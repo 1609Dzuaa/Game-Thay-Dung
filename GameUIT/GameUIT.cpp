@@ -57,6 +57,9 @@ ID3D10Device* pD3DDevice = NULL;
 IDXGISwapChain* pSwapChain = NULL;
 ID3D10RenderTargetView* pRenderTargetView = NULL;
 
+//Đặt thằng này thành biến toàn cục để các hàm ở dưới có thể thoải mái truy cập
+ID3D10ShaderResourceView* gSpriteTextureRV = NULL;
+
 int BackBufferWidth = 0;
 int BackBufferHeight = 0;
 
@@ -81,6 +84,26 @@ float ball_vx = ball_START_VX;
 float ball_y = ball_START_Y;
 float ball_vy = ball_START_VY;
 
+//Sử dụng Class để quản lý các đối tượng giống nhau
+class Balls
+{
+//6 biến đại diện cho chiều dài, rộng, Toạ độ và tốc độ theo trục x và y của quả bóng
+public: float height, width, x, y, vx, vy;
+public: bool visible; //Dùng để Check xem vật thể có nằm trong vùng quan sát được ?!
+	  //Sử dụng Hàm tạo để khởi tạo giá trị của từng quả bóng
+	  Balls()
+	  {
+		  height = 16.0f;
+		  width = 16.0f;
+		  x = (float)(rand() % 600);
+		  y = (float)(rand() % 450);
+		  vx = 0.5f;
+		  vy = 20.0f;
+		  visible = TRUE;
+	  }
+};
+Balls arrBalls[10]; //Mảng 10 đối tượng kiểu Quả Bóng
+D3DX10_SPRITE spritePool[10]; //Mảng 10 Sprites của 10 Quả Bóng ở trên
 
 LRESULT CALLBACK WinProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
@@ -256,9 +279,6 @@ void InitDirectX(HWND hWnd)
 		10);
 	hr = spriteObject->SetProjectionTransform(&matProjection);
 
-
-
-
 	DebugOut((wchar_t*)L"[INFO] InitDirectX has been successful\n");
 
 	return;
@@ -267,6 +287,7 @@ void InitDirectX(HWND hWnd)
 /*
 	Load game resources. In this example, we only load a ball image
 */
+
 void LoadResources()
 {
 	ID3D10Resource* pD3D10Resource = NULL;
@@ -311,26 +332,20 @@ void LoadResources()
 	SRVDesc.ViewDimension = D3D10_SRV_DIMENSION_TEXTURE2D;
 	SRVDesc.Texture2D.MipLevels = desc.MipLevels;
 
-	ID3D10ShaderResourceView* gSpriteTextureRV = NULL;
+	//ID3D10ShaderResourceView* gSpriteTextureRV = NULL;
 
 	pD3DDevice->CreateShaderResourceView(texball, &SRVDesc, &gSpriteTextureRV);
 
-	// Set the sprite’s shader resource view
-	spriteball.pTexture = gSpriteTextureRV;
-
-	// top-left location in U,V coords
-	spriteball.TexCoord.x = 0;
-	spriteball.TexCoord.y = 0;
-
-	// Determine the texture size in U,V coords
-	spriteball.TexSize.x = 1.0f;
-	spriteball.TexSize.y = 1.0f;
-
-	// Set the texture index. Single textures will use 0
-	spriteball.TextureIndex = 0;
-
-	// The color to apply to this sprite, full color applies white.
-	spriteball.ColorModulate = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+	for (int i = 0; i < 10; i++)
+	{
+		spritePool[i].pTexture = gSpriteTextureRV;
+		spritePool[i].TextureIndex = 0;
+		spritePool[i].TexCoord.x = 0;
+		spritePool[i].TexCoord.y = 0;
+		spritePool[i].TexSize.x = 1;
+		spritePool[i].TexSize.y = 1;
+		spritePool[i].ColorModulate = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+	}
 
 
 	DebugOut((wchar_t*)L"[INFO] Texture loaded Ok: %s \n", TEXTURE_PATH_ball);
@@ -342,28 +357,26 @@ void LoadResources()
 
 	IMPORTANT: no render-related code should be used inside this function.
 */
+
 void Update(DWORD dt)
-{
+{    
+	//Hàm này sẽ Update trạng thái từng object mình vẽ ra trong hàm Render()
 	//Uncomment the whole function to see the ball moves and bounces back when hitting left and right edges
-	ball_x++;
-
-	ball_x += ball_vx * dt;
-
-	// NOTE: BackBufferWidth is indeed related to rendering!!
-	float right_edge = BackBufferWidth - ball_HEIGHT;
-
-	if (ball_x < 0 || ball_x > right_edge) {
-
-		ball_vx = -ball_vx;
-
-		//	//Why not having these logics would make the ball disappear sometimes?  
-		if (ball_x < 0)
+	float right_edge = BackBufferWidth;
+	for (int i = 0; i < 10; i++)
+	{
+		if (arrBalls[i].visible)
 		{
-			ball_x = 0;
-		}
-		else if (ball_x > right_edge)
-		{
-			ball_x = right_edge;
+			arrBalls[i].x++;
+			arrBalls[i].x += arrBalls[i].vx*dt;
+			if (arrBalls[i].x <= 0 || arrBalls[i].x > right_edge)
+			{
+				arrBalls[i].vx = -arrBalls[i].vx;
+				if (arrBalls[i].x < 0)
+					arrBalls[i].x = 0;
+				else if (arrBalls[i].x > right_edge)
+					arrBalls[i].x = right_edge;
+			}
 		}
 	}
 }
@@ -378,32 +391,35 @@ void Render()
 	{
 		// clear the target buffer
 		pD3DDevice->ClearRenderTargetView(pRenderTargetView, BACKGROUND_COLOR);
+		if (spriteObject != NULL)
+		{
+			spriteObject->Begin(D3DX10_SPRITE_SORT_TEXTURE);
+			D3DXMATRIX matTranslation;
+			D3DXMATRIX matScaling;
 
-		// start drawing the sprites
-		spriteObject->Begin(D3DX10_SPRITE_SORT_TEXTURE);
+			for (int i = 0; i < 10; i++)
+			{
+				if (arrBalls[i].visible)
+				{
+					D3DXMatrixScaling(&matScaling, arrBalls[i].width, arrBalls[i].height, 1.0f);
+					D3DXMatrixTranslation(&matTranslation, arrBalls[i].x, (float)(BackBufferHeight - arrBalls[i].y), 0.1f);
+					spritePool[i].matWorld = (matScaling * matTranslation);
+				}
+			}
 
-		// The translation matrix to be created
-		D3DXMATRIX matTranslation;
-		// Create the translation matrix
-		D3DXMatrixTranslation(&matTranslation, ball_x, (BackBufferHeight - ball_y), 0.1f);
+			spriteObject->DrawSpritesBuffered(spritePool, 10); //Vẽ 10 Quả Bóng từ mảng các Sprites
+			spriteObject->Flush();
 
-		// Scale the sprite to its correct width and height
-		D3DXMATRIX matScaling;
-		D3DXMatrixScaling(&matScaling, ball_WIDTH, ball_HEIGHT, 1.0f);
+			// Finish up and send the sprites to the hardware
+			spriteObject->End();
 
-		// Setting the sprite’s position and size
-		spriteball.matWorld = (matScaling * matTranslation);
+			//DebugOutTitle((wchar_t*)L"%s (%0.1f,%0.1f) v:%0.1f", WINDOW_TITLE, ball_x, ball_y, ball_vx);
 
-		spriteObject->DrawSpritesImmediate(&spriteball, 1, 0, 0);
-
-		// Finish up and send the sprites to the hardware
-		spriteObject->End();
-
-		//DebugOutTitle((wchar_t*)L"%s (%0.1f,%0.1f) v:%0.1f", WINDOW_TITLE, ball_x, ball_y, ball_vx);
-
-		// display the next item in the swap chain
+			// display the next item in the swap chain
+		}
 		pSwapChain->Present(0, 0);
 	}
+	//Hàm này chỉ để RENDERING
 }
 
 HWND CreateGameWindow(HINSTANCE hInstance, int nCmdShow, int ScreenWidth, int ScreenHeight)
@@ -482,6 +498,7 @@ int Run()
 		if (dt >= tickPerFrame)
 		{
 			frameStart = now;
+			//FillArr();
 			Update((DWORD)dt);
 			Render();
 		}
