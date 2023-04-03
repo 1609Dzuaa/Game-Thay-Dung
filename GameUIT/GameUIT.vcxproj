@@ -128,23 +128,27 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="debug.h" />
     <ClInclude Include="framework.h" />
-    <ClInclude Include="GameUIT.h" />
-    <ClInclude Include="Resource.h" />
-    <ClInclude Include="targetver.h" />
+    <ClInclude Include="Game.h" />
+    <ClInclude Include="GameObject.h" />
+    <ClInclude Include="Texture.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="GameUIT.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="GameUIT.rc" />
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="GameUIT.ico" />
-    <Image Include="small.ico" />
+    <ClCompile Include="debug.cpp" />
+    <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="Game.cpp" />
+    <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\..\MarioGame\MarioGame\brick.ico" />
+    <Image Include="..\..\MarioGame\MarioGame\brick.png" />
+    <Image Include="..\..\MarioGame\MarioGame\mario.png" />
+    <Image Include="..\..\MarioGame\MarioGame\mario_full.png" />
+    <Image Include="..\..\MarioGame\MarioGame\misc.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
