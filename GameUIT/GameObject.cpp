@@ -9,6 +9,7 @@
 /*
 	Initialize game object
 */
+
 CGameObject::CGameObject(float x, float y, LPTEXTURE tex)
 {
 	this->x = x;
@@ -40,6 +41,7 @@ CBall::~CBall()
 void CMario::Update(DWORD dt)
 {
 	x += vx * dt;
+	y -= vy * dt;
 
 	int BackBufferWidth = CGame::GetInstance()->GetBackBufferWidth();
 	if (x <= 0 || x >= BackBufferWidth - MARIO_WIDTH)
@@ -57,6 +59,8 @@ void CMario::Update(DWORD dt)
 		}
 
 	}
+	if (y < 5 || y > 100)
+		vy = -vy;
 }
 
 void CBall::Update(DWORD dt)
@@ -111,5 +115,19 @@ void CBrick::Update(DWORD dt)
 		{
 			x = (float)(BackBufferWidth);
 		}
+	}
+}
+
+void CTurtle::Update(DWORD dt)
+{
+	x += vx * dt;
+	int BackBufferWidth = CGame::GetInstance()->GetBackBufferWidth();
+	if (x <= 0 || x >= BackBufferWidth)
+	{
+		vx = -vx;
+		if (x < 0)
+			x = 0;
+		else if (x > BackBufferWidth)
+			x = (float)BackBufferWidth;
 	}
 }

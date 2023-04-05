@@ -19,8 +19,11 @@ protected:
 	LPTEXTURE texture;
 public:
 	void SetPosition(float x, float y) { this->x = x, this->y = y; }
+
 	float GetX() { return x; }
+
 	float GetY() { return y; }
+
 	float GetRadius() //Lấy bán kính để xét va chạm(Collision)
 	{
 		return radius;
@@ -80,11 +83,32 @@ class CMario : public CGameObject
 {
 	float vx;
 	float vy;
+	bool destroyed = false;
 public:
 	CMario(float x, float y, float vx, float vy, LPTEXTURE texture) :CGameObject(x, y, texture)
 	{
 		this->vx = vx;
 		this->vy = vy;
+		this->radius = (float)(25 * sqrt(2)) / (float)2;
+		//Vì các sprite có dạng hình vuông với cạnh 25
+		//nên bán kính sẽ tính như trên
 	};
+	void Update(DWORD dt);
+
+	bool getDes() { return this->destroyed; }
+
+	void setDes(bool param) { this->destroyed = param; }
+};
+
+class CTurtle :public CGameObject
+{
+	float vx, vy;
+public:
+	CTurtle(float x, float y, float vx, float vy, LPTEXTURE tex) :CGameObject(x, y, tex)
+	{
+		this->vx = vx;
+		this->vy = vy;
+		this->radius = (float)(25 * sqrt(2)) / (float)2; 
+	}
 	void Update(DWORD dt);
 };

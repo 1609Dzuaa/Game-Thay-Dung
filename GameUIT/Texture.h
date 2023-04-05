@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <d3d10.h>
 #include <d3dx10.h>
@@ -31,6 +31,7 @@ public:
 		this->_tex->GetDesc(&desc);
 		this->_width = 25.0f;
 		this->_height = 25.0f;
+		//Các sprite sẽ có dạng hình vuông với cạnh = 25
 	}
 
 	ID3D10ShaderResourceView* getShaderResourceView() { return this->_rsview; }

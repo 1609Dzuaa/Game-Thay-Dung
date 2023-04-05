@@ -28,6 +28,7 @@
 
 #define TEXTURE_PATH_BRICK L"brick.png"
 #define TEXTURE_PATH_MARIO L"mario.png"
+#define TEXTURE_PATH_TURTLE L"Turtle.png"
 #define TEXTURE_PATH_BALL L"ball.png"
 
 #define TEXTURE_PATH_MISC L"misc.png"
@@ -39,16 +40,17 @@
 
 using namespace std;
 
-CMario* mario;
+CMario* mario[5];
 #define MARIO_START_X 10.0f
 #define MARIO_START_Y 100.0f
 #define MARIO_START_VX 0.1f
 #define MARIO_START_VY 0.1f
 
+CTurtle* turtle;
 
-CBrick* brick[20];
+CBrick* brick[100];
 #define BRICK_X 10.0f
-#define BRICK_Y 120.0f
+#define BRICK_Y 125.0f
 
 CBall* ball[100];
 #define BALL_START_X 10.0f
@@ -60,6 +62,7 @@ vector<CBrick>* vectorBricks;
 
 
 LPTEXTURE texMario = NULL;
+LPTEXTURE texTurtle = NULL;
 LPTEXTURE texBrick = NULL;
 LPTEXTURE texBall = NULL;
 LPTEXTURE texMisc = NULL;
@@ -87,23 +90,20 @@ void LoadResources()
 	CGame* game = CGame::GetInstance();
 	texBrick = game->LoadTexture(TEXTURE_PATH_BRICK);
 	texMario = game->LoadTexture(TEXTURE_PATH_MARIO);
+	texTurtle = game->LoadTexture(TEXTURE_PATH_TURTLE);
 	texMisc = game->LoadTexture(TEXTURE_PATH_MISC);
-	texBall = game->LoadTexture(TEXTURE_PATH_BALL);
+	//texBall = game->LoadTexture(TEXTURE_PATH_BALL);
 
 	// Load a sprite sheet as a texture to try drawing a portion of a texture. See function Render 
 	//texMisc = game->LoadTexture(TEXTURE_PATH_MISC);
-
-	mario = new CMario(30, MARIO_START_Y, MARIO_START_VX, MARIO_START_VY, texMario);
 	for (int i = 0; i < 5; i++)
+		mario[i] = new CMario(30 + 30 * i, MARIO_START_Y, MARIO_START_VX, MARIO_START_VY, texMario);
+	turtle = new CTurtle(300, 103, 0.1, 0.25, texTurtle);
+
+	for (int i = 0; i < 20; i++)
 	{
 		brick[i] = new CBrick(BRICK_X + 20 * i, BRICK_Y, 0.2, 0.2, texBrick);
 	}
-
-	for (int i = 0; i < 5; i++)
-	{
-		ball[i] = new CBall(150, BALL_START_Y, 0.15, 0.15, texBall);
-	}
-
 
 	// objects.push_back(mario);
 	// for(i)		 
@@ -122,12 +122,16 @@ void LoadResources()
 	dt: time period between beginning of last frame and beginning of this frame
 */
 
-void CheckCollision(CBall* ball, CBrick* brick)
+void CheckCollision(CMario* mario, CTurtle* turtle)
 {
-	if (ball->GetRadius() + brick->GetRadius() > sqrt((ball->GetX() - brick->GetX()) * (ball->GetX() - brick->GetX()) + (ball->GetY() - brick->GetY()) * (ball->GetY() - brick->GetY())))
+	if (mario->GetRadius() + turtle->GetRadius() > sqrt((mario->GetX() - turtle->GetX()) * (mario->GetX() - turtle->GetX()) + (mario->GetY() - turtle->GetY()) * (mario->GetY() - turtle->GetY())))
 	{
-		ball->SetDes(true);
+		mario->setDes(true);
+		//Biểu thức trong điều kiện if là công thức toán cơ bản:
+		//Tính khoảng cách giữa 2 vật thể biết toạ độ(x,y) cho trước
 	}
+	//Hàm xét va chạm dựa trên bán kính và toạ độ (x,y) của 2 vật thể
+	//Coi 2 vật thể như hình tròn
 }
 
 void Update(DWORD dt)
@@ -136,14 +140,11 @@ void Update(DWORD dt)
 	for (int i=0;i<n;i++)
 		objects[i]->Update(dt);
 	*/
-
-	//mario->Update(dt);
 	for (int i = 0; i < 5; i++)
-		brick[i]->Update(dt);
+		mario[i]->Update(dt);
+	turtle->Update(dt);
 	for (int i = 0; i < 5; i++)
-		ball[i]->Update(dt);
-	for (int i = 0; i < 5; i++)
-		CheckCollision(ball[i], brick[i]);
+		CheckCollision(mario[i], turtle);
 	//DebugOutTitle(L"01 - Skeleton %0.1f, %0.1f", mario->GetX(), mario->GetY());
 }
 
@@ -170,15 +171,14 @@ void Render()
 		FLOAT NewBlendFactor[4] = { 0,0,0,0 };
 		pD3DDevice->OMSetBlendState(g->GetAlphaBlending(), NewBlendFactor, 0xffffffff);
 
-		for (int i = 0; i < 5; i++)
+		for (int i = 0; i < 20; i++)
 			brick[i]->Render();
+
+		//Nếu vật thể chưa bị phá huỷ thì tiếp tục Render, nếu đã bị phá huỷ(Des = true) thì ngừng Render
 		for (int i = 0; i < 5; i++)
-		{
-			if (!ball[i]->getDes())
-				ball[i]->Render();
-			//Nếu vật thể chưa bị phá huỷ thì tiếp tục Render, nếu đã bị phá huỷ(Collision) thì ngừng Render
-		}
-		//mario->Render();
+			if (!mario[i]->getDes())
+				mario[i]->Render();  
+		turtle->Render();
 
 		// Uncomment this line to see how to draw a porttion of a texture  
 		//g->Draw(10, 10, texMisc, 300, 117, 317, 134);
