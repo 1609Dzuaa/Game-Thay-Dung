@@ -45,7 +45,7 @@
 //#define TEXTURES_DIR L"textures"
 #define TEXTURE_PATH_MARIO L"mario_transparent.png"
 #define TEXTURE_PATH_MISC L"misc_transparent.png"
-#define TEXTURE_PATH_ENEMIES L"enemies.png"
+#define TEXTURE_PATH_ENEMIES L"enemies_transparent.png"
 #define TEXTURE_PATH_BRICK L"brick.png"
 
 CMario* mario;
@@ -106,10 +106,10 @@ void LoadResources()
 
 	LPTEXTURE texMisc = textures->Get(ID_TEX_MISC);
 	//Thêm Sprites của cục gạch bí ẩn
-	sprites->Add(20001, 300, 117, 316, 133, texMisc);
-	sprites->Add(20002, 318, 117, 334, 133, texMisc);
-	sprites->Add(20003, 336, 117, 352, 133, texMisc);
-	sprites->Add(20004, 354, 117, 370, 133, texMisc);
+	sprites->Add(20001, 352, 153, 369, 168, texMisc);
+	//sprites->Add(20002, 318, 117, 334, 133, texMisc);
+	//sprites->Add(20003, 336, 117, 352, 133, texMisc);
+	//sprites->Add(20004, 354, 117, 370, 133, texMisc);
 
 	LPTEXTURE texEnemy = textures->Get(ID_TEX_ENEMY);
 	sprites->Add(31001, 4, 13, 22, 30, texEnemy);
@@ -140,9 +140,9 @@ void LoadResources()
 
 	ani = new CAnimation(200);
 	ani->Add(20001, 1000);
-	ani->Add(20002);
-	ani->Add(20003);
-	ani->Add(20004);
+	//ani->Add(20002);
+	//ani->Add(20003);
+	//ani->Add(20004);
 	animations->Add(510, ani);
 	//Chuyển động của cục gạch
 
@@ -153,8 +153,8 @@ void LoadResources()
 
 	mario = new CMario(MARIO_START_X, MARIO_START_Y, MARIO_START_VX);
 	Enemy = new CEnemy(40.0f, 136.0f, 0.05f);
-	for (int i = 0; i < 10; i++)
-		brick[i] = new CBrick(100.0f+16*i, 100.0f);
+	for (int i = 0; i < 20; i++)
+		brick[i] = new CBrick(0.0f+16*i, 150.0f);
 }
 
 /*
@@ -176,19 +176,6 @@ void Render()
 	ID3D10RenderTargetView* pRenderTargetView = g->GetRenderTargetView();
 	ID3DX10Sprite* spriteHandler = g->GetSpriteHandler();
 
-	D3D10_BLEND_DESC blendDesc;
-	ZeroMemory(&blendDesc, sizeof(blendDesc));
-	blendDesc.AlphaToCoverageEnable = FALSE;
-	blendDesc.BlendEnable[0] = TRUE;
-	blendDesc.SrcBlend = D3D10_BLEND_SRC_ALPHA;
-	blendDesc.DestBlend = D3D10_BLEND_INV_SRC_ALPHA;
-	blendDesc.BlendOp = D3D10_BLEND_OP_ADD;
-	blendDesc.SrcBlendAlpha = D3D10_BLEND_ONE;
-	blendDesc.DestBlendAlpha = D3D10_BLEND_ZERO;
-	blendDesc.BlendOpAlpha = D3D10_BLEND_OP_ADD;
-	blendDesc.RenderTargetWriteMask[0] = D3D10_COLOR_WRITE_ENABLE_ALL;
-	ID3D10BlendState* blendState;
-
 	if (pD3DDevice != NULL)
 	{
 		// clear the background 
@@ -196,13 +183,11 @@ void Render()
 
 		spriteHandler->Begin(D3DX10_SPRITE_SORT_TEXTURE);
 
-		pD3DDevice->CreateBlendState(&blendDesc, &blendState);
-
 		// Use Alpha blending for transparent sprites
 		FLOAT NewBlendFactor[4] = { 0,0,0,0 };
-		pD3DDevice->OMSetBlendState(blendState, 0, 0xFFFFFFFF); //0xFFFFFFFF
+		pD3DDevice->OMSetBlendState(g->GetAlphaBlending(), NewBlendFactor, 0xffffffff);
 
-		for (int i = 0; i < 10; i++)
+		for (int i = 0; i < 20; i++)
 			brick[i]->Render();
 		mario->Render();
 		Enemy->Render();
