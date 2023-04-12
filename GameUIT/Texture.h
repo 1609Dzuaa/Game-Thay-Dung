@@ -29,9 +29,8 @@ public:
 
 		D3D10_TEXTURE2D_DESC desc;
 		this->_tex->GetDesc(&desc);
-		this->_width = 25.0f;
-		this->_height = 25.0f;
-		//Các sprite sẽ có dạng hình vuông với cạnh = 25
+		this->_width = desc.Width;
+		this->_height = desc.Height;
 	}
 
 	ID3D10ShaderResourceView* getShaderResourceView() { return this->_rsview; }

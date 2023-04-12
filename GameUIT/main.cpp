@@ -1,73 +1,60 @@
 ﻿/* =============================================================
 	INTRODUCTION TO GAME PROGRAMMING SE102
 
-	SAMPLE 01 - SKELETON CODE
+	SAMPLE 02 - SPRITE AND ANIMATION
 
 	This sample illustrates how to:
 
-	1/ Re-organize introductory code to an initial skeleton for better scalability
-	2/ CGame is a singleton, playing a role of an "engine".
-	3/ CGameObject is an abstract class for all game objects
-	4/ CTexture is a wrapper class for ID3D10TEXTURE
-
-	NOTE: to create transparent background, download GIMP, then use Color to Alpha feature
+		1/ Render a sprite (within a sprite sheet)
+		2/ How to manage sprites/animations in a game
+		3/ Enhance CGameObject with sprite animation
 ================================================================ */
 
-#include <windows.h>
+#include <Windows.h>
 #include <d3d10.h>
 #include <d3dx10.h>
-#include <vector>
 
 #include "debug.h"
 #include "Game.h"
-#include "GameObject.h"
+#include "Textures.h"
 
-#define WINDOW_CLASS_NAME L"Game Window"
-#define MAIN_WINDOW_TITLE L"01 - Skeleton"
-#define WINDOW_ICON_PATH L"brick.ico"
+#include "Sprite.h"
+#include "Sprites.h"
 
-#define TEXTURE_PATH_BRICK L"brick.png"
-#define TEXTURE_PATH_MARIO L"mario.png"
-#define TEXTURE_PATH_TURTLE L"Turtle.png"
-#define TEXTURE_PATH_BALL L"ball.png"
+#include "Animation.h"
+#include "Animations.h"
 
-#define TEXTURE_PATH_MISC L"misc.png"
 
-#define BACKGROUND_COLOR D3DXCOLOR(0.5f, 0.5f, 0.5f, 0.0f)
+#include "Mario.h"
+#include "Brick.h"
+#include "Enemy.h"
+
+#define WINDOW_CLASS_NAME L"SampleWindow"
+#define MAIN_WINDOW_TITLE L"02 - Sprite animation"
+#define WINDOW_ICON_PATH L"mario.ico"
+
+#define BACKGROUND_COLOR D3DXCOLOR(200.0f/255, 200.0f/255, 255.0f/255,0.0f)
 #define SCREEN_WIDTH 320
 #define SCREEN_HEIGHT 240
 
+#define ID_TEX_MARIO 0
+#define ID_TEX_ENEMY 10
+#define ID_TEX_MISC 20
+#define ID_TEX_BRICK 30
 
-using namespace std;
+//#define TEXTURES_DIR L"textures"
+#define TEXTURE_PATH_MARIO L"mario_transparent.png"
+#define TEXTURE_PATH_MISC L"misc_transparent.png"
+#define TEXTURE_PATH_ENEMIES L"enemies.png"
+#define TEXTURE_PATH_BRICK L"brick.png"
 
-CMario* mario[5];
+CMario* mario;
 #define MARIO_START_X 10.0f
-#define MARIO_START_Y 100.0f
+#define MARIO_START_Y 130.0f
 #define MARIO_START_VX 0.1f
-#define MARIO_START_VY 0.1f
+CEnemy* Enemy;
 
-CTurtle* turtle;
-
-CBrick* brick[100];
-#define BRICK_X 10.0f
-#define BRICK_Y 125.0f
-
-CBall* ball[100];
-#define BALL_START_X 10.0f
-#define BALL_START_Y 100.0f
-#define BALL_START_VX 0.1f
-#define BALL_START_VY 0.1f
-
-vector<CBrick>* vectorBricks;
-
-
-LPTEXTURE texMario = NULL;
-LPTEXTURE texTurtle = NULL;
-LPTEXTURE texBrick = NULL;
-LPTEXTURE texBall = NULL;
-LPTEXTURE texMisc = NULL;
-
-//vector<LPGAMEOBJECT> objects;  
+CBrick* brick[50];
 
 LRESULT CALLBACK WinProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
@@ -83,74 +70,103 @@ LRESULT CALLBACK WinProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 }
 
 /*
-	Load all game resources. In this example, create a brick object and mario object
+	Load all game resources
+	In this example: load textures, sprites, animations and mario object
 */
+
 void LoadResources()
 {
-	CGame* game = CGame::GetInstance();
-	texBrick = game->LoadTexture(TEXTURE_PATH_BRICK);
-	texMario = game->LoadTexture(TEXTURE_PATH_MARIO);
-	texTurtle = game->LoadTexture(TEXTURE_PATH_TURTLE);
-	texMisc = game->LoadTexture(TEXTURE_PATH_MISC);
-	//texBall = game->LoadTexture(TEXTURE_PATH_BALL);
+	//Tạo 1 con trỏ kiểu CTextures tên là textures để nắm giữ toàn bộ textures của game
+	CTextures* textures = CTextures::GetInstance();
 
-	// Load a sprite sheet as a texture to try drawing a portion of a texture. See function Render 
-	//texMisc = game->LoadTexture(TEXTURE_PATH_MISC);
-	for (int i = 0; i < 5; i++)
-		mario[i] = new CMario(30 + 30 * i, MARIO_START_Y, MARIO_START_VX, MARIO_START_VY, texMario);
-	turtle = new CTurtle(300, 103, 0.1, 0.25, texTurtle);
+	//Thêm các đường dẫn file texture cùng với đó là ID của chúng để dễ phân biệt
+	textures->Add(ID_TEX_MARIO, TEXTURE_PATH_MARIO);
+	textures->Add(ID_TEX_ENEMY, TEXTURE_PATH_ENEMIES);
+	textures->Add(ID_TEX_MISC, TEXTURE_PATH_MISC);
+	textures->Add(ID_TEX_BRICK, TEXTURE_PATH_BRICK);
 
-	for (int i = 0; i < 20; i++)
-	{
-		brick[i] = new CBrick(BRICK_X + 20 * i, BRICK_Y, 0.2, 0.2, texBrick);
-	}
+	//Tạo 1 con trỏ kiểu CSprites để nắm giữ toàn bộ sprites của game
+	CSprites* sprites = CSprites::GetInstance();
 
-	// objects.push_back(mario);
-	// for(i)		 
-	//		objects.push_back(new CGameObject(BRICK_X+i*BRICK_WIDTH,....);
-	//
+	//Tạo 1 con trỏ kiểu CTexture tên là texMario để lấy Textures của Mario từ biến textures đã lưu trước đó  
+	LPTEXTURE texMario = textures->Get(ID_TEX_MARIO);
 
-	//
-	// int x = BRICK_X;
-	// for(i)
-	//		... new CGameObject(x,.... 
-	//		x+=BRICK_WIDTH;
+	// readline => id, left, top, right
+
+    //Thêm Sprites của Mario lúc đi
+	//id có thể là bất kì, tuy nhiên nên đặt sao cho dễ phân biệt, dễ nhớ
+	sprites->Add(10001, 246, 154, 259, 181, texMario);
+	sprites->Add(10002, 275, 154, 290, 181, texMario);
+	sprites->Add(10003, 304, 154, 321, 181, texMario);
+
+	//Thêm Sprites của Mario lúc về
+	sprites->Add(10011, 186, 154, 200, 181, texMario);
+	sprites->Add(10012, 155, 154, 171, 181, texMario);
+	sprites->Add(10013, 125, 154, 141, 181, texMario);
+
+	LPTEXTURE texMisc = textures->Get(ID_TEX_MISC);
+	//Thêm Sprites của cục gạch bí ẩn
+	sprites->Add(20001, 300, 117, 316, 133, texMisc);
+	sprites->Add(20002, 318, 117, 334, 133, texMisc);
+	sprites->Add(20003, 336, 117, 352, 133, texMisc);
+	sprites->Add(20004, 354, 117, 370, 133, texMisc);
+
+	LPTEXTURE texEnemy = textures->Get(ID_TEX_ENEMY);
+	sprites->Add(31001, 4, 13, 22, 30, texEnemy);
+	sprites->Add(31002, 24, 13, 42, 30, texEnemy);
+
+	//Tạo biến con trỏ kiểu CAnimations để chứa toàn bộ animation của game
+	CAnimations* animations = CAnimations::GetInstance();
+
+	//Tạo biến con trỏ kiểu Animation để thêm các chuyển động của nhân vật
+	LPANIMATION ani;
+
+	ani = new CAnimation(200); //Thiết lập thời gian animation mặc định là 200ms
+	ani->Add(10001); //cụp 
+	ani->Add(10002); //giơ chân vừa
+	ani->Add(10003); //giơ chân max
+
+	//Thêm 3 chuyển động của Mario theo thứ tự lúc đi và thêm nó vào biến animations với ID là 500
+	//và biến con trỏ lúc nãy đã lưu chuyển động của nhân vật
+	animations->Add(500, ani);
+
+	ani = new CAnimation(200);
+	ani->Add(10011);
+	ani->Add(10012);
+	ani->Add(10013);
+
+	//Thêm chuyển động Mario lúc về vào biến animations với ID là 501 
+	animations->Add(501, ani);
+
+	ani = new CAnimation(200);
+	ani->Add(20001, 1000);
+	ani->Add(20002);
+	ani->Add(20003);
+	ani->Add(20004);
+	animations->Add(510, ani);
+	//Chuyển động của cục gạch
+
+	ani = new CAnimation(200);
+	ani->Add(31001);
+	ani->Add(31002);
+	animations->Add(502, ani);
+
+	mario = new CMario(MARIO_START_X, MARIO_START_Y, MARIO_START_VX);
+	Enemy = new CEnemy(40.0f, 136.0f, 0.05f);
+	for (int i = 0; i < 10; i++)
+		brick[i] = new CBrick(100.0f+16*i, 100.0f);
 }
 
 /*
 	Update world status for this frame
 	dt: time period between beginning of last frame and beginning of this frame
 */
-
-void CheckCollision(CMario* mario, CTurtle* turtle)
-{
-	if (mario->GetRadius() + turtle->GetRadius() > sqrt((mario->GetX() - turtle->GetX()) * (mario->GetX() - turtle->GetX()) + (mario->GetY() - turtle->GetY()) * (mario->GetY() - turtle->GetY())))
-	{
-		mario->setDes(true);
-		//Biểu thức trong điều kiện if là công thức toán cơ bản:
-		//Tính khoảng cách giữa 2 vật thể biết toạ độ(x,y) cho trước
-	}
-	//Hàm xét va chạm dựa trên bán kính và toạ độ (x,y) của 2 vật thể
-	//Coi 2 vật thể như hình tròn
-}
-
 void Update(DWORD dt)
 {
-	/*
-	for (int i=0;i<n;i++)
-		objects[i]->Update(dt);
-	*/
-	for (int i = 0; i < 5; i++)
-		mario[i]->Update(dt);
-	turtle->Update(dt);
-	for (int i = 0; i < 5; i++)
-		CheckCollision(mario[i], turtle);
-	//DebugOutTitle(L"01 - Skeleton %0.1f, %0.1f", mario->GetX(), mario->GetY());
+	mario->Update(dt);
+	Enemy->Update(dt);
 }
 
-/*
-	Render a frame
-*/
 void Render()
 {
 	CGame* g = CGame::GetInstance();
@@ -160,6 +176,19 @@ void Render()
 	ID3D10RenderTargetView* pRenderTargetView = g->GetRenderTargetView();
 	ID3DX10Sprite* spriteHandler = g->GetSpriteHandler();
 
+	D3D10_BLEND_DESC blendDesc;
+	ZeroMemory(&blendDesc, sizeof(blendDesc));
+	blendDesc.AlphaToCoverageEnable = FALSE;
+	blendDesc.BlendEnable[0] = TRUE;
+	blendDesc.SrcBlend = D3D10_BLEND_SRC_ALPHA;
+	blendDesc.DestBlend = D3D10_BLEND_INV_SRC_ALPHA;
+	blendDesc.BlendOp = D3D10_BLEND_OP_ADD;
+	blendDesc.SrcBlendAlpha = D3D10_BLEND_ONE;
+	blendDesc.DestBlendAlpha = D3D10_BLEND_ZERO;
+	blendDesc.BlendOpAlpha = D3D10_BLEND_OP_ADD;
+	blendDesc.RenderTargetWriteMask[0] = D3D10_COLOR_WRITE_ENABLE_ALL;
+	ID3D10BlendState* blendState;
+
 	if (pD3DDevice != NULL)
 	{
 		// clear the background 
@@ -167,22 +196,21 @@ void Render()
 
 		spriteHandler->Begin(D3DX10_SPRITE_SORT_TEXTURE);
 
+		pD3DDevice->CreateBlendState(&blendDesc, &blendState);
+
 		// Use Alpha blending for transparent sprites
 		FLOAT NewBlendFactor[4] = { 0,0,0,0 };
-		pD3DDevice->OMSetBlendState(g->GetAlphaBlending(), NewBlendFactor, 0xffffffff);
+		pD3DDevice->OMSetBlendState(blendState, 0, 0xFFFFFFFF); //0xFFFFFFFF
 
-		for (int i = 0; i < 20; i++)
+		for (int i = 0; i < 10; i++)
 			brick[i]->Render();
+		mario->Render();
+		Enemy->Render();
 
-		//Nếu vật thể chưa bị phá huỷ thì tiếp tục Render, nếu đã bị phá huỷ(Des = true) thì ngừng Render
-		for (int i = 0; i < 5; i++)
-			if (!mario[i]->getDes())
-				mario[i]->Render();  
-		turtle->Render();
+		// Uncomment this line to see how to draw a porttion of a texture
+		//LPTEXTURE texMisc = textures->Get(ID_TEX_MISC);
+		//g->Draw(10, 10, texMisc, 300, 117, 316, 133);
 
-		// Uncomment this line to see how to draw a porttion of a texture  
-		//g->Draw(10, 10, texMisc, 300, 117, 317, 134);
-		//g->Draw(10, 10, texMario, 215, 120, 234, 137);
 
 		spriteHandler->End();
 		pSwapChain->Present(0, 0);
@@ -279,17 +307,15 @@ int WINAPI WinMain(
 	_In_opt_ HINSTANCE hPrevInstance,
 	_In_ LPSTR lpCmdLine,
 	_In_ int nCmdShow
-)
-{
+) {
 	HWND hWnd = CreateGameWindow(hInstance, nCmdShow, SCREEN_WIDTH, SCREEN_HEIGHT);
 
 	CGame* game = CGame::GetInstance();
 	game->Init(hWnd);
 
-	SetWindowPos(hWnd, 0, 0, 0, SCREEN_WIDTH * 2, SCREEN_HEIGHT * 2, SWP_NOMOVE | SWP_NOOWNERZORDER | SWP_NOZORDER);
-
-
 	LoadResources();
+
+	SetWindowPos(hWnd, 0, 0, 0, SCREEN_WIDTH * 2, SCREEN_HEIGHT * 2, SWP_NOMOVE | SWP_NOOWNERZORDER | SWP_NOZORDER);
 
 	Run();
 

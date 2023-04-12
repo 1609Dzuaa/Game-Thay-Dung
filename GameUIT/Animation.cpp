@@ -1,0 +1,38 @@
+﻿#include "Animation.h"
+
+void CAnimation::Add(int spriteId, DWORD time)
+{
+	int t = time;
+	if (time == 0) t = this->defaultTime;
+
+	//Câu lệnh bên phải sẽ trả về một sprite, ta sẽ gán nó vào biến con trỏ sprite dưới
+	LPSPRITE sprite = CSprites::GetInstance()->Get(spriteId);
+	//Tạo 1 con trỏ frame kiểu CAnimationFrame để khởi tạo giá trị cho nó
+	LPANIMATION_FRAME frame = new CAnimationFrame(sprite, t);
+	//Thêm con trỏ trên vào cuối vector frames
+	frames.push_back(frame);
+}
+
+void CAnimation::Render(float x, float y)
+{
+	ULONGLONG now = GetTickCount64(); //Hàm này trả về thời gian kể từ khi ứng dụng chạy cho đến hiện tại
+
+	if (currentFrame == -1) //Nếu nó là frame mặc định (-1)
+	{
+		currentFrame = 0;
+		lastFrameTime = now;
+	}
+	else
+	{
+		DWORD t = frames[currentFrame]->GetTime(); //Lấy thời gian chuyển động của frame hiện tại và gán cho t
+		if (now - lastFrameTime > t)
+		{
+			currentFrame++;
+			lastFrameTime = now;
+			if (currentFrame == frames.size()) currentFrame = 0;
+			//DebugOut(L"now: %d, lastFrameTime: %d, t: %d\n", now, lastFrameTime, t);
+		}
+	}
+
+	frames[currentFrame]->GetSprite()->Draw(x, y);
+}

@@ -36,7 +36,7 @@ void CGame::Init(HWND hWnd)
 
 	// Create the D3D device and the swap chain
 	HRESULT hr = D3D10CreateDeviceAndSwapChain(NULL,
-		D3D10_DRIVER_TYPE_HARDWARE,
+		D3D10_DRIVER_TYPE_REFERENCE,
 		NULL,
 		0,
 		D3D10_SDK_VERSION,
@@ -104,7 +104,6 @@ void CGame::Init(HWND hWnd)
 		10);
 	hr = spriteObject->SetProjectionTransform(&matProjection);
 
-
 	// Initialize the blend state for alpha drawing
 	D3D10_BLEND_DESC StateDesc;
 	ZeroMemory(&StateDesc, sizeof(D3D10_BLEND_DESC));
@@ -126,7 +125,8 @@ void CGame::Init(HWND hWnd)
 
 /*
 	Draw the whole texture or part of texture onto screen
-	NOTE: This function is OBSOLTED in this example. Use Sprite::Render instead
+	NOTE: This function is very inefficient because it has to convert
+	from texture to sprite every time we need to draw it
 */
 void CGame::Draw(float x, float y, LPTEXTURE tex, RECT* rect)
 {
@@ -150,16 +150,18 @@ void CGame::Draw(float x, float y, LPTEXTURE tex, RECT* rect)
 		sprite.TexSize.x = 1.0f;
 		sprite.TexSize.y = 1.0f;
 
+		//Important here
 		spriteWidth = tex->getWidth();
 		spriteHeight = tex->getHeight();
+		//Nếu NULL thì vẽ toàn bộ texture
 	}
 	else
 	{
 		sprite.TexCoord.x = rect->left / (float)tex->getWidth();
 		sprite.TexCoord.y = rect->top / (float)tex->getHeight();
 
-		spriteWidth = (rect->right - rect->left + 1);
-		spriteHeight = (rect->bottom - rect->top + 1);
+		spriteWidth = 16;//(rect->right - rect->left);
+		spriteHeight = 16; (rect->bottom - rect->top);
 
 		sprite.TexSize.x = spriteWidth / (float)tex->getWidth();
 		sprite.TexSize.y = spriteHeight / (float)tex->getHeight();
@@ -192,7 +194,7 @@ void CGame::Draw(float x, float y, LPTEXTURE tex, RECT* rect)
 }
 
 /*
-	Utility function to wrap D3DX10CreateTextureFromFileEx
+	Utility function to wrap D3DXCreateTextureFromFileEx
 */
 LPTEXTURE CGame::LoadTexture(LPCWSTR texturePath)
 {
@@ -254,7 +256,11 @@ LPTEXTURE CGame::LoadTexture(LPCWSTR texturePath)
 
 CGame::~CGame()
 {
-
+	pBlendStateAlpha->Release();
+	spriteObject->Release();
+	pRenderTargetView->Release();
+	pSwapChain->Release();
+	pD3DDevice->Release();
 }
 
 CGame* CGame::GetInstance()
