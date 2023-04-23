@@ -20,10 +20,11 @@ CTextures* CTextures::GetInstance()
 void CTextures::Add(int id, LPCWSTR filePath)
 {
 	textures[id] = CGame::GetInstance()->LoadTexture(filePath);
-	//Load file ảnh Textures kèm theo Key id
 }
 
 LPTEXTURE CTextures::Get(unsigned int i)
 {
 	return textures[i];
 }
+
+

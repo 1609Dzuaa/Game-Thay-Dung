@@ -1,12 +1,12 @@
 ﻿#include "Game.h"
-#include "Enemy.h"
+#include "Goomba.h"
 
-CEnemy::CEnemy(float x, float y, float vx) :CGameObject(x, y)
+CGoomba::CGoomba(float x, float y, float vx) :CGameObject(x, y)
 {
 	this->vx = vx;
 }
 
-void CEnemy::Update(DWORD dt)
+void CGoomba::Update(DWORD dt)
 {
 	x += vx * dt;
 
@@ -27,10 +27,11 @@ void CEnemy::Update(DWORD dt)
 	}
 }
 
-void CEnemy::Render()
+void CGoomba::Render()
 {
 	LPANIMATION ani;
 
+	//if(die) get(Goomba_Die) ani->Render(x,y)
 	ani = CAnimations::GetInstance()->Get(502);
 	ani->Render(x,y);
 }

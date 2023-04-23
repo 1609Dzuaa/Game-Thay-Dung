@@ -15,12 +15,8 @@ CSprite::CSprite(int id, int left, int top, int right, int bottom, LPTEXTURE tex
 	sprite.TexCoord.x = this->left / (float)tex->getWidth();
 	sprite.TexCoord.y = this->top / (float)tex->getHeight();
 
-	//Important ?
 	int spriteWidth = (this->right - this->left + 1);
 	int spriteHeight = (this->bottom - this->top + 1);
-
-	this->height = spriteHeight;
-	this->width = spriteWidth;
 
 	sprite.TexSize.x = spriteWidth / (float)tex->getWidth();
 	sprite.TexSize.y = spriteHeight / (float)tex->getHeight();
@@ -28,7 +24,7 @@ CSprite::CSprite(int id, int left, int top, int right, int bottom, LPTEXTURE tex
 	sprite.ColorModulate = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 	sprite.TextureIndex = 0;
 
-	D3DXMatrixScaling(&this->matScaling, (FLOAT)spriteWidth, (FLOAT)spriteHeight, 1.0f); //Ma trận Scale
+	D3DXMatrixScaling(&this->matScaling, (FLOAT)spriteWidth, (FLOAT)spriteHeight, 1.0f);
 }
 
 void CSprite::Draw(float x, float y)

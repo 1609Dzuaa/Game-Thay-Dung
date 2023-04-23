@@ -1,7 +1,13 @@
-﻿#include "GameObject.h"
+#include <d3dx9.h>
 
-CGameObject::CGameObject(float x, float y)
+#include "debug.h"
+#include "Game.h"
+#include "GameObject.h"
+
+CGameObject::CGameObject()
 {
-	this->x = x;
-	this->y = y;
+	x = y = 0;
+	vx = vy = 0;
+	nx = 1;
+	state = -1;
 }

@@ -3,12 +3,14 @@
 #include "Animation.h"
 #include "Animations.h"
 
-class CEnemy : public CGameObject
+#define Goomba_Die 503
+
+class CTurtle : public CGameObject
 {
 private:
 	float vx;
 public:
-	CEnemy(float x, float y, float vx);
+	CTurtle(float x, float y, float vx);
 	void Update(DWORD dt);
 	void Render();
 };
