@@ -1,5 +1,6 @@
 #pragma once
 #include "GameObject.h"
+#include "Brick.h"
 
 #include "Animation.h"
 #include "Animations.h"
@@ -29,6 +30,9 @@
 
 #define MARIO_STATE_SIT				600
 #define MARIO_STATE_SIT_RELEASE		601
+
+#define MARIO_STATE_SHOOT_RIGHT 20
+#define MARIO_STATE_SHOOT_LEFT 21
 
 
 #pragma region ANIMATION_ID
@@ -67,7 +71,10 @@ class CMario : public CGameObject
 {
 	BOOLEAN isSitting;
 	float maxVx;
-	float ax;				// acceleration on x 
+	float ax;				// acceleration on x
+	bool right = true;
+	bool left = false;
+
 public:
 	CMario(float x, float y) : CGameObject(x, y)
 	{
@@ -78,4 +85,9 @@ public:
 	void Update(DWORD dt);
 	void Render();
 	void SetState(int state);
+	void SetRight(bool para) { this->right = para; }
+	void SetLeft(bool para) { this->left = para; }
+
+	bool GetRight() { return this->right; }
+	bool GetLeft() { return this->left; }
 };

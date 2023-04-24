@@ -221,9 +221,6 @@ void LoadResources()
 	ani->Add(9001);
 	ani->Add(9002);
 	animations->Add(ID_ANI_BULLET, ani);
-
-	bullet = new CFireBullet();
-	objects.push_back(bullet);
 }
 
 /*

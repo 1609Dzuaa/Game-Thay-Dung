@@ -4,7 +4,6 @@ void CMario::Update(DWORD dt)
 {
 	x += vx * dt;
 	y += vy * dt;
-
 	// simple fall down
 	vy += MARIO_GRAVITY * dt;
 

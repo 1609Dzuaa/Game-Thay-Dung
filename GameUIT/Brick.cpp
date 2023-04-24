@@ -1,11 +1,12 @@
 ﻿#include "Brick.h"
+#include "Mario.h"
 
+extern CMario* mario;
 void CBrick::Render()
 {
 	CAnimations* animations = CAnimations::GetInstance();
 	animations->Get(ID_ANI_BRICK)->Render(x, y);
 }
-
 
 void CFireBullet::Update(DWORD dt)
 {
@@ -18,13 +19,22 @@ void CFireBullet::Render()
 	animations->Get(ID_ANI_BULLET)->Render(x, y);
 }
 
-void CFireBullet::SetState(int state)
+void CFireBullet::Fire(int para)
 {
-	switch (state)
+	//0: right, 1:left
+	//Hàm này nhận tham số để quyết định bắn sang phải hay trái
+	switch (para)
 	{
-	case BULLET_STATE_SHOOT:
-		this->x = 200.0f;
-		this->y = 155.0f;
+	case 0:
+		this->vx = abs(vx);
+		this->x = mario->GetX() + 5.0f;
+		this->y = mario->GetY() + 0.0f;
+		break;
+	case 1:
+		if (this->vx > 0)
+			this->vx = -this->vx;
+		this->x = mario->GetX() - 5.0f;
+		this->y = mario->GetY() + 0.0f;
+		break;
 	}
-	//Set trạng thái cho viên đạn
 }

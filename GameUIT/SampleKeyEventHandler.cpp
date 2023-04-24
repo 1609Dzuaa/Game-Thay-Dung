@@ -1,4 +1,4 @@
-#include "SampleKeyEventHandler.h"
+﻿#include "SampleKeyEventHandler.h"
 
 #include "debug.h"
 #include "Game.h"
@@ -6,8 +6,10 @@
 #include "Mario.h"
 #include "Brick.h"
 
-extern CMario* mario;
-extern CFireBullet* bullet;
+extern CMario* mario; 
+//extern CFireBullet* bullet;
+extern vector<LPGAMEOBJECT> objects;
+CGame* game = CGame::GetInstance();
 
 void CSampleKeyHandler::OnKeyDown(int KeyCode)
 {
@@ -18,7 +20,13 @@ void CSampleKeyHandler::OnKeyDown(int KeyCode)
 		mario->SetState(MARIO_STATE_JUMP);
 		break;
 	case DIK_X:
-		bullet->SetState(BULLET_STATE_SHOOT);
+		CFireBullet* bullet = new CFireBullet();
+		objects.push_back(bullet);
+		//Tạo viên đạn mới và push_back nó vào vector kiểu con trỏ CGameObject
+		if (mario->GetRight())
+			bullet->Fire(0); //bắn đạn về phía phải
+		else
+			bullet->Fire(1); //về phía trái
 	}
 }
 
@@ -38,10 +46,11 @@ void CSampleKeyHandler::OnKeyUp(int KeyCode)
 
 void CSampleKeyHandler::KeyState(BYTE* states)
 {
-	CGame* game = CGame::GetInstance();
 
 	if (game->IsKeyDown(DIK_RIGHT))
 	{
+		mario->SetRight(true);
+		mario->SetLeft(false);
 		if (game->IsKeyDown(DIK_A))
 			mario->SetState(MARIO_STATE_RUNNING_RIGHT);
 		else
@@ -49,6 +58,8 @@ void CSampleKeyHandler::KeyState(BYTE* states)
 	}
 	else if (game->IsKeyDown(DIK_LEFT))
 	{
+		mario->SetRight(false);
+		mario->SetLeft(true);
 		if (game->IsKeyDown(DIK_A))
 			mario->SetState(MARIO_STATE_RUNNING_LEFT);
 		else

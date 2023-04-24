@@ -1,4 +1,4 @@
-#include <d3dx9.h>
+#include <d3dx10.h>
 
 #include "debug.h"
 #include "Game.h"

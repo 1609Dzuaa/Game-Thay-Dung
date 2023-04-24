@@ -9,8 +9,6 @@
 
 #define ID_ANI_BULLET 20000
 
-#define BULLET_STATE_SHOOT 20
-
 class CBrick : public CGameObject 
 {
 public:
@@ -22,11 +20,12 @@ public:
 class CFireBullet : public CGameObject
 {
 public:
-	CFireBullet() : CGameObject(x, y) 
+	CFireBullet() : CGameObject(x, y)
 	{
 		this->vx = 0.05f;
 	}
 	void Render();
 	void Update(DWORD dt);
 	void SetState(int state);
+	void Fire(int para);
 };

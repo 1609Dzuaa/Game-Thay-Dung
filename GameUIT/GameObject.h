@@ -19,8 +19,12 @@ protected:
 
 	int state;
 public:
+	float GetX() { return this->x; }
+	float GetY() { return this->y; }
+
 	void SetPosition(float x, float y) { this->x = x, this->y = y; }
 	void SetSpeed(float vx, float vy) { this->vx = vx, this->vy = vy; }
+	void SetVX(float vx) { this->vx = vx; }
 
 	void SetState(int state) { this->state = state; }
 	int GetState() { return this->state; }
@@ -30,7 +34,7 @@ public:
 
 	virtual void Update(DWORD dt) = 0;
 	virtual void Render() = 0;
-	~CGameObject();
+	~CGameObject() {};
 };
 
 typedef CGameObject* LPGAMEOBJECT;
