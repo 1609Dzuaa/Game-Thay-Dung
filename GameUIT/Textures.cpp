@@ -26,5 +26,3 @@ LPTEXTURE CTextures::Get(unsigned int i)
 {
 	return textures[i];
 }
-
-

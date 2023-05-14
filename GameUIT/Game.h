@@ -9,10 +9,9 @@
 #include "Texture.h"
 #include "KeyEventHandler.h"
 
-#define MAX_FRAME_RATE 60
+#define MAX_FRAME_RATE 100
 #define KEYBOARD_BUFFER_SIZE 1024
 #define KEYBOARD_STATE_SIZE 256
-
 
 /*
 	Our simple game framework
@@ -40,26 +39,31 @@ class CGame
 
 	LPKEYEVENTHANDLER keyHandler;
 
+	float cam_x = 0.0f;
+	float cam_y = 0.0f;
+
 	HINSTANCE hInstance;
+
+	ID3D10SamplerState* pPointSamplerState;
 
 public:
 	// Init DirectX, Sprite Handler
 	void Init(HWND hWnd, HINSTANCE hInstance);
 
 	//
-	// Draw a portion or ALL the texture at position (x,y) on the screen
+	// Draw a portion or ALL the texture at position (x,y) on the screen. (x,y) is at the CENTER of the image
 	// rect : if NULL, the whole texture will be drawn
 	//        if NOT NULL, only draw that portion of the texture 
-	void Draw(float x, float y, LPTEXTURE tex, RECT* rect = NULL);
+	void Draw(float x, float y, LPTEXTURE tex, RECT* rect = NULL, float alpha = 1.0f);
 
-	void Draw(float x, float y, LPTEXTURE tex, int l, int t, int r, int b)
+	void Draw(float x, float y, LPTEXTURE tex, int l, int t, int r, int b, float alpha = 1.0f)
 	{
 		RECT rect;
 		rect.left = l;
 		rect.top = t;
 		rect.right = r;
 		rect.bottom = b;
-		this->Draw(x, y, tex, &rect);
+		this->Draw(x, y, tex, &rect, alpha);
 	}
 
 	LPTEXTURE LoadTexture(LPCWSTR texturePath);
@@ -82,5 +86,11 @@ public:
 
 	static CGame* GetInstance();
 
+	void SetPointSamplerState();
+
+	void SetCamPos(float x, float y) { cam_x = x; cam_y = y; }
+	void GetCamPos(float& x, float& y) { x = cam_x; y = cam_y; }
+
 	~CGame();
 };
+

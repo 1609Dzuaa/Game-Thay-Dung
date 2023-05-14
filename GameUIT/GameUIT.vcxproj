@@ -131,36 +131,40 @@
     <ClInclude Include="Animation.h" />
     <ClInclude Include="AnimationFrame.h" />
     <ClInclude Include="Animations.h" />
+    <ClInclude Include="AssetIDs.h" />
     <ClInclude Include="Brick.h" />
+    <ClInclude Include="Coin.h" />
+    <ClInclude Include="Collision.h" />
     <ClInclude Include="debug.h" />
     <ClInclude Include="GameObject.h" />
-    <ClInclude Include="Goomba.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="Game.h" />
+    <ClInclude Include="Goomba.h" />
     <ClInclude Include="KeyEventHandler.h" />
     <ClInclude Include="Mario.h" />
+    <ClInclude Include="Platform.h" />
     <ClInclude Include="SampleKeyEventHandler.h" />
     <ClInclude Include="Sprite.h" />
     <ClInclude Include="Sprites.h" />
-    <ClInclude Include="Texture.h" />
     <ClInclude Include="Textures.h" />
-    <ClInclude Include="Turtle.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Animation.cpp" />
     <ClCompile Include="Animations.cpp" />
     <ClCompile Include="Brick.cpp" />
+    <ClCompile Include="Coin.cpp" />
+    <ClCompile Include="Collision.cpp" />
     <ClCompile Include="debug.cpp" />
     <ClCompile Include="GameObject.cpp" />
-    <ClCompile Include="Goomba.cpp" />
     <ClCompile Include="Game.cpp" />
+    <ClCompile Include="Goomba.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Mario.cpp" />
+    <ClCompile Include="Platform.cpp" />
     <ClCompile Include="SampleKeyEventHandler.cpp" />
     <ClCompile Include="Sprite.cpp" />
     <ClCompile Include="Sprites.cpp" />
     <ClCompile Include="Textures.cpp" />
-    <ClCompile Include="Turtle.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

@@ -1,72 +1,73 @@
 ﻿/* =============================================================
 	INTRODUCTION TO GAME PROGRAMMING SE102
 
-	SAMPLE 03 - KEYBOARD AND OBJECT STATE
+	SAMPLE 04 - COLLISION
 
 	This sample illustrates how to:
 
-		1/ Process keyboard input
-		2/ Control object state with keyboard events
+		1/ Implement SweptAABB algorithm between moving objects
+		2/ Implement a simple (yet effective) collision frame work, applying on Mario, Brick, Goomba & Coin
+
+	Key functions:
+		CCollision::SweptAABB
+		CCollision::SweptAABBEx
+		CCollision::Scan
+		CCollision::Filter
+		CCollision::Process
+
+		CGameObject::GetBoundingBox
+
 ================================================================ */
 
 #include <windows.h>
+#include <d3d10.h>
+#include <d3dx10.h>
+#include <list>
 
 #include "debug.h"
 #include "Game.h"
 #include "GameObject.h"
 #include "Textures.h"
-
 #include "Animation.h"
 #include "Animations.h"
-#include "Sprite.h"
-#include "Sprites.h"
 
 #include "Mario.h"
 #include "Brick.h"
+//#include "ClassBrick.h"
+#include "Goomba.h"
+#include "Coin.h"
+#include "Platform.h"
 
 #include "SampleKeyEventHandler.h"
 
-#define WINDOW_CLASS_NAME L"SampleWindow"
-#define MAIN_WINDOW_TITLE L"03 - Keyboard and Mario states"
-#define WINDOW_ICON_PATH L"mario.ico"
+#include "AssetIDs.h"
 
+#define WINDOW_CLASS_NAME L"SampleWindow"
+#define MAIN_WINDOW_TITLE L"04 - Collision"
+#define WINDOW_ICON_PATH L"mario.ico"
 
 #define BACKGROUND_COLOR D3DXCOLOR(200.0f/255, 200.0f/255, 255.0f/255, 0.0f)
 
 #define SCREEN_WIDTH 320
 #define SCREEN_HEIGHT 240
 
-#define ID_TEX_MARIO 0
-#define ID_TEX_ENEMY 10
-#define ID_TEX_MISC 20
 
-#define ID_SPRITE_BRICK 20001
+#define TEXTURES_DIR L"textures"
+#define TEXTURE_PATH_MARIO TEXTURES_DIR "\\mario_transparent.png"
+#define TEXTURE_PATH_MISC TEXTURES_DIR "\\misc_transparent.png"
+#define TEXTURE_PATH_ENEMY TEXTURES_DIR "\\enemies_transparent.png"
+#define TEXTURE_PATH_BBOX TEXTURES_DIR "\\bbox.png"
 
-//#define TEXTURES_DIR L"textures"
-//#define TEXTURE_PATH_MARIO TEXTURES_DIR "\\mario.png"
-//#define TEXTURE_PATH_MISC TEXTURES_DIR "\\misc.png"
-#define TEXTURE_PATH_MARIO L"mario.png"
-#define TEXTURE_PATH_MISC L"misc.png"
+CGame* game;
+CMario* mario;
 
-
-#define MARIO_START_X 200.0f
-#define MARIO_START_Y 10.0f
-
-#define BRICK_X 0.0f
-#define BRICK_Y GROUND_Y + 20.0f
-#define NUM_BRICKS 50
-
-CMario* mario = NULL;
-CFireBullet* bullet = NULL;
+list<LPGAMEOBJECT> objects;
 
 CSampleKeyHandler* keyHandler;
 
-vector<LPGAMEOBJECT> objects; //sử dụng vector kiểu con trỏ CGameObject
-
 LRESULT CALLBACK WinProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	switch (message) 
-	{
+	switch (message) {
 	case WM_DESTROY:
 		PostQuitMessage(0);
 		break;
@@ -77,150 +78,439 @@ LRESULT CALLBACK WinProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	return 0;
 }
 
+void LoadAssetsMario()
+{
+	CTextures* textures = CTextures::GetInstance();
+	CSprites* sprites = CSprites::GetInstance();
+	CAnimations* animations = CAnimations::GetInstance();
+
+	LPTEXTURE texMario = textures->Get(ID_TEX_MARIO);
+
+	// IDLE
+	sprites->Add(ID_SPRITE_MARIO_BIG_IDLE_RIGHT + 1, 246, 154, 259, 181, texMario);
+	sprites->Add(ID_SPRITE_MARIO_BIG_IDLE_LEFT + 1, 186, 154, 199, 181, texMario);
+
+	// WALKING LEFT
+	sprites->Add(ID_SPRITE_MARIO_BIG_WALKING_RIGHT + 2, 275, 154, 290, 181, texMario);
+	sprites->Add(ID_SPRITE_MARIO_BIG_WALKING_RIGHT + 3, 304, 154, 321, 181, texMario);
+
+	// WALKING RIGHT
+	sprites->Add(ID_SPRITE_MARIO_BIG_WALKING_LEFT + 2, 155, 154, 170, 181, texMario);
+	sprites->Add(ID_SPRITE_MARIO_BIG_WALKING_LEFT + 3, 125, 154, 140, 181, texMario);
+
+	// RUNNING RIGHT 
+	sprites->Add(ID_SPRITE_MARIO_BIG_RUNNING_RIGHT + 1, 334, 154, 355, 181, texMario);
+	sprites->Add(ID_SPRITE_MARIO_BIG_RUNNING_RIGHT + 2, 334, 154, 355, 181, texMario);
+	sprites->Add(ID_SPRITE_MARIO_BIG_RUNNING_RIGHT + 3, 392, 154, 413, 181, texMario);
+
+	// RUNNING LEFT
+	sprites->Add(ID_SPRITE_MARIO_BIG_RUNNING_LEFT + 1, 91, 154, 112, 181, texMario);
+	sprites->Add(ID_SPRITE_MARIO_BIG_RUNNING_LEFT + 2, 65, 154, 86, 181, texMario);
+	sprites->Add(ID_SPRITE_MARIO_BIG_RUNNING_LEFT + 3, 34, 154, 55, 181, texMario);
+
+	// JUMP WALK RIGHT & LEFT 
+	sprites->Add(ID_SPRITE_MARIO_BIG_JUMP_WALK_RIGHT + 1, 395, 275, 412, 302, texMario);
+	sprites->Add(ID_SPRITE_MARIO_BIG_JUMP_WALK_LEFT + 1, 35, 275, 52, 302, texMario);
+
+	// JUMP RUN RIGHT & LEFT 
+	sprites->Add(ID_SPRITE_MARIO_BIG_JUMP_RUN_RIGHT + 1, 394, 195, 413, 222, texMario);
+	sprites->Add(ID_SPRITE_MARIO_BIG_JUMP_RUN_LEFT + 1, 35, 195, 52, 222, texMario);
+
+	// SIT RIGHT/LEFT
+	sprites->Add(ID_SPRITE_MARIO_BIG_SIT_RIGHT + 1, 426, 239, 441, 256, texMario);
+	sprites->Add(ID_SPRITE_MARIO_BIG_SIT_LEFT + 1, 5, 239, 20, 256, texMario);
+
+	// BRACING RIGHT/LEFT
+	sprites->Add(ID_SPRITE_MARIO_BIG_BRACE_RIGHT + 1, 425, 154, 442, 181, texMario);
+	sprites->Add(ID_SPRITE_MARIO_BIG_BRACE_LEFT + 1, 5, 154, 22, 181, texMario);
+
+	// MARIO DIE
+	sprites->Add(ID_SPRITE_MARIO_DIE + 1, 215, 120, 231, 135, texMario);
+
+	// SMALL MARIO 
+	sprites->Add(ID_SPRITE_MARIO_SMALL_IDLE_RIGHT + 1, 247, 0, 259, 15, texMario);
+	sprites->Add(ID_SPRITE_MARIO_SMALL_IDLE_LEFT + 1, 187, 0, 198, 15, texMario);
+
+	sprites->Add(ID_SPRITE_MARIO_SMALL_WALKING_RIGHT + 2, 275, 0, 291, 15, texMario);
+	sprites->Add(ID_SPRITE_MARIO_SMALL_WALKING_RIGHT + 3, 306, 0, 320, 15, texMario);
+
+	sprites->Add(ID_SPRITE_MARIO_SMALL_WALKING_LEFT + 2, 155, 0, 170, 15, texMario);
+	sprites->Add(ID_SPRITE_MARIO_SMALL_WALKING_LEFT + 3, 125, 0, 139, 15, texMario);
+
+	sprites->Add(ID_SPRITE_MARIO_SMALL_RUNNING_RIGHT + 1, 275, 0, 275 + 15, 15, texMario);
+	sprites->Add(ID_SPRITE_MARIO_SMALL_RUNNING_RIGHT + 2, 306, 0, 306 + 15, 15, texMario);
+	sprites->Add(ID_SPRITE_MARIO_SMALL_RUNNING_RIGHT + 3, 335, 0, 335 + 15, 15, texMario);
+
+	sprites->Add(ID_SPRITE_MARIO_SMALL_RUNNING_LEFT + 1, 155, 0, 155 + 15, 15, texMario);
+	sprites->Add(ID_SPRITE_MARIO_SMALL_RUNNING_LEFT + 2, 125, 0, 125 + 15, 15, texMario);
+	sprites->Add(ID_SPRITE_MARIO_SMALL_RUNNING_LEFT + 3, 95, 0, 95 + 15, 15, texMario);
+
+	sprites->Add(ID_SPRITE_MARIO_SMALL_BRACE_LEFT + 1, 6, 0, 6 + 13, 15, texMario);
+	sprites->Add(ID_SPRITE_MARIO_SMALL_BRACE_RIGHT + 1, 426, 0, 426 + 13, 15, texMario);
+
+	sprites->Add(ID_SPRITE_MARIO_SMALL_JUMP_WALK_LEFT + 1, 35, 80, 35 + 15, 80 + 15, texMario);
+	sprites->Add(ID_SPRITE_MARIO_SMALL_JUMP_WALK_RIGHT + 1, 395, 80, 395 + 15, 80 + 15, texMario);
+
+	sprites->Add(ID_SPRITE_MARIO_SMALL_JUMP_RUN_LEFT + 1, 65, 40, 65 + 15, 40 + 15, texMario);
+	sprites->Add(ID_SPRITE_MARIO_SMALL_JUMP_RUN_RIGHT + 1, 365, 40, 365 + 15, 40 + 15, texMario);
+
+	LPANIMATION ani;
+
+	ani = new CAnimation(100);
+	ani->Add(ID_SPRITE_MARIO_BIG_IDLE_RIGHT + 1);
+	animations->Add(ID_ANI_MARIO_IDLE_RIGHT, ani);
+
+	ani = new CAnimation(100);
+	ani->Add(ID_SPRITE_MARIO_BIG_IDLE_LEFT + 1);
+	animations->Add(ID_ANI_MARIO_IDLE_LEFT, ani);
+
+	ani = new CAnimation(100);
+	ani->Add(ID_SPRITE_MARIO_BIG_IDLE_RIGHT + 1);
+	ani->Add(ID_SPRITE_MARIO_BIG_WALKING_RIGHT + 2);
+	ani->Add(ID_SPRITE_MARIO_BIG_WALKING_RIGHT + 3);
+	animations->Add(ID_ANI_MARIO_WALKING_RIGHT, ani);
+
+	ani = new CAnimation(100);
+	ani->Add(ID_SPRITE_MARIO_BIG_IDLE_LEFT + 1);
+	ani->Add(ID_SPRITE_MARIO_BIG_WALKING_LEFT + 2);
+	ani->Add(ID_SPRITE_MARIO_BIG_WALKING_LEFT + 3);
+	animations->Add(ID_ANI_MARIO_WALKING_LEFT, ani);
+
+	ani = new CAnimation(50);
+	ani->Add(ID_SPRITE_MARIO_BIG_RUNNING_RIGHT + 1);
+	ani->Add(ID_SPRITE_MARIO_BIG_RUNNING_RIGHT + 2);
+	ani->Add(ID_SPRITE_MARIO_BIG_RUNNING_RIGHT + 3);
+	animations->Add(ID_ANI_MARIO_RUNNING_RIGHT, ani);
+
+	// Mario runs faster hence animation speed should be faster
+	ani = new CAnimation(50);
+	ani->Add(ID_SPRITE_MARIO_BIG_RUNNING_LEFT + 1);
+	ani->Add(ID_SPRITE_MARIO_BIG_RUNNING_LEFT + 2);
+	ani->Add(ID_SPRITE_MARIO_BIG_RUNNING_LEFT + 3);
+	animations->Add(ID_ANI_MARIO_RUNNING_LEFT, ani);
+
+	ani = new CAnimation(100);
+	ani->Add(ID_SPRITE_MARIO_BIG_JUMP_WALK_RIGHT + 1);
+	animations->Add(ID_ANI_MARIO_JUMP_WALK_RIGHT, ani);
+
+	ani = new CAnimation(100);
+	ani->Add(ID_SPRITE_MARIO_BIG_JUMP_WALK_LEFT + 1);
+	animations->Add(ID_ANI_MARIO_JUMP_WALK_LEFT, ani);
+
+	ani = new CAnimation(100);
+	ani->Add(ID_SPRITE_MARIO_BIG_JUMP_RUN_RIGHT + 1);
+	animations->Add(ID_ANI_MARIO_JUMP_RUN_RIGHT, ani);
+
+	ani = new CAnimation(100);
+	ani->Add(ID_SPRITE_MARIO_BIG_JUMP_RUN_LEFT + 1);
+	animations->Add(ID_ANI_MARIO_JUMP_RUN_LEFT, ani);
+
+	ani = new CAnimation(100);
+	ani->Add(ID_SPRITE_MARIO_BIG_SIT_RIGHT + 1);
+	animations->Add(ID_ANI_MARIO_SIT_RIGHT, ani);
+
+	ani = new CAnimation(100);
+	ani->Add(ID_SPRITE_MARIO_BIG_SIT_LEFT + 1);
+	animations->Add(ID_ANI_MARIO_SIT_LEFT, ani);
+
+	ani = new CAnimation(100);
+	ani->Add(ID_SPRITE_MARIO_BIG_BRACE_RIGHT + 1);
+	animations->Add(ID_ANI_MARIO_BRACE_RIGHT, ani);
+
+	ani = new CAnimation(100);
+	ani->Add(ID_SPRITE_MARIO_BIG_BRACE_LEFT + 1);
+	animations->Add(ID_ANI_MARIO_BRACE_LEFT, ani);
+
+	ani = new CAnimation(100);
+	ani->Add(ID_SPRITE_MARIO_DIE + 1);
+	animations->Add(ID_ANI_MARIO_DIE, ani);
+
+	//
+	// SMALL MARIO 
+	//
+	ani = new CAnimation(100);
+	ani->Add(ID_SPRITE_MARIO_SMALL_IDLE_RIGHT + 1);
+	animations->Add(ID_ANI_MARIO_SMALL_IDLE_RIGHT, ani);
+
+	ani = new CAnimation(100);
+	ani->Add(ID_SPRITE_MARIO_SMALL_IDLE_RIGHT + 1);
+	ani->Add(ID_SPRITE_MARIO_SMALL_WALKING_RIGHT + 2);
+	ani->Add(ID_SPRITE_MARIO_SMALL_WALKING_RIGHT + 3);
+	animations->Add(ID_ANI_MARIO_SMALL_WALKING_RIGHT, ani);
+
+	ani = new CAnimation(100);
+	ani->Add(ID_SPRITE_MARIO_SMALL_IDLE_LEFT + 1);
+	animations->Add(ID_ANI_MARIO_SMALL_IDLE_LEFT, ani);
+
+	ani = new CAnimation(100);
+	ani->Add(ID_SPRITE_MARIO_SMALL_IDLE_LEFT + 1);
+	ani->Add(ID_SPRITE_MARIO_SMALL_WALKING_LEFT + 2);
+	ani->Add(ID_SPRITE_MARIO_SMALL_WALKING_LEFT + 3);
+	animations->Add(ID_ANI_MARIO_SMALL_WALKING_LEFT, ani);
+
+	ani = new CAnimation(50);
+	ani->Add(ID_SPRITE_MARIO_SMALL_RUNNING_RIGHT + 1);
+	ani->Add(ID_SPRITE_MARIO_SMALL_RUNNING_RIGHT + 2);
+	ani->Add(ID_SPRITE_MARIO_SMALL_RUNNING_RIGHT + 3);
+	animations->Add(ID_ANI_MARIO_SMALL_RUNNING_RIGHT, ani);
+
+	ani = new CAnimation(50);
+	ani->Add(ID_SPRITE_MARIO_SMALL_RUNNING_LEFT + 1);
+	ani->Add(ID_SPRITE_MARIO_SMALL_RUNNING_LEFT + 2);
+	ani->Add(ID_SPRITE_MARIO_SMALL_RUNNING_LEFT + 3);
+	animations->Add(ID_ANI_MARIO_SMALL_RUNNING_LEFT, ani);
+
+	ani = new CAnimation(100);
+	ani->Add(ID_SPRITE_MARIO_SMALL_BRACE_LEFT + 1);
+	animations->Add(ID_ANI_MARIO_SMALL_BRACE_LEFT, ani);
+
+	ani = new CAnimation(100);
+	ani->Add(ID_SPRITE_MARIO_SMALL_BRACE_RIGHT + 1);
+	animations->Add(ID_ANI_MARIO_SMALL_BRACE_RIGHT, ani);
+
+	ani = new CAnimation(100);
+	ani->Add(ID_SPRITE_MARIO_SMALL_JUMP_WALK_RIGHT + 1);
+	animations->Add(ID_ANI_MARIO_SMALL_JUMP_WALK_RIGHT, ani);
+
+	ani = new CAnimation(100);
+	ani->Add(ID_SPRITE_MARIO_SMALL_JUMP_WALK_LEFT + 1);
+	animations->Add(ID_ANI_MARIO_SMALL_JUMP_WALK_LEFT, ani);
+
+	ani = new CAnimation(100);
+	ani->Add(ID_SPRITE_MARIO_SMALL_JUMP_RUN_LEFT + 1);
+	animations->Add(ID_ANI_MARIO_SMALL_JUMP_RUN_LEFT, ani);
+
+	ani = new CAnimation(100);
+	ani->Add(ID_SPRITE_MARIO_SMALL_JUMP_RUN_RIGHT + 1);
+	animations->Add(ID_ANI_MARIO_SMALL_JUMP_RUN_RIGHT, ani);
+}
+
+void LoadAssetsGoomba()
+{
+	CTextures* textures = CTextures::GetInstance();
+	CSprites* sprites = CSprites::GetInstance();
+	CAnimations* animations = CAnimations::GetInstance();
+
+	LPTEXTURE texEnemy = textures->Get(ID_TEX_ENEMY);
+
+	sprites->Add(ID_SPRITE_GOOMBA_WALK + 1, 4, 13, 22, 30, texEnemy);
+	sprites->Add(ID_SPRITE_GOOMBA_WALK + 2, 24, 13, 42, 30, texEnemy);
+
+	sprites->Add(ID_SPRITE_GOOMBA_DIE + 1, 44, 19, 62, 30, texEnemy);
+
+	LPANIMATION ani = new CAnimation(100);
+	ani->Add(ID_SPRITE_GOOMBA_WALK + 1);
+	ani->Add(ID_SPRITE_GOOMBA_WALK + 2);
+	animations->Add(ID_ANI_GOOMBA_WALKING, ani);
+
+	ani = new CAnimation(100);
+	ani->Add(ID_SPRITE_GOOMBA_DIE + 1);
+	animations->Add(ID_ANI_GOOMBA_DIE, ani);
+
+}
+void LoadAssetsBrick()
+{
+	CTextures* textures = CTextures::GetInstance();
+	CSprites* sprites = CSprites::GetInstance();
+	CAnimations* animations = CAnimations::GetInstance();
+
+	LPTEXTURE texMisc = textures->Get(ID_TEX_MISC);
+	sprites->Add(ID_SPRITE_BRICK + 1, 372, 153, 372 + 15, 153 + 15, texMisc);
+
+	LPANIMATION ani = new CAnimation(100);
+	ani->Add(ID_SPRITE_BRICK + 1);
+	animations->Add(ID_ANI_BRICK, ani);
+}
+void LoadAssetClassBrick()
+{
+	CTextures* textures = CTextures::GetInstance();
+	CSprites* sprites = CSprites::GetInstance();
+	CAnimations* animations = CAnimations::GetInstance();
+
+	LPTEXTURE texMisc = textures->Get(ID_TEX_MISC);
+	sprites->Add(ID_SPRITE_CLASSBRICK + 1, 300, 135, 300 + 15, 135 + 15, texMisc);
+	sprites->Add(ID_SPRITE_CLASSBRICK + 2, 318, 135, 318 + 15, 135 + 15, texMisc);
+	sprites->Add(ID_SPRITE_CLASSBRICK + 3, 336, 135, 336 + 15, 135 + 15, texMisc);
+	sprites->Add(ID_SPRITE_CLASSBRICK + 4, 354, 135, 354 + 15, 135 + 15, texMisc);
+	sprites->Add(ID_SPRITE_CLASSBRICK + 5, 372, 135, 372 + 15, 135 + 15, texMisc);
+
+	/*LPANIMATION ani = new CAnimation(200);
+	ani->Add(ID_SPRITE_CLASSBRICK + 1);
+	ani->Add(ID_SPRITE_CLASSBRICK + 2);
+	ani->Add(ID_SPRITE_CLASSBRICK + 3);
+	ani->Add(ID_SPRITE_CLASSBRICK + 4);
+	ani->Add(ID_SPRITE_CLASSBRICK + 5);
+	animations->Add(ID_ANI_CLASSBRICK, ani);*/
+}
+void LoadAssetsCoin()
+{
+	CTextures* textures = CTextures::GetInstance();
+	CSprites* sprites = CSprites::GetInstance();
+	CAnimations* animations = CAnimations::GetInstance();
+
+	LPTEXTURE texMisc = textures->Get(ID_TEX_MISC);
+
+	sprites->Add(ID_SPRITE_COIN + 1, 303, 99, 303 + 9, 99 + 15, texMisc);
+	sprites->Add(ID_SPRITE_COIN + 2, 321, 99, 321 + 9, 99 + 15, texMisc);
+	sprites->Add(ID_SPRITE_COIN + 3, 338, 99, 338 + 9, 99 + 15, texMisc);
+
+	LPANIMATION ani = new CAnimation(300);
+	ani->Add(ID_SPRITE_COIN + 1);
+	ani->Add(ID_SPRITE_COIN + 2);
+	ani->Add(ID_SPRITE_COIN + 3);
+	animations->Add(ID_ANI_COIN, ani);
+}
+
+void LoadAssetsOther()
+{
+	CTextures* textures = CTextures::GetInstance();
+	CSprites* sprites = CSprites::GetInstance();
+
+	LPTEXTURE texMisc = textures->Get(ID_TEX_MISC);
+	sprites->Add(ID_SPRITE_CLOUD_BEGIN, 390, 117, 390 + 15, 117 + 15, texMisc);
+	sprites->Add(ID_SPRITE_CLOUD_MIDDLE, 408, 117, 408 + 15, 117 + 15, texMisc);
+	sprites->Add(ID_SPRITE_CLOUD_END, 426, 117, 426 + 15, 117 + 15, texMisc);
+
+}
+
 /*
 	Load all game resources
 	In this example: load textures, sprites, animations and mario object
+
+	TO-DO: Improve this function by loading texture,sprite,animation,object from file
 */
 void LoadResources()
 {
 	CTextures* textures = CTextures::GetInstance();
 
 	textures->Add(ID_TEX_MARIO, TEXTURE_PATH_MARIO);
+	textures->Add(ID_TEX_ENEMY, TEXTURE_PATH_ENEMY);
 	textures->Add(ID_TEX_MISC, TEXTURE_PATH_MISC);
+	textures->Add(ID_TEX_BBOX, TEXTURE_PATH_BBOX);
 
-	CSprites* sprites = CSprites::GetInstance();
-	CAnimations* animations = CAnimations::GetInstance();
+	LoadAssetsMario();
+	LoadAssetsGoomba();
+	LoadAssetsBrick();
+	LoadAssetClassBrick();
+	LoadAssetsCoin();
+	LoadAssetsOther();
+}
 
-	LPTEXTURE texMario = textures->Get(ID_TEX_MARIO);
+void ClearScene()
+{
+	list<LPGAMEOBJECT>::iterator it;
+	for (it = objects.begin(); it != objects.end(); it++)
+	{
+		delete (*it);
+	}
+	objects.clear();
+}
 
-	sprites->Add(10001, 246, 154, 260, 181, texMario);
+#define MARIO_START_X 20.0f
+#define MARIO_START_Y 10.0f
 
-	sprites->Add(10002, 275, 154, 290, 181, texMario);
-	sprites->Add(10003, 304, 154, 321, 181, texMario);
+#define BRICK_X 0.0f
+#define GOOMBA_X 200.0f
+#define COIN_X 100.0f
 
-	sprites->Add(10011, 186, 154, 200, 181, texMario);
+#define BRICK_Y GROUND_Y + 20.0f
+#define NUM_BRICKS 70
 
-	sprites->Add(10012, 155, 154, 170, 181, texMario);
-	sprites->Add(10013, 125, 154, 140, 181, texMario);
+/*
+* Reload all objects of current scene
+* NOTE: super bad way to build a scene! We need to load a scene from data instead of hard-coding like this
+*/
+void Reload()
+{
+	ClearScene();
 
-	// RUNNING RIGHT 
-	sprites->Add(10021, 335, 154, 335 + 18, 154 + 26, texMario);
-	sprites->Add(10022, 363, 154, 363 + 18, 154 + 26, texMario);
-	sprites->Add(10023, 393, 154, 393 + 18, 154 + 26, texMario);
+	// Main ground
+	for (int i = 0; i < NUM_BRICKS; i++)
+	{
+		CBrick* b = new CBrick(i * BRICK_WIDTH * 1.0f, BRICK_Y);
+		objects.push_back(b);
+	}
 
-	// RUNNING LEFT
-	sprites->Add(10031, 92, 154, 92 + 18, 154 + 26, texMario);
-	sprites->Add(10032, 66, 154, 66 + 18, 154 + 26, texMario);
-	sprites->Add(10033, 35, 154, 35 + 18, 154 + 26, texMario);
+	/*for (int i = 0; i < 5; i++)
+	{
+		ClassBrick* cbr = new ClassBrick(15.0f * i + 75.0f, BRICK_Y - 50);
+		objects.push_back(cbr);
+	}*/
 
-	// JUMP WALK RIGHT & LEFT 
-	sprites->Add(10041, 395, 275, 395 + 16, 275 + 25, texMario);
-	sprites->Add(10042, 35, 275, 35 + 16, 275 + 25, texMario);
+	// Short, low platform
+	for (int i = 1; i < 3; i++)
+	{
+		CBrick* b = new CBrick(i * BRICK_WIDTH * 1.0f, BRICK_Y - 44.0f);
+		objects.push_back(b);
+	}
 
-	// JUMP RUN RIGHT & LEFT 
-	sprites->Add(10043, 395, 195, 395 + 18, 195 + 25, texMario);
-	sprites->Add(10044, 33, 195, 33 + 18, 195 + 25, texMario);
+	// Vertical column 1
+	for (int i = 0; i < 10; i++)
+	{
+		CBrick* b = new CBrick(0, BRICK_Y - i * BRICK_WIDTH);
+		objects.push_back(b);
+	}
 
-	// SIT RIGHT/LEFT
-	sprites->Add(10051, 426, 239, 426 + 14, 239 + 17, texMario);
-	sprites->Add(10052, 5, 239, 5 + 14, 239 + 17, texMario);
+	// Vertical column 2
+	for (int i = 1; i < 3; i++)
+	{
+		CBrick* b = new CBrick(BRICK_X + 300.0f, BRICK_Y - i * BRICK_WIDTH);
+		objects.push_back(b);
+	}
 
-	// BRACING RIGHT/LEFT
-	sprites->Add(10061, 425, 154, 425 + 15, 154 + 27, texMario);
-	sprites->Add(10062, 5, 154, 5 + 15, 154 + 27, texMario);
+	// Vertical column 3
+	for (int i = 1; i < 4; i++)
+	{
+		CBrick* b = new CBrick(BRICK_X + 400.0f, BRICK_Y - i * BRICK_WIDTH);
+		objects.push_back(b);
+	}
 
-	LPANIMATION ani;
+	// Vertical column 4
+	for (int i = 1; i < 5; i++)
+	{
+		CBrick* b = new CBrick(BRICK_X + 500.0f, BRICK_Y - i * BRICK_WIDTH);
+		objects.push_back(b);
+	}
 
-	ani = new CAnimation(100);
-	ani->Add(10001);
-	animations->Add(ID_ANI_MARIO_IDLE_RIGHT, ani);
-
-	ani = new CAnimation(100);
-	ani->Add(10011);
-	animations->Add(ID_ANI_MARIO_IDLE_LEFT, ani);
-
-	ani = new CAnimation(100);
-	ani->Add(10001);
-	ani->Add(10002);
-	ani->Add(10003);
-	animations->Add(ID_ANI_MARIO_WALKING_RIGHT, ani);
-
-	ani = new CAnimation(100);
-	ani->Add(10011);
-	ani->Add(10012);
-	ani->Add(10013);
-	animations->Add(ID_ANI_MARIO_WALKING_LEFT, ani);
-
-	ani = new CAnimation(100);
-	ani->Add(10021);
-	ani->Add(10022);
-	ani->Add(10023);
-	animations->Add(ID_ANI_MARIO_RUNNING_RIGHT, ani);
-
-	ani = new CAnimation(50);	// Mario runs faster hence animation speed should be faster
-	ani->Add(10031);
-	ani->Add(10032);
-	ani->Add(10033);
-	animations->Add(ID_ANI_MARIO_RUNNING_LEFT, ani);
-
-	ani = new CAnimation(100);
-	ani->Add(10041);
-	animations->Add(ID_ANI_MARIO_JUMP_WALK_RIGHT, ani);
-
-	ani = new CAnimation(100);
-	ani->Add(10042);
-	animations->Add(ID_ANI_MARIO_JUMP_WALK_LEFT, ani);
-
-	ani = new CAnimation(100);
-	ani->Add(10043);
-	animations->Add(ID_ANI_MARIO_JUMP_RUN_RIGHT, ani);
-
-	ani = new CAnimation(100);
-	ani->Add(10044);
-	animations->Add(ID_ANI_MARIO_JUMP_RUN_LEFT, ani);
-
-	ani = new CAnimation(100);
-	ani->Add(10051);
-	animations->Add(ID_ANI_MARIO_SIT_RIGHT, ani);
-
-	ani = new CAnimation(100);
-	ani->Add(10052);
-	animations->Add(ID_ANI_MARIO_SIT_LEFT, ani);
-
-	ani = new CAnimation(100);
-	ani->Add(10061);
-	animations->Add(ID_ANI_MARIO_BRACE_RIGHT, ani);
-
-	ani = new CAnimation(100);
-	ani->Add(10062);
-	animations->Add(ID_ANI_MARIO_BRACE_LEFT, ani);
+	// Second cloud platform 
+	CPlatform* p = new CPlatform(90.0f, GROUND_Y - 74.0f,
+		16, 15, 16, ID_SPRITE_CLOUD_BEGIN, ID_SPRITE_CLOUD_MIDDLE, ID_SPRITE_CLOUD_END);
+	objects.push_back(p);
 
 	mario = new CMario(MARIO_START_X, MARIO_START_Y);
 	objects.push_back(mario);
 
-	// Brick objects 
-	LPTEXTURE texMisc = textures->Get(ID_TEX_MISC);
-	sprites->Add(ID_SPRITE_BRICK, 372, 153, 372 + 15, 153 + 15, texMisc);
-
-	ani = new CAnimation(100);
-	ani->Add(ID_SPRITE_BRICK);
-	animations->Add(ID_ANI_BRICK, ani);
-
-	for (int i = 0; i < NUM_BRICKS; i++)
+	for (int j = 0; j < 4; j++)
 	{
-		CBrick* b = new CBrick(BRICK_X + i * BRICK_WIDTH, BRICK_Y);
-		objects.push_back(b);
+		CGoomba* goomba = new CGoomba(GOOMBA_X + j * 60, GROUND_Y - 120.0f);
+		objects.push_back(goomba);
 	}
 
-	sprites->Add(9000, 536, 121, 536 + 6, 121 + 4, texMisc);
-	sprites->Add(9001, 544, 118, 544 + 6, 118 + 11, texMisc);
-	sprites->Add(9002, 552, 115, 552 + 9, 115 + 17, texMisc);
+	// COINS 
+	for (int i = 0; i < 10; i++)
+	{
+		CCoin* c = new CCoin(COIN_X + i * (COIN_WIDTH * 2), GROUND_Y - 96.0f);
+		objects.push_back(c);
+	}
+}
 
-	ani = new CAnimation(100);
-	ani->Add(9000);
-	ani->Add(9001);
-	ani->Add(9002);
-	animations->Add(ID_ANI_BULLET, ani);
+bool IsGameObjectDeleted(const LPGAMEOBJECT& o) { return o == NULL; }
+
+void PurgeDeletedObjects()
+{
+	list<LPGAMEOBJECT>::iterator it;
+	for (it = objects.begin(); it != objects.end(); it++)
+	{
+		LPGAMEOBJECT o = *it;
+		if (o->IsDeleted())
+		{
+			delete o;
+			*it = NULL;
+		}
+	}
+	objects.erase(
+		std::remove_if(objects.begin(), objects.end(), IsGameObjectDeleted),
+		objects.end());
 }
 
 /*
@@ -229,12 +519,38 @@ void LoadResources()
 */
 void Update(DWORD dt)
 {
-	for (int i = 0; i < (int)objects.size(); i++)
+	// We know that Mario is the first object in the list hence we won't add him into the colliable object list
+	// TO-DO: This is a "dirty" way, need a more organized way 
+	vector<LPGAMEOBJECT> coObjects;
+	list<LPGAMEOBJECT>::iterator i;
+	for (i = objects.begin(); i != objects.end(); ++i)
 	{
-		objects[i]->Update(dt);
+		coObjects.push_back(*i);
 	}
+
+	for (i = objects.begin(); i != objects.end(); ++i)
+	{
+		(*i)->Update(dt, &coObjects);
+	}
+
+	PurgeDeletedObjects();
+
+	// Update camera to follow mario
+	float cx, cy;
+	mario->GetPosition(cx, cy);
+
+	cx -= SCREEN_WIDTH / 2;
+	cy = 0;
+	//cy -= SCREEN_HEIGHT / 2;
+
+	if (cx < 0) cx = 0;
+
+	CGame::GetInstance()->SetCamPos(cx, cy);
 }
 
+/*
+	Render a frame
+*/
 void Render()
 {
 	CGame* g = CGame::GetInstance();
@@ -251,9 +567,10 @@ void Render()
 	FLOAT NewBlendFactor[4] = { 0,0,0,0 };
 	pD3DDevice->OMSetBlendState(g->GetAlphaBlending(), NewBlendFactor, 0xffffffff);
 
-	for (int i = 0; i < (int)objects.size(); i++)
+	list<LPGAMEOBJECT>::iterator i;
+	for (i = objects.begin(); i != objects.end(); ++i)
 	{
-		objects[i]->Render();
+		(*i)->Render();
 	}
 
 	spriteHandler->End();
@@ -271,7 +588,7 @@ HWND CreateGameWindow(HINSTANCE hInstance, int nCmdShow, int ScreenWidth, int Sc
 	wc.lpfnWndProc = (WNDPROC)WinProc;
 	wc.cbClsExtra = 0;
 	wc.cbWndExtra = 0;
-	wc.hIcon = (HICON)LoadImage(hInstance, WINDOW_ICON_PATH, IMAGE_ICON, 0, 0, LR_LOADFROMFILE);;
+	wc.hIcon = (HICON)LoadImage(hInstance, WINDOW_ICON_PATH, IMAGE_ICON, 0, 0, LR_LOADFROMFILE);
 	wc.hCursor = LoadCursor(NULL, IDC_ARROW);
 	wc.hbrBackground = (HBRUSH)GetStockObject(WHITE_BRUSH);
 	wc.lpszMenuName = NULL;
@@ -312,7 +629,7 @@ int Run()
 	MSG msg;
 	int done = 0;
 	ULONGLONG frameStart = GetTickCount64();
-	ULONGLONG tickPerFrame = 1000 / MAX_FRAME_RATE;
+	DWORD tickPerFrame = 1000 / MAX_FRAME_RATE;
 
 	while (!done)
 	{
@@ -328,17 +645,18 @@ int Run()
 
 		// dt: the time between (beginning of last frame) and now
 		// this frame: the frame we are about to render
-		ULONGLONG dt = now - frameStart;
+		DWORD dt = (DWORD)(now - frameStart);
 
 		if (dt >= tickPerFrame)
 		{
 			frameStart = now;
-			Update((DWORD)dt);
-			CGame::GetInstance()->ProcessKeyboard();
+
+			game->ProcessKeyboard();
+			Update(dt);
 			Render();
 		}
 		else
-			Sleep((DWORD)(tickPerFrame - dt));
+			Sleep(tickPerFrame - dt);
 	}
 
 	return 1;
@@ -354,15 +672,16 @@ int WINAPI WinMain(
 
 	SetDebugWindow(hWnd);
 
-	CGame* game = CGame::GetInstance();
+	game = CGame::GetInstance();
 	game->Init(hWnd, hInstance);
 
 	keyHandler = new CSampleKeyHandler();
 	game->InitKeyboard(keyHandler);
 
-	SetWindowPos(hWnd, 0, 0, 0, SCREEN_WIDTH * 2, SCREEN_HEIGHT * 2, SWP_NOMOVE | SWP_NOOWNERZORDER | SWP_NOZORDER);
-
 	LoadResources();
+	Reload();
+
+	SetWindowPos(hWnd, 0, 0, 0, SCREEN_WIDTH * 2, SCREEN_HEIGHT * 2, SWP_NOMOVE | SWP_NOOWNERZORDER | SWP_NOZORDER);
 
 	Run();
 

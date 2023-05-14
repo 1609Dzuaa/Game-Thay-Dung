@@ -1,5 +1,5 @@
-﻿#include "debug.h"
-#include "Game.h"
+﻿#include "Game.h"
+#include "debug.h"
 
 CGame* CGame::__instance = NULL;
 
@@ -19,6 +19,8 @@ void CGame::Init(HWND hWnd, HINSTANCE hInstance)
 
 	backBufferWidth = r.right + 1;
 	backBufferHeight = r.bottom + 1;
+
+	DebugOut(L"[INFO] Window's client area: width= %d, height= %d\n", r.right - 1, r.bottom - 1);
 
 	// Create & clear the DXGI_SWAP_CHAIN_DESC structure
 	DXGI_SWAP_CHAIN_DESC swapChainDesc;
@@ -85,6 +87,26 @@ void CGame::Init(HWND hWnd, HINSTANCE hInstance)
 	viewPort.TopLeftY = 0;
 	pD3DDevice->RSSetViewports(1, &viewPort);
 
+	//
+	//
+	//
+
+	D3D10_SAMPLER_DESC desc;
+	desc.Filter = D3D10_FILTER_MIN_MAG_POINT_MIP_LINEAR;
+	desc.AddressU = D3D10_TEXTURE_ADDRESS_CLAMP;
+	desc.AddressV = D3D10_TEXTURE_ADDRESS_CLAMP;
+	desc.AddressW = D3D10_TEXTURE_ADDRESS_CLAMP;
+	desc.MipLODBias = 0;
+	desc.MaxAnisotropy = 1;
+	desc.ComparisonFunc = D3D10_COMPARISON_NEVER;
+	desc.BorderColor[0] = 1.0f;
+	desc.BorderColor[1] = 1.0f;
+	desc.BorderColor[2] = 1.0f;
+	desc.BorderColor[3] = 1.0f;
+	desc.MinLOD = -FLT_MAX;
+	desc.MaxLOD = FLT_MAX;
+
+	pD3DDevice->CreateSamplerState(&desc, &this->pPointSamplerState);
 
 	// create the sprite object to handle sprite drawing 
 	hr = D3DX10CreateSprite(pD3DDevice, 0, &spriteObject);
@@ -126,12 +148,19 @@ void CGame::Init(HWND hWnd, HINSTANCE hInstance)
 	return;
 }
 
+void CGame::SetPointSamplerState()
+{
+	pD3DDevice->VSSetSamplers(0, 1, &pPointSamplerState);
+	pD3DDevice->GSSetSamplers(0, 1, &pPointSamplerState);
+	pD3DDevice->PSSetSamplers(0, 1, &pPointSamplerState);
+}
+
 /*
 	Draw the whole texture or part of texture onto screen
 	NOTE: This function is very inefficient because it has to convert
 	from texture to sprite every time we need to draw it
 */
-void CGame::Draw(float x, float y, LPTEXTURE tex, RECT* rect)
+void CGame::Draw(float x, float y, LPTEXTURE tex, RECT* rect, float alpha)
 {
 	if (tex == NULL) return;
 
@@ -172,7 +201,9 @@ void CGame::Draw(float x, float y, LPTEXTURE tex, RECT* rect)
 	sprite.TextureIndex = 0;
 
 	// The color to apply to this sprite, full color applies white.
-	sprite.ColorModulate = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+	//sprite.ColorModulate = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+	sprite.ColorModulate = D3DXCOLOR(1.0f, 1.0f, 1.0f, alpha);
+
 
 	//
 	// Build the rendering matrix based on sprite location 
@@ -202,10 +233,35 @@ LPTEXTURE CGame::LoadTexture(LPCWSTR texturePath)
 	ID3D10Resource* pD3D10Resource = NULL;
 	ID3D10Texture2D* tex = NULL;
 
+	// Retrieve image information first 
+	D3DX10_IMAGE_INFO imageInfo;
+	HRESULT hr = D3DX10GetImageInfoFromFile(texturePath, NULL, &imageInfo, NULL);
+	if (FAILED(hr))
+	{
+		DebugOut((wchar_t*)L"[ERROR] D3DX10GetImageInfoFromFile failed for  file: %s with error: %d\n", texturePath, hr);
+		return NULL;
+	}
+
+	D3DX10_IMAGE_LOAD_INFO info;
+	ZeroMemory(&info, sizeof(D3DX10_IMAGE_LOAD_INFO));
+	info.Width = imageInfo.Width;
+	info.Height = imageInfo.Height;
+	info.Depth = imageInfo.Depth;
+	info.FirstMipLevel = 0;
+	info.MipLevels = 1;
+	info.Usage = D3D10_USAGE_DEFAULT;
+	info.BindFlags = D3DX10_DEFAULT;
+	info.CpuAccessFlags = D3DX10_DEFAULT;
+	info.MiscFlags = D3DX10_DEFAULT;
+	info.Format = imageInfo.Format;
+	info.Filter = D3DX10_FILTER_NONE;
+	info.MipFilter = D3DX10_DEFAULT;
+	info.pSrcInfo = &imageInfo;
+
 	// Loads the texture into a temporary ID3D10Resource object
-	HRESULT hr = D3DX10CreateTextureFromFile(pD3DDevice,
+	hr = D3DX10CreateTextureFromFile(pD3DDevice,
 		texturePath,
-		NULL, //&info,
+		&info,
 		NULL,
 		&pD3D10Resource,
 		NULL);
@@ -383,3 +439,4 @@ CGame* CGame::GetInstance()
 	if (__instance == NULL) __instance = new CGame();
 	return __instance;
 }
+
