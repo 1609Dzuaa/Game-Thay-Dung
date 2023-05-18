@@ -7,7 +7,7 @@
 #include "Goomba.h"
 #include "Coin.h"
 #include "Brick.h"
-//#include "ClassBrick.h"
+#include "Koopa.h"
 
 #include "Collision.h"
 
@@ -56,6 +56,8 @@ void CMario::OnCollisionWith(LPCOLLISIONEVENT e)
 
 	if (dynamic_cast<CGoomba*>(e->obj))
 		OnCollisionWithGoomba(e);
+	if (dynamic_cast<CKoopa*>(e->obj))
+		OnCollisionWithKoopa(e);
 	else if (dynamic_cast<CCoin*>(e->obj))
 		OnCollisionWithCoin(e);
 }
@@ -77,6 +79,7 @@ void CMario::OnCollisionWithGoomba(LPCOLLISIONEVENT e)
 	{
 		if (untouchable == 0)
 		{
+			//Nếu con Goomba chưa chết thì xét không thì bỏ qua nó
 			if (goomba->GetState() != GOOMBA_STATE_DIE)
 			{
 				if (level > MARIO_LEVEL_SMALL)
@@ -99,9 +102,44 @@ void CMario::OnCollisionWithCoin(LPCOLLISIONEVENT e)
 	coin++;
 }
 
-void CMario::OnCollisionWithClassBrick(LPCOLLISIONEVENT e)
+void CMario::OnCollisionWithKoopa(LPCOLLISIONEVENT e)
 {
-	e->obj->Delete();
+	CKoopa* koopa = dynamic_cast<CKoopa*>(e->obj);
+	//Nhảy lên Koopa thì sẽ đưa Koopa về trạng thái ngủ đông
+	if (e->ny < 0)
+	{
+		if (koopa->GetState() != KOOPA_STATE_DIE)
+		{
+			koopa->SetState(KOOPA_STATE_SLEEP);
+			vy = -MARIO_JUMP_DEFLECT_SPEED;
+		}
+	}
+	else 
+	{
+		if (untouchable == 0) //can be touched
+		{
+			if (koopa->GetState() != KOOPA_STATE_DIE)
+			{
+				if (koopa->GetState() == KOOPA_STATE_SLEEP)
+				{
+					//Lúc này sẽ đá con koopa sang phải
+					//koopa->SetState()
+				}
+				else
+				{
+					if (level > MARIO_LEVEL_SMALL)
+					{
+						level = MARIO_LEVEL_SMALL;
+						StartUntouchable();
+					}
+					else
+					{
+						SetState(MARIO_STATE_DIE);
+					}
+				}
+			}
+		}
+	}
 }
 
 //

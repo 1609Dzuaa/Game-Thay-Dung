@@ -1,4 +1,5 @@
 ﻿#include "Animation.h"
+#include "debug.h"
 
 void CAnimation::Add(int spriteId, DWORD time)
 {
@@ -8,8 +9,11 @@ void CAnimation::Add(int spriteId, DWORD time)
 	//Câu lệnh bên phải sẽ trả về một sprite, ta sẽ gán nó vào biến con trỏ sprite dưới
 	LPSPRITE sprite = CSprites::GetInstance()->Get(spriteId);
 	//Tạo 1 con trỏ frame kiểu CAnimationFrame để khởi tạo giá trị cho nó
+	if (sprite == NULL)
+		DebugOut(L"[ERROR] Sprite ID %d not found!\n", spriteId);
+	
 	LPANIMATION_FRAME frame = new CAnimationFrame(sprite, t);
-	//Thêm con trỏ trên vào cuối vector frames
+
 	frames.push_back(frame);
 }
 
@@ -30,7 +34,6 @@ void CAnimation::Render(float x, float y)
 			currentFrame++;
 			lastFrameTime = now;
 			if (currentFrame == frames.size()) currentFrame = 0;
-			//DebugOut(L"now: %d, lastFrameTime: %d, t: %d\n", now, lastFrameTime, t);
 		}
 	}
 

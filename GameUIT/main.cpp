@@ -33,8 +33,8 @@
 
 #include "Mario.h"
 #include "Brick.h"
-//#include "ClassBrick.h"
 #include "Goomba.h"
+#include "Koopa.h"
 #include "Coin.h"
 #include "Platform.h"
 
@@ -306,7 +306,32 @@ void LoadAssetsGoomba()
 	ani = new CAnimation(100);
 	ani->Add(ID_SPRITE_GOOMBA_DIE + 1);
 	animations->Add(ID_ANI_GOOMBA_DIE, ani);
+}
+void LoadAssetsKoopa()
+{
+	CTextures* textures = CTextures::GetInstance();
+	CSprites* sprites = CSprites::GetInstance();
+	CAnimations* animations = CAnimations::GetInstance();
 
+	LPTEXTURE texEnemy = textures->Get(ID_TEX_ENEMY);
+
+	sprites->Add(ID_SPRITE_KOOPA_WALK + 1, 5, 129, 5 + 18, 129 + 27, texEnemy);
+	sprites->Add(ID_SPRITE_KOOPA_WALK + 2, 27, 128, 27 + 17, 128 + 28, texEnemy);
+
+	sprites->Add(ID_SPRITE_KOOPA_SLEEP + 1, 49, 138, 49 + 17, 138 + 16, texEnemy);
+
+	sprites->Add(ID_SPRITE_KOOPA_REBORN + 1, 49, 138, 49 + 17, 138 + 16, texEnemy);
+	sprites->Add(ID_SPRITE_KOOPA_REBORN + 1, 49, 138, 49 + 17, 138 + 16, texEnemy);
+
+
+	LPANIMATION ani = new CAnimation(100);
+	ani->Add(ID_SPRITE_KOOPA_WALK + 1);
+	ani->Add(ID_SPRITE_KOOPA_WALK + 2);
+	animations->Add(ID_ANI_KOOPA_WALKING, ani);
+
+	ani = new CAnimation(100);
+	ani->Add(ID_SPRITE_KOOPA_SLEEP + 1);
+	animations->Add(ID_ANI_KOOPA_SLEEPING, ani);
 }
 void LoadAssetsBrick()
 {
@@ -320,27 +345,6 @@ void LoadAssetsBrick()
 	LPANIMATION ani = new CAnimation(100);
 	ani->Add(ID_SPRITE_BRICK + 1);
 	animations->Add(ID_ANI_BRICK, ani);
-}
-void LoadAssetClassBrick()
-{
-	CTextures* textures = CTextures::GetInstance();
-	CSprites* sprites = CSprites::GetInstance();
-	CAnimations* animations = CAnimations::GetInstance();
-
-	LPTEXTURE texMisc = textures->Get(ID_TEX_MISC);
-	sprites->Add(ID_SPRITE_CLASSBRICK + 1, 300, 135, 300 + 15, 135 + 15, texMisc);
-	sprites->Add(ID_SPRITE_CLASSBRICK + 2, 318, 135, 318 + 15, 135 + 15, texMisc);
-	sprites->Add(ID_SPRITE_CLASSBRICK + 3, 336, 135, 336 + 15, 135 + 15, texMisc);
-	sprites->Add(ID_SPRITE_CLASSBRICK + 4, 354, 135, 354 + 15, 135 + 15, texMisc);
-	sprites->Add(ID_SPRITE_CLASSBRICK + 5, 372, 135, 372 + 15, 135 + 15, texMisc);
-
-	/*LPANIMATION ani = new CAnimation(200);
-	ani->Add(ID_SPRITE_CLASSBRICK + 1);
-	ani->Add(ID_SPRITE_CLASSBRICK + 2);
-	ani->Add(ID_SPRITE_CLASSBRICK + 3);
-	ani->Add(ID_SPRITE_CLASSBRICK + 4);
-	ani->Add(ID_SPRITE_CLASSBRICK + 5);
-	animations->Add(ID_ANI_CLASSBRICK, ani);*/
 }
 void LoadAssetsCoin()
 {
@@ -390,8 +394,8 @@ void LoadResources()
 
 	LoadAssetsMario();
 	LoadAssetsGoomba();
+	LoadAssetsKoopa();
 	LoadAssetsBrick();
-	LoadAssetClassBrick();
 	LoadAssetsCoin();
 	LoadAssetsOther();
 }
@@ -411,6 +415,7 @@ void ClearScene()
 
 #define BRICK_X 0.0f
 #define GOOMBA_X 200.0f
+#define KOOPA_X 270.0f
 #define COIN_X 100.0f
 
 #define BRICK_Y GROUND_Y + 20.0f
@@ -430,12 +435,6 @@ void Reload()
 		CBrick* b = new CBrick(i * BRICK_WIDTH * 1.0f, BRICK_Y);
 		objects.push_back(b);
 	}
-
-	/*for (int i = 0; i < 5; i++)
-	{
-		ClassBrick* cbr = new ClassBrick(15.0f * i + 75.0f, BRICK_Y - 50);
-		objects.push_back(cbr);
-	}*/
 
 	// Short, low platform
 	for (int i = 1; i < 3; i++)
@@ -484,6 +483,12 @@ void Reload()
 	{
 		CGoomba* goomba = new CGoomba(GOOMBA_X + j * 60, GROUND_Y - 120.0f);
 		objects.push_back(goomba);
+	}
+
+	for (int j = 0; j < 4; j++)
+	{
+		CKoopa* koopa = new CKoopa(KOOPA_X + j * 60, GROUND_Y - 120.0f);
+		objects.push_back(koopa);
 	}
 
 	// COINS 
