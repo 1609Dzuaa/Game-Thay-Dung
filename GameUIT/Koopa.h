@@ -13,6 +13,7 @@
 
 #define KOOPA_STATE_WALKING 1000
 #define KOOPA_STATE_SLEEP 2000
+#define KOOPA_STATE_SLIP 2050
 #define KOOPA_STATE_DIE 2100
 #define KOOPA_STATE_REBORN 2200
 
@@ -20,8 +21,9 @@
 #define ID_ANI_KOOPA_WALKING_LEFT 50000
 #define ID_ANI_KOOPA_WALKING_RIGHT 50500
 #define ID_ANI_KOOPA_SLEEPING 50005
-#define ID_ANI_KOOPA_DIE 50010
-#define ID_ANI_KOOPA_REBORN 50015
+#define ID_ANI_KOOPA_SLIPPING 50010
+#define ID_ANI_KOOPA_DIE 50015
+#define ID_ANI_KOOPA_REBORN 50020
 
 class CKoopa : public CGameObject
 {
@@ -40,6 +42,7 @@ protected:
 	virtual void OnNoCollision(DWORD dt);
 
 	virtual void OnCollisionWith(LPCOLLISIONEVENT e);
+	void OnCollisionWithGoomba(LPCOLLISIONEVENT e);
 
 public:
 	CKoopa(float x, float y);

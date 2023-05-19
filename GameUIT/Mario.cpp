@@ -46,11 +46,10 @@ void CMario::OnCollisionWith(LPCOLLISIONEVENT e)
 			isOnPlatform = true;
 		}
 	}
-	else
-		if (e->nx != 0 && e->obj->IsBlocking())
-		{
-			//vx = 0;
-		}
+	else if (e->nx != 0 && e->obj->IsBlocking())
+	{
+		vx = 0;
+	}
 
 	if (dynamic_cast<CGoomba*>(e->obj))
 		OnCollisionWithGoomba(e);
@@ -77,7 +76,7 @@ void CMario::OnCollisionWithGoomba(LPCOLLISIONEVENT e)
 	{
 		if (untouchable == 0)
 		{
-			//Nếu con Goomba chưa chết thì xét không thì bỏ qua nó
+			//Nếu con Goomba chưa chết thì xét, không thì bỏ qua nó
 			if (goomba->GetState() != GOOMBA_STATE_DIE)
 			{
 				if (level > MARIO_LEVEL_SMALL)
@@ -120,8 +119,16 @@ void CMario::OnCollisionWithKoopa(LPCOLLISIONEVENT e)
 			{
 				if (koopa->GetState() == KOOPA_STATE_SLEEP)
 				{
-					//Lúc này sẽ đá con koopa sang phải
-					//koopa->SetState()
+					if (this->nx == 1)//&& this->level > MARIO_LEVEL_SMALL)
+					{
+						this->SetState(MARIO_STATE_KICKING_RIGHT);
+						koopa->SetState(KOOPA_STATE_SLIP);
+					}
+					else if (this->nx == -1)//&& this->level > MARIO_LEVEL_SMALL)
+					{
+						this->SetState(MARIO_STATE_KICKING_LEFT);
+						koopa->SetState(KOOPA_STATE_SLIP);
+					}
 				}
 				else
 				{
@@ -270,6 +277,10 @@ void CMario::Render()
 
 	if (state == MARIO_STATE_DIE)
 		aniId = ID_ANI_MARIO_DIE;
+	else if (state == MARIO_STATE_KICKING_RIGHT)
+		aniId = ID_ANI_MARIO_KICKING_RIGHT;
+	else if (state == MARIO_STATE_KICKING_LEFT)
+		aniId = ID_ANI_MARIO_KICKING_LEFT;
 	else if (level == MARIO_LEVEL_BIG)
 		aniId = GetAniIdBig();
 	else if (level == MARIO_LEVEL_SMALL)
@@ -295,24 +306,36 @@ void CMario::SetState(int state)
 		ax = MARIO_ACCEL_RUN_X;
 		nx = 1;
 		break;
+
 	case MARIO_STATE_RUNNING_LEFT:
 		if (isSitting) break;
 		maxVx = -MARIO_RUNNING_SPEED;
 		ax = -MARIO_ACCEL_RUN_X;
 		nx = -1;
 		break;
+
 	case MARIO_STATE_WALKING_RIGHT:
 		if (isSitting) break;
 		maxVx = MARIO_WALKING_SPEED;
 		ax = MARIO_ACCEL_WALK_X;
 		nx = 1;
 		break;
+
 	case MARIO_STATE_WALKING_LEFT:
 		if (isSitting) break;
 		maxVx = -MARIO_WALKING_SPEED;
 		ax = -MARIO_ACCEL_WALK_X;
 		nx = -1;
 		break;
+
+	case MARIO_STATE_KICKING_RIGHT:
+		if (isSitting) break;
+		break;
+
+	case MARIO_STATE_KICKING_LEFT:
+		if (isSitting) break;
+		break;
+
 	case MARIO_STATE_JUMP:
 		if (isSitting) break;
 		if (isOnPlatform)

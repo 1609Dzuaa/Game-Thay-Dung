@@ -124,6 +124,10 @@ void LoadAssetsMario()
 	sprites->Add(ID_SPRITE_MARIO_BIG_BRACE_RIGHT + 1, 425, 154, 442, 181, texMario);
 	sprites->Add(ID_SPRITE_MARIO_BIG_BRACE_LEFT + 1, 5, 154, 22, 181, texMario);
 
+	// KICKING RIGHT/LEFT
+	sprites->Add(ID_SPRITE_MARIO_BIG_KICK_RIGHT + 1, 422, 273, 422 + 22, 273 + 28, texMario);
+	sprites->Add(ID_SPRITE_MARIO_BIG_KICK_LEFT + 1, 1, 273, 1 + 22, 273 + 28, texMario);
+
 	// MARIO DIE
 	sprites->Add(ID_SPRITE_MARIO_DIE + 1, 215, 120, 231, 135, texMario);
 
@@ -200,6 +204,14 @@ void LoadAssetsMario()
 	ani = new CAnimation(100);
 	ani->Add(ID_SPRITE_MARIO_BIG_JUMP_RUN_RIGHT + 1);
 	animations->Add(ID_ANI_MARIO_JUMP_RUN_RIGHT, ani);
+
+	ani = new CAnimation(100);
+	ani->Add(ID_SPRITE_MARIO_BIG_KICK_RIGHT + 1);
+	animations->Add(ID_ANI_MARIO_KICKING_RIGHT, ani);
+
+	ani = new CAnimation(100);
+	ani->Add(ID_SPRITE_MARIO_BIG_KICK_LEFT + 1);
+	animations->Add(ID_ANI_MARIO_KICKING_LEFT, ani);
 
 	ani = new CAnimation(100);
 	ani->Add(ID_SPRITE_MARIO_BIG_JUMP_RUN_LEFT + 1);
@@ -293,10 +305,10 @@ void LoadAssetsGoomba()
 
 	LPTEXTURE texEnemy = textures->Get(ID_TEX_ENEMY);
 
-	sprites->Add(ID_SPRITE_GOOMBA_WALK + 1, 4, 13, 22, 30, texEnemy);
-	sprites->Add(ID_SPRITE_GOOMBA_WALK + 2, 24, 13, 42, 30, texEnemy);
+	sprites->Add(ID_SPRITE_GOOMBA_WALK + 1, 31, 348, 31 + 17, 348 + 16, texEnemy);
+	sprites->Add(ID_SPRITE_GOOMBA_WALK + 2, 53, 348, 53 + 15, 348 + 17, texEnemy);
 
-	sprites->Add(ID_SPRITE_GOOMBA_DIE + 1, 44, 19, 62, 30, texEnemy);
+	sprites->Add(ID_SPRITE_GOOMBA_DIE + 1, 11, 355, 11 + 15, 355 + 9, texEnemy);
 
 	LPANIMATION ani = new CAnimation(100);
 	ani->Add(ID_SPRITE_GOOMBA_WALK + 1);
@@ -315,13 +327,17 @@ void LoadAssetsKoopa()
 
 	LPTEXTURE texEnemy = textures->Get(ID_TEX_ENEMY);
 
-	sprites->Add(ID_SPRITE_KOOPA_WALK_LEFT + 1, 5, 129, 5 + 18, 129 + 27, texEnemy);
-	sprites->Add(ID_SPRITE_KOOPA_WALK_LEFT + 2, 27, 128, 27 + 17, 128 + 28, texEnemy);
+	sprites->Add(ID_SPRITE_KOOPA_WALK_LEFT + 1, 70, 65, 70 + 17, 65 + 27, texEnemy);
+	sprites->Add(ID_SPRITE_KOOPA_WALK_LEFT + 2, 88, 66, 88 + 15, 66 + 26, texEnemy);
 
-	sprites->Add(ID_SPRITE_KOOPA_WALK_RIGHT + 1, 937, 129, 937 + 17, 129 + 27, texEnemy);
-	sprites->Add(ID_SPRITE_KOOPA_WALK_RIGHT + 2, 915, 128, 915 + 17, 128 + 28, texEnemy);
+	sprites->Add(ID_SPRITE_KOOPA_WALK_RIGHT + 1, 655, 66, 655 + 16, 66 + 26, texEnemy);
+	sprites->Add(ID_SPRITE_KOOPA_WALK_RIGHT + 2, 638, 66, 638 + 15, 66 + 26, texEnemy);
 
-	sprites->Add(ID_SPRITE_KOOPA_SLEEP + 1, 49, 138, 49 + 17, 138 + 16, texEnemy);
+	sprites->Add(ID_SPRITE_KOOPA_SLEEP + 1, 70, 123, 70 + 16, 123 + 15, texEnemy);
+
+	sprites->Add(ID_SPRITE_KOOPA_SLIP + 1, 88, 123, 88 + 15, 123 + 15, texEnemy);
+	sprites->Add(ID_SPRITE_KOOPA_SLIP + 2, 105, 123, 105 + 15, 123 + 15, texEnemy);
+	sprites->Add(ID_SPRITE_KOOPA_SLIP + 3, 122, 123, 122 + 15, 123 + 15, texEnemy);
 
 	sprites->Add(ID_SPRITE_KOOPA_REBORN + 1, 49, 138, 49 + 17, 138 + 16, texEnemy);
 	sprites->Add(ID_SPRITE_KOOPA_REBORN + 1, 49, 138, 49 + 17, 138 + 16, texEnemy);
@@ -340,6 +356,13 @@ void LoadAssetsKoopa()
 	ani = new CAnimation(100);
 	ani->Add(ID_SPRITE_KOOPA_SLEEP + 1);
 	animations->Add(ID_ANI_KOOPA_SLEEPING, ani);
+
+	ani = new CAnimation(50);
+	ani->Add(ID_SPRITE_KOOPA_SLIP + 1);
+	ani->Add(ID_SPRITE_KOOPA_SLIP + 2);
+	ani->Add(ID_SPRITE_KOOPA_SLIP + 3);
+	animations->Add(ID_ANI_KOOPA_SLIPPING, ani);
+
 }
 void LoadAssetsBrick()
 {

@@ -1,4 +1,5 @@
 ﻿#include"Koopa.h"
+#include "Goomba.h"
 
 CKoopa::CKoopa(float x, float y) :CGameObject(x, y)
 {
@@ -37,8 +38,11 @@ void CKoopa::OnCollisionWith(LPCOLLISIONEVENT e)
 	//Koopa chết:
 	//1.Rơi vào chế độ ngủ đông và bị Mario quăng đập vào enemy khác
 	//2.Va chạm với Koopa mà bị Mario quăng
+	if (dynamic_cast<CGoomba*>(e->obj) && this->state == KOOPA_STATE_SLIP)
+		this->OnCollisionWithGoomba(e);
 	if (!e->obj->IsBlocking()) return;
 	if (dynamic_cast<CKoopa*>(e->obj)) return; //Hãy kiểm tra Koopa chạm Koopa
+
 
 	if (e->ny != 0)
 	{
@@ -77,6 +81,10 @@ void CKoopa::Render()
 	{
 		aniId = ID_ANI_KOOPA_SLEEPING;
 	}
+	if (state == KOOPA_STATE_SLIP)
+	{
+		aniId = ID_ANI_KOOPA_SLIPPING;
+	}
 	if (state == KOOPA_STATE_DIE)
 	{
 		aniId = ID_ANI_KOOPA_DIE;
@@ -105,8 +113,18 @@ void CKoopa::SetState(int state)
 		vy = 0;
 		ay = 0;
 		break;
+	case KOOPA_STATE_SLIP:
+		vx = 0.20f;
+		ax = 0.00005f;
+		break;
 	case KOOPA_STATE_WALKING:
 		vx = -KOOPA_WALKING_SPEED;
 		break;
 	}
+}
+
+void CKoopa::OnCollisionWithGoomba(LPCOLLISIONEVENT e)
+{
+	CGoomba* goomba = dynamic_cast<CGoomba*>(e->obj);
+	goomba->SetState(GOOMBA_STATE_DIE);
 }
