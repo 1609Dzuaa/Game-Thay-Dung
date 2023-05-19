@@ -315,8 +315,11 @@ void LoadAssetsKoopa()
 
 	LPTEXTURE texEnemy = textures->Get(ID_TEX_ENEMY);
 
-	sprites->Add(ID_SPRITE_KOOPA_WALK + 1, 5, 129, 5 + 18, 129 + 27, texEnemy);
-	sprites->Add(ID_SPRITE_KOOPA_WALK + 2, 27, 128, 27 + 17, 128 + 28, texEnemy);
+	sprites->Add(ID_SPRITE_KOOPA_WALK_LEFT + 1, 5, 129, 5 + 18, 129 + 27, texEnemy);
+	sprites->Add(ID_SPRITE_KOOPA_WALK_LEFT + 2, 27, 128, 27 + 17, 128 + 28, texEnemy);
+
+	sprites->Add(ID_SPRITE_KOOPA_WALK_RIGHT + 1, 937, 129, 937 + 17, 129 + 27, texEnemy);
+	sprites->Add(ID_SPRITE_KOOPA_WALK_RIGHT + 2, 915, 128, 915 + 17, 128 + 28, texEnemy);
 
 	sprites->Add(ID_SPRITE_KOOPA_SLEEP + 1, 49, 138, 49 + 17, 138 + 16, texEnemy);
 
@@ -325,9 +328,14 @@ void LoadAssetsKoopa()
 
 
 	LPANIMATION ani = new CAnimation(100);
-	ani->Add(ID_SPRITE_KOOPA_WALK + 1);
-	ani->Add(ID_SPRITE_KOOPA_WALK + 2);
-	animations->Add(ID_ANI_KOOPA_WALKING, ani);
+	ani->Add(ID_SPRITE_KOOPA_WALK_LEFT + 1);
+	ani->Add(ID_SPRITE_KOOPA_WALK_LEFT + 2);
+	animations->Add(ID_ANI_KOOPA_WALKING_LEFT, ani);
+
+    ani = new CAnimation(100);
+	ani->Add(ID_SPRITE_KOOPA_WALK_RIGHT + 1);
+	ani->Add(ID_SPRITE_KOOPA_WALK_RIGHT + 2);
+	animations->Add(ID_ANI_KOOPA_WALKING_RIGHT, ani);
 
 	ani = new CAnimation(100);
 	ani->Add(ID_SPRITE_KOOPA_SLEEP + 1);

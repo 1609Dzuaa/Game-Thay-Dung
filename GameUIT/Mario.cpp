@@ -44,14 +44,12 @@ void CMario::OnCollisionWith(LPCOLLISIONEVENT e)
 		if (e->ny < 0)
 		{
 			isOnPlatform = true;
-			//if (dynamic_cast<ClassBrick*>(e->obj))
-				//OnCollisionWithClassBrick(e);
 		}
 	}
 	else
 		if (e->nx != 0 && e->obj->IsBlocking())
 		{
-			vx = 0;
+			//vx = 0;
 		}
 
 	if (dynamic_cast<CGoomba*>(e->obj))
