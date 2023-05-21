@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "GameObject.h"
 
 #include "Animation.h"
@@ -26,6 +26,7 @@
 
 #define MARIO_STATE_KICKING_RIGHT	110
 #define MARIO_STATE_KICKING_LEFT	210
+#define MARIO_STATE_KICKING_RELEASE 310
 
 #define MARIO_STATE_JUMP			300
 #define MARIO_STATE_RELEASE_JUMP    301
@@ -110,10 +111,12 @@
 
 
 #define MARIO_UNTOUCHABLE_TIME 2500
+#define MARIO_KICK_TIME 100
 
 class CMario : public CGameObject
 {
 	BOOLEAN isSitting;
+	BOOLEAN isKicking;
 	float maxVx;
 	float ax;				// acceleration on x 
 	float ay;				// acceleration on y 
@@ -121,6 +124,7 @@ class CMario : public CGameObject
 	int level;
 	int untouchable;
 	ULONGLONG untouchable_start;
+	ULONGLONG kick_start; //Tính thời gian sút để giải phóng Mario khỏi hành động sút
 	BOOLEAN isOnPlatform;
 	int coin;
 
@@ -137,6 +141,7 @@ public:
 	CMario(float x, float y) : CGameObject(x, y)
 	{
 		isSitting = false;
+		isKicking = false;
 		maxVx = 0.0f;
 		ax = 0.0f;
 		ay = MARIO_GRAVITY;
@@ -144,6 +149,7 @@ public:
 		level = MARIO_LEVEL_BIG;
 		untouchable = 0;
 		untouchable_start = -1;
+		kick_start = 0;
 		isOnPlatform = false;
 		coin = 0;
 	}

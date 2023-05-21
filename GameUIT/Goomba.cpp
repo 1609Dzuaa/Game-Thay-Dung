@@ -1,4 +1,5 @@
 ﻿#include "Goomba.h"
+#include "debug.h"
 
 CGoomba::CGoomba(float x, float y) :CGameObject(x, y)
 {
@@ -31,13 +32,16 @@ void CGoomba::OnNoCollision(DWORD dt)
 	x += vx * dt;
 	y += vy * dt;
 	//0 có va chạm thì di chuyển như thường
+	//x = x0 + vt;
 };
 
 void CGoomba::OnCollisionWith(LPCOLLISIONEVENT e)
 {
-	if (!e->obj->IsBlocking()) return;
-	if (dynamic_cast<CGoomba*>(e->obj)) return;
+	//Xét va chạm giữa Goomba và VẬT KHÁC
+	if (!e->obj->IsBlocking()) return; //Nếu nó không có thuộc tính block thì kết thúc hàm này
+	if (dynamic_cast<CGoomba*>(e->obj)) return; //Nếu VẬT KHÁC LÀ Goomba thì cũng bỏ qua hàm này 
 
+	//Xét gạch
 	if (e->ny != 0)
 	{
 		vy = 0;
@@ -46,6 +50,7 @@ void CGoomba::OnCollisionWith(LPCOLLISIONEVENT e)
 	{
 		vx = -vx;
 	}
+	//DebugOutTitle(L"Coins: %f", e->ny);
 }
 
 void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
@@ -69,9 +74,9 @@ void CGoomba::Render()
 {
 	int aniId = ID_ANI_GOOMBA_WALKING;
 	if (state == GOOMBA_STATE_DIE)
-	{
 		aniId = ID_ANI_GOOMBA_DIE;
-	}
+	if (state == GOOMBA_STATE_DIE_REVERSE)
+		aniId = ID_ANI_GOOMBA_DIE_REVERSE;
 
 	CAnimations::GetInstance()->Get(aniId)->Render(x, y);
 	RenderBoundingBox();
@@ -88,6 +93,10 @@ void CGoomba::SetState(int state)
 		vx = 0;
 		vy = 0;
 		ay = 0;
+		break;
+	case GOOMBA_STATE_DIE_REVERSE:
+		ax = 0;
+		vy = -0.4f;
 		break;
 	case GOOMBA_STATE_WALKING:
 		vx = -GOOMBA_WALKING_SPEED;

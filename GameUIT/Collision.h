@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <Windows.h>
 #include <vector>
@@ -14,8 +14,8 @@ typedef CCollisionEvent* LPCOLLISIONEVENT;
 
 struct CCollisionEvent
 {
-	LPGAMEOBJECT src_obj;		// source object : the object from which to calculate collision
-	LPGAMEOBJECT obj;			// the target object
+	LPGAMEOBJECT src_obj;  // source object : the object from which to calculate collision(vật đc xét va chạm với VẬT KHÁC)
+	LPGAMEOBJECT obj;	   // the target object (VẬT KHÁC)
 
 	float t, nx, ny;
 

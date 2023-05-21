@@ -21,7 +21,7 @@ void CAnimation::Render(float x, float y)
 {
 	ULONGLONG now = GetTickCount64(); //Hàm này trả về thời gian kể từ khi ứng dụng chạy cho đến hiện tại
 
-	if (currentFrame == -1) //Nếu nó là frame mặc định (-1)
+	if (currentFrame == -1) //Nếu nó là frame mặc định (-1) //careful NULL here
 	{
 		currentFrame = 0;
 		lastFrameTime = now;

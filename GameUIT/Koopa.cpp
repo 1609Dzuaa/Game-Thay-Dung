@@ -1,5 +1,7 @@
 ﻿#include"Koopa.h"
 #include "Goomba.h"
+#include "Mario.h"
+#include "debug.h"
 
 CKoopa::CKoopa(float x, float y) :CGameObject(x, y)
 {
@@ -40,11 +42,12 @@ void CKoopa::OnCollisionWith(LPCOLLISIONEVENT e)
 	//2.Va chạm với Koopa mà bị Mario quăng
 	if (dynamic_cast<CGoomba*>(e->obj) && this->state == KOOPA_STATE_SLIP)
 		this->OnCollisionWithGoomba(e);
+	//if (dynamic_cast<CKoopa*>(e->obj))
+		//this->OnCollisionWithKoopa(e); //Hãy kiểm tra Koopa chạm Koopa
 	if (!e->obj->IsBlocking()) return;
-	if (dynamic_cast<CKoopa*>(e->obj)) return; //Hãy kiểm tra Koopa chạm Koopa
 
 
-	if (e->ny != 0)
+	if (e->ny != 0) //Nếu object có thuộc tính block
 	{
 		vy = 0;
 	}
@@ -67,6 +70,7 @@ void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 	CGameObject::Update(dt, coObjects);
 	CCollision::GetInstance()->Process(this, dt, coObjects);
+	DebugOutTitle(L"Koopa acceleration x: %f", this->ax);
 }
 
 
@@ -102,20 +106,19 @@ void CKoopa::SetState(int state)
 	case KOOPA_STATE_SLEEP:
 		vx = 0;
 		vy = 0;
-		ax = 0;
-		ay = 0;
-		y = y + 2.50f;
+		//y = y + 2.50f;
 		break;
-	case KOOPA_STATE_DIE:
+	/*case KOOPA_STATE_DIE:
 		die_start = GetTickCount64();
 		y += (KOOPA_BBOX_HEIGHT - KOOPA_BBOX_HEIGHT_DIE) / 2;
 		vx = 0;
 		vy = 0;
 		ay = 0;
-		break;
+		break;*/
 	case KOOPA_STATE_SLIP:
-		vx = 0.20f;
-		ax = 0.00005f;
+		//vx = KOOPA_WALKING_SPEED * 4;
+		//ay = KOOPA_GRAVITY;
+		//ax = 0.00005f;
 		break;
 	case KOOPA_STATE_WALKING:
 		vx = -KOOPA_WALKING_SPEED;
@@ -125,6 +128,18 @@ void CKoopa::SetState(int state)
 
 void CKoopa::OnCollisionWithGoomba(LPCOLLISIONEVENT e)
 {
+	float goombaVx = 0, goombaVy = 0;
 	CGoomba* goomba = dynamic_cast<CGoomba*>(e->obj);
-	goomba->SetState(GOOMBA_STATE_DIE);
+	goomba->GetSpeed(goombaVx, goombaVy);
+	goomba->SetState(GOOMBA_STATE_DIE_REVERSE);
+	//if (e->nx > 0)
+		//goomba->SetSpeed(-goombaVx, goombaVy);
+	//else if (e->ny > 0)
+		//goomba->SetSpeed(goombaVx, -goombaVy);
+}
+
+void CKoopa::OnCollisionWithKoopa(LPCOLLISIONEVENT e)
+{
+	CKoopa* koopa = dynamic_cast<CKoopa*>(e->obj);
+	koopa->SetState(KOOPA_STATE_DIE);
 }

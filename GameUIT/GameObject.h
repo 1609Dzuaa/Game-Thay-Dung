@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <Windows.h>
 #include <d3dx10.h>
@@ -34,6 +34,7 @@ public:
 	void SetSpeed(float vx, float vy) { this->vx = vx, this->vy = vy; }
 	void GetPosition(float& x, float& y) { x = this->x; y = this->y; }
 	void GetSpeed(float& vx, float& vy) { vx = this->vx; vy = this->vy; }
+	//Hàm GetSpeed lấy tốc độ của đối tượng và lưu nó vào tham số
 
 	int GetState() { return this->state; }
 	virtual void Delete() { isDeleted = true; }
@@ -63,6 +64,9 @@ public:
 
 	// Is this object blocking other object? If YES, collision framework will automatically push the other object
 	virtual int IsBlocking() { return 1; }
+
+	//Khởi tạo ban đầu của mọi object trong game là CÓ thuộc tính block(return 1;) và KHÔNG THỂ va chạm(return 0;)
+	//Còn sau đó obj đó có thuộc tính block hay không là tuỳ định nghĩa ở mỗi class
 
 	~CGameObject();
 

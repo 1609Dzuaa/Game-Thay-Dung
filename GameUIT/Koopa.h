@@ -22,7 +22,7 @@
 #define ID_ANI_KOOPA_WALKING_RIGHT 50500
 #define ID_ANI_KOOPA_SLEEPING 50005
 #define ID_ANI_KOOPA_SLIPPING 50010
-#define ID_ANI_KOOPA_DIE 50015
+#define ID_ANI_KOOPA_DIE 50015  //NULL HERE
 #define ID_ANI_KOOPA_REBORN 50020
 
 class CKoopa : public CGameObject
@@ -43,6 +43,7 @@ protected:
 
 	virtual void OnCollisionWith(LPCOLLISIONEVENT e);
 	void OnCollisionWithGoomba(LPCOLLISIONEVENT e);
+	void OnCollisionWithKoopa(LPCOLLISIONEVENT e);
 
 public:
 	CKoopa(float x, float y);
