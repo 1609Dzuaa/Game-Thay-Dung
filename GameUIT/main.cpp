@@ -152,6 +152,9 @@ void LoadAssetsMario()
 	sprites->Add(ID_SPRITE_MARIO_SMALL_BRACE_LEFT + 1, 6, 0, 6 + 13, 15, texMario);
 	sprites->Add(ID_SPRITE_MARIO_SMALL_BRACE_RIGHT + 1, 426, 0, 426 + 13, 15, texMario);
 
+	sprites->Add(ID_SPRITE_MARIO_SMALL_KICK_LEFT + 1, 4, 79, 4 + 17, 79 + 17, texMario);
+	sprites->Add(ID_SPRITE_MARIO_SMALL_KICK_RIGHT + 1, 424, 79, 424 + 17, 79 + 17, texMario);
+
 	sprites->Add(ID_SPRITE_MARIO_SMALL_JUMP_WALK_LEFT + 1, 35, 80, 35 + 15, 80 + 15, texMario);
 	sprites->Add(ID_SPRITE_MARIO_SMALL_JUMP_WALK_RIGHT + 1, 395, 80, 395 + 15, 80 + 15, texMario);
 
@@ -205,11 +208,11 @@ void LoadAssetsMario()
 	ani->Add(ID_SPRITE_MARIO_BIG_JUMP_RUN_RIGHT + 1);
 	animations->Add(ID_ANI_MARIO_JUMP_RUN_RIGHT, ani);
 
-	ani = new CAnimation(1000);
+	ani = new CAnimation(100);
 	ani->Add(ID_SPRITE_MARIO_BIG_KICK_RIGHT + 1);
 	animations->Add(ID_ANI_MARIO_KICKING_RIGHT, ani);
 
-	ani = new CAnimation(1000);
+	ani = new CAnimation(100);
 	ani->Add(ID_SPRITE_MARIO_BIG_KICK_LEFT + 1);
 	animations->Add(ID_ANI_MARIO_KICKING_LEFT, ani);
 
@@ -295,6 +298,14 @@ void LoadAssetsMario()
 	ani = new CAnimation(100);
 	ani->Add(ID_SPRITE_MARIO_SMALL_JUMP_RUN_RIGHT + 1);
 	animations->Add(ID_ANI_MARIO_SMALL_JUMP_RUN_RIGHT, ani);
+
+	ani = new CAnimation(100);
+	ani->Add(ID_SPRITE_MARIO_SMALL_KICK_LEFT + 1);
+	animations->Add(ID_ANI_MARIO_SMALL_KICKING_LEFT, ani);
+
+	ani = new CAnimation(100);
+	ani->Add(ID_SPRITE_MARIO_SMALL_KICK_RIGHT + 1);
+	animations->Add(ID_ANI_MARIO_SMALL_KICKING_RIGHT, ani);
 }
 
 void LoadAssetsGoomba()
@@ -348,6 +359,8 @@ void LoadAssetsKoopa()
 	sprites->Add(ID_SPRITE_KOOPA_REBORN + 1, 49, 138, 49 + 17, 138 + 16, texEnemy);
 	sprites->Add(ID_SPRITE_KOOPA_REBORN + 1, 49, 138, 49 + 17, 138 + 16, texEnemy);
 
+	sprites->Add(ID_SPRITE_KOOPA_DIE + 1, 210, 348, 210 + 17, 348 + 16, texEnemy);
+
 
 	LPANIMATION ani = new CAnimation(100);
 	ani->Add(ID_SPRITE_KOOPA_WALK_LEFT + 1);
@@ -369,6 +382,10 @@ void LoadAssetsKoopa()
 	ani->Add(ID_SPRITE_KOOPA_SLIP + 3);
 	ani->Add(ID_SPRITE_KOOPA_SLIP + 4);
 	animations->Add(ID_ANI_KOOPA_SLIPPING, ani);
+
+	ani = new CAnimation(100);
+	ani->Add(ID_SPRITE_KOOPA_DIE + 1);
+	animations->Add(ID_ANI_KOOPA_DIE, ani);
 
 }
 void LoadAssetsBrick()
@@ -517,13 +534,13 @@ void Reload()
 	mario = new CMario(MARIO_START_X, MARIO_START_Y);
 	objects.push_back(mario);
 
-	for (int j = 0; j < 4; j++)
+	for (int j = 0; j < 1; j++)
 	{
 		CGoomba* goomba = new CGoomba(GOOMBA_X + j * 60, GROUND_Y - 120.0f);
 		objects.push_back(goomba);
 	}
 
-	for (int j = 0; j < 1; j++)
+	for (int j = 0; j < 2; j++)
 	{
 		CKoopa* koopa = new CKoopa(KOOPA_X + j * 60, GROUND_Y - 120.0f);
 		objects.push_back(koopa);

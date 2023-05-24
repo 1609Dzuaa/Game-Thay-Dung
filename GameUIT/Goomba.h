@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "GameObject.h"
 
 #define GOOMBA_GRAVITY 0.002f
@@ -9,7 +9,7 @@
 #define GOOMBA_BBOX_HEIGHT 14
 #define GOOMBA_BBOX_HEIGHT_DIE 7
 
-#define GOOMBA_DIE_TIMEOUT 500
+#define GOOMBA_DIE_TIMEOUT 650
 
 #define GOOMBA_STATE_WALKING 100
 #define GOOMBA_STATE_DIE 200
@@ -26,12 +26,18 @@ protected:
 	float ay;
 
 	ULONGLONG die_start;
+	ULONGLONG die_reverse_start;
 
 	virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom);
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
 	virtual void Render();
 
-	virtual int IsCollidable() { return 1; };
+    int IsCollidable() 
+	{ 
+		return (state != GOOMBA_STATE_DIE &&
+			state != GOOMBA_STATE_DIE_REVERSE); 
+		//Nó phải khác cả 2 trạng thái chết bình thường và chết NGƯỢC thì mới đúng
+	};
 	virtual int IsBlocking() { return 0; }
 	virtual void OnNoCollision(DWORD dt);
 

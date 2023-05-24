@@ -88,6 +88,8 @@
 #define ID_ANI_MARIO_SMALL_JUMP_RUN_RIGHT 1600
 #define ID_ANI_MARIO_SMALL_JUMP_RUN_LEFT 1601
 
+//#define ID_ANI_MARIO_SMALL_KICKING_LEFT 1700
+//#define ID_ANI_MARIO_SMALL_KICKING_RIGHT 1701
 
 #pragma endregion
 
@@ -163,6 +165,8 @@ public:
 	}
 
 	int IsBlocking() { return (state != MARIO_STATE_DIE && untouchable == 0); }
+	//Để ý ở đây Mario có thuộc tính blocking => đôi lúc nó sẽ khiến các quái vật khác đổi hướng khi va chạm với nó
+	//Khi nó ở trạng thái vô địch(untouchable) và CHƯA CHẾT
 
 	void OnNoCollision(DWORD dt);
 	void OnCollisionWith(LPCOLLISIONEVENT e);

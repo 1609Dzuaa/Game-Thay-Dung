@@ -6,6 +6,7 @@ CGoomba::CGoomba(float x, float y) :CGameObject(x, y)
 	this->ax = 0;
 	this->ay = GOOMBA_GRAVITY;
 	die_start = -1;
+	die_reverse_start = -1;
 	SetState(GOOMBA_STATE_WALKING);
 }
 
@@ -38,10 +39,11 @@ void CGoomba::OnNoCollision(DWORD dt)
 void CGoomba::OnCollisionWith(LPCOLLISIONEVENT e)
 {
 	//Xét va chạm giữa Goomba và VẬT KHÁC
-	if (!e->obj->IsBlocking()) return; //Nếu nó không có thuộc tính block thì kết thúc hàm này
+
+	if (!e->obj->IsBlocking()) return; //Nếu nó không có thuộc tính block thì kết thúc hàm này (On no collision inside here)
 	if (dynamic_cast<CGoomba*>(e->obj)) return; //Nếu VẬT KHÁC LÀ Goomba thì cũng bỏ qua hàm này 
 
-	//Xét gạch
+	//Xét vật có thuộc tính BLOCK
 	if (e->ny != 0)
 	{
 		vy = 0;
@@ -64,9 +66,17 @@ void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		isDeleted = true;
 		return;
 	}
+	else if ((state == GOOMBA_STATE_DIE_REVERSE) && (GetTickCount64() - die_reverse_start > GOOMBA_DIE_TIMEOUT))
+	{
+		isDeleted = true;
+		return;
+	}
 
 	CGameObject::Update(dt, coObjects);
 	CCollision::GetInstance()->Process(this, dt, coObjects);
+
+	//DebugOutTitle(L"GOOMBA STATE: %d", state);
+
 }
 
 
@@ -80,11 +90,14 @@ void CGoomba::Render()
 
 	CAnimations::GetInstance()->Get(aniId)->Render(x, y);
 	RenderBoundingBox();
+	//DebugOutTitle(L"Value vy: %f", vy);
 }
 
 void CGoomba::SetState(int state)
 {
 	CGameObject::SetState(state);
+	//if (state == GOOMBA_STATE_DIE || GOOMBA_STATE_DIE_REVERSE)
+		//return;
 	switch (state)
 	{
 	case GOOMBA_STATE_DIE:
@@ -94,10 +107,16 @@ void CGoomba::SetState(int state)
 		vy = 0;
 		ay = 0;
 		break;
+
 	case GOOMBA_STATE_DIE_REVERSE:
-		ax = 0;
-		vy = -0.4f;
+		die_reverse_start = GetTickCount64();
+		if (this->nx > 0)
+			vx = -vx * 1.15;
+		else
+			vx = vx * 1.15;
+		vy = -0.5f;
 		break;
+
 	case GOOMBA_STATE_WALKING:
 		vx = -GOOMBA_WALKING_SPEED;
 		break;

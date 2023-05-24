@@ -14,6 +14,7 @@
 #define KOOPA_STATE_WALKING 1000
 #define KOOPA_STATE_SLEEP 2000
 #define KOOPA_STATE_SLIP 2050
+#define KOOPA_STATE_SLIP_RELEASE 2060
 #define KOOPA_STATE_DIE 2100
 #define KOOPA_STATE_REBORN 2200
 
@@ -32,12 +33,18 @@ protected:
 	float ay;
 
 	ULONGLONG die_start;
+	BOOLEAN isSlipping;
+	BOOLEAN isOnPlatform;
 
 	virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom);
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
 	virtual void Render();
 
-	virtual int IsCollidable() { return 1; };
+	virtual int IsCollidable() 
+	{ 
+		return state != KOOPA_STATE_DIE;
+	};
+
 	virtual int IsBlocking() { return 0; }
 	virtual void OnNoCollision(DWORD dt);
 
@@ -48,4 +55,7 @@ protected:
 public:
 	CKoopa(float x, float y);
 	virtual void SetState(int state);
+
+	bool GetisOnPlatform() { return isOnPlatform; }
+	void SetisOnPlatform(bool para) { this->isOnPlatform = para; }
 };

@@ -24,6 +24,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		untouchable_start = 0;
 		untouchable = 0;
 	}
+	//Maybe use a function and call it here
 
 	if (isKicking && GetTickCount64() - kick_start >= MARIO_KICK_TIME)
 	{
@@ -34,12 +35,14 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	isOnPlatform = false;
 
 	CCollision::GetInstance()->Process(this, dt, coObjects);
+	DebugOutTitle(L"MARIO STATE: %d", state);
 }
 
 void CMario::OnNoCollision(DWORD dt)
 {
-	x += vx * dt; //x = x0 + vx * t
+	x += vx * dt; //x = x0 + vx * dt
 	y += vy * dt; //y = y0 + vy * dt
+
 }
 
 void CMario::OnCollisionWith(LPCOLLISIONEVENT e)
@@ -50,6 +53,7 @@ void CMario::OnCollisionWith(LPCOLLISIONEVENT e)
 		if (e->ny < 0)
 		{
 			isOnPlatform = true;
+			//if i comment the line above, Mario can't jump
 		}
 	}
 	else if (e->nx != 0 && e->obj->IsBlocking())
@@ -63,6 +67,7 @@ void CMario::OnCollisionWith(LPCOLLISIONEVENT e)
 		OnCollisionWithKoopa(e);
 	else if (dynamic_cast<CCoin*>(e->obj))
 		OnCollisionWithCoin(e);
+
 }
 
 void CMario::OnCollisionWithGoomba(LPCOLLISIONEVENT e)
@@ -109,7 +114,6 @@ void CMario::OnCollisionWithCoin(LPCOLLISIONEVENT e)
 void CMario::OnCollisionWithKoopa(LPCOLLISIONEVENT e)
 {
 	CKoopa* koopa = dynamic_cast<CKoopa*>(e->obj);
-	//Ta sẽ cast thuộc tính obj của e thành con trỏ koopa
 	//Nhảy lên Koopa thì sẽ đưa Koopa về trạng thái ngủ đông
 	if (e->ny < 0) //Hướng TRÊN (UP)
 	{
@@ -117,23 +121,36 @@ void CMario::OnCollisionWithKoopa(LPCOLLISIONEVENT e)
 		{
 			if (koopa->GetState() != KOOPA_STATE_SLEEP)
 			{
-				koopa->SetState(KOOPA_STATE_SLEEP);
-				vy = -MARIO_JUMP_DEFLECT_SPEED;
-				//Nếu Koopa đang trạng thái bình thường hoặc trượt thì cho nó ngủ
-			}
-			else
-			{
-				//Dựa vào hướng của Mario để quyết định dấu vận tốc của Koopa
-				if (this->nx > 0) 
+				if (koopa->GetState() != KOOPA_STATE_SLIP)
 				{
-					koopa->SetState(KOOPA_STATE_SLIP);
+					koopa->SetState(KOOPA_STATE_SLEEP);
+					//koopa->SetisOnPlatform(true);
 					vy = -MARIO_JUMP_DEFLECT_SPEED;
-					koopa->SetSpeed(abs(KOOPA_WALKING_SPEED * 4), 0);
+					//Trạng thái BÌNH THƯỜNG
+					//Hãy làm sao để lúc nó ngủ nó vẫn đang ở trạng thái va chạm(OCW)
 				}
 				else
 				{
+					koopa->SetState(KOOPA_STATE_SLIP_RELEASE); //dừng TRƯỢT
+					//Trạng thái TRƯỢT
+				}
+			}
+			else //ĐANG NGỦ
+			{
+				//Dựa vào hướng của Mario để quyết định dấu vận tốc của Koopa
+				if (this->nx > 0)
+				{
 					koopa->SetState(KOOPA_STATE_SLIP);
-					vy = -MARIO_JUMP_DEFLECT_SPEED;
+					koopa->SetSpeed(abs(KOOPA_WALKING_SPEED * 4), 0);
+				}
+				else if (this->nx < 0)
+				{
+					koopa->SetState(KOOPA_STATE_SLIP);
+					koopa->SetSpeed(-KOOPA_WALKING_SPEED * 4, 0);
+				}
+				else 
+				{
+					koopa->SetState(KOOPA_STATE_SLIP);
 					koopa->SetSpeed(-KOOPA_WALKING_SPEED * 4, 0);
 				}
 			}
@@ -145,7 +162,19 @@ void CMario::OnCollisionWithKoopa(LPCOLLISIONEVENT e)
 		{
 			if (koopa->GetState() != KOOPA_STATE_DIE)
 			{
-				if (koopa->GetState() == KOOPA_STATE_SLEEP)
+				if (koopa->GetState() != KOOPA_STATE_SLEEP)
+				{
+					if (level > MARIO_LEVEL_SMALL)
+					{
+						level = MARIO_LEVEL_SMALL;
+						StartUntouchable();
+					}
+					else
+					{
+						SetState(MARIO_STATE_DIE);
+					}
+				}
+				else
 				{
 					if (e->nx == -1 && this->level > MARIO_LEVEL_SMALL)
 					{
@@ -159,17 +188,11 @@ void CMario::OnCollisionWithKoopa(LPCOLLISIONEVENT e)
 						koopa->SetState(KOOPA_STATE_SLIP);
 						koopa->SetSpeed(-KOOPA_WALKING_SPEED * 4, 0);
 					}
-				}
-				else
-				{
-					if (level > MARIO_LEVEL_SMALL)
+					else if (e->nx == -1 && this->level == MARIO_LEVEL_SMALL)
 					{
-						level = MARIO_LEVEL_SMALL;
-						StartUntouchable();
-					}
-					else
-					{
-						SetState(MARIO_STATE_DIE);
+						this->SetState(MARIO_STATE_KICKING_RIGHT);
+						koopa->SetState(KOOPA_STATE_SLIP);
+						koopa->SetSpeed(abs(KOOPA_WALKING_SPEED * 4), 0);
 					}
 				}
 			}
@@ -200,30 +223,39 @@ int CMario::GetAniIdSmall()
 				aniId = ID_ANI_MARIO_SMALL_JUMP_WALK_LEFT;
 		}
 	}
-		else 
-			if (vx == 0)
-			{
-				if (nx > 0) aniId = ID_ANI_MARIO_SMALL_IDLE_RIGHT;
-				else aniId = ID_ANI_MARIO_SMALL_IDLE_LEFT;
-			}
-			else if (vx > 0)
-			{
-				if (ax < 0)
-					aniId = ID_ANI_MARIO_SMALL_BRACE_RIGHT;
-				else if (ax == MARIO_ACCEL_RUN_X)
-					aniId = ID_ANI_MARIO_SMALL_RUNNING_RIGHT;
-				else if (ax == MARIO_ACCEL_WALK_X)
-					aniId = ID_ANI_MARIO_SMALL_WALKING_RIGHT;
-			}
-			else // vx < 0
-			{
-				if (ax > 0)
-					aniId = ID_ANI_MARIO_SMALL_BRACE_LEFT;
-				else if (ax == -MARIO_ACCEL_RUN_X)
-					aniId = ID_ANI_MARIO_SMALL_RUNNING_LEFT;
-				else if (ax == -MARIO_ACCEL_WALK_X)
-					aniId = ID_ANI_MARIO_SMALL_WALKING_LEFT;
-			}
+	else 
+	{
+		if (isKicking)
+		{
+			if (nx > 0)
+				aniId = ID_ANI_MARIO_SMALL_KICKING_RIGHT;
+			else
+				aniId = ID_ANI_MARIO_SMALL_KICKING_LEFT;
+		}
+		if (vx == 0)
+		{
+			if (nx > 0) aniId = ID_ANI_MARIO_SMALL_IDLE_RIGHT;
+			else aniId = ID_ANI_MARIO_SMALL_IDLE_LEFT;
+		}
+		else if (vx > 0)
+		{
+			if (ax < 0)
+				aniId = ID_ANI_MARIO_SMALL_BRACE_RIGHT;
+			else if (ax == MARIO_ACCEL_RUN_X)
+				aniId = ID_ANI_MARIO_SMALL_RUNNING_RIGHT;
+			else if (ax == MARIO_ACCEL_WALK_X)
+				aniId = ID_ANI_MARIO_SMALL_WALKING_RIGHT;
+		}
+		else // vx < 0
+		{
+			if (ax > 0)
+				aniId = ID_ANI_MARIO_SMALL_BRACE_LEFT;
+			else if (ax == -MARIO_ACCEL_RUN_X)
+				aniId = ID_ANI_MARIO_SMALL_RUNNING_LEFT;
+			else if (ax == -MARIO_ACCEL_WALK_X)
+				aniId = ID_ANI_MARIO_SMALL_WALKING_LEFT;
+		}
+	}
 
 	if (aniId == -1) aniId = ID_ANI_MARIO_SMALL_IDLE_RIGHT;
 
@@ -318,7 +350,7 @@ void CMario::Render()
 
 	RenderBoundingBox();
 
-	//DebugOutTitle(L"Coins: %f", y);
+	//DebugOutTitle(L"Coins: %f", vy);
 }
 
 void CMario::SetState(int state)
@@ -378,7 +410,7 @@ void CMario::SetState(int state)
 
 	case MARIO_STATE_JUMP:
 		if (isSitting) break;
-		if (isOnPlatform)
+		if (isOnPlatform) 
 		{
 			if (abs(this->vx) == MARIO_RUNNING_SPEED)
 				vy = -MARIO_JUMP_RUN_SPEED_Y;
@@ -416,7 +448,7 @@ void CMario::SetState(int state)
 		break;
 
 	case MARIO_STATE_DIE:
-		vy = -MARIO_JUMP_DEFLECT_SPEED * 1.75;
+		vy = -MARIO_JUMP_DEFLECT_SPEED * 1.5;
 		vx = 0;
 		ax = 0;
 		break;

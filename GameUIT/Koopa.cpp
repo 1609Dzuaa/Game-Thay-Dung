@@ -5,9 +5,11 @@
 
 CKoopa::CKoopa(float x, float y) :CGameObject(x, y)
 {
-	this->ax = 0;
+	this->ax = 0; //Chuyển động đều 
 	this->ay = KOOPA_GRAVITY;
 	die_start = -1;
+	isSlipping = false;
+	isOnPlatform = false;
 	SetState(KOOPA_STATE_WALKING);
 }
 
@@ -31,8 +33,28 @@ void CKoopa::GetBoundingBox(float& left, float& top, float& right, float& bottom
 
 void CKoopa::OnNoCollision(DWORD dt)
 {
-	x += vx * dt;
-	y += vy * dt;
+	//Koopa có 4 trạng thái: BÌNH THƯỜNG, NGỦ, TRƯỢT, CHẾT
+	/*if (this->GetState() != KOOPA_STATE_SLEEP || this->GetState() == KOOPA_STATE_SLIP)
+	{
+		x += vx * dt;
+		y += vy * dt;
+	}
+	else //Ngủ, Chết
+	{
+		
+	}*/
+	if (isOnPlatform)
+	{
+		x += vx * dt;
+	}
+	else 
+	{
+		x += vx * dt;
+		y += vy * dt;
+	}
+
+	//DebugOutTitle(L"KOOPA 0 VA CHAM: %d\n", isOnPlatform);
+	//Hãy làm sao để mà khi con Koopa nó ngủ thì vẫn hiện On Collision With
 };
 
 void CKoopa::OnCollisionWith(LPCOLLISIONEVENT e)
@@ -40,37 +62,45 @@ void CKoopa::OnCollisionWith(LPCOLLISIONEVENT e)
 	//Koopa chết:
 	//1.Rơi vào chế độ ngủ đông và bị Mario quăng đập vào enemy khác
 	//2.Va chạm với Koopa mà bị Mario quăng
+	
+
 	if (dynamic_cast<CGoomba*>(e->obj) && this->state == KOOPA_STATE_SLIP)
 		this->OnCollisionWithGoomba(e);
-	//if (dynamic_cast<CKoopa*>(e->obj))
-		//this->OnCollisionWithKoopa(e); //Hãy kiểm tra Koopa chạm Koopa
+	if (dynamic_cast<CKoopa*>(e->obj) && this->state == KOOPA_STATE_SLIP)
+		this->OnCollisionWithKoopa(e);
 	if (!e->obj->IsBlocking()) return;
 
 
-	if (e->ny != 0) //Nếu object có thuộc tính block
+	if (e->ny < 0) //Nếu object có thuộc tính block
 	{
 		vy = 0;
+		isOnPlatform = true;
 	}
 	else if (e->nx != 0)
 	{
 		vx = -vx;
 	}
+	//DebugOutTitle(L"KOOPA VA CHAM: %f\n", ay);
 }
 
 void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
+
 	vy += ay * dt;
 	vx += ax * dt;
 
-	if ((state == KOOPA_STATE_DIE) && (GetTickCount64() - die_start > KOOPA_DIE_TIMEOUT))
+	/*if ((state == KOOPA_STATE_DIE) && (GetTickCount64() - die_start > KOOPA_DIE_TIMEOUT))
 	{
 		isDeleted = true;
 		return;
-	}
+	}*/
+	isOnPlatform = false;
 
 	CGameObject::Update(dt, coObjects);
 	CCollision::GetInstance()->Process(this, dt, coObjects);
-	DebugOutTitle(L"Koopa acceleration x: %f", this->ax);
+	//Gọi liên tục
+
+	//DebugOutTitle(L"KOOPA STATE: %d", state);
 }
 
 
@@ -105,21 +135,34 @@ void CKoopa::SetState(int state)
 	{
 	case KOOPA_STATE_SLEEP:
 		vx = 0;
-		vy = 0;
-		//y = y + 2.50f;
+		isOnPlatform = true;
+		isSlipping = false;
+
 		break;
-	/*case KOOPA_STATE_DIE:
+
+	case KOOPA_STATE_DIE:
 		die_start = GetTickCount64();
-		y += (KOOPA_BBOX_HEIGHT - KOOPA_BBOX_HEIGHT_DIE) / 2;
-		vx = 0;
-		vy = 0;
-		ay = 0;
-		break;*/
-	case KOOPA_STATE_SLIP:
-		//vx = KOOPA_WALKING_SPEED * 4;
-		//ay = KOOPA_GRAVITY;
-		//ax = 0.00005f;
+		if (this->nx > 0)
+			vx = -vx * 1.15;
+		else
+			vx = vx * 1.15;
+		vy = -0.5f;
 		break;
+
+	case KOOPA_STATE_SLIP:
+		//vy = 0;
+		ay = KOOPA_GRAVITY;
+		isSlipping = true;
+		break;
+
+	case KOOPA_STATE_SLIP_RELEASE:
+		if (isSlipping)
+		{
+			isSlipping = false;
+			state = KOOPA_STATE_SLEEP;
+		}
+		break;
+
 	case KOOPA_STATE_WALKING:
 		vx = -KOOPA_WALKING_SPEED;
 		break;
@@ -128,18 +171,14 @@ void CKoopa::SetState(int state)
 
 void CKoopa::OnCollisionWithGoomba(LPCOLLISIONEVENT e)
 {
-	float goombaVx = 0, goombaVy = 0;
 	CGoomba* goomba = dynamic_cast<CGoomba*>(e->obj);
-	goomba->GetSpeed(goombaVx, goombaVy);
-	goomba->SetState(GOOMBA_STATE_DIE_REVERSE);
-	//if (e->nx > 0)
-		//goomba->SetSpeed(-goombaVx, goombaVy);
-	//else if (e->ny > 0)
-		//goomba->SetSpeed(goombaVx, -goombaVy);
+	if (goomba->GetState() != GOOMBA_STATE_DIE_REVERSE)
+		goomba->SetState(GOOMBA_STATE_DIE_REVERSE);
 }
 
 void CKoopa::OnCollisionWithKoopa(LPCOLLISIONEVENT e)
 {
 	CKoopa* koopa = dynamic_cast<CKoopa*>(e->obj);
-	koopa->SetState(KOOPA_STATE_DIE);
+	if (koopa->GetState() != KOOPA_STATE_DIE)
+		koopa->SetState(KOOPA_STATE_DIE);
 }

@@ -1,4 +1,4 @@
-#include "Collision.h"
+﻿#include "Collision.h"
 #include "GameObject.h"
 
 #include "debug.h"
@@ -55,6 +55,7 @@ void CCollision::SweptAABB(
 	{
 		dx_entry = sr - ml;
 		dx_exit = sl - mr;
+		//Negative here
 	}
 
 
@@ -169,6 +170,8 @@ void CCollision::Scan(LPGAMEOBJECT objSrc, DWORD dt, vector<LPGAMEOBJECT>* objDe
 			coEvents.push_back(e);
 		else
 			delete e;
+		//Nếu có va chạm giữa vật nguồn và 1 trong các vật trong vector chứa nó thì đẩy cái event này vào vector 
+		//Còn không có va chạm thì xoá sự kiện ấy đi
 	}
 
 	//std::sort(coEvents.begin(), coEvents.end(), CCollisionEvent::compare);
@@ -189,11 +192,12 @@ void CCollision::Filter(LPGAMEOBJECT objSrc,
 	int min_ix = -1;
 	int min_iy = -1;
 
+	//Duyệt từng cái event trong vector coEvents
 	for (UINT i = 0; i < coEvents.size(); i++)
 	{
 		LPCOLLISIONEVENT c = coEvents[i];
-		if (c->isDeleted) continue;
-		if (c->obj->IsDeleted()) continue;
+		if (c->isDeleted) continue; //Nếu event đó đã bị xoá thì bỏ qua xét event tiếp
+		if (c->obj->IsDeleted()) continue; 
 
 		// ignore collision event with object having IsBlocking = 0 (like coin, mushroom, etc)
 		if (filterBlock == 1 && !c->obj->IsBlocking())
@@ -229,14 +233,18 @@ void CCollision::Process(LPGAMEOBJECT objSrc, DWORD dt, vector<LPGAMEOBJECT>* co
 	if (objSrc->IsCollidable())
 	{
 		Scan(objSrc, dt, coObjects, coEvents);
+		//Scan xem có va chạm giữa vật nguồn và VẬT KHÁC hay không
+		//Có thì thêm event đó vào vector coEvents không thì xoá event đó
 	}
 
-	// No collision detected
+	// No collision detected(no event was added into vector)
 	if (coEvents.size() == 0)
 	{
 		objSrc->OnNoCollision(dt);
+		//Lúc con Koopa ở trạng thái ngủ thì nó vào khối lệnh trong điều kiện này
+		//=> Vấn đề ở hàm Scan không quét được va chạm
 	}
-	else
+	else //There is collision
 	{
 		Filter(objSrc, coEvents, colX, colY);
 
@@ -335,7 +343,8 @@ void CCollision::Process(LPGAMEOBJECT objSrc, DWORD dt, vector<LPGAMEOBJECT>* co
 					y += dy;
 				}
 
-		objSrc->SetPosition(x, y);
+		objSrc->SetPosition(x, y); //Set Pos x, y mà ở ngoài hàm OnNoCollision
+	
 	}
 
 	//
