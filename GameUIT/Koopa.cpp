@@ -8,19 +8,19 @@ CKoopa::CKoopa(float x, float y) :CGameObject(x, y)
 	this->ax = 0; //Chuyển động đều 
 	this->ay = KOOPA_GRAVITY;
 	die_start = -1;
-	isSlipping = false;
 	isOnPlatform = false;
+	isStepOn = false;
 	SetState(KOOPA_STATE_WALKING);
 }
 
 void CKoopa::GetBoundingBox(float& left, float& top, float& right, float& bottom)
 {
-	if (state == KOOPA_STATE_DIE)
+	if (state == KOOPA_STATE_SLEEP || state == KOOPA_STATE_DIE || state == KOOPA_STATE_SLIP)
 	{
 		left = x - KOOPA_BBOX_WIDTH / 2;
-		top = y - KOOPA_BBOX_HEIGHT_DIE / 2;
+		top = y - KOOPA_BBOX_IN_SHELL_HEIGHT;
 		right = left + KOOPA_BBOX_WIDTH;
-		bottom = top + KOOPA_BBOX_HEIGHT_DIE;
+		bottom = top + KOOPA_BBOX_IN_SHELL_HEIGHT;
 	}
 	else
 	{
@@ -33,27 +33,17 @@ void CKoopa::GetBoundingBox(float& left, float& top, float& right, float& bottom
 
 void CKoopa::OnNoCollision(DWORD dt)
 {
-	//Koopa có 4 trạng thái: BÌNH THƯỜNG, NGỦ, TRƯỢT, CHẾT
-	/*if (this->GetState() != KOOPA_STATE_SLEEP || this->GetState() == KOOPA_STATE_SLIP)
+	if (!isOnPlatform)
 	{
 		x += vx * dt;
 		y += vy * dt;
-	}
-	else //Ngủ, Chết
-	{
-		
-	}*/
-	if (isOnPlatform)
-	{
-		x += vx * dt;
 	}
 	else 
 	{
 		x += vx * dt;
-		y += vy * dt;
 	}
 
-	//DebugOutTitle(L"KOOPA 0 VA CHAM: %d\n", isOnPlatform);
+	DebugOut(L"KOOPA KHONG VA CHAM: %d\n", isOnPlatform);
 	//Hãy làm sao để mà khi con Koopa nó ngủ thì vẫn hiện On Collision With
 };
 
@@ -80,27 +70,36 @@ void CKoopa::OnCollisionWith(LPCOLLISIONEVENT e)
 	{
 		vx = -vx;
 	}
-	//DebugOutTitle(L"KOOPA VA CHAM: %f\n", ay);
+	DebugOutTitle(L"KOOPA VA CHAM: %f\n", ay);
 }
 
 void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
+	if (!isStepOn)
+	{
+		vy += ay * dt;
+		vx += ax * dt;
+	}
+	else
+	{
+		vy -= KOOPA_STEP_ON_GRAVITY * dt;
+		vx += ax * dt;
+	}
 
-	vy += ay * dt;
-	vx += ax * dt;
-
-	/*if ((state == KOOPA_STATE_DIE) && (GetTickCount64() - die_start > KOOPA_DIE_TIMEOUT))
+	if ((state == KOOPA_STATE_DIE) && (GetTickCount64() - die_start > KOOPA_DIE_TIMEOUT))
 	{
 		isDeleted = true;
 		return;
-	}*/
+	}
+
 	isOnPlatform = false;
+	isStepOn = false;
 
 	CGameObject::Update(dt, coObjects);
 	CCollision::GetInstance()->Process(this, dt, coObjects);
 	//Gọi liên tục
 
-	//DebugOutTitle(L"KOOPA STATE: %d", state);
+	//DebugOutTitle(L"KOOPA: %f, %f", vy, ay);
 }
 
 
@@ -135,9 +134,8 @@ void CKoopa::SetState(int state)
 	{
 	case KOOPA_STATE_SLEEP:
 		vx = 0;
+		isStepOn = true;
 		isOnPlatform = true;
-		isSlipping = false;
-
 		break;
 
 	case KOOPA_STATE_DIE:
@@ -150,17 +148,8 @@ void CKoopa::SetState(int state)
 		break;
 
 	case KOOPA_STATE_SLIP:
-		//vy = 0;
+		isStepOn = true;
 		ay = KOOPA_GRAVITY;
-		isSlipping = true;
-		break;
-
-	case KOOPA_STATE_SLIP_RELEASE:
-		if (isSlipping)
-		{
-			isSlipping = false;
-			state = KOOPA_STATE_SLEEP;
-		}
 		break;
 
 	case KOOPA_STATE_WALKING:

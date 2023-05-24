@@ -2,19 +2,19 @@
 #include "GameObject.h"
 
 #define KOOPA_GRAVITY 0.002f
+#define KOOPA_STEP_ON_GRAVITY 0.001f
 #define KOOPA_WALKING_SPEED 0.05f
 
 
-#define KOOPA_BBOX_WIDTH 20
-#define KOOPA_BBOX_HEIGHT 18
-#define KOOPA_BBOX_HEIGHT_DIE 10
+#define KOOPA_BBOX_WIDTH 17
+#define KOOPA_BBOX_HEIGHT 26
+#define KOOPA_BBOX_IN_SHELL_HEIGHT 15
 
 #define KOOPA_DIE_TIMEOUT 500
 
 #define KOOPA_STATE_WALKING 1000
 #define KOOPA_STATE_SLEEP 2000
 #define KOOPA_STATE_SLIP 2050
-#define KOOPA_STATE_SLIP_RELEASE 2060
 #define KOOPA_STATE_DIE 2100
 #define KOOPA_STATE_REBORN 2200
 
@@ -33,8 +33,8 @@ protected:
 	float ay;
 
 	ULONGLONG die_start;
-	BOOLEAN isSlipping;
 	BOOLEAN isOnPlatform;
+	BOOLEAN isStepOn;
 
 	virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom);
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
@@ -56,6 +56,4 @@ public:
 	CKoopa(float x, float y);
 	virtual void SetState(int state);
 
-	bool GetisOnPlatform() { return isOnPlatform; }
-	void SetisOnPlatform(bool para) { this->isOnPlatform = para; }
 };

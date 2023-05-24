@@ -209,6 +209,7 @@ void CCollision::Filter(LPGAMEOBJECT objSrc,
 			min_tx = c->t; min_ix = i;
 		}
 
+		//Rùa va chạm TRÊN cục mây
 		if (c->t < min_ty && c->ny != 0 && filterY == 1) {
 			min_ty = c->t; min_iy = i;
 		}
@@ -242,7 +243,6 @@ void CCollision::Process(LPGAMEOBJECT objSrc, DWORD dt, vector<LPGAMEOBJECT>* co
 	{
 		objSrc->OnNoCollision(dt);
 		//Lúc con Koopa ở trạng thái ngủ thì nó vào khối lệnh trong điều kiện này
-		//=> Vấn đề ở hàm Scan không quét được va chạm
 	}
 	else //There is collision
 	{
@@ -333,8 +333,20 @@ void CCollision::Process(LPGAMEOBJECT objSrc, DWORD dt, vector<LPGAMEOBJECT>* co
 			else
 				if (colY != NULL)
 				{
-					x += dx;
-					y += colY->t * dy + colY->ny * BLOCK_PUSH_FACTOR;
+					//maybe check here ?
+					float objX, objY;
+					colY->obj->GetPosition(objX, objY);
+					if (y >= objY)
+					{
+						x += dx;
+					}
+					else 
+					{
+						x += dx;
+						y += colY->t * dy + colY->ny * BLOCK_PUSH_FACTOR; //65->78
+					}
+					/*x += dx;
+					y += colY->t * dy + colY->ny * BLOCK_PUSH_FACTOR; //65->78*/
 					objSrc->OnCollisionWith(colY);
 				}
 				else // both colX & colY are NULL 

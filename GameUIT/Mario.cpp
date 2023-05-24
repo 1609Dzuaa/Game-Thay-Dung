@@ -35,14 +35,12 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	isOnPlatform = false;
 
 	CCollision::GetInstance()->Process(this, dt, coObjects);
-	DebugOutTitle(L"MARIO STATE: %d", state);
 }
 
 void CMario::OnNoCollision(DWORD dt)
 {
 	x += vx * dt; //x = x0 + vx * dt
 	y += vy * dt; //y = y0 + vy * dt
-
 }
 
 void CMario::OnCollisionWith(LPCOLLISIONEVENT e)
@@ -114,26 +112,15 @@ void CMario::OnCollisionWithCoin(LPCOLLISIONEVENT e)
 void CMario::OnCollisionWithKoopa(LPCOLLISIONEVENT e)
 {
 	CKoopa* koopa = dynamic_cast<CKoopa*>(e->obj);
-	//Nhảy lên Koopa thì sẽ đưa Koopa về trạng thái ngủ đông
+	//Nhảy lên Koopa thì sẽ đưa Koopa về trạng thái ngủ
 	if (e->ny < 0) //Hướng TRÊN (UP)
 	{
 		if (koopa->GetState() != KOOPA_STATE_DIE)
 		{
 			if (koopa->GetState() != KOOPA_STATE_SLEEP)
 			{
-				if (koopa->GetState() != KOOPA_STATE_SLIP)
-				{
-					koopa->SetState(KOOPA_STATE_SLEEP);
-					//koopa->SetisOnPlatform(true);
-					vy = -MARIO_JUMP_DEFLECT_SPEED;
-					//Trạng thái BÌNH THƯỜNG
-					//Hãy làm sao để lúc nó ngủ nó vẫn đang ở trạng thái va chạm(OCW)
-				}
-				else
-				{
-					koopa->SetState(KOOPA_STATE_SLIP_RELEASE); //dừng TRƯỢT
-					//Trạng thái TRƯỢT
-				}
+				koopa->SetState(KOOPA_STATE_SLEEP);
+				vy = -MARIO_JUMP_DEFLECT_SPEED;
 			}
 			else //ĐANG NGỦ
 			{
@@ -156,7 +143,7 @@ void CMario::OnCollisionWithKoopa(LPCOLLISIONEVENT e)
 			}
 		}
 	}
-	else //Allow ny == 0 here
+	else //Va chạm hướng TRÁI, PHẢI, DƯỚI
 	{
 		if (untouchable == 0) //can be touched
 		{
