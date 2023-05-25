@@ -205,12 +205,14 @@ void CCollision::Filter(LPGAMEOBJECT objSrc,
 			continue;
 		}
 
-		if (c->t < min_tx && c->nx != 0 && filterX == 1) {
+		if (c->t < min_tx && c->nx != 0 && filterX == 1) 
+		{
 			min_tx = c->t; min_ix = i;
 		}
 
 		//Rùa va chạm TRÊN cục mây
-		if (c->t < min_ty && c->ny != 0 && filterY == 1) {
+		if (c->t < min_ty && c->ny != 0 && filterY == 1) 
+		{
 			min_ty = c->t; min_iy = i;
 		}
 	}

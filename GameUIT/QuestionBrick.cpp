@@ -1,4 +1,5 @@
 #include "QuestionBrick.h"
+#include "debug.h"
 
 void CQuestionBrick::Render()
 {
@@ -11,8 +12,17 @@ void CQuestionBrick::Render()
 
 void CQuestionBrick::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
-	CGameObject::Update(dt, coObjects);
-	CCollision::GetInstance()->Process(this, dt, coObjects);
+
+	if (isBouncing)
+	{
+		if (GetTickCount64() - bouncing_start > BOUNCING_TIME)
+		{
+			isBouncing = false;
+			y += BOUNCING_DISTANCE;
+		}
+	}
+
+	CGameObject::Update(dt);
 }
 
 void CQuestionBrick::GetBoundingBox(float& l, float& t, float& r, float& b)
@@ -28,6 +38,9 @@ void CQuestionBrick::SetState(int state)
 	switch (state)
 	{
 	case QBRICK_STATE_HITTED:
+		bouncing_start = GetTickCount64();
+		isBouncing = true;
+		y -= BOUNCING_DISTANCE;
 		break;
 	}
 

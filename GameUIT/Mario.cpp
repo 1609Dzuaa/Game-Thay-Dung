@@ -64,7 +64,7 @@ void CMario::OnCollisionWith(LPCOLLISIONEVENT e)
 		OnCollisionWithGoomba(e);
 	if (dynamic_cast<CKoopa*>(e->obj))
 		OnCollisionWithKoopa(e);
-	if (dynamic_cast<CQuestionBrick*>(e->obj))
+	if (dynamic_cast<CQuestionBrick*>(e->obj) && e->obj->GetState() != QBRICK_STATE_HITTED)
 		OnCollisionWithQuesBrick(e);
 	else if (dynamic_cast<CCoin*>(e->obj))
 		OnCollisionWithCoin(e);
@@ -193,6 +193,7 @@ void CMario::OnCollisionWithKoopa(LPCOLLISIONEVENT e)
 void CMario::OnCollisionWithQuesBrick(LPCOLLISIONEVENT e)
 {
 	CQuestionBrick *qb = dynamic_cast<CQuestionBrick*>(e->obj);
+
 	if (e->ny == 1)
 		qb->SetState(QBRICK_STATE_HITTED);
 	//rơi tiền, nấm ra

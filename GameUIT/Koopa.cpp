@@ -1,6 +1,7 @@
 ﻿#include"Koopa.h"
 #include "Goomba.h"
 #include "Mario.h"
+#include "QuestionBrick.h"
 #include "debug.h"
 
 CKoopa::CKoopa(float x, float y) :CGameObject(x, y)
@@ -58,6 +59,8 @@ void CKoopa::OnCollisionWith(LPCOLLISIONEVENT e)
 		this->OnCollisionWithGoomba(e);
 	if (dynamic_cast<CKoopa*>(e->obj) && this->state == KOOPA_STATE_SLIP)
 		this->OnCollisionWithKoopa(e);
+	if (dynamic_cast<CQuestionBrick*>(e->obj) && this->state == KOOPA_STATE_SLIP && e->obj->GetState() != QBRICK_STATE_HITTED)
+		this->OnCollisionWithQuesBrick(e);
 	if (!e->obj->IsBlocking()) return;
 
 
@@ -99,7 +102,7 @@ void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	CCollision::GetInstance()->Process(this, dt, coObjects);
 	//Gọi liên tục
 
-	DebugOutTitle(L"KOOPA: %f, %f, %f", vx, vy, ay);
+	//DebugOutTitle(L"KOOPA: %f, %f, %f", vx, vy, ay);
 }
 
 
@@ -170,4 +173,11 @@ void CKoopa::OnCollisionWithKoopa(LPCOLLISIONEVENT e)
 	CKoopa* koopa = dynamic_cast<CKoopa*>(e->obj);
 	if (koopa->GetState() != KOOPA_STATE_DIE)
 		koopa->SetState(KOOPA_STATE_DIE);
+}
+
+void CKoopa::OnCollisionWithQuesBrick(LPCOLLISIONEVENT e)
+{
+	CQuestionBrick* qb = dynamic_cast<CQuestionBrick*>(e->obj);
+	if (qb->GetState() != QBRICK_STATE_HITTED)
+		qb->SetState(QBRICK_STATE_HITTED);
 }

@@ -410,7 +410,7 @@ void LoadAssetsBrick()
 	ani->Add(ID_SPRITE_BRICK + 1);
 	animations->Add(ID_ANI_BRICK, ani);
 
-	ani = new CAnimation(100);
+	ani = new CAnimation(150);
 	ani->Add(ID_SPRITE_QBRICK + 1);
 	ani->Add(ID_SPRITE_QBRICK + 2);
 	ani->Add(ID_SPRITE_QBRICK + 3);
@@ -551,7 +551,7 @@ void Reload()
 
 	for (int i = 0; i < 1; i++)
 	{
-		CQuestionBrick* qb = new CQuestionBrick(BRICK_X + 200.0f, 30.0f);
+		CQuestionBrick* qb = new CQuestionBrick(BRICK_X + 200.0f, 165.0f);
 		objects.push_back(qb);
 	}
 
