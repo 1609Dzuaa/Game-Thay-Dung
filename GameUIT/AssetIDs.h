@@ -7,6 +7,7 @@
 #define ID_TEX_MARIO 0
 #define ID_TEX_ENEMY 10
 #define ID_TEX_MISC 20
+#define ID_TEX_MISC_2 30
 
 #pragma region MARIO 
 
@@ -72,6 +73,7 @@
 #pragma endregion 
 
 #define ID_SPRITE_BRICK 20000
+#define ID_SPRITE_QBRICK 20500
 
 #define ID_SPRITE_GOOMBA 30000
 #define ID_SPRITE_GOOMBA_WALK (ID_SPRITE_GOOMBA + 1000)

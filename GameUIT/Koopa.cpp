@@ -70,11 +70,12 @@ void CKoopa::OnCollisionWith(LPCOLLISIONEVENT e)
 	{
 		vx = -vx;
 	}
-	DebugOutTitle(L"KOOPA VA CHAM: %f\n", ay);
+	//DebugOutTitle(L"KOOPA VA CHAM: %f\n", ay);
 }
 
 void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
+
 	if (!isStepOn)
 	{
 		vy += ay * dt;
@@ -82,7 +83,6 @@ void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	}
 	else
 	{
-		vy -= KOOPA_STEP_ON_GRAVITY * dt;
 		vx += ax * dt;
 	}
 
@@ -99,7 +99,7 @@ void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	CCollision::GetInstance()->Process(this, dt, coObjects);
 	//Gọi liên tục
 
-	//DebugOutTitle(L"KOOPA: %f, %f", vy, ay);
+	DebugOutTitle(L"KOOPA: %f, %f, %f", vx, vy, ay);
 }
 
 

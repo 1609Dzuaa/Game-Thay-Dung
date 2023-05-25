@@ -33,6 +33,7 @@
 
 #include "Mario.h"
 #include "Brick.h"
+#include "QuestionBrick.h"
 #include "Goomba.h"
 #include "Koopa.h"
 #include "Coin.h"
@@ -55,6 +56,7 @@
 #define TEXTURES_DIR L"textures"
 #define TEXTURE_PATH_MARIO TEXTURES_DIR "\\mario_transparent.png"
 #define TEXTURE_PATH_MISC TEXTURES_DIR "\\misc_transparent.png"
+#define TEXTURE_PATH_MISC_2 TEXTURES_DIR "\\misc_2.png"
 #define TEXTURE_PATH_ENEMY TEXTURES_DIR "\\enemies_transparent.png"
 #define TEXTURE_PATH_BBOX TEXTURES_DIR "\\bbox.png"
 
@@ -397,9 +399,29 @@ void LoadAssetsBrick()
 	LPTEXTURE texMisc = textures->Get(ID_TEX_MISC);
 	sprites->Add(ID_SPRITE_BRICK + 1, 372, 153, 372 + 15, 153 + 15, texMisc);
 
+
+	texMisc = textures->Get(ID_TEX_MISC_2);
+	sprites->Add(ID_SPRITE_QBRICK + 1, 157, 188, 172, 203, texMisc);
+	sprites->Add(ID_SPRITE_QBRICK + 2, 176, 188, 191, 203, texMisc);
+	sprites->Add(ID_SPRITE_QBRICK + 3, 196, 188, 211, 203, texMisc);
+	sprites->Add(ID_SPRITE_QBRICK + 4, 215, 188, 230, 203, texMisc);
+
 	LPANIMATION ani = new CAnimation(100);
 	ani->Add(ID_SPRITE_BRICK + 1);
 	animations->Add(ID_ANI_BRICK, ani);
+
+	ani = new CAnimation(100);
+	ani->Add(ID_SPRITE_QBRICK + 1);
+	ani->Add(ID_SPRITE_QBRICK + 2);
+	ani->Add(ID_SPRITE_QBRICK + 3);
+	ani->Add(ID_SPRITE_QBRICK + 4);
+	animations->Add(ID_ANI_QUESTION_BRICK, ani);
+
+	//QBrick -> Normal Brick
+	sprites->Add(ID_SPRITE_QBRICK + 5, 235, 188, 250, 203, texMisc);
+	ani = new CAnimation(100);
+	ani->Add(ID_SPRITE_QBRICK + 5);
+	animations->Add(ID_ANI_QUESTION_BRICK_HITTED, ani);
 }
 void LoadAssetsCoin()
 {
@@ -445,6 +467,7 @@ void LoadResources()
 	textures->Add(ID_TEX_MARIO, TEXTURE_PATH_MARIO);
 	textures->Add(ID_TEX_ENEMY, TEXTURE_PATH_ENEMY);
 	textures->Add(ID_TEX_MISC, TEXTURE_PATH_MISC);
+	textures->Add(ID_TEX_MISC_2, TEXTURE_PATH_MISC_2);
 	textures->Add(ID_TEX_BBOX, TEXTURE_PATH_BBOX);
 
 	LoadAssetsMario();
@@ -524,6 +547,12 @@ void Reload()
 	{
 		CBrick* b = new CBrick(BRICK_X + 500.0f, BRICK_Y - i * BRICK_WIDTH);
 		objects.push_back(b);
+	}
+
+	for (int i = 0; i < 1; i++)
+	{
+		CQuestionBrick* qb = new CQuestionBrick(BRICK_X + 200.0f, 30.0f);
+		objects.push_back(qb);
 	}
 
 	// Second cloud platform 

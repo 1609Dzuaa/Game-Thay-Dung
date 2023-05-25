@@ -340,13 +340,12 @@ void CCollision::Process(LPGAMEOBJECT objSrc, DWORD dt, vector<LPGAMEOBJECT>* co
 					{
 						x += dx;
 					}
-					else 
+					else
 					{
 						x += dx;
 						y += colY->t * dy + colY->ny * BLOCK_PUSH_FACTOR; //65->78
 					}
-					/*x += dx;
-					y += colY->t * dy + colY->ny * BLOCK_PUSH_FACTOR; //65->78*/
+
 					objSrc->OnCollisionWith(colY);
 				}
 				else // both colX & colY are NULL 
