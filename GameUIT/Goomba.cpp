@@ -88,7 +88,7 @@ void CGoomba::Render()
 		aniId = ID_ANI_GOOMBA_DIE_REVERSE;
 
 	CAnimations::GetInstance()->Get(aniId)->Render(x, y);
-	RenderBoundingBox();
+	//RenderBoundingBox();
 	//DebugOutTitle(L"Value vy: %f", vy);
 }
 

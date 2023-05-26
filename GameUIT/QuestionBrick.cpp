@@ -1,5 +1,8 @@
 #include "QuestionBrick.h"
+#include "Coin.h"
 #include "debug.h"
+
+extern list<LPGAMEOBJECT> objects;
 
 void CQuestionBrick::Render()
 {
@@ -17,6 +20,14 @@ void CQuestionBrick::OnNoCollision(DWORD dt)
 
 void CQuestionBrick::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
+	HandleBouncingBrick();
+
+	CGameObject::Update(dt,coObjects);
+	CCollision::GetInstance()->Process(this, dt, coObjects);
+}
+
+void CQuestionBrick::HandleBouncingBrick()
+{
 	if (y <= minY)
 	{
 		vy = BOUNCING_SPEED;
@@ -26,9 +37,13 @@ void CQuestionBrick::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		y = currentY;
 		vy = 0;
 	}
+}
 
-	CGameObject::Update(dt,coObjects);
-	CCollision::GetInstance()->Process(this, dt, coObjects);
+void CQuestionBrick::SpawnCoin(float xBrick, float yBrick, float veloY)
+{
+	CCoin* coin = new CCoin(xBrick, yBrick, veloY);
+	coin->SetSpeed(0, -COIN_FLY_SPEED);
+	objects.push_back(coin);
 }
 
 void CQuestionBrick::GetBoundingBox(float& l, float& t, float& r, float& b)
@@ -44,6 +59,7 @@ void CQuestionBrick::SetState(int state)
 	switch (state)
 	{
 	case QBRICK_STATE_HITTED:
+		SpawnCoin(x, y, -COIN_FLY_SPEED);
 		vy = -BOUNCING_SPEED;
 		break;
 	}

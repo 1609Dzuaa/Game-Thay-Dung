@@ -435,7 +435,7 @@ void LoadAssetsCoin()
 	sprites->Add(ID_SPRITE_COIN + 2, 321, 99, 321 + 9, 99 + 15, texMisc);
 	sprites->Add(ID_SPRITE_COIN + 3, 338, 99, 338 + 9, 99 + 15, texMisc);
 
-	LPANIMATION ani = new CAnimation(300);
+	LPANIMATION ani = new CAnimation(150);
 	ani->Add(ID_SPRITE_COIN + 1);
 	ani->Add(ID_SPRITE_COIN + 2);
 	ani->Add(ID_SPRITE_COIN + 3);

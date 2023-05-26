@@ -244,6 +244,7 @@ void CCollision::Process(LPGAMEOBJECT objSrc, DWORD dt, vector<LPGAMEOBJECT>* co
 	if (coEvents.size() == 0)
 	{
 		objSrc->OnNoCollision(dt);
+		//Brick is NO Collidable -> It will come here
 		//Lúc con Koopa ở trạng thái ngủ thì nó vào khối lệnh trong điều kiện này
 	}
 	else //There is collision

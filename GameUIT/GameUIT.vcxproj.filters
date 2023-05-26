@@ -78,6 +78,9 @@
     <ClInclude Include="QuestionBrick.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Mushroom.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -135,6 +138,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="QuestionBrick.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Mushroom.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

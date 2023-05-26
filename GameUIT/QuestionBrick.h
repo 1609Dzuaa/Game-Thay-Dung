@@ -9,7 +9,6 @@
 #define QBRICK_BBOX_WIDTH 16
 #define QBRICK_BBOX_HEIGHT 16
 
-#define QBRICK_STATE_IDLE 0
 #define QBRICK_STATE_HITTED 10
 
 #define BOUNCING_TIME 500
@@ -31,9 +30,13 @@ public:
 
 	void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
 
+	void SpawnCoin(float xBrick, float yBrick, float veloY);
+
 	void GetBoundingBox(float& l, float& t, float& r, float& b);
 
 	void SetState(int state);
 
 	void OnNoCollision(DWORD dt);
+
+	void HandleBouncingBrick();
 };
