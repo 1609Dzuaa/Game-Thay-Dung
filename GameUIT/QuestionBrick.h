@@ -1,4 +1,4 @@
-#include "Animation.h"
+﻿#include "Animation.h"
 #include "Animations.h"
 #include "Brick.h"
 
@@ -14,18 +14,17 @@
 
 #define BOUNCING_TIME 500
 #define BOUNCING_DISTANCE 5.0f
+#define BOUNCING_SPEED 0.2f
 
-class CQuestionBrick :public CGameObject 
+class CQuestionBrick :public CBrick 
 {
-	ULONGLONG bouncing_start;
-	BOOLEAN isBouncing;
-
+	float minY, currentY;
 public:
 
-	CQuestionBrick(float x, float y) : CGameObject(x, y)
+	CQuestionBrick(float x, float y) : CBrick(x, y)
 	{
-		bouncing_start = -1;
-		isBouncing = false;
+		this->currentY = y;
+		this->minY = y - QBRICK_BBOX_HEIGHT; //Càng lên cao y càng giảm
 	}
 
 	void Render();
@@ -33,11 +32,8 @@ public:
 	void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
 
 	void GetBoundingBox(float& l, float& t, float& r, float& b);
-	
-	int IsCollidable()
-	{
-		return (state != QBRICK_STATE_HITTED);
-	}
 
 	void SetState(int state);
+
+	void OnNoCollision(DWORD dt);
 };

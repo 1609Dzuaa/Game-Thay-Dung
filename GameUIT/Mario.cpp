@@ -57,7 +57,7 @@ void CMario::OnCollisionWith(LPCOLLISIONEVENT e)
 	}
 	else if (e->nx != 0 && e->obj->IsBlocking())
 	{
-		vx = 0; //vx = 0 thì sẽ giữ nguyên vật tại vị trí x vì x = x0 + v*t
+		vx = 0; 
 	}
 
 	if (dynamic_cast<CGoomba*>(e->obj))
@@ -74,9 +74,7 @@ void CMario::OnCollisionWith(LPCOLLISIONEVENT e)
 void CMario::OnCollisionWithGoomba(LPCOLLISIONEVENT e)
 {
 	CGoomba* goomba = dynamic_cast<CGoomba*>(e->obj);
-	//e->obj là Goomba còn e là va chạm giữa Mario và Goomba
 
-	// jump on top >> kill Goomba and deflect a bit 
 	if (e->ny < 0)
 	{
 		if (goomba->GetState() != GOOMBA_STATE_DIE)
@@ -196,6 +194,7 @@ void CMario::OnCollisionWithQuesBrick(LPCOLLISIONEVENT e)
 
 	if (e->ny == 1)
 		qb->SetState(QBRICK_STATE_HITTED);
+
 	//rơi tiền, nấm ra
 }
 

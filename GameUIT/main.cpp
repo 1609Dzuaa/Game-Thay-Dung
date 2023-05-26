@@ -549,9 +549,9 @@ void Reload()
 		objects.push_back(b);
 	}
 
-	for (int i = 0; i < 1; i++)
+	for (int i = 0; i < 2; i++)
 	{
-		CQuestionBrick* qb = new CQuestionBrick(BRICK_X + 200.0f, 165.0f);
+		CQuestionBrick* qb = new CQuestionBrick(BRICK_X + 200.0f + i * 16.0f, 125.0f);
 		objects.push_back(qb);
 	}
 

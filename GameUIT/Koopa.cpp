@@ -44,7 +44,7 @@ void CKoopa::OnNoCollision(DWORD dt)
 		x += vx * dt;
 	}
 
-	DebugOut(L"KOOPA KHONG VA CHAM: %d\n", isOnPlatform);
+	//DebugOut(L"KOOPA KHONG VA CHAM: %d\n", isOnPlatform);
 	//Hãy làm sao để mà khi con Koopa nó ngủ thì vẫn hiện On Collision With
 };
 

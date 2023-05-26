@@ -10,19 +10,25 @@ void CQuestionBrick::Render()
 		animations->Get(ID_ANI_QUESTION_BRICK_HITTED)->Render(x, y);
 }
 
+void CQuestionBrick::OnNoCollision(DWORD dt)
+{
+	y += vy * dt;
+}
+
 void CQuestionBrick::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
-
-	if (isBouncing)
+	if (y <= minY)
 	{
-		if (GetTickCount64() - bouncing_start > BOUNCING_TIME)
-		{
-			isBouncing = false;
-			y += BOUNCING_DISTANCE;
-		}
+		vy = BOUNCING_SPEED;
+	}
+	if (y > currentY)
+	{
+		y = currentY;
+		vy = 0;
 	}
 
-	CGameObject::Update(dt);
+	CGameObject::Update(dt,coObjects);
+	CCollision::GetInstance()->Process(this, dt, coObjects);
 }
 
 void CQuestionBrick::GetBoundingBox(float& l, float& t, float& r, float& b)
@@ -38,9 +44,7 @@ void CQuestionBrick::SetState(int state)
 	switch (state)
 	{
 	case QBRICK_STATE_HITTED:
-		bouncing_start = GetTickCount64();
-		isBouncing = true;
-		y -= BOUNCING_DISTANCE;
+		vy = -BOUNCING_SPEED;
 		break;
 	}
 
