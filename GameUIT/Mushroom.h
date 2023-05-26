@@ -9,6 +9,7 @@
 #define MUSHROOM_ACCELERATION_X 0.0005f
 #define MUSHROOM_GRAVITY 0.002f
 #define MUSHROOM_RISE_UP_SPEED 0.015f
+#define IN_THE_BRICK 0
 #define OUT_OF_BRICK 10
 
 
@@ -18,19 +19,14 @@ class CMushroom : public CGameObject
 {
 	//2 loại Nấm
 	float ax, ay, brickminY;
-	int untouchable;
-	ULONGLONG untouchable_start;
-	bool isOutOfBrick;
 public:
 	CMushroom(float x, float y, float brickY) : CGameObject(x, y)
 	{
 		this->vx = MUSHROOM_SPEED_X;
-		this->ax = MUSHROOM_ACCELERATION_X;
+		this->ax = 0;
 		this->ay = MUSHROOM_GRAVITY;
-		untouchable = 1;
-		untouchable_start = 0;
 		brickminY = brickY;
-		isOutOfBrick = false;
+		state = IN_THE_BRICK;
 	}
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
 

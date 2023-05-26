@@ -17,55 +17,50 @@ void CMushroom::GetBoundingBox(float& l, float& t, float& r, float& b)
 
 void CMushroom::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
-	//vy += ay * dt;
-	//vx += ax * dt;
-	vy += ay * dt;
-	//isOutOfBrick = false;
-
-	if (!isOutOfBrick)
+	if (state != OUT_OF_BRICK)
 	{
 		if (y <= brickminY)
 		{
-			//vy = 0;
 			y = brickminY;
-			isOutOfBrick = true;
-			//vx += ax * dt;
+			state = OUT_OF_BRICK;
 		}
 		else
 		{
 			y -= MUSHROOM_RISE_UP_SPEED * dt;
 		}
 	}
+	else 
+	{
+		vy += ay * dt;
+		vx += ax * dt;
+	}
 
 	CGameObject::Update(dt, coObjects);
 	CCollision::GetInstance()->Process(this, dt, coObjects);
-	//DebugOutTitle(L"UNTOUCHABLE: %f, %f, %f, %f, %d", brickminY, y, vy, vx, isOutOfBrick);
-	DebugOutTitle(L"IS COLLIDABLE: %d", IsCollidable());
+	DebugOutTitle(L"IS COLLIDABLE: %f", vx);
 }
 
 void CMushroom::OnNoCollision(DWORD dt)
 {
-	x += vx * dt;
-	y += vy * dt;
-	//DebugOutTitle(L"KHONG CO VA CHAM");
+	if (state != IN_THE_BRICK)
+	{
+		x += vx * dt;
+		y += vy * dt;
+	}
 }
 
 void CMushroom::OnCollisionWith(LPCOLLISIONEVENT e)
 {
-	//if (untouchable != 1)
-	//{
-		if (!e->obj->IsBlocking()) return;
+	if (!e->obj->IsBlocking()) return;
 
-		if (e->ny != 0)
-		{
-			vy = 0;
-		}
-		else if (e->nx != 0)
-		{
-			vx = -vx;
-		}
-		DebugOutTitle(L"VA CHAM");
-	//}
+	if (e->ny != 0)
+	{
+		vy = 0;
+	}
+	else if (e->nx != 0)
+	{
+		vx = -vx;
+	}
 }
 
 void CMushroom::SetState(int state)
@@ -73,7 +68,9 @@ void CMushroom::SetState(int state)
 	switch (state)
 	{
 	case OUT_OF_BRICK:
-
+		//if()
+		vx = MUSHROOM_SPEED_X;
 		break;
 	}
+	//Nếu qua trái mà gần với Mario thì nấm qua phải
 }

@@ -208,6 +208,8 @@ void CMario::OnCollisionWithMushroom(LPCOLLISIONEVENT e)
 	mr->Delete();
 
 	this->SetLevel(2);
+
+	//Da Fuq Mario blocking Mushroom ??
 }
 
 //
