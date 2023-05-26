@@ -72,13 +72,26 @@
 
 #pragma endregion 
 
+
+#pragma region BRICK 
+
 #define ID_SPRITE_BRICK 20000
 #define ID_SPRITE_QBRICK 20500
+
+#pragma endregion 
+
+
+#pragma region GOOMBA
 
 #define ID_SPRITE_GOOMBA 30000
 #define ID_SPRITE_GOOMBA_WALK (ID_SPRITE_GOOMBA + 1000)
 #define ID_SPRITE_GOOMBA_DIE (ID_SPRITE_GOOMBA + 2000)
 #define ID_SPRITE_GOOMBA_DIE_REVERSE (ID_SPRITE_GOOMBA + 2001)
+
+#pragma endregion 
+
+
+#pragma region KOOPA
 
 #define ID_SPRITE_KOOPA 35000
 #define ID_SPRITE_KOOPA_WALK_LEFT (ID_SPRITE_KOOPA + 1000)
@@ -88,8 +101,19 @@
 #define ID_SPRITE_KOOPA_DIE (ID_SPRITE_KOOPA + 4000)
 #define ID_SPRITE_KOOPA_REBORN (ID_SPRITE_KOOPA + 5000)
 
+#pragma endregion 
+
+#pragma region COIN
 
 #define ID_SPRITE_COIN 40000
+
+#pragma endregion 
+
+#pragma region MUSHROOM
+
+#define ID_SPRITE_MUSHROOM 45000
+
+#pragma endregion 
 
 #define ID_SPRITE_CLOUD 50000
 #define ID_SPRITE_CLOUD_BEGIN (ID_SPRITE_CLOUD+1000)

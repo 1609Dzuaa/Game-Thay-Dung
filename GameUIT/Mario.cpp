@@ -9,6 +9,7 @@
 #include "Brick.h"
 #include "Koopa.h"
 #include "QuestionBrick.h"
+#include "Mushroom.h"
 
 #include "Collision.h"
 
@@ -66,6 +67,8 @@ void CMario::OnCollisionWith(LPCOLLISIONEVENT e)
 		OnCollisionWithKoopa(e);
 	if (dynamic_cast<CQuestionBrick*>(e->obj) && e->obj->GetState() != QBRICK_STATE_HITTED)
 		OnCollisionWithQuesBrick(e);
+	if (dynamic_cast<CMushroom*>(e->obj))
+		OnCollisionWithMushroom(e);
 	else if (dynamic_cast<CCoin*>(e->obj))
 		OnCollisionWithCoin(e);
 
@@ -196,6 +199,15 @@ void CMario::OnCollisionWithQuesBrick(LPCOLLISIONEVENT e)
 		qb->SetState(QBRICK_STATE_HITTED);
 
 	//rơi tiền, nấm ra
+}
+
+void CMario::OnCollisionWithMushroom(LPCOLLISIONEVENT e)
+{
+	CMushroom* mr = dynamic_cast<CMushroom*>(e->obj);
+
+	mr->Delete();
+
+	this->SetLevel(2);
 }
 
 //

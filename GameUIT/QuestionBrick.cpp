@@ -1,5 +1,6 @@
-#include "QuestionBrick.h"
+﻿#include "QuestionBrick.h"
 #include "Coin.h"
+#include "Mushroom.h"
 #include "debug.h"
 
 extern list<LPGAMEOBJECT> objects;
@@ -20,8 +21,10 @@ void CQuestionBrick::OnNoCollision(DWORD dt)
 
 void CQuestionBrick::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
+	isEmpty = false;
 	HandleBouncingBrick();
-
+	if (isEmpty)
+		SpawnMushroom(x, y);
 	CGameObject::Update(dt,coObjects);
 	CCollision::GetInstance()->Process(this, dt, coObjects);
 }
@@ -36,6 +39,7 @@ void CQuestionBrick::HandleBouncingBrick()
 	{
 		y = currentY;
 		vy = 0;
+		isEmpty = true;
 	}
 }
 
@@ -44,6 +48,13 @@ void CQuestionBrick::SpawnCoin(float xBrick, float yBrick, float veloY)
 	CCoin* coin = new CCoin(xBrick, yBrick, veloY);
 	coin->SetSpeed(0, -COIN_FLY_SPEED);
 	objects.push_back(coin);
+}
+
+void CQuestionBrick::SpawnMushroom(float xBrick, float yBrick)
+{
+	CMushroom* mushroom = new CMushroom(xBrick, yBrick, 109.0f);
+	mushroom->SetBrickMinY(109.0f);
+	objects.push_back(mushroom);
 }
 
 void CQuestionBrick::GetBoundingBox(float& l, float& t, float& r, float& b)
@@ -59,7 +70,8 @@ void CQuestionBrick::SetState(int state)
 	switch (state)
 	{
 	case QBRICK_STATE_HITTED:
-		SpawnCoin(x, y, -COIN_FLY_SPEED);
+		//SpawnCoin(x, y, -COIN_FLY_SPEED);
+		//SpawnMushroom(x, y);
 		vy = -BOUNCING_SPEED;
 		break;
 	}

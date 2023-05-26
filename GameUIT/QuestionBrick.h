@@ -11,19 +11,21 @@
 
 #define QBRICK_STATE_HITTED 10
 
-#define BOUNCING_TIME 500
+
 #define BOUNCING_DISTANCE 5.0f
-#define BOUNCING_SPEED 0.2f
+#define BOUNCING_SPEED 0.1f
 
 class CQuestionBrick :public CBrick 
 {
 	float minY, currentY;
+	bool isEmpty;
 public:
 
 	CQuestionBrick(float x, float y) : CBrick(x, y)
 	{
 		this->currentY = y;
 		this->minY = y - QBRICK_BBOX_HEIGHT; //Càng lên cao y càng giảm
+		isEmpty = false;
 	}
 
 	void Render();
@@ -31,6 +33,8 @@ public:
 	void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
 
 	void SpawnCoin(float xBrick, float yBrick, float veloY);
+
+	void SpawnMushroom(float xBrick, float yBrick);
 
 	void GetBoundingBox(float& l, float& t, float& r, float& b);
 

@@ -36,6 +36,7 @@
 #include "QuestionBrick.h"
 #include "Goomba.h"
 #include "Koopa.h"
+#include "Mushroom.h"
 #include "Coin.h"
 #include "Platform.h"
 
@@ -442,6 +443,21 @@ void LoadAssetsCoin()
 	animations->Add(ID_ANI_COIN, ani);
 }
 
+void LoadAssetMushroom()
+{
+	CTextures* textures = CTextures::GetInstance();
+	CSprites* sprites = CSprites::GetInstance();
+	CAnimations* animations = CAnimations::GetInstance();
+
+	LPTEXTURE texMisc = textures->Get(ID_TEX_MISC);
+
+	sprites->Add(ID_SPRITE_MUSHROOM + 1, 300, 189, 315, 204, texMisc);
+
+	LPANIMATION ani = new CAnimation(100);
+	ani->Add(ID_SPRITE_MUSHROOM + 1);
+	animations->Add(ID_ANI_MUSHROOM, ani);
+}
+
 void LoadAssetsOther()
 {
 	CTextures* textures = CTextures::GetInstance();
@@ -473,6 +489,7 @@ void LoadResources()
 	LoadAssetsMario();
 	LoadAssetsGoomba();
 	LoadAssetsKoopa();
+	LoadAssetMushroom();
 	LoadAssetsBrick();
 	LoadAssetsCoin();
 	LoadAssetsOther();
@@ -569,7 +586,7 @@ void Reload()
 		objects.push_back(goomba);
 	}*/
 
-	for (int j = 0; j < 1; j++)
+	for (int j = 0; j < 0; j++)
 	{
 		CKoopa* koopa = new CKoopa(KOOPA_X + j * 60, GROUND_Y - 120.0f);
 		objects.push_back(koopa);
