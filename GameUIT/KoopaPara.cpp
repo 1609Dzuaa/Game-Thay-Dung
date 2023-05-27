@@ -4,7 +4,7 @@
 #include "QuestionBrick.h"
 #include "debug.h"
 
-CKoopaPara::CKoopaPara(float x, float y) :CKoopa(x, y)
+CKoopaPara::CKoopaPara(float x, float y) :CKoopa(x, y, type)
 {
 	this->ax = 0; //Chuyển động đều 
 	this->ay = KOOPA_GRAVITY;
@@ -15,20 +15,12 @@ CKoopaPara::CKoopaPara(float x, float y) :CKoopa(x, y)
 
 void CKoopaPara::GetBoundingBox(float& left, float& top, float& right, float& bottom)
 {
-	//if (state == KOOPA_STATE_SLEEP || state == KOOPA_STATE_DIE || state == KOOPA_STATE_SLIP)
-	//{
-		//left = x - KOOPA_BBOX_WIDTH / 2;
-		//top = y - KOOPA_BBOX_IN_SHELL_HEIGHT;
-		//right = left + KOOPA_BBOX_WIDTH;
-		//bottom = top + KOOPA_BBOX_IN_SHELL_HEIGHT;
-	//}
-	//else
-	//{
-		left = x - KOOPA_BBOX_WIDTH / 2;
-		top = y - KOOPA_BBOX_HEIGHT / 2;
-		right = left + KOOPA_BBOX_WIDTH;
-	    bottom = top + KOOPA_BBOX_HEIGHT;
-	//}
+
+	left = x - KOOPA_BBOX_WIDTH / 2;
+	top = y - KOOPA_BBOX_HEIGHT / 2;
+	right = left + KOOPA_BBOX_WIDTH;
+	bottom = top + KOOPA_BBOX_HEIGHT;
+
 }
 
 void CKoopaPara::OnNoCollision(DWORD dt)

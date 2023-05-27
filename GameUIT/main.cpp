@@ -36,7 +36,6 @@
 #include "QuestionBrick.h"
 #include "Goomba.h"
 #include "Koopa.h"
-#include "KoopaPara.h"
 #include "Mushroom.h"
 #include "Coin.h"
 #include "Platform.h"
@@ -365,8 +364,24 @@ void LoadAssetsKoopa()
 
 	sprites->Add(ID_SPRITE_KOOPA_DIE + 1, 210, 348, 210 + 17, 348 + 16, texEnemy);
 
+	//KOOPA JUMPING
+	sprites->Add(ID_SPRITE_KOOPA_JUMPING_LEFT + 1, 70, 94, 87, 121, texEnemy);
+	sprites->Add(ID_SPRITE_KOOPA_JUMPING_LEFT + 2, 121, 94, 138, 121, texEnemy);
+
+	sprites->Add(ID_SPRITE_KOOPA_JUMPING_RIGHT + 1, 655, 94, 670, 121, texEnemy);
+	sprites->Add(ID_SPRITE_KOOPA_JUMPING_RIGHT + 2, 603, 94, 619, 121, texEnemy);
 
 	LPANIMATION ani = new CAnimation(100);
+	ani->Add(ID_SPRITE_KOOPA_JUMPING_LEFT + 1);
+	ani->Add(ID_SPRITE_KOOPA_JUMPING_LEFT + 2);
+	animations->Add(ID_ANI_KOOPA_JUMPING_LEFT, ani);
+
+	ani = new CAnimation(100);
+	ani->Add(ID_SPRITE_KOOPA_JUMPING_RIGHT + 1);
+	ani->Add(ID_SPRITE_KOOPA_JUMPING_RIGHT + 2);
+	animations->Add(ID_ANI_KOOPA_JUMPING_RIGHT, ani);
+
+    ani = new CAnimation(100);
 	ani->Add(ID_SPRITE_KOOPA_WALK_LEFT + 1);
 	ani->Add(ID_SPRITE_KOOPA_WALK_LEFT + 2);
 	animations->Add(ID_ANI_KOOPA_WALKING_LEFT, ani);
@@ -399,21 +414,7 @@ void LoadAssetKoopaPara()
 	CAnimations* animations = CAnimations::GetInstance();
 
 	LPTEXTURE texEnemy = textures->Get(ID_TEX_ENEMY);
-	sprites->Add(ID_SPRITE_KOOPA_PARA_WALK_LEFT + 1, 70, 94, 86, 121, texEnemy);
-	sprites->Add(ID_SPRITE_KOOPA_PARA_WALK_LEFT + 2, 121, 94, 138, 121, texEnemy);
-
-	sprites->Add(ID_SPRITE_KOOPA_PARA_WALK_RIGHT + 1, 655, 94, 670, 121, texEnemy);
-	sprites->Add(ID_SPRITE_KOOPA_PARA_WALK_RIGHT + 2, 603, 94, 619, 121, texEnemy);
-
-	LPANIMATION ani = new CAnimation(100);
-	ani->Add(ID_SPRITE_KOOPA_PARA_WALK_LEFT + 1);
-	ani->Add(ID_SPRITE_KOOPA_PARA_WALK_LEFT + 2);
-	animations->Add(ID_ANI_KOOPA_PARA_WALKING_LEFT, ani);
-
-	ani = new CAnimation(100);
-	ani->Add(ID_SPRITE_KOOPA_PARA_WALK_RIGHT + 1);
-	ani->Add(ID_SPRITE_KOOPA_PARA_WALK_RIGHT + 2);
-	animations->Add(ID_ANI_KOOPA_PARA_WALKING_RIGHT, ani);
+	
 }
 void LoadAssetsBrick()
 {
@@ -610,16 +611,10 @@ void Reload()
 		objects.push_back(goomba);
 	}*/
 
-	/*for (int j = 0; j < 0; j++)
-	{
-		CKoopa* koopa = new CKoopa(KOOPA_X + j * 60, GROUND_Y - 120.0f);
-		objects.push_back(koopa);
-	}*/
-
 	for (int j = 0; j < 1; j++)
 	{
-		CKoopaPara* koopa_para = new CKoopaPara(KOOPA_X + j * 60, GROUND_Y - 120.0f);
-		objects.push_back(koopa_para);
+		CKoopa* koopa = new CKoopa(KOOPA_X + j * 60, GROUND_Y - 120.0f, 2);
+		objects.push_back(koopa);
 	}
 
 	// COINS 

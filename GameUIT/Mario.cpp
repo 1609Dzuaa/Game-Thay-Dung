@@ -116,33 +116,46 @@ void CMario::OnCollisionWithCoin(LPCOLLISIONEVENT e)
 void CMario::OnCollisionWithKoopa(LPCOLLISIONEVENT e)
 {
 	CKoopa* koopa = dynamic_cast<CKoopa*>(e->obj);
-	//Nhảy lên Koopa thì sẽ đưa Koopa về trạng thái ngủ
-	if (e->ny < 0) //Hướng TRÊN (UP)
+	HandleCollisionWithKoopa(e, koopa);
+}
+
+void CMario::HandleCollisionWithKoopa(LPCOLLISIONEVENT e, CKoopa* koopa)
+{
+	if (e->ny < 0) //Va chạm Hướng TRÊN (UP) => đưa Koopa về trạng thái ngủ
 	{
 		if (koopa->GetState() != KOOPA_STATE_DIE)
 		{
-			if (koopa->GetState() != KOOPA_STATE_SLEEP)
+			if (koopa->GetType() == 2)
 			{
-				koopa->SetState(KOOPA_STATE_SLEEP);
+				koopa->SetType(1);
+				koopa->SetState(KOOPA_STATE_WALKING);
 				vy = -MARIO_JUMP_DEFLECT_SPEED;
 			}
-			else //ĐANG NGỦ
+			else 
 			{
-				//Dựa vào hướng của Mario để quyết định dấu vận tốc của Koopa
-				if (this->nx > 0)
+				if (koopa->GetState() != KOOPA_STATE_SLEEP)
 				{
-					koopa->SetState(KOOPA_STATE_SLIP);
-					koopa->SetSpeed(abs(KOOPA_WALKING_SPEED * 4), 0);
+					koopa->SetState(KOOPA_STATE_SLEEP);
+					vy = -MARIO_JUMP_DEFLECT_SPEED;
 				}
-				else if (this->nx < 0)
+				else //ĐANG NGỦ
 				{
-					koopa->SetState(KOOPA_STATE_SLIP);
-					koopa->SetSpeed(-KOOPA_WALKING_SPEED * 4, 0);
-				}
-				else 
-				{
-					koopa->SetState(KOOPA_STATE_SLIP);
-					koopa->SetSpeed(-KOOPA_WALKING_SPEED * 4, 0);
+					//Dựa vào hướng của Mario để quyết định dấu vận tốc của Koopa
+					if (this->nx > 0)
+					{
+						koopa->SetState(KOOPA_STATE_SLIP);
+						koopa->SetSpeed(abs(KOOPA_WALKING_SPEED * 4), 0);
+					}
+					else if (this->nx < 0)
+					{
+						koopa->SetState(KOOPA_STATE_SLIP);
+						koopa->SetSpeed(-KOOPA_WALKING_SPEED * 4, 0);
+					}
+					else
+					{
+						koopa->SetState(KOOPA_STATE_SLIP);
+						koopa->SetSpeed(-KOOPA_WALKING_SPEED * 4, 0);
+					}
 				}
 			}
 		}

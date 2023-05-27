@@ -4,10 +4,11 @@
 #include "QuestionBrick.h"
 #include "debug.h"
 
-CKoopa::CKoopa(float x, float y) :CGameObject(x, y)
+CKoopa::CKoopa(float x, float y, int type) :CGameObject(x, y)
 {
 	this->ax = 0; //Chuyển động đều 
 	this->ay = KOOPA_GRAVITY;
+	this->type = type;
 	die_start = -1;
 	isOnPlatform = false;
 	isStepOn = false;
@@ -34,17 +35,8 @@ void CKoopa::GetBoundingBox(float& left, float& top, float& right, float& bottom
 
 void CKoopa::OnNoCollision(DWORD dt)
 {
-	if (!isOnPlatform)
-	{
-		x += vx * dt;
-		y += vy * dt;
-	}
-	else 
-	{
-		x += vx * dt;
-	}
-
-	//DebugOut(L"KOOPA KHONG VA CHAM: %d\n", isOnPlatform);
+	x += vx * dt;
+	y += vy * dt;
 	//Hãy làm sao để mà khi con Koopa nó ngủ thì vẫn hiện On Collision With
 };
 
@@ -66,27 +58,38 @@ void CKoopa::OnCollisionWith(LPCOLLISIONEVENT e)
 
 	if (e->ny < 0) //Nếu object có thuộc tính block
 	{
-		vy = 0;
+		if (type != 2)
+			vy = 0;
+		else
+			SetState(KOOPA_STATE_JUMPING);
+
 		isOnPlatform = true;
 	}
 	else if (e->nx != 0)
 	{
 		vx = -vx;
 	}
-	//DebugOutTitle(L"KOOPA VA CHAM: %f\n", ay);
 }
 
 void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
-
-	if (!isStepOn)
+	//Should create a function Handle these complicated code
+	if (type != 2)
 	{
-		vy += ay * dt;
-		vx += ax * dt;
+		if (!isStepOn)
+		{
+			vy += ay * dt;
+			vx += ax * dt;
+		}
+		else
+		{
+			vx += ax * dt;
+		}
 	}
 	else
 	{
 		vx += ax * dt;
+		vy += ay * dt;
 	}
 
 	if ((state == KOOPA_STATE_DIE) && (GetTickCount64() - die_start > KOOPA_DIE_TIMEOUT))
@@ -100,31 +103,17 @@ void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 	CGameObject::Update(dt, coObjects);
 	CCollision::GetInstance()->Process(this, dt, coObjects);
-	//Gọi liên tục
-
-	//DebugOutTitle(L"KOOPA: %f, %f, %f", vx, vy, ay);
 }
 
 
 void CKoopa::Render()
 {
 	int aniId = 0;
-	if (vx < 0)
-		aniId = ID_ANI_KOOPA_WALKING_LEFT;
-	else
-		aniId = ID_ANI_KOOPA_WALKING_RIGHT;
-	if (state == KOOPA_STATE_SLEEP)
-	{
-		aniId = ID_ANI_KOOPA_SLEEPING;
-	}
-	if (state == KOOPA_STATE_SLIP)
-	{
-		aniId = ID_ANI_KOOPA_SLIPPING;
-	}
-	if (state == KOOPA_STATE_DIE)
-	{
-		aniId = ID_ANI_KOOPA_DIE;
-	}
+	
+	if (type == 1)
+		aniId = GetAniIdGreenKoopa();
+	else if (type == 2)
+		aniId = GetAniIdFlyingKoopa();
 
 	CAnimations::GetInstance()->Get(aniId)->Render(x, y);
 	//RenderBoundingBox();
@@ -132,7 +121,6 @@ void CKoopa::Render()
 
 void CKoopa::SetState(int state)
 {
-	CGameObject::SetState(state);
 	switch (state)
 	{
 	case KOOPA_STATE_SLEEP:
@@ -158,7 +146,13 @@ void CKoopa::SetState(int state)
 	case KOOPA_STATE_WALKING:
 		vx = -KOOPA_WALKING_SPEED;
 		break;
+
+	case KOOPA_STATE_JUMPING:
+		vy = -KOOPA_JUMP_SPEED;
+		break;
 	}
+
+	CGameObject::SetState(state);
 }
 
 void CKoopa::OnCollisionWithGoomba(LPCOLLISIONEVENT e)
@@ -180,4 +174,29 @@ void CKoopa::OnCollisionWithQuesBrick(LPCOLLISIONEVENT e)
 	CQuestionBrick* qb = dynamic_cast<CQuestionBrick*>(e->obj);
 	if (qb->GetState() != QBRICK_STATE_HITTED)
 		qb->SetState(QBRICK_STATE_HITTED);
+}
+
+int CKoopa::GetAniIdGreenKoopa()
+{
+	int id = -1;
+	if (state == KOOPA_STATE_WALKING && this->vx > 0)
+		id = ID_ANI_KOOPA_WALKING_RIGHT;
+	else if (state == KOOPA_STATE_WALKING && this->vx < 0)
+		id = ID_ANI_KOOPA_WALKING_LEFT;
+	else if (state == KOOPA_STATE_SLEEP)
+		id = ID_ANI_KOOPA_SLEEPING;
+	else if (state == KOOPA_STATE_SLIP)
+		id = ID_ANI_KOOPA_SLIPPING;
+	else
+		id = ID_ANI_KOOPA_DIE;
+
+	return id;
+}
+
+int CKoopa::GetAniIdFlyingKoopa()
+{
+	if (vx > 0)
+		return ID_ANI_KOOPA_JUMPING_RIGHT;
+	else
+		return ID_ANI_KOOPA_JUMPING_LEFT;
 }
