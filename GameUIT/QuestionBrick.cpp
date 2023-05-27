@@ -53,7 +53,7 @@ void CQuestionBrick::SpawnCoin(float xBrick, float yBrick, float veloY)
 void CQuestionBrick::SpawnMushroom(float xBrick, float yBrick)
 {
 	CMushroom* mushroom = new CMushroom(xBrick, yBrick, 109.0f);
-	mushroom->SetBrickMinY(109.0f);
+	mushroom->SetBrickMinY(minY);
 	objects.push_back(mushroom);
 }
 
