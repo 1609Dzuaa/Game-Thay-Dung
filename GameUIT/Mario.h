@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "GameObject.h"
+#include "Goomba.h"
 #include "Koopa.h"
 #include "Animation.h"
 #include "Animations.h"
@@ -135,6 +136,7 @@ class CMario : public CGameObject
 	void OnCollisionWithCoin(LPCOLLISIONEVENT e);
 	void OnCollisionWithPortal(LPCOLLISIONEVENT e);
 
+	void HandleCollisionWithGoomba(LPCOLLISIONEVENT e, CGoomba* goomba);
 	void HandleCollisionWithKoopa(LPCOLLISIONEVENT e, CKoopa* koopa);
 	int GetAniIdBig();
 	int GetAniIdSmall();

@@ -127,6 +127,13 @@
 
 #pragma endregion 
 
+#pragma region LEAF
+
+#define ID_SPRITE_LEAF_RIGHT 60000
+#define ID_SPRITE_LEAF_LEFT 60500
+
+#pragma endregion 
+
 #define ID_SPRITE_CLOUD 50000
 #define ID_SPRITE_CLOUD_BEGIN (ID_SPRITE_CLOUD+1000)
 #define ID_SPRITE_CLOUD_MIDDLE (ID_SPRITE_CLOUD+2000)

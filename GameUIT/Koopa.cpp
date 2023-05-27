@@ -127,6 +127,8 @@ void CKoopa::SetState(int state)
 		vx = 0;
 		isStepOn = true;
 		isOnPlatform = true;
+		y += (KOOPA_BBOX_HEIGHT - KOOPA_BBOX_IN_SHELL_HEIGHT) / 2;
+		//y -= (MARIO_BIG_BBOX_HEIGHT - MARIO_SMALL_BBOX_HEIGHT) / 2;
 		break;
 
 	case KOOPA_STATE_DIE:

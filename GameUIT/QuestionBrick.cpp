@@ -1,6 +1,7 @@
 ﻿#include "QuestionBrick.h"
 #include "Coin.h"
 #include "Mushroom.h"
+#include "Leaf.h"
 #include "debug.h"
 
 extern list<LPGAMEOBJECT> objects;
@@ -57,6 +58,14 @@ void CQuestionBrick::SpawnMushroom(float xBrick, float yBrick)
 	objects.push_back(mushroom);
 }
 
+void CQuestionBrick::SpawnLeaf(float xBrick, float yBrick)
+{
+	CLeaf* leaf = new CLeaf(xBrick, yBrick);
+	leaf->SetMinY(y - 70.0f);
+	//leaf->setMinX(x);
+	objects.push_back(leaf);
+}
+
 void CQuestionBrick::GetBoundingBox(float& l, float& t, float& r, float& b)
 {
 	l = x - QBRICK_BBOX_WIDTH / 2;
@@ -72,6 +81,7 @@ void CQuestionBrick::SetState(int state)
 	case QBRICK_STATE_HITTED:
 		//SpawnCoin(x, y, -COIN_FLY_SPEED);
 		//SpawnMushroom(x, y);
+		SpawnLeaf(x, y);
 		vy = -BOUNCING_SPEED;
 		break;
 	}

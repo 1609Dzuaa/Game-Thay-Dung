@@ -39,6 +39,7 @@
 #include "Mushroom.h"
 #include "Coin.h"
 #include "Platform.h"
+#include "Leaf.h"
 
 #include "SampleKeyEventHandler.h"
 
@@ -486,12 +487,24 @@ void LoadAssetsOther()
 {
 	CTextures* textures = CTextures::GetInstance();
 	CSprites* sprites = CSprites::GetInstance();
+	CAnimations* animations = CAnimations::GetInstance();
 
 	LPTEXTURE texMisc = textures->Get(ID_TEX_MISC);
 	sprites->Add(ID_SPRITE_CLOUD_BEGIN, 390, 117, 390 + 15, 117 + 15, texMisc);
 	sprites->Add(ID_SPRITE_CLOUD_MIDDLE, 408, 117, 408 + 15, 117 + 15, texMisc);
 	sprites->Add(ID_SPRITE_CLOUD_END, 426, 117, 426 + 15, 117 + 15, texMisc);
 
+	texMisc = textures->Get(ID_TEX_MISC_2);
+	sprites->Add(ID_SPRITE_LEAF_LEFT + 1, 180, 123, 195, 137, texMisc);
+	sprites->Add(ID_SPRITE_LEAF_RIGHT + 1, 160, 362, 176, 376, texMisc);
+
+	LPANIMATION ani = new CAnimation(100);
+	ani->Add(ID_SPRITE_LEAF_LEFT + 1);
+	animations->Add(ID_ANI_LEAF_LEFT, ani);
+
+	ani = new CAnimation(100);
+	ani->Add(ID_SPRITE_LEAF_RIGHT + 1);
+	animations->Add(ID_ANI_LEAF_RIGHT, ani);
 }
 
 /*
@@ -593,7 +606,7 @@ void Reload()
 
 	for (int i = 0; i < 2; i++)
 	{
-		CQuestionBrick* qb = new CQuestionBrick(BRICK_X + 200.0f + i * 16.0f, 115.0f);
+		CQuestionBrick* qb = new CQuestionBrick(BRICK_X + 200.0f + i * 16.0f, 105.0f);
 		objects.push_back(qb);
 	}
 
@@ -616,6 +629,12 @@ void Reload()
 		CKoopa* koopa = new CKoopa(KOOPA_X + j * 60, GROUND_Y - 120.0f, 2);
 		objects.push_back(koopa);
 	}
+
+	/*for (int j = 0; j < 1; j++)
+	{
+		CLeaf* leaf = new CLeaf(KOOPA_X + j * 60, GROUND_Y - 120.0f);
+		objects.push_back(leaf);
+	}*/
 
 	// COINS 
 	for (int i = 0; i < 10; i++)

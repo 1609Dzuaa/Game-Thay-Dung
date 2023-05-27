@@ -2,6 +2,14 @@
 #include "Animations.h"
 #include "Brick.h"
 
+//Map 1-1 Question Brick cho ra 3 loại items: coin, nấm, lá
+#pragma region QUESTION_BRICK_TYPE 
+
+#define HAS_COIN 1
+#define HAS_MUSHROOM 2
+#define HAS_LEAF 3
+
+#pragma endregion 
 
 #define ID_ANI_QUESTION_BRICK 20000
 #define ID_ANI_QUESTION_BRICK_HITTED 20100
@@ -35,6 +43,8 @@ public:
 	void SpawnCoin(float xBrick, float yBrick, float veloY);
 
 	void SpawnMushroom(float xBrick, float yBrick);
+
+	void SpawnLeaf(float xBrick, float yBrick);
 
 	void GetBoundingBox(float& l, float& t, float& r, float& b);
 
