@@ -268,7 +268,7 @@ void LoadAssetsMario()
 	animations->Add(ID_ANI_MARIO_SMALL_WALKING_LEFT, ani);
 
 	ani = new CAnimation(50);
-	ani->Add(ID_SPRITE_MARIO_SMALL_RUNNING_RIGHT + 1);
+	ani->Add(ID_SPRITE_MARIO_RACOON_RUNNING_RIGHT + 1);
 	ani->Add(ID_SPRITE_MARIO_SMALL_RUNNING_RIGHT + 2);
 	ani->Add(ID_SPRITE_MARIO_SMALL_RUNNING_RIGHT + 3);
 	animations->Add(ID_ANI_MARIO_SMALL_RUNNING_RIGHT, ani);
@@ -310,6 +310,75 @@ void LoadAssetsMario()
 	ani = new CAnimation(100);
 	ani->Add(ID_SPRITE_MARIO_SMALL_KICK_RIGHT + 1);
 	animations->Add(ID_ANI_MARIO_SMALL_KICKING_RIGHT, ani);
+
+	//
+	// RACOON MARIO 
+	//
+	
+	sprites->Add(ID_SPRITE_MARIO_RACOON_IDLE_LEFT + 1, 182, 633, 203, 661, texMario);
+	sprites->Add(ID_SPRITE_MARIO_RACOON_WALKING_LEFT + 2, 151, 633, 174, 661, texMario);
+	sprites->Add(ID_SPRITE_MARIO_RACOON_WALKING_LEFT + 3, 121, 633, 143, 661, texMario);
+
+	sprites->Add(ID_SPRITE_MARIO_RACOON_IDLE_RIGHT + 1, 242, 633, 264, 661, texMario);
+	sprites->Add(ID_SPRITE_MARIO_RACOON_WALKING_RIGHT + 2, 271, 633, 294, 661, texMario);
+	sprites->Add(ID_SPRITE_MARIO_RACOON_WALKING_RIGHT + 3, 302, 633, 324, 661, texMario);
+
+	sprites->Add(ID_SPRITE_MARIO_RACOON_IDLE_RIGHT + 1, 242, 633, 264, 661, texMario);
+	sprites->Add(ID_SPRITE_MARIO_RACOON_WALKING_RIGHT + 2, 271, 633, 294, 661, texMario);
+	sprites->Add(ID_SPRITE_MARIO_RACOON_WALKING_RIGHT + 3, 302, 633, 324, 661, texMario);
+
+	sprites->Add(ID_SPRITE_MARIO_RACOON_RUNNING_LEFT + 1, 31, 633, 53, 661, texMario);
+	sprites->Add(ID_SPRITE_MARIO_RACOON_RUNNING_LEFT + 2, 61, 633, 84, 661, texMario);
+	sprites->Add(ID_SPRITE_MARIO_RACOON_RUNNING_LEFT + 3, 91, 633, 115, 661, texMario);
+
+	sprites->Add(ID_SPRITE_MARIO_RACOON_RUNNING_RIGHT + 1, 392, 633, 414, 661, texMario);
+	sprites->Add(ID_SPRITE_MARIO_RACOON_RUNNING_RIGHT + 2, 361, 633, 385, 661, texMario);
+	sprites->Add(ID_SPRITE_MARIO_RACOON_RUNNING_RIGHT + 3, 330, 633, 355, 661, texMario);
+
+	sprites->Add(ID_SPRITE_MARIO_RACOON_BRACE_LEFT + 1, 4, 633, 21, 661, texMario);
+	sprites->Add(ID_SPRITE_MARIO_RACOON_BRACE_RIGHT + 1, 425, 633, 441, 661, texMario);
+
+	sprites->Add(ID_SPRITE_MARIO_RACOON_RUNNING_RIGHT + 1, 392, 633, 414, 661, texMario);
+
+	ani = new CAnimation(100);
+	ani->Add(ID_SPRITE_MARIO_RACOON_IDLE_RIGHT + 1);
+	animations->Add(ID_ANI_MARIO_RACOON_IDLE_RIGHT, ani);
+
+	ani = new CAnimation(100);
+	ani->Add(ID_SPRITE_MARIO_RACOON_IDLE_LEFT + 1);
+	animations->Add(ID_ANI_MARIO_RACOON_IDLE_LEFT, ani);
+
+	ani = new CAnimation(100);
+	ani->Add(ID_SPRITE_MARIO_RACOON_IDLE_LEFT + 1);
+	ani->Add(ID_SPRITE_MARIO_RACOON_WALKING_LEFT + 2);
+	ani->Add(ID_SPRITE_MARIO_RACOON_WALKING_LEFT + 3);
+	animations->Add(ID_ANI_MARIO_RACOON_WALKING_LEFT, ani);
+
+	ani = new CAnimation(100);
+	ani->Add(ID_SPRITE_MARIO_RACOON_IDLE_RIGHT + 1);
+	ani->Add(ID_SPRITE_MARIO_RACOON_WALKING_RIGHT + 2);
+	ani->Add(ID_SPRITE_MARIO_RACOON_WALKING_RIGHT + 3);
+	animations->Add(ID_ANI_MARIO_RACOON_WALKING_RIGHT, ani);
+
+	ani = new CAnimation(100);
+	ani->Add(ID_SPRITE_MARIO_RACOON_RUNNING_LEFT + 1);
+	ani->Add(ID_SPRITE_MARIO_RACOON_RUNNING_LEFT + 2);
+	ani->Add(ID_SPRITE_MARIO_RACOON_RUNNING_LEFT + 3);
+	animations->Add(ID_ANI_MARIO_RACOON_RUNNING_LEFT, ani);
+
+	ani = new CAnimation(100);
+	ani->Add(ID_SPRITE_MARIO_RACOON_RUNNING_RIGHT + 1);
+	ani->Add(ID_SPRITE_MARIO_RACOON_RUNNING_RIGHT + 2);
+	ani->Add(ID_SPRITE_MARIO_RACOON_RUNNING_RIGHT + 3);
+	animations->Add(ID_ANI_MARIO_RACOON_RUNNING_RIGHT, ani);
+
+	ani = new CAnimation(100);
+	ani->Add(ID_SPRITE_MARIO_RACOON_BRACE_LEFT + 1);
+	animations->Add(ID_ANI_MARIO_RACOON_BRACE_LEFT, ani);
+
+	ani = new CAnimation(100);
+	ani->Add(ID_SPRITE_MARIO_RACOON_BRACE_RIGHT + 1);
+	animations->Add(ID_ANI_MARIO_RACOON_BRACE_RIGHT, ani);
 }
 
 void LoadAssetsGoomba()
@@ -624,7 +693,7 @@ void Reload()
 		objects.push_back(goomba);
 	}*/
 
-	for (int j = 0; j < 1; j++)
+	for (int j = 0; j < 0; j++)
 	{
 		CKoopa* koopa = new CKoopa(KOOPA_X + j * 60, GROUND_Y - 120.0f, 2);
 		objects.push_back(koopa);

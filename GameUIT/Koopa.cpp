@@ -6,7 +6,7 @@
 
 CKoopa::CKoopa(float x, float y, int type) :CGameObject(x, y)
 {
-	this->ax = 0; //Chuyển động đều 
+	this->ax = 0; 
 	this->ay = KOOPA_GRAVITY;
 	this->type = type;
 	die_start = -1;
@@ -46,7 +46,6 @@ void CKoopa::OnCollisionWith(LPCOLLISIONEVENT e)
 	//1.Rơi vào chế độ ngủ đông và bị Mario quăng đập vào enemy khác
 	//2.Va chạm với Koopa mà bị Mario quăng
 	
-
 	if (dynamic_cast<CGoomba*>(e->obj) && this->state == KOOPA_STATE_SLIP)
 		this->OnCollisionWithGoomba(e);
 	if (dynamic_cast<CKoopa*>(e->obj) && this->state == KOOPA_STATE_SLIP)
@@ -61,7 +60,7 @@ void CKoopa::OnCollisionWith(LPCOLLISIONEVENT e)
 		if (type != 2)
 			vy = 0;
 		else
-			SetState(KOOPA_STATE_JUMPING);
+			SetState(KOOPA_STATE_JUMPING); //Loại 2 chạm sàn thì bắt đầu nhảy
 
 		isOnPlatform = true;
 	}
@@ -101,8 +100,8 @@ void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	isOnPlatform = false;
 	isStepOn = false;
 
-	CGameObject::Update(dt, coObjects);
 	CCollision::GetInstance()->Process(this, dt, coObjects);
+	//DebugOutTitle(L"Velo: %f", vy);
 }
 
 
@@ -127,7 +126,7 @@ void CKoopa::SetState(int state)
 		vx = 0;
 		isStepOn = true;
 		isOnPlatform = true;
-		y += (KOOPA_BBOX_HEIGHT - KOOPA_BBOX_IN_SHELL_HEIGHT) / 2;
+		y -= (KOOPA_BBOX_HEIGHT - KOOPA_BBOX_IN_SHELL_HEIGHT) / 2;
 		//y -= (MARIO_BIG_BBOX_HEIGHT - MARIO_SMALL_BBOX_HEIGHT) / 2;
 		break;
 

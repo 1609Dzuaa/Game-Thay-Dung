@@ -37,7 +37,7 @@ void CMushroom::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 	CGameObject::Update(dt, coObjects);
 	CCollision::GetInstance()->Process(this, dt, coObjects);
-	DebugOutTitle(L"IS COLLIDABLE: %f", vx);
+	//DebugOutTitle(L"IS COLLIDABLE: %f", vx);
 }
 
 void CMushroom::OnNoCollision(DWORD dt)

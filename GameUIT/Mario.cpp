@@ -10,6 +10,7 @@
 #include "Koopa.h"
 #include "QuestionBrick.h"
 #include "Mushroom.h"
+#include "Leaf.h"
 
 #include "Collision.h"
 
@@ -69,6 +70,8 @@ void CMario::OnCollisionWith(LPCOLLISIONEVENT e)
 		OnCollisionWithQuesBrick(e);
 	if (dynamic_cast<CMushroom*>(e->obj))
 		OnCollisionWithMushroom(e);
+	if (dynamic_cast<CLeaf*>(e->obj))
+		OnCollisionWithLeaf(e);
 	else if (dynamic_cast<CCoin*>(e->obj))
 		OnCollisionWithCoin(e);
 
@@ -229,6 +232,13 @@ void CMario::OnCollisionWithMushroom(LPCOLLISIONEVENT e)
 	//Da Fuq Mario blocking Mushroom ??
 }
 
+void CMario::OnCollisionWithLeaf(LPCOLLISIONEVENT e)
+{
+	CLeaf* leaf = dynamic_cast<CLeaf*>(e->obj);
+	this->SetLevel(MARIO_LEVEL_RACOON);
+	leaf->Delete();
+}
+
 //
 // Get animation ID for small Mario
 //
@@ -363,6 +373,74 @@ int CMario::GetAniIdBig()
 	return aniId;
 }
 
+int CMario::GetAniIdRacoon()
+{
+	int aniId = -1;
+	if (!isOnPlatform)
+	{
+		if (abs(ax) == MARIO_ACCEL_RUN_X)
+		{
+			if (nx >= 0)
+				aniId = ID_ANI_MARIO_JUMP_RUN_RIGHT;
+			else
+				aniId = ID_ANI_MARIO_JUMP_RUN_LEFT;
+		}
+		else
+		{
+			if (nx >= 0)
+				aniId = ID_ANI_MARIO_JUMP_WALK_RIGHT;
+			else
+				aniId = ID_ANI_MARIO_JUMP_WALK_LEFT;
+		}
+	}
+	else
+	{
+		if (isSitting)
+		{
+			if (nx > 0)
+				aniId = ID_ANI_MARIO_SIT_RIGHT;
+			else
+				aniId = ID_ANI_MARIO_SIT_LEFT;
+		}
+		else if (isKicking)
+		{
+			if (nx > 0)
+				aniId = ID_ANI_MARIO_KICKING_RIGHT;
+			else
+				aniId = ID_ANI_MARIO_KICKING_LEFT;
+		}
+		else
+		{
+			if (vx == 0)
+			{
+				if (nx > 0) aniId = ID_ANI_MARIO_RACOON_IDLE_RIGHT;
+				else aniId = ID_ANI_MARIO_RACOON_IDLE_LEFT;
+			}
+			else if (vx > 0)
+			{
+				if (ax < 0)
+					aniId = ID_ANI_MARIO_RACOON_BRACE_RIGHT;
+				else if (ax == MARIO_ACCEL_RUN_X)
+					aniId = ID_ANI_MARIO_RACOON_RUNNING_RIGHT;
+				else if (ax == MARIO_ACCEL_WALK_X)
+					aniId = ID_ANI_MARIO_RACOON_WALKING_RIGHT;
+			}
+			else // vx < 0
+			{
+				if (ax > 0)
+					aniId = ID_ANI_MARIO_RACOON_BRACE_LEFT;
+				else if (ax == -MARIO_ACCEL_RUN_X)
+					aniId = ID_ANI_MARIO_RACOON_RUNNING_LEFT;
+				else if (ax == -MARIO_ACCEL_WALK_X)
+					aniId = ID_ANI_MARIO_RACOON_WALKING_LEFT;
+			}
+		}
+	}
+	if (aniId == -1) aniId = ID_ANI_MARIO_RACOON_IDLE_RIGHT;
+
+	return aniId;
+}
+
 void CMario::Render()
 {
 	CAnimations* animations = CAnimations::GetInstance();
@@ -374,11 +452,11 @@ void CMario::Render()
 		aniId = GetAniIdBig();
 	else if (level == MARIO_LEVEL_SMALL)
 		aniId = GetAniIdSmall();
+	else if (level == MARIO_LEVEL_RACOON)
+		aniId = GetAniIdRacoon();
 
 	animations->Get(aniId)->Render(x, y);
 	RenderBoundingBox();
-
-	//DebugOutTitle(L"Coins: %f", vy);
 }
 
 void CMario::SetState(int state)
@@ -520,6 +598,10 @@ void CMario::SetLevel(int l)
 	{
 		y -= (MARIO_BIG_BBOX_HEIGHT - MARIO_SMALL_BBOX_HEIGHT) / 2;
 	}
+	//else
+	//{
+		//y -= (MARIO_BIG_BBOX_HEIGHT) / 2;
+	//}
 	level = l;
 }
 

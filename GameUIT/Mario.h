@@ -92,6 +92,19 @@
 //#define ID_ANI_MARIO_SMALL_KICKING_LEFT 1700
 //#define ID_ANI_MARIO_SMALL_KICKING_RIGHT 1701
 
+
+#define ID_ANI_MARIO_RACOON_IDLE_LEFT 1800
+#define ID_ANI_MARIO_RACOON_IDLE_RIGHT 1801
+
+#define ID_ANI_MARIO_RACOON_WALKING_LEFT 1900
+#define ID_ANI_MARIO_RACOON_WALKING_RIGHT 1901
+
+#define ID_ANI_MARIO_RACOON_RUNNING_LEFT 2000
+#define ID_ANI_MARIO_RACOON_RUNNING_RIGHT 2001
+
+#define ID_ANI_MARIO_RACOON_BRACE_LEFT 2400
+#define ID_ANI_MARIO_RACOON_BRACE_RIGHT 2401
+
 #pragma endregion
 
 #define GROUND_Y 160.0f
@@ -99,6 +112,7 @@
 
 #define	MARIO_LEVEL_SMALL	1
 #define	MARIO_LEVEL_BIG		2
+#define MARIO_LEVEL_RACOON 3
 
 #define MARIO_BIG_BBOX_WIDTH  14
 #define MARIO_BIG_BBOX_HEIGHT 24
@@ -134,12 +148,14 @@ class CMario : public CGameObject
 	void OnCollisionWithQuesBrick(LPCOLLISIONEVENT e);
 	void OnCollisionWithMushroom(LPCOLLISIONEVENT e);
 	void OnCollisionWithCoin(LPCOLLISIONEVENT e);
+	void OnCollisionWithLeaf(LPCOLLISIONEVENT e);
 	void OnCollisionWithPortal(LPCOLLISIONEVENT e);
 
 	void HandleCollisionWithGoomba(LPCOLLISIONEVENT e, CGoomba* goomba);
 	void HandleCollisionWithKoopa(LPCOLLISIONEVENT e, CKoopa* koopa);
 	int GetAniIdBig();
 	int GetAniIdSmall();
+	int GetAniIdRacoon();
 
 public:
 	CMario(float x, float y) : CGameObject(x, y)

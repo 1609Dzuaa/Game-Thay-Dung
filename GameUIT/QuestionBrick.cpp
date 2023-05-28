@@ -25,7 +25,7 @@ void CQuestionBrick::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	isEmpty = false;
 	HandleBouncingBrick();
 	if (isEmpty)
-		SpawnMushroom(x, y);
+		//SpawnMushroom(x, y);
 	CGameObject::Update(dt,coObjects);
 	CCollision::GetInstance()->Process(this, dt, coObjects);
 }
