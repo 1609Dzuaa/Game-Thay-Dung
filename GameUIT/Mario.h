@@ -178,8 +178,11 @@ class CMario : public CGameObject
 	void OnCollisionWithLeaf(LPCOLLISIONEVENT e);
 	void OnCollisionWithPortal(LPCOLLISIONEVENT e);
 
-	void HandleCollisionWithGoomba(LPCOLLISIONEVENT e, CGoomba* goomba);
-	void HandleCollisionWithKoopa(LPCOLLISIONEVENT e, CKoopa* koopa);
+	void HandleCollisionUpperDirectionWithGoomba(CGoomba* goomba);
+	void HandleCollisionOtherDirectionWithGoomba(LPCOLLISIONEVENT e, CGoomba* goomba); 
+	void HandleCollisionUpperDirectionWithKoopa(CKoopa* koopa);
+	void HandleCollisionOtherDirectionWithKoopa(LPCOLLISIONEVENT e, CKoopa* koopa);
+
 	int GetAniIdBig();
 	int GetAniIdSmall();
 	int GetAniIdRacoon();

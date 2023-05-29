@@ -39,7 +39,7 @@ void CLeaf::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	}
 
 	CCollision::GetInstance()->Process(this, dt, coObjects);
-	DebugOutTitle(L"Pos Y: %f", y);
+	//DebugOutTitle(L"Pos Y: %f", y);
 }
 
 void CLeaf::Render()

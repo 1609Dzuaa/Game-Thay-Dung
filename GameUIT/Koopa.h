@@ -13,6 +13,7 @@
 #define KOOPA_GRAVITY 0.002f
 #define KOOPA_STEP_ON_GRAVITY 0.001f
 #define KOOPA_WALKING_SPEED 0.05f
+#define KOOPA_SLIPPING_SPEED 0.2f
 #define KOOPA_JUMP_SPEED 0.35f
 
 
@@ -21,13 +22,15 @@
 #define KOOPA_IN_SHELL_BBOX_HEIGHT 15
 
 #define KOOPA_DIE_TIMEOUT 500
+#define KOOPA_SLEEP_TIMEOUT 4000
+#define KOOPA_REBORN_TIMEOUT 2000
 
 #define KOOPA_STATE_WALKING 1000
 #define KOOPA_STATE_SLEEP 2000
 #define KOOPA_STATE_SLIP 2050
 #define KOOPA_STATE_DIE 2100
 #define KOOPA_STATE_REBORN 2200
-#define KOOPA_STATE_JUMPING 12300
+#define KOOPA_STATE_JUMPING 2300
 
 #define ID_ANI_KOOPA_WALKING_LEFT 50000
 #define ID_ANI_KOOPA_WALKING_RIGHT 50500
@@ -47,8 +50,9 @@ protected:
 	float ay;
 
 	ULONGLONG die_start;
+	ULONGLONG sleep_start;
+	ULONGLONG reborn_start;
 	BOOLEAN isOnPlatform;
-	BOOLEAN isStepOn;
 
 	virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom);
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
@@ -74,4 +78,5 @@ public:
 	virtual void SetState(int state);
 	int GetType() { return type; };
 	void SetType(int para) { this->type = para; };
+	void SetVxAndAy(float vx, float ay) { this->vx = vx; this->ay = ay; }
 };

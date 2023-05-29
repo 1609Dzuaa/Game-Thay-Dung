@@ -87,35 +87,41 @@ void CMario::OnCollisionWith(LPCOLLISIONEVENT e)
 void CMario::OnCollisionWithGoomba(LPCOLLISIONEVENT e)
 {
 	CGoomba* goomba = dynamic_cast<CGoomba*>(e->obj);
-	HandleCollisionWithGoomba(e, goomba);
+	if (e->ny < 0)
+		HandleCollisionUpperDirectionWithGoomba(goomba);
+	else
+		HandleCollisionOtherDirectionWithGoomba(e, goomba);
 }
 
-void CMario::HandleCollisionWithGoomba(LPCOLLISIONEVENT e, CGoomba* goomba)
+void CMario::HandleCollisionUpperDirectionWithGoomba(CGoomba* goomba)
 {
-	if (e->ny < 0)
+	if (goomba->GetState() != GOOMBA_STATE_DIE)
 	{
+		goomba->SetState(GOOMBA_STATE_DIE);
+		vy = -MARIO_JUMP_DEFLECT_SPEED; //nảy lên
+	}
+}
+
+void CMario::HandleCollisionOtherDirectionWithGoomba(LPCOLLISIONEVENT e, CGoomba* goomba)
+{
+	if (untouchable == 0)
+	{
+		//Nếu con Goomba chưa chết thì xét, không thì bỏ qua nó
 		if (goomba->GetState() != GOOMBA_STATE_DIE)
 		{
-			goomba->SetState(GOOMBA_STATE_DIE);
-			vy = -MARIO_JUMP_DEFLECT_SPEED; //nảy lên
-		}
-	}
-	else // hit by Goomba
-	{
-		if (untouchable == 0)
-		{
-			//Nếu con Goomba chưa chết thì xét, không thì bỏ qua nó
-			if (goomba->GetState() != GOOMBA_STATE_DIE)
+			if (level > MARIO_LEVEL_BIG)
 			{
-				if (level > MARIO_LEVEL_SMALL)
-				{
-					level = MARIO_LEVEL_SMALL;
-					StartUntouchable();
-				}
-				else
-				{
-					SetState(MARIO_STATE_DIE);
-				}
+				level = MARIO_LEVEL_BIG;
+				StartUntouchable();
+			}
+			else if (level > MARIO_LEVEL_SMALL)
+			{
+				level = MARIO_LEVEL_SMALL;
+				StartUntouchable();
+			}
+			else
+			{
+				SetState(MARIO_STATE_DIE);
 			}
 		}
 	}
@@ -130,82 +136,85 @@ void CMario::OnCollisionWithCoin(LPCOLLISIONEVENT e)
 void CMario::OnCollisionWithKoopa(LPCOLLISIONEVENT e)
 {
 	CKoopa* koopa = dynamic_cast<CKoopa*>(e->obj);
-	HandleCollisionWithKoopa(e, koopa);
+	if (e->ny < 0)
+		HandleCollisionUpperDirectionWithKoopa(koopa);
+	else
+		HandleCollisionOtherDirectionWithKoopa(e, koopa);
 }
 
-void CMario::HandleCollisionWithKoopa(LPCOLLISIONEVENT e, CKoopa* koopa)
+void CMario::HandleCollisionUpperDirectionWithKoopa(CKoopa* koopa)
 {
-	if (e->ny < 0) //Va chạm Hướng TRÊN (UP) => đưa Koopa về trạng thái ngủ
+	//Va chạm Hướng TRÊN (UP) => đưa Koopa về trạng thái ngủ
+	if (koopa->GetState() != KOOPA_STATE_DIE)
 	{
-		if (koopa->GetState() != KOOPA_STATE_DIE)
+		if (koopa->GetType() == 2)
 		{
-			if (koopa->GetType() == 2)
+			koopa->SetType(1);
+			koopa->SetState(KOOPA_STATE_WALKING);
+			vy = -MARIO_JUMP_DEFLECT_SPEED;
+		}
+		else
+		{
+			if (koopa->GetState() != KOOPA_STATE_SLEEP)
 			{
-				koopa->SetType(1);
-				koopa->SetState(KOOPA_STATE_WALKING);
+				koopa->SetState(KOOPA_STATE_SLEEP);
 				vy = -MARIO_JUMP_DEFLECT_SPEED;
 			}
-			else 
+			else //Koopa ĐANG NGỦ
 			{
-				if (koopa->GetState() != KOOPA_STATE_SLEEP)
+				//Dựa vào hướng của Mario để quyết định dấu vận tốc của Koopa
+				if (this->nx > 0)
 				{
-					koopa->SetState(KOOPA_STATE_SLEEP);
-					vy = -MARIO_JUMP_DEFLECT_SPEED;
+					koopa->SetState(KOOPA_STATE_SLIP);
+					koopa->SetSpeed(abs(KOOPA_SLIPPING_SPEED), 0);
 				}
-				else //ĐANG NGỦ
+				else if (this->nx < 0)
 				{
-					//Dựa vào hướng của Mario để quyết định dấu vận tốc của Koopa
-					if (this->nx > 0)
-					{
-						koopa->SetState(KOOPA_STATE_SLIP);
-						koopa->SetSpeed(abs(KOOPA_WALKING_SPEED * 4), 0);
-					}
-					else if (this->nx < 0)
-					{
-						koopa->SetState(KOOPA_STATE_SLIP);
-						koopa->SetSpeed(-KOOPA_WALKING_SPEED * 4, 0);
-					}
-					else
-					{
-						koopa->SetState(KOOPA_STATE_SLIP);
-						koopa->SetSpeed(-KOOPA_WALKING_SPEED * 4, 0);
-					}
+					koopa->SetState(KOOPA_STATE_SLIP);
+					koopa->SetSpeed(-KOOPA_SLIPPING_SPEED, 0);
 				}
 			}
 		}
 	}
-	else //Va chạm hướng TRÁI, PHẢI, DƯỚI
+}
+
+void CMario::HandleCollisionOtherDirectionWithKoopa(LPCOLLISIONEVENT e, CKoopa* koopa)
+{
+	//Va chạm các hướng KHÁC hướng TRÊN
+	if (untouchable == 0) //can be touched
 	{
-		if (untouchable == 0) //can be touched
+		if (koopa->GetState() != KOOPA_STATE_DIE)
 		{
-			if (koopa->GetState() != KOOPA_STATE_DIE)
+			if (koopa->GetState() != KOOPA_STATE_SLEEP)
 			{
-				if (koopa->GetState() != KOOPA_STATE_SLEEP)
+				if (level == MARIO_LEVEL_RACOON)
 				{
-					if (level > MARIO_LEVEL_SMALL)
-					{
-						level = MARIO_LEVEL_SMALL;
-						StartUntouchable();
-					}
-					else
-					{
-						SetState(MARIO_STATE_DIE);
-					}
+					level = MARIO_LEVEL_BIG;
+					StartUntouchable();
+				}
+				else if (level == MARIO_LEVEL_BIG)
+				{
+					level = MARIO_LEVEL_SMALL;
+					StartUntouchable();
 				}
 				else
 				{
-					if (e->nx == -1)
-					{
-						this->SetState(MARIO_STATE_KICKING_RIGHT);
-						koopa->SetState(KOOPA_STATE_SLIP);
-						koopa->SetSpeed(abs(KOOPA_WALKING_SPEED * 4), 0);
-					}
-					else if (e->nx == 1)
-					{
-						this->SetState(MARIO_STATE_KICKING_LEFT);
-						koopa->SetState(KOOPA_STATE_SLIP);
-						koopa->SetSpeed(-KOOPA_WALKING_SPEED * 4, 0);
-					}
+					SetState(MARIO_STATE_DIE);
+				}
+			}
+			else
+			{
+				if (e->nx == -1)
+				{
+					this->SetState(MARIO_STATE_KICKING_RIGHT);
+					koopa->SetState(KOOPA_STATE_SLIP);
+					koopa->SetSpeed(abs(KOOPA_SLIPPING_SPEED), 0);
+				}
+				else if (e->nx == 1)
+				{
+					this->SetState(MARIO_STATE_KICKING_LEFT);
+					koopa->SetState(KOOPA_STATE_SLIP);
+					koopa->SetSpeed(-KOOPA_SLIPPING_SPEED, 0);
 				}
 			}
 		}
@@ -436,7 +445,7 @@ int CMario::GetAniIdRacoon()
 			else if (vx > 0)
 			{
 				if (ax < 0)
-					aniId = ID_ANI_MARIO_RACOON_BRACE_RIGHT;
+					aniId = ID_ANI_MARIO_RACOON_BRACE_LEFT;
 				else if (ax == MARIO_ACCEL_RUN_X)
 					aniId = ID_ANI_MARIO_RACOON_RUNNING_RIGHT;
 				else if (ax == MARIO_ACCEL_WALK_X)
@@ -445,7 +454,7 @@ int CMario::GetAniIdRacoon()
 			else // vx < 0
 			{
 				if (ax > 0)
-					aniId = ID_ANI_MARIO_RACOON_BRACE_LEFT;
+					aniId = ID_ANI_MARIO_RACOON_BRACE_RIGHT;
 				else if (ax == -MARIO_ACCEL_RUN_X)
 					aniId = ID_ANI_MARIO_RACOON_RUNNING_LEFT;
 				else if (ax == -MARIO_ACCEL_WALK_X)

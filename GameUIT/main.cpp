@@ -494,12 +494,16 @@ void LoadAssetsKoopa()
 
 	sprites->Add(ID_SPRITE_KOOPA_DIE + 1, 210, 348, 210 + 17, 348 + 16, texEnemy);
 
-	//KOOPA JUMPING
+	//KOOPA JUMPING LEFT
 	sprites->Add(ID_SPRITE_KOOPA_JUMPING_LEFT + 1, 70, 94, 87, 121, texEnemy);
 	sprites->Add(ID_SPRITE_KOOPA_JUMPING_LEFT + 2, 121, 94, 138, 121, texEnemy);
 
+	//KOOPA JUMPING RIGHT
 	sprites->Add(ID_SPRITE_KOOPA_JUMPING_RIGHT + 1, 655, 94, 670, 121, texEnemy);
 	sprites->Add(ID_SPRITE_KOOPA_JUMPING_RIGHT + 2, 603, 94, 619, 121, texEnemy);
+
+	//KOOPA REBORN
+	sprites->Add(ID_SPRITE_KOOPA_REBORN + 1, 105, 75, 122, 92, texEnemy);
 
 	LPANIMATION ani = new CAnimation(100);
 	ani->Add(ID_SPRITE_KOOPA_JUMPING_LEFT + 1);
@@ -536,15 +540,10 @@ void LoadAssetsKoopa()
 	ani->Add(ID_SPRITE_KOOPA_DIE + 1);
 	animations->Add(ID_ANI_KOOPA_DIE, ani);
 
-}
-void LoadAssetKoopaPara()
-{
-	CTextures* textures = CTextures::GetInstance();
-	CSprites* sprites = CSprites::GetInstance();
-	CAnimations* animations = CAnimations::GetInstance();
-
-	LPTEXTURE texEnemy = textures->Get(ID_TEX_ENEMY);
-	
+	ani = new CAnimation(100);
+	ani->Add(ID_SPRITE_KOOPA_SLEEP + 1);
+	ani->Add(ID_SPRITE_KOOPA_REBORN + 1);
+	animations->Add(ID_ANI_KOOPA_REBORN, ani);
 }
 void LoadAssetsBrick()
 {
@@ -655,7 +654,6 @@ void LoadResources()
 	LoadAssetsMario();
 	LoadAssetsGoomba();
 	LoadAssetsKoopa();
-	LoadAssetKoopaPara();
 	LoadAssetMushroom();
 	LoadAssetsBrick();
 	LoadAssetsCoin();

@@ -11,13 +11,12 @@ CKoopa::CKoopa(float x, float y, int type) :CGameObject(x, y)
 	this->type = type;
 	die_start = -1;
 	isOnPlatform = false;
-	isStepOn = false;
 	SetState(KOOPA_STATE_WALKING);
 }
 
 void CKoopa::GetBoundingBox(float& left, float& top, float& right, float& bottom)
 {
-	if (state == KOOPA_STATE_SLEEP || state == KOOPA_STATE_DIE || state == KOOPA_STATE_SLIP)
+	if (state == KOOPA_STATE_SLEEP || state == KOOPA_STATE_DIE || state == KOOPA_STATE_SLIP || state == KOOPA_STATE_REBORN)
 	{
 		left = x - KOOPA_BBOX_WIDTH / 2;
 		top = y - KOOPA_IN_SHELL_BBOX_HEIGHT / 2;
@@ -38,6 +37,7 @@ void CKoopa::OnNoCollision(DWORD dt)
 	x += vx * dt;
 	y += vy * dt;
 	//Hãy làm sao để mà khi con Koopa nó ngủ thì vẫn hiện On Collision With
+	//DebugOutTitle(L"OCW: %f, %f, %d", vx, vy, isOnPlatform);
 };
 
 void CKoopa::OnCollisionWith(LPCOLLISIONEVENT e)
@@ -68,40 +68,36 @@ void CKoopa::OnCollisionWith(LPCOLLISIONEVENT e)
 	{
 		vx = -vx;
 	}
+	//DebugOutTitle(L"OCW: %f, %f, %d", vx, vy, isOnPlatform);
 }
 
 void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
+	isOnPlatform = false;
+
 	//Should create a function Handle these complicated code
-	if (type != 2)
-	{
-		if (!isStepOn)
-		{
-			vy += ay * dt;
-			vx += ax * dt;
-		}
-		else
-		{
-			vx += ax * dt;
-		}
-	}
-	else
-	{
-		vx += ax * dt;
-		vy += ay * dt;
-	}
+	vx += ax * dt;
+	vy += ay * dt;
 
 	if ((state == KOOPA_STATE_DIE) && (GetTickCount64() - die_start > KOOPA_DIE_TIMEOUT))
 	{
 		isDeleted = true;
 		return;
 	}
-
-	isOnPlatform = false;
-	//isStepOn = false;
+	else if ((state == KOOPA_STATE_SLEEP) && (GetTickCount64() - sleep_start >= KOOPA_SLEEP_TIMEOUT))
+	{
+		sleep_start = 0;
+		SetState(KOOPA_STATE_REBORN);
+	}
+	else if ((state == KOOPA_STATE_REBORN) && (GetTickCount64() - reborn_start >= KOOPA_REBORN_TIMEOUT))
+	{
+		//Should Get Mario's position after reborn
+		reborn_start = 0;
+		SetState(KOOPA_STATE_WALKING);
+	}
 
 	CCollision::GetInstance()->Process(this, dt, coObjects);
-	DebugOutTitle(L"Ace: %d", isStepOn);
+	DebugOutTitle(L"Vx, Vy, Ay: %f, %f, %f", vx, vy, ay);
 }
 
 
@@ -124,9 +120,14 @@ void CKoopa::SetState(int state)
 	{
 	case KOOPA_STATE_SLEEP:
 		vx = 0;
-		isStepOn = true;
 		isOnPlatform = true;
+		sleep_start = GetTickCount64();
 		y -= (KOOPA_BBOX_HEIGHT - KOOPA_IN_SHELL_BBOX_HEIGHT) / 2;
+		break;
+
+	case KOOPA_STATE_REBORN:
+		ay = 0;
+		reborn_start = GetTickCount64();
 		break;
 
 	case KOOPA_STATE_DIE:
@@ -139,11 +140,12 @@ void CKoopa::SetState(int state)
 		break;
 
 	case KOOPA_STATE_SLIP:
-		//isStepOn = true;
+		vy = 0;
 		break;
 
 	case KOOPA_STATE_WALKING:
 		vx = -KOOPA_WALKING_SPEED;
+		ay = KOOPA_GRAVITY;
 		break;
 
 	case KOOPA_STATE_JUMPING:
@@ -186,6 +188,8 @@ int CKoopa::GetAniIdGreenKoopa()
 		id = ID_ANI_KOOPA_SLEEPING;
 	else if (state == KOOPA_STATE_SLIP)
 		id = ID_ANI_KOOPA_SLIPPING;
+	else if (state == KOOPA_STATE_REBORN)
+		id = ID_ANI_KOOPA_REBORN;
 	else
 		id = ID_ANI_KOOPA_DIE;
 
