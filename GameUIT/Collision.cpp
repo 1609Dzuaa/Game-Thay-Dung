@@ -337,17 +337,17 @@ void CCollision::Process(LPGAMEOBJECT objSrc, DWORD dt, vector<LPGAMEOBJECT>* co
 				if (colY != NULL)
 				{
 					//maybe check here ?
-					float objX, objY;
-					colY->obj->GetPosition(objX, objY);
-					if (y >= objY)
-					{
-						x += dx;
-					}
-					else
-					{
+					//float objX, objY;
+					//colY->obj->GetPosition(objX, objY);
+					//if (y >= objY)
+					//{
+						//x += dx;
+					//}
+					//else
+					//{
 						x += dx;
 						y += colY->t * dy + colY->ny * BLOCK_PUSH_FACTOR; //65->78
-					}
+					//}
 
 					objSrc->OnCollisionWith(colY);
 				}

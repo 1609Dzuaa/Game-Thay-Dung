@@ -27,7 +27,6 @@
 
 #define MARIO_STATE_KICKING_RIGHT	110
 #define MARIO_STATE_KICKING_LEFT	210
-#define MARIO_STATE_KICKING_RELEASE 310
 
 #define MARIO_STATE_JUMP			300
 #define MARIO_STATE_RELEASE_JUMP    301
@@ -38,6 +37,7 @@
 #define MARIO_STATE_SIT				600
 #define MARIO_STATE_SIT_RELEASE		601
 
+#define MARIO_RACOON_STATE_ATTACK 700
 
 #pragma region ANIMATION_ID
 
@@ -92,12 +92,9 @@
 #define ID_ANI_MARIO_SMALL_SIT_RIGHT 1700
 #define ID_ANI_MARIO_SMALL_SIT_LEFT 1701
 
-//#define ID_ANI_MARIO_SMALL_KICKING_LEFT 1750
-//#define ID_ANI_MARIO_SMALL_KICKING_RIGHT 1751
-
+//
 //RACOON MARIO
-
-#define MARIO_RACOON_STATE_ATTACK 10
+//
 
 #define ID_ANI_MARIO_RACOON_IDLE_LEFT 1800
 #define ID_ANI_MARIO_RACOON_IDLE_RIGHT 1801
@@ -140,19 +137,27 @@
 #define MARIO_BIG_SITTING_BBOX_WIDTH  14
 #define MARIO_BIG_SITTING_BBOX_HEIGHT 16
 
-#define MARIO_SIT_HEIGHT_ADJUST ((MARIO_BIG_BBOX_HEIGHT-MARIO_BIG_SITTING_BBOX_HEIGHT)/2)
+#define MARIO_RACOON_BBOX_WIDTH  21
+#define MARIO_RACOON_BBOX_HEIGHT 24
+#define MARIO_RACOON_SITTING_BBOX_WIDTH  22
+#define MARIO_RACOON_SITTING_BBOX_HEIGHT 16
 
-#define MARIO_SMALL_BBOX_WIDTH  13
-#define MARIO_SMALL_BBOX_HEIGHT 12
+#define MARIO_SIT_HEIGHT_ADJUST ((MARIO_BIG_BBOX_HEIGHT - MARIO_BIG_SITTING_BBOX_HEIGHT) / 2)
+#define MARIO_RACOON_SIT_HEIGHT_ADJSUT ((MARIO_RACOON_BBOX_HEIGHT - MARIO_RACOON_SITTING_BBOX_HEIGHT) / 2)
+
+#define MARIO_SMALL_BBOX_WIDTH  12 //USED TO BE 13
+#define MARIO_SMALL_BBOX_HEIGHT 12 //CALCULATE RA 16 17 ??
 
 
 #define MARIO_UNTOUCHABLE_TIME 2500
 #define MARIO_KICK_TIME 100
+#define MARIO_RACOON_ATTACK_TIME 100
 
 class CMario : public CGameObject
 {
 	BOOLEAN isSitting;
 	BOOLEAN isKicking;
+	BOOLEAN isAttacking;
 	float maxVx;
 	float ax;				// acceleration on x 
 	float ay;				// acceleration on y 
@@ -161,6 +166,7 @@ class CMario : public CGameObject
 	int untouchable;
 	ULONGLONG untouchable_start;
 	ULONGLONG kick_start; //Tính thời gian sút để giải phóng Mario khỏi hành động sút
+	ULONGLONG attack_start;
 	BOOLEAN isOnPlatform;
 	int coin;
 
@@ -183,6 +189,7 @@ public:
 	{
 		isSitting = false;
 		isKicking = false;
+		isAttacking = false;
 		maxVx = 0.0f;
 		ax = 0.0f;
 		ay = MARIO_GRAVITY;
@@ -191,6 +198,7 @@ public:
 		untouchable = 0;
 		untouchable_start = -1;
 		kick_start = 0;
+		attack_start = 0;
 		isOnPlatform = false;
 		coin = 0;
 	}
@@ -211,6 +219,7 @@ public:
 	void OnCollisionWith(LPCOLLISIONEVENT e);
 
 	void SetLevel(int l);
+	int GetLevel() { return level; };
 	void StartUntouchable() { untouchable = 1; untouchable_start = GetTickCount64(); }
 
 	void GetBoundingBox(float& left, float& top, float& right, float& bottom);

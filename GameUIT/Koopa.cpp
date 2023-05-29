@@ -20,9 +20,9 @@ void CKoopa::GetBoundingBox(float& left, float& top, float& right, float& bottom
 	if (state == KOOPA_STATE_SLEEP || state == KOOPA_STATE_DIE || state == KOOPA_STATE_SLIP)
 	{
 		left = x - KOOPA_BBOX_WIDTH / 2;
-		top = y - KOOPA_BBOX_IN_SHELL_HEIGHT;
+		top = y - KOOPA_IN_SHELL_BBOX_HEIGHT / 2;
 		right = left + KOOPA_BBOX_WIDTH;
-		bottom = top + KOOPA_BBOX_IN_SHELL_HEIGHT;
+		bottom = top + KOOPA_IN_SHELL_BBOX_HEIGHT;
 	}
 	else
 	{
@@ -98,10 +98,10 @@ void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	}
 
 	isOnPlatform = false;
-	isStepOn = false;
+	//isStepOn = false;
 
 	CCollision::GetInstance()->Process(this, dt, coObjects);
-	//DebugOutTitle(L"Velo: %f", vy);
+	DebugOutTitle(L"Ace: %d", isStepOn);
 }
 
 
@@ -115,7 +115,7 @@ void CKoopa::Render()
 		aniId = GetAniIdFlyingKoopa();
 
 	CAnimations::GetInstance()->Get(aniId)->Render(x, y);
-	//RenderBoundingBox();
+	RenderBoundingBox();
 }
 
 void CKoopa::SetState(int state)
@@ -126,8 +126,7 @@ void CKoopa::SetState(int state)
 		vx = 0;
 		isStepOn = true;
 		isOnPlatform = true;
-		y -= (KOOPA_BBOX_HEIGHT - KOOPA_BBOX_IN_SHELL_HEIGHT) / 2;
-		//y -= (MARIO_BIG_BBOX_HEIGHT - MARIO_SMALL_BBOX_HEIGHT) / 2;
+		y -= (KOOPA_BBOX_HEIGHT - KOOPA_IN_SHELL_BBOX_HEIGHT) / 2;
 		break;
 
 	case KOOPA_STATE_DIE:
@@ -140,8 +139,7 @@ void CKoopa::SetState(int state)
 		break;
 
 	case KOOPA_STATE_SLIP:
-		isStepOn = true;
-		ay = KOOPA_GRAVITY;
+		//isStepOn = true;
 		break;
 
 	case KOOPA_STATE_WALKING:

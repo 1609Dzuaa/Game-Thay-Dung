@@ -13,6 +13,7 @@ void CQuestionBrick::Render()
 		animations->Get(ID_ANI_QUESTION_BRICK)->Render(x, y);
 	else 
 		animations->Get(ID_ANI_QUESTION_BRICK_HITTED)->Render(x, y);
+	RenderBoundingBox();
 }
 
 void CQuestionBrick::OnNoCollision(DWORD dt)

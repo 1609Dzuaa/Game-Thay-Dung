@@ -21,7 +21,8 @@
 class CCoin : public CGameObject 
 {
 	int type;
-	float currentY, minY;
+	float currentY, minY; //dùng cho loại bay từ QuestionBrick
+    //minY: khoảng cách búng đồng tiền lên trên tính từ currentY của QuestionBrick
 public:
 
 	CCoin(float x, float y) : CGameObject(x, y) 
