@@ -4,6 +4,8 @@
 #include "QuestionBrick.h"
 #include "debug.h"
 
+extern CMario* mario;
+
 CKoopa::CKoopa(float x, float y, int type) :CGameObject(x, y)
 {
 	this->ax = 0; 
@@ -97,7 +99,7 @@ void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	}
 
 	CCollision::GetInstance()->Process(this, dt, coObjects);
-	DebugOutTitle(L"Vx, Vy, Ay: %f, %f, %f", vx, vy, ay);
+	//DebugOutTitle(L"Vx, Vy, Ay: %f, %f, %f", vx, vy, ay);
 }
 
 
@@ -122,11 +124,9 @@ void CKoopa::SetState(int state)
 		vx = 0;
 		isOnPlatform = true;
 		sleep_start = GetTickCount64();
-		y -= (KOOPA_BBOX_HEIGHT - KOOPA_IN_SHELL_BBOX_HEIGHT) / 2;
 		break;
 
 	case KOOPA_STATE_REBORN:
-		ay = 0;
 		reborn_start = GetTickCount64();
 		break;
 
@@ -144,8 +144,14 @@ void CKoopa::SetState(int state)
 		break;
 
 	case KOOPA_STATE_WALKING:
-		vx = -KOOPA_WALKING_SPEED;
-		ay = KOOPA_GRAVITY;
+		if (this->x > mario->GetMarioPositionX())
+			vx = -KOOPA_WALKING_SPEED;
+		else 
+			vx = KOOPA_WALKING_SPEED;
+
+		y -= (KOOPA_BBOX_HEIGHT - KOOPA_IN_SHELL_BBOX_HEIGHT) / 2; 
+		//Cập nhật vị trí y mới sau khi từ trạng thái NGỦ đến lúc hồi sinh
+		//để tránh việc bị rơi xuống nền
 		break;
 
 	case KOOPA_STATE_JUMPING:

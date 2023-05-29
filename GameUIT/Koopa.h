@@ -78,5 +78,4 @@ public:
 	virtual void SetState(int state);
 	int GetType() { return type; };
 	void SetType(int para) { this->type = para; };
-	void SetVxAndAy(float vx, float ay) { this->vx = vx; this->ay = ay; }
 };
