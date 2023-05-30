@@ -22,7 +22,7 @@ class CMushroom : public CGameObject
 public:
 	CMushroom(float x, float y, float brickY) : CGameObject(x, y)
 	{
-		this->vx = MUSHROOM_SPEED_X;
+		this->vx = 0;
 		this->ax = 0;
 		this->ay = MUSHROOM_GRAVITY;
 		brickminY = brickY;

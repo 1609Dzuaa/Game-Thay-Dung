@@ -18,7 +18,9 @@ CKoopa::CKoopa(float x, float y, int type) :CGameObject(x, y)
 
 void CKoopa::GetBoundingBox(float& left, float& top, float& right, float& bottom)
 {
-	if (state == KOOPA_STATE_SLEEP || state == KOOPA_STATE_DIE || state == KOOPA_STATE_SLIP || state == KOOPA_STATE_REBORN)
+	if (state == KOOPA_STATE_SLEEP || state == KOOPA_STATE_DIE
+		|| state == KOOPA_STATE_SLIP || state == KOOPA_STATE_REBORN
+		|| state == KOOPA_STATE_SLEEP_REVERSE || state == KOOPA_STATE_REBORN_REVERSE)
 	{
 		left = x - KOOPA_BBOX_WIDTH / 2;
 		top = y - KOOPA_IN_SHELL_BBOX_HEIGHT / 2;
@@ -81,6 +83,11 @@ void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	vx += ax * dt;
 	vy += ay * dt;
 
+	if ((state == KOOPA_STATE_SLEEP_REVERSE) && (GetTickCount64() - flying_start > KOOPA_FLY_TIMEOUT))
+	{
+		vx = 0;
+	}
+
 	if ((state == KOOPA_STATE_DIE) && (GetTickCount64() - die_start > KOOPA_DIE_TIMEOUT))
 	{
 		isDeleted = true;
@@ -91,12 +98,19 @@ void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		sleep_start = 0;
 		SetState(KOOPA_STATE_REBORN);
 	}
-	else if ((state == KOOPA_STATE_REBORN) && (GetTickCount64() - reborn_start >= KOOPA_REBORN_TIMEOUT))
+	else if ((state == KOOPA_STATE_SLEEP_REVERSE) && (GetTickCount64() - sleep_start >= KOOPA_SLEEP_TIMEOUT))
 	{
-		//Should Get Mario's position after reborn
-		reborn_start = 0;
-		SetState(KOOPA_STATE_WALKING);
+		sleep_start = 0;
+		SetState(KOOPA_STATE_REBORN_REVERSE);
 	}
+	else 
+		if ((state == KOOPA_STATE_REBORN) && (GetTickCount64() - reborn_start >= KOOPA_REBORN_TIMEOUT)
+			|| (state == KOOPA_STATE_REBORN_REVERSE) && (GetTickCount64() - reborn_start >= KOOPA_REBORN_TIMEOUT))
+		{
+			//Should Get Mario's position after reborn
+			reborn_start = 0;
+			SetState(KOOPA_STATE_WALKING);
+		}
 
 	CCollision::GetInstance()->Process(this, dt, coObjects);
 	//DebugOutTitle(L"Vx, Vy, Ay: %f, %f, %f", vx, vy, ay);
@@ -127,8 +141,27 @@ void CKoopa::SetState(int state)
 		y -= (KOOPA_BBOX_HEIGHT - KOOPA_IN_SHELL_BBOX_HEIGHT) / 2;
 		break;
 
+	case KOOPA_STATE_SLEEP_REVERSE:
+		if (mario->GetMarioNormalX() > 0)
+			vx = vx * KOOPA_KNOCK_OFF_FACTOR_X;
+		else
+			vx = -vx * KOOPA_KNOCK_OFF_FACTOR_X;
+		vy = -KOOPA_KNOCK_OFF_FACTOR_Y;
+		isOnPlatform = true;
+		sleep_start = GetTickCount64();
+		flying_start = GetTickCount64();
+		y -= (KOOPA_BBOX_HEIGHT - KOOPA_IN_SHELL_BBOX_HEIGHT) / 2;
+		break;
+
 	case KOOPA_STATE_REBORN:
 		reborn_start = GetTickCount64();
+		break;
+		
+	case KOOPA_STATE_REBORN_REVERSE:
+		vx = 0;
+		reborn_start = GetTickCount64();
+		y -= (KOOPA_BBOX_HEIGHT - KOOPA_IN_SHELL_BBOX_HEIGHT) / 2;
+		isOnPlatform = true;
 		break;
 
 	case KOOPA_STATE_DIE:
@@ -198,6 +231,8 @@ int CKoopa::GetAniIdGreenKoopa()
 		id = ID_ANI_KOOPA_SLIPPING;
 	else if (state == KOOPA_STATE_REBORN)
 		id = ID_ANI_KOOPA_REBORN;
+	else if (state == KOOPA_STATE_REBORN_REVERSE)
+		id = ID_ANI_KOOPA_REBORN_REVERSE;
 	else
 		id = ID_ANI_KOOPA_DIE;
 

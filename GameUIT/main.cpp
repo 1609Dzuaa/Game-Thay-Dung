@@ -484,6 +484,8 @@ void LoadAssetsKoopa()
 
 	sprites->Add(ID_SPRITE_KOOPA_SLEEP + 1, 70, 123, 70 + 16, 123 + 15, texEnemy);
 
+	sprites->Add(ID_SPRITE_KOOPA_SLEEP_REVERSE + 1, 210, 348, 227, 364, texEnemy);
+
 	sprites->Add(ID_SPRITE_KOOPA_SLIP + 1, 88, 123, 88 + 15, 123 + 15, texEnemy);
 	sprites->Add(ID_SPRITE_KOOPA_SLIP + 2, 105, 123, 105 + 15, 123 + 15, texEnemy);
 	sprites->Add(ID_SPRITE_KOOPA_SLIP + 3, 122, 123, 122 + 15, 123 + 15, texEnemy);
@@ -504,6 +506,9 @@ void LoadAssetsKoopa()
 
 	//KOOPA REBORN
 	sprites->Add(ID_SPRITE_KOOPA_REBORN + 1, 105, 75, 122, 92, texEnemy);
+
+	//KOOPA REBORN REVERSE
+	sprites->Add(ID_SPRITE_KOOPA_REBORN_REVERSE + 1, 230, 347, 248, 365, texEnemy);
 
 	LPANIMATION ani = new CAnimation(100);
 	ani->Add(ID_SPRITE_KOOPA_JUMPING_LEFT + 1);
@@ -529,6 +534,10 @@ void LoadAssetsKoopa()
 	ani->Add(ID_SPRITE_KOOPA_SLEEP + 1);
 	animations->Add(ID_ANI_KOOPA_SLEEPING, ani);
 
+	ani = new CAnimation(100);
+	ani->Add(ID_SPRITE_KOOPA_SLEEP_REVERSE + 1);
+	animations->Add(ID_ANI_KOOPA_SLEEPING_REVERSE, ani);
+
 	ani = new CAnimation(50);
 	ani->Add(ID_SPRITE_KOOPA_SLIP + 1);
 	ani->Add(ID_SPRITE_KOOPA_SLIP + 2);
@@ -544,6 +553,11 @@ void LoadAssetsKoopa()
 	ani->Add(ID_SPRITE_KOOPA_SLEEP + 1);
 	ani->Add(ID_SPRITE_KOOPA_REBORN + 1);
 	animations->Add(ID_ANI_KOOPA_REBORN, ani);
+
+	ani = new CAnimation(100);
+	ani->Add(ID_SPRITE_KOOPA_SLEEP_REVERSE + 1);
+	ani->Add(ID_SPRITE_KOOPA_REBORN_REVERSE + 1);
+	animations->Add(ID_ANI_KOOPA_REBORN_REVERSE, ani);
 }
 void LoadAssetsBrick()
 {
@@ -753,7 +767,7 @@ void Reload()
 
 	for (int j = 0; j < 1; j++)
 	{
-		CKoopa* koopa = new CKoopa(KOOPA_X + j * 60, GROUND_Y - 120.0f, 2);
+		CKoopa* koopa = new CKoopa(KOOPA_X + j * 60, GROUND_Y - 120.0f, 1);
 		objects.push_back(koopa);
 	}
 

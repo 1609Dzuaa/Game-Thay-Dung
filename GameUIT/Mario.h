@@ -229,4 +229,5 @@ public:
 
 	void GetBoundingBox(float& left, float& top, float& right, float& bottom);
 	float GetMarioPositionX() { return x; };
+	int GetMarioNormalX() { return nx; }
 };

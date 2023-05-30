@@ -198,7 +198,7 @@ void CMario::HandleCollisionOtherDirectionWithKoopa(LPCOLLISIONEVENT e, CKoopa* 
 		{
 			if (this->isAttacking)
 			{
-				koopa->SetState(KOOPA_STATE_DIE);
+				koopa->SetState(KOOPA_STATE_SLEEP_REVERSE);
 			}
 			else 
 			{

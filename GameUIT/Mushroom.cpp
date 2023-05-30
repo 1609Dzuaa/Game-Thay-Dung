@@ -70,10 +70,10 @@ void CMushroom::SetState(int state)
 	switch (state)
 	{
 	case OUT_OF_BRICK:
-		if (mario->GetMarioPositionX() > this->x)
-			vx = -MUSHROOM_SPEED_X;
-		else 
+		if (this->x > mario->GetMarioPositionX())
 			vx = MUSHROOM_SPEED_X;
+		else if(this->x < mario->GetMarioPositionX())
+			vx = -MUSHROOM_SPEED_X;
 		break;
 	}
 	//Nếu qua trái mà gần với Mario thì nấm qua phải
