@@ -124,6 +124,7 @@ void CKoopa::SetState(int state)
 		vx = 0;
 		isOnPlatform = true;
 		sleep_start = GetTickCount64();
+		y -= (KOOPA_BBOX_HEIGHT - KOOPA_IN_SHELL_BBOX_HEIGHT) / 2;
 		break;
 
 	case KOOPA_STATE_REBORN:
@@ -141,6 +142,7 @@ void CKoopa::SetState(int state)
 
 	case KOOPA_STATE_SLIP:
 		vy = 0;
+		y -= (KOOPA_BBOX_HEIGHT - KOOPA_IN_SHELL_BBOX_HEIGHT) / 2;
 		break;
 
 	case KOOPA_STATE_WALKING:

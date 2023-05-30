@@ -424,7 +424,7 @@ void LoadAssetsMario()
 	ani->Add(ID_SPRITE_MARIO_RACOON_KICK_LEFT + 1);
 	animations->Add(ID_ANI_MARIO_RACOON_KICKING_LEFT, ani);
 
-	ani = new CAnimation(500);
+	ani = new CAnimation(50);
 	ani->Add(ID_SPRITE_MARIO_RACOON_ATTACK_LEFT + 1);
 	ani->Add(ID_SPRITE_MARIO_RACOON_ATTACK_LEFT + 2);
 	ani->Add(ID_SPRITE_MARIO_RACOON_ATTACK_LEFT + 3);
@@ -432,7 +432,7 @@ void LoadAssetsMario()
 	ani->Add(ID_SPRITE_MARIO_RACOON_ATTACK_LEFT + 5);
 	animations->Add(ID_ANI_MARIO_RACOON_ATTACKING_LEFT, ani);
 
-	ani = new CAnimation(500);
+	ani = new CAnimation(50);
 	ani->Add(ID_SPRITE_MARIO_RACOON_ATTACK_RIGHT + 1);
 	ani->Add(ID_SPRITE_MARIO_RACOON_ATTACK_RIGHT + 2);
 	ani->Add(ID_SPRITE_MARIO_RACOON_ATTACK_RIGHT + 3);
@@ -745,15 +745,15 @@ void Reload()
 	mario = new CMario(MARIO_START_X, MARIO_START_Y);
 	objects.push_back(mario);
 
-	/*for (int j = 0; j < 1; j++)
+	for (int j = 0; j < 1; j++)
 	{
 		CGoomba* goomba = new CGoomba(GOOMBA_X + j * 60, GROUND_Y - 120.0f);
 		objects.push_back(goomba);
-	}*/
+	}
 
 	for (int j = 0; j < 1; j++)
 	{
-		CKoopa* koopa = new CKoopa(KOOPA_X + j * 60, GROUND_Y - 120.0f, 1);
+		CKoopa* koopa = new CKoopa(KOOPA_X + j * 60, GROUND_Y - 120.0f, 2);
 		objects.push_back(koopa);
 	}
 

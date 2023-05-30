@@ -44,7 +44,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	isOnPlatform = false;
 
 	CCollision::GetInstance()->Process(this, dt, coObjects);
-	DebugOutTitle(L"STATE: %f", y);
+	//DebugOutTitle(L"STATE: %d", state);
 }
 
 void CMario::OnNoCollision(DWORD dt)
@@ -61,7 +61,6 @@ void CMario::OnCollisionWith(LPCOLLISIONEVENT e)
 		if (e->ny < 0)
 		{
 			isOnPlatform = true;
-			//if i comment the line above, Mario can't jump
 		}
 	}
 	else if (e->nx != 0 && e->obj->IsBlocking())
@@ -69,6 +68,12 @@ void CMario::OnCollisionWith(LPCOLLISIONEVENT e)
 		vx = 0; 
 	}
 
+	//Va chạm với vật không có thuộc tính block hoặc Question Brick
+	KindOfOnCollisionWith(e);
+}
+
+void CMario::KindOfOnCollisionWith(LPCOLLISIONEVENT e)
+{
 	if (dynamic_cast<CGoomba*>(e->obj))
 		OnCollisionWithGoomba(e);
 	if (dynamic_cast<CKoopa*>(e->obj))
@@ -81,7 +86,6 @@ void CMario::OnCollisionWith(LPCOLLISIONEVENT e)
 		OnCollisionWithLeaf(e);
 	else if (dynamic_cast<CCoin*>(e->obj))
 		OnCollisionWithCoin(e);
-
 }
 
 void CMario::OnCollisionWithGoomba(LPCOLLISIONEVENT e)
@@ -109,19 +113,26 @@ void CMario::HandleCollisionOtherDirectionWithGoomba(LPCOLLISIONEVENT e, CGoomba
 		//Nếu con Goomba chưa chết thì xét, không thì bỏ qua nó
 		if (goomba->GetState() != GOOMBA_STATE_DIE)
 		{
-			if (level > MARIO_LEVEL_BIG)
+			if (this->isAttacking)
 			{
-				level = MARIO_LEVEL_BIG;
-				StartUntouchable();
-			}
-			else if (level > MARIO_LEVEL_SMALL)
-			{
-				level = MARIO_LEVEL_SMALL;
-				StartUntouchable();
+				goomba->SetState(GOOMBA_STATE_DIE_REVERSE);
 			}
 			else
 			{
-				SetState(MARIO_STATE_DIE);
+				if (level > MARIO_LEVEL_BIG)
+				{
+					level = MARIO_LEVEL_BIG;
+					StartUntouchable();
+				}
+				else if (level > MARIO_LEVEL_SMALL)
+				{
+					level = MARIO_LEVEL_SMALL;
+					StartUntouchable();
+				}
+				else
+				{
+					SetState(MARIO_STATE_DIE);
+				}
 			}
 		}
 	}
@@ -144,7 +155,7 @@ void CMario::OnCollisionWithKoopa(LPCOLLISIONEVENT e)
 
 void CMario::HandleCollisionUpperDirectionWithKoopa(CKoopa* koopa)
 {
-	//Va chạm Hướng TRÊN (UP) => đưa Koopa về trạng thái ngủ
+	//Va chạm Hướng TRÊN (UP) => đưa Koopa về trạng thái ngủ/lăn
 	if (koopa->GetState() != KOOPA_STATE_DIE)
 	{
 		if (koopa->GetType() == 2)
@@ -185,36 +196,43 @@ void CMario::HandleCollisionOtherDirectionWithKoopa(LPCOLLISIONEVENT e, CKoopa* 
 	{
 		if (koopa->GetState() != KOOPA_STATE_DIE)
 		{
-			if (koopa->GetState() != KOOPA_STATE_SLEEP)
+			if (this->isAttacking)
 			{
-				if (level == MARIO_LEVEL_RACOON)
+				koopa->SetState(KOOPA_STATE_DIE);
+			}
+			else 
+			{
+				if (koopa->GetState() != KOOPA_STATE_SLEEP)
 				{
-					level = MARIO_LEVEL_BIG;
-					StartUntouchable();
-				}
-				else if (level == MARIO_LEVEL_BIG)
-				{
-					level = MARIO_LEVEL_SMALL;
-					StartUntouchable();
+					if (level == MARIO_LEVEL_RACOON)
+					{
+						level = MARIO_LEVEL_BIG;
+						StartUntouchable();
+					}
+					else if (level == MARIO_LEVEL_BIG)
+					{
+						level = MARIO_LEVEL_SMALL;
+						StartUntouchable();
+					}
+					else
+					{
+						SetState(MARIO_STATE_DIE);
+					}
 				}
 				else
 				{
-					SetState(MARIO_STATE_DIE);
-				}
-			}
-			else
-			{
-				if (e->nx == -1)
-				{
-					this->SetState(MARIO_STATE_KICKING_RIGHT);
-					koopa->SetState(KOOPA_STATE_SLIP);
-					koopa->SetSpeed(abs(KOOPA_SLIPPING_SPEED), 0);
-				}
-				else if (e->nx == 1)
-				{
-					this->SetState(MARIO_STATE_KICKING_LEFT);
-					koopa->SetState(KOOPA_STATE_SLIP);
-					koopa->SetSpeed(-KOOPA_SLIPPING_SPEED, 0);
+					if (e->nx == -1)
+					{
+						this->SetState(MARIO_STATE_KICKING_RIGHT);
+						koopa->SetState(KOOPA_STATE_SLIP);
+						koopa->SetSpeed(abs(KOOPA_SLIPPING_SPEED), 0);
+					}
+					else if (e->nx == 1)
+					{
+						this->SetState(MARIO_STATE_KICKING_LEFT);
+						koopa->SetState(KOOPA_STATE_SLIP);
+						koopa->SetSpeed(-KOOPA_SLIPPING_SPEED, 0);
+					}
 				}
 			}
 		}

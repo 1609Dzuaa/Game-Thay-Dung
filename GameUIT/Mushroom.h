@@ -44,5 +44,7 @@ public:
 
 	void SetBrickMinY(float para) { this->brickminY = para; }
 
+	void SetMushroomX(float x) { this->x = x; }
+
 	void SetState(int state);
 };

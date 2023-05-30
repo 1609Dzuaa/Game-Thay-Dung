@@ -137,7 +137,7 @@
 #define MARIO_BIG_SITTING_BBOX_WIDTH  14
 #define MARIO_BIG_SITTING_BBOX_HEIGHT 16
 
-#define MARIO_RACOON_BBOX_WIDTH  21
+#define MARIO_RACOON_BBOX_WIDTH  24 //USED TO BE 21
 #define MARIO_RACOON_BBOX_HEIGHT 24
 #define MARIO_RACOON_SITTING_BBOX_WIDTH  22
 #define MARIO_RACOON_SITTING_BBOX_HEIGHT 16
@@ -151,7 +151,7 @@
 
 #define MARIO_UNTOUCHABLE_TIME 2500
 #define MARIO_KICK_TIME 100
-#define MARIO_RACOON_ATTACK_TIME 100
+#define MARIO_RACOON_ATTACK_TIME 300
 
 class CMario : public CGameObject
 {
@@ -182,6 +182,8 @@ class CMario : public CGameObject
 	void HandleCollisionOtherDirectionWithGoomba(LPCOLLISIONEVENT e, CGoomba* goomba); 
 	void HandleCollisionUpperDirectionWithKoopa(CKoopa* koopa);
 	void HandleCollisionOtherDirectionWithKoopa(LPCOLLISIONEVENT e, CKoopa* koopa);
+
+	void KindOfOnCollisionWith(LPCOLLISIONEVENT e);
 
 	int GetAniIdBig();
 	int GetAniIdSmall();

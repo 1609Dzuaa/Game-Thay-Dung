@@ -110,10 +110,10 @@ void CGoomba::SetState(int state)
 	case GOOMBA_STATE_DIE_REVERSE:
 		die_reverse_start = GetTickCount64();
 		if (this->nx > 0)
-			vx = -vx * 1.15;
+			vx = -vx * GOOMBA_DIE_REVERSE_FACTOR_X;
 		else
-			vx = vx * 1.15;
-		vy = -0.5f;
+			vx = vx * GOOMBA_DIE_REVERSE_FACTOR_X;
+		vy = -GOOMBA_DIE_REVERSE_FACTOR_Y;
 		break;
 
 	case GOOMBA_STATE_WALKING:

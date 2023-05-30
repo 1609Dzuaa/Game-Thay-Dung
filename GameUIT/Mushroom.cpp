@@ -1,5 +1,8 @@
 ﻿#include "Mushroom.h"
+#include "Mario.h"
 #include "debug.h"
+
+extern CMario* mario;
 
 void CMushroom::Render()
 {
@@ -22,7 +25,7 @@ void CMushroom::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		if (y <= brickminY)
 		{
 			y = brickminY;
-			state = OUT_OF_BRICK;
+			this->SetState(OUT_OF_BRICK);
 		}
 		else
 		{
@@ -35,9 +38,8 @@ void CMushroom::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		vx += ax * dt;
 	}
 
-	CGameObject::Update(dt, coObjects);
 	CCollision::GetInstance()->Process(this, dt, coObjects);
-	//DebugOutTitle(L"IS COLLIDABLE: %f", vx);
+	DebugOutTitle(L"State and X and Mario X: %d, %f, %f", state, x, mario->GetMarioPositionX());
 }
 
 void CMushroom::OnNoCollision(DWORD dt)
@@ -68,9 +70,12 @@ void CMushroom::SetState(int state)
 	switch (state)
 	{
 	case OUT_OF_BRICK:
-		//if()
-		vx = MUSHROOM_SPEED_X;
+		if (mario->GetMarioPositionX() > this->x)
+			vx = -MUSHROOM_SPEED_X;
+		else 
+			vx = MUSHROOM_SPEED_X;
 		break;
 	}
 	//Nếu qua trái mà gần với Mario thì nấm qua phải
+	CGameObject::SetState(state);
 }
