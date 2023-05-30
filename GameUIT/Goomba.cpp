@@ -1,5 +1,8 @@
 ﻿#include "Goomba.h"
+#include "Mario.h"
 #include "debug.h"
+
+extern CMario* mario;
 
 CGoomba::CGoomba(float x, float y) :CGameObject(x, y)
 {
@@ -7,6 +10,7 @@ CGoomba::CGoomba(float x, float y) :CGameObject(x, y)
 	this->ay = GOOMBA_GRAVITY;
 	die_start = -1;
 	die_reverse_start = -1;
+	isDead = false;
 	SetState(GOOMBA_STATE_WALKING);
 }
 
@@ -63,11 +67,13 @@ void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	if ((state == GOOMBA_STATE_DIE) && (GetTickCount64() - die_start > GOOMBA_DIE_TIMEOUT))
 	{
 		isDeleted = true;
+		isDead = true;
 		return;
 	}
 	else if ((state == GOOMBA_STATE_DIE_REVERSE) && (GetTickCount64() - die_reverse_start > GOOMBA_DIE_TIMEOUT))
 	{
 		isDeleted = true;
+		isDead = true;
 		return;
 	}
 
@@ -109,10 +115,10 @@ void CGoomba::SetState(int state)
 
 	case GOOMBA_STATE_DIE_REVERSE:
 		die_reverse_start = GetTickCount64();
-		if (this->nx > 0)
-			vx = -vx * GOOMBA_DIE_REVERSE_FACTOR_X;
-		else
+		if (mario->GetMarioNormalX() > 0 && mario->GetMarioPositionX() > this->x)
 			vx = vx * GOOMBA_DIE_REVERSE_FACTOR_X;
+		else if (mario->GetMarioNormalX() < 0 && mario->GetMarioPositionX() < this->x)
+			vx = -vx * GOOMBA_DIE_REVERSE_FACTOR_X;
 		vy = -GOOMBA_DIE_REVERSE_FACTOR_Y;
 		break;
 

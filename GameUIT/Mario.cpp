@@ -99,7 +99,7 @@ void CMario::OnCollisionWithGoomba(LPCOLLISIONEVENT e)
 
 void CMario::HandleCollisionUpperDirectionWithGoomba(CGoomba* goomba)
 {
-	if (goomba->GetState() != GOOMBA_STATE_DIE)
+	if (goomba->GetState() != GOOMBA_STATE_DIE && goomba->GetState() != GOOMBA_STATE_DIE_REVERSE)
 	{
 		goomba->SetState(GOOMBA_STATE_DIE);
 		vy = -MARIO_JUMP_DEFLECT_SPEED; //nảy lên
@@ -111,7 +111,7 @@ void CMario::HandleCollisionOtherDirectionWithGoomba(LPCOLLISIONEVENT e, CGoomba
 	if (untouchable == 0)
 	{
 		//Nếu con Goomba chưa chết thì xét, không thì bỏ qua nó
-		if (goomba->GetState() != GOOMBA_STATE_DIE)
+		if (goomba->GetState() != GOOMBA_STATE_DIE && goomba->GetState() != GOOMBA_STATE_DIE_REVERSE)
 		{
 			if (this->isAttacking)
 			{
@@ -166,12 +166,17 @@ void CMario::HandleCollisionUpperDirectionWithKoopa(CKoopa* koopa)
 		}
 		else
 		{
-			if (koopa->GetState() != KOOPA_STATE_SLEEP)
+			if (koopa->GetState() == KOOPA_STATE_SLIP) //Mayber slip, slip_reverse, sleep_reverse, normal
 			{
 				koopa->SetState(KOOPA_STATE_SLEEP);
 				vy = -MARIO_JUMP_DEFLECT_SPEED;
 			}
-			else //Koopa ĐANG NGỦ
+			else if (koopa->GetState() == KOOPA_STATE_SLIP_REVERSE)
+			{
+				koopa->SetState(KOOPA_STATE_SLEEP_REVERSE);
+				vy = -MARIO_JUMP_DEFLECT_SPEED;
+			}
+			else if(koopa->GetState() == KOOPA_STATE_SLEEP) //Koopa ĐANG NGỦ
 			{
 				//Dựa vào hướng của Mario để quyết định dấu vận tốc của Koopa
 				if (this->nx > 0)
@@ -184,6 +189,33 @@ void CMario::HandleCollisionUpperDirectionWithKoopa(CKoopa* koopa)
 					koopa->SetState(KOOPA_STATE_SLIP);
 					koopa->SetSpeed(-KOOPA_SLIPPING_SPEED, 0);
 				}
+			}
+			else if (koopa->GetState() == KOOPA_STATE_SLEEP_REVERSE)
+			{
+				if (this->nx > 0)
+				{
+					koopa->SetState(KOOPA_STATE_SLIP_REVERSE);
+					koopa->SetSpeed(abs(KOOPA_SLIPPING_SPEED), 0);
+				}
+				else if (this->nx < 0)
+				{
+					koopa->SetState(KOOPA_STATE_SLIP_REVERSE);
+					koopa->SetSpeed(-KOOPA_SLIPPING_SPEED, 0);
+				}
+			}
+			else
+			{
+				if (this->nx > 0)
+				{
+					koopa->SetState(KOOPA_STATE_SLIP);
+					koopa->SetSpeed(abs(KOOPA_SLIPPING_SPEED), 0);
+				}
+				else if (this->nx < 0)
+				{
+					koopa->SetState(KOOPA_STATE_SLIP);
+					koopa->SetSpeed(-KOOPA_SLIPPING_SPEED, 0);
+				}
+
 			}
 		}
 	}
@@ -199,10 +231,11 @@ void CMario::HandleCollisionOtherDirectionWithKoopa(LPCOLLISIONEVENT e, CKoopa* 
 			if (this->isAttacking)
 			{
 				koopa->SetState(KOOPA_STATE_SLEEP_REVERSE);
+				koopa->SetKnockOff(true);
 			}
 			else 
 			{
-				if (koopa->GetState() != KOOPA_STATE_SLEEP)
+				if (koopa->GetState() != KOOPA_STATE_SLEEP && koopa->GetState() != KOOPA_STATE_SLEEP_REVERSE)
 				{
 					if (level == MARIO_LEVEL_RACOON)
 					{
@@ -219,7 +252,22 @@ void CMario::HandleCollisionOtherDirectionWithKoopa(LPCOLLISIONEVENT e, CKoopa* 
 						SetState(MARIO_STATE_DIE);
 					}
 				}
-				else
+				else if (koopa->GetState() == KOOPA_STATE_SLEEP_REVERSE)
+				{
+					if (e->nx == -1)
+					{
+						this->SetState(MARIO_STATE_KICKING_RIGHT);
+						koopa->SetState(KOOPA_STATE_SLIP_REVERSE);
+						koopa->SetSpeed(abs(KOOPA_SLIPPING_SPEED), 0);
+					}
+					else if (e->nx == 1)
+					{
+						this->SetState(MARIO_STATE_KICKING_LEFT);
+						koopa->SetState(KOOPA_STATE_SLIP_REVERSE);
+						koopa->SetSpeed(-KOOPA_SLIPPING_SPEED, 0);
+					}
+				}
+				else //Đang Ngủ Bình Thường
 				{
 					if (e->nx == -1)
 					{

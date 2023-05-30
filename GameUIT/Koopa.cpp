@@ -12,22 +12,27 @@ CKoopa::CKoopa(float x, float y, int type) :CGameObject(x, y)
 	this->ay = KOOPA_GRAVITY;
 	this->type = type;
 	die_start = -1;
+	reborn_start = -1;
+	knock_off_start = -1;
 	isOnPlatform = false;
+	isBeingKnockOff = false;
 	SetState(KOOPA_STATE_WALKING);
 }
 
 void CKoopa::GetBoundingBox(float& left, float& top, float& right, float& bottom)
 {
+	//Các trạng thái ở trong mai
 	if (state == KOOPA_STATE_SLEEP || state == KOOPA_STATE_DIE
 		|| state == KOOPA_STATE_SLIP || state == KOOPA_STATE_REBORN
-		|| state == KOOPA_STATE_SLEEP_REVERSE || state == KOOPA_STATE_REBORN_REVERSE)
+		|| state == KOOPA_STATE_SLEEP_REVERSE || state == KOOPA_STATE_REBORN_REVERSE
+		|| state == KOOPA_STATE_SLIP_REVERSE)
 	{
 		left = x - KOOPA_BBOX_WIDTH / 2;
 		top = y - KOOPA_IN_SHELL_BBOX_HEIGHT / 2;
 		right = left + KOOPA_BBOX_WIDTH;
 		bottom = top + KOOPA_IN_SHELL_BBOX_HEIGHT;
 	}
-	else
+	else //trạng thái bình thường
 	{
 		left = x - KOOPA_BBOX_WIDTH / 2;
 		top = y - KOOPA_BBOX_HEIGHT / 2;
@@ -83,9 +88,10 @@ void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	vx += ax * dt;
 	vy += ay * dt;
 
-	if ((state == KOOPA_STATE_SLEEP_REVERSE) && (GetTickCount64() - flying_start > KOOPA_FLY_TIMEOUT))
+	if ((state == KOOPA_STATE_SLEEP_REVERSE) && (GetTickCount64() - knock_off_start > KOOPA_FLY_TIMEOUT) && isBeingKnockOff)
 	{
 		vx = 0;
+		isBeingKnockOff = false;
 	}
 
 	if ((state == KOOPA_STATE_DIE) && (GetTickCount64() - die_start > KOOPA_DIE_TIMEOUT))
@@ -142,14 +148,14 @@ void CKoopa::SetState(int state)
 		break;
 
 	case KOOPA_STATE_SLEEP_REVERSE:
-		if (mario->GetMarioNormalX() > 0)
+		if (mario->GetMarioNormalX() > 0 && mario->GetMarioPositionX() > this->x)
 			vx = vx * KOOPA_KNOCK_OFF_FACTOR_X;
-		else
+		else if (mario->GetMarioNormalX() < 0 && mario->GetMarioPositionX() < this->x)
 			vx = -vx * KOOPA_KNOCK_OFF_FACTOR_X;
 		vy = -KOOPA_KNOCK_OFF_FACTOR_Y;
 		isOnPlatform = true;
 		sleep_start = GetTickCount64();
-		flying_start = GetTickCount64();
+		knock_off_start = GetTickCount64();
 		y -= (KOOPA_BBOX_HEIGHT - KOOPA_IN_SHELL_BBOX_HEIGHT) / 2;
 		break;
 
@@ -167,13 +173,18 @@ void CKoopa::SetState(int state)
 	case KOOPA_STATE_DIE:
 		die_start = GetTickCount64();
 		if (this->nx > 0)
-			vx = -vx * 1.15;
+			vx = -vx * KOOPA_KNOCK_OFF_FACTOR_X;
 		else
-			vx = vx * 1.15;
-		vy = -0.5f;
+			vx = vx * KOOPA_KNOCK_OFF_FACTOR_X;
+		vy = -KOOPA_KNOCK_OFF_FACTOR_Y;
 		break;
 
 	case KOOPA_STATE_SLIP:
+		vy = 0;
+		y -= (KOOPA_BBOX_HEIGHT - KOOPA_IN_SHELL_BBOX_HEIGHT) / 2;
+		break;
+
+	case KOOPA_STATE_SLIP_REVERSE:
 		vy = 0;
 		y -= (KOOPA_BBOX_HEIGHT - KOOPA_IN_SHELL_BBOX_HEIGHT) / 2;
 		break;
@@ -229,6 +240,8 @@ int CKoopa::GetAniIdGreenKoopa()
 		id = ID_ANI_KOOPA_SLEEPING;
 	else if (state == KOOPA_STATE_SLIP)
 		id = ID_ANI_KOOPA_SLIPPING;
+	else if (state == KOOPA_STATE_SLIP_REVERSE)
+		id = ID_ANI_KOOPA_SLIPPING_REVERSE;
 	else if (state == KOOPA_STATE_REBORN)
 		id = ID_ANI_KOOPA_REBORN;
 	else if (state == KOOPA_STATE_REBORN_REVERSE)

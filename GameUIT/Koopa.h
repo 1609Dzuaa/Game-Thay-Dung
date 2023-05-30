@@ -24,27 +24,29 @@
 #define KOOPA_IN_SHELL_BBOX_HEIGHT 15
 
 #define KOOPA_DIE_TIMEOUT 500
-#define KOOPA_SLEEP_TIMEOUT 4000
-#define KOOPA_REBORN_TIMEOUT 2000
+#define KOOPA_SLEEP_TIMEOUT 4500
+#define KOOPA_REBORN_TIMEOUT 2500
 #define KOOPA_FLY_TIMEOUT 500
 
 #define KOOPA_STATE_WALKING 1000
 #define KOOPA_STATE_SLEEP 2000
 #define KOOPA_STATE_SLEEP_REVERSE 2050
 #define KOOPA_STATE_SLIP 2100
-#define KOOPA_STATE_DIE 2150
-#define KOOPA_STATE_REBORN 2200
-#define KOOPA_STATE_REBORN_REVERSE 2250 //Dùng cho lúc Koopa bị Gấu Mèo quật
-#define KOOPA_STATE_JUMPING 2300
+#define KOOPA_STATE_SLIP_REVERSE 2150
+#define KOOPA_STATE_DIE 2200
+#define KOOPA_STATE_REBORN 2250
+#define KOOPA_STATE_REBORN_REVERSE 2300 //Dùng cho lúc Koopa bị Gấu Mèo quật
+#define KOOPA_STATE_JUMPING 2350
 
 #define ID_ANI_KOOPA_WALKING_LEFT 50000
 #define ID_ANI_KOOPA_WALKING_RIGHT 50500
 #define ID_ANI_KOOPA_SLEEPING 50005
 #define ID_ANI_KOOPA_SLEEPING_REVERSE 500010
 #define ID_ANI_KOOPA_SLIPPING 50015
-#define ID_ANI_KOOPA_DIE 50020  //NULL HERE
-#define ID_ANI_KOOPA_REBORN 50025
-#define ID_ANI_KOOPA_REBORN_REVERSE 50030
+#define ID_ANI_KOOPA_SLIPPING_REVERSE 50020
+#define ID_ANI_KOOPA_DIE 50025  //NULL HERE
+#define ID_ANI_KOOPA_REBORN 50030
+#define ID_ANI_KOOPA_REBORN_REVERSE 50035
 #define ID_ANI_KOOPA_JUMPING_LEFT 60000
 #define ID_ANI_KOOPA_JUMPING_RIGHT 60500
 
@@ -59,8 +61,9 @@ protected:
 	ULONGLONG die_start;
 	ULONGLONG sleep_start;
 	ULONGLONG reborn_start;
-	ULONGLONG flying_start;
+	ULONGLONG knock_off_start;
 	BOOLEAN isOnPlatform;
+	BOOLEAN isBeingKnockOff;
 
 	virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom);
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
@@ -86,4 +89,5 @@ public:
 	virtual void SetState(int state);
 	int GetType() { return type; };
 	void SetType(int para) { this->type = para; };
+	void SetKnockOff(BOOLEAN para) { this->isBeingKnockOff = para; }
 };

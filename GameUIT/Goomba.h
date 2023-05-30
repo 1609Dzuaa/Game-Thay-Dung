@@ -29,6 +29,7 @@ protected:
 
 	ULONGLONG die_start;
 	ULONGLONG die_reverse_start;
+	BOOLEAN isDead;
 
 	virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom);
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);

@@ -486,10 +486,13 @@ void LoadAssetsKoopa()
 
 	sprites->Add(ID_SPRITE_KOOPA_SLEEP_REVERSE + 1, 210, 348, 227, 364, texEnemy);
 
-	sprites->Add(ID_SPRITE_KOOPA_SLIP + 1, 88, 123, 88 + 15, 123 + 15, texEnemy);
-	sprites->Add(ID_SPRITE_KOOPA_SLIP + 2, 105, 123, 105 + 15, 123 + 15, texEnemy);
-	sprites->Add(ID_SPRITE_KOOPA_SLIP + 3, 122, 123, 122 + 15, 123 + 15, texEnemy);
-	sprites->Add(ID_SPRITE_KOOPA_SLIP + 4, 70, 123, 70 + 16, 123 + 15, texEnemy);
+	sprites->Add(ID_SPRITE_KOOPA_SLIP + 1, 105, 123, 105 + 15, 123 + 15, texEnemy);
+	sprites->Add(ID_SPRITE_KOOPA_SLIP + 2, 122, 123, 122 + 15, 123 + 15, texEnemy);
+	sprites->Add(ID_SPRITE_KOOPA_SLIP + 3, 70, 123, 70 + 16, 123 + 15, texEnemy);
+
+	sprites->Add(ID_SPRITE_KOOPA_SLIP_REVERSE + 1, 252, 349, 268, 365, texEnemy);
+	sprites->Add(ID_SPRITE_KOOPA_SLIP_REVERSE + 2, 269, 349, 285, 365, texEnemy);
+	sprites->Add(ID_SPRITE_KOOPA_SLIP_REVERSE + 3, 286, 349, 302, 365, texEnemy);
 
 	sprites->Add(ID_SPRITE_KOOPA_REBORN + 1, 49, 138, 49 + 17, 138 + 16, texEnemy);
 	sprites->Add(ID_SPRITE_KOOPA_REBORN + 1, 49, 138, 49 + 17, 138 + 16, texEnemy);
@@ -538,11 +541,11 @@ void LoadAssetsKoopa()
 	ani->Add(ID_SPRITE_KOOPA_SLEEP_REVERSE + 1);
 	animations->Add(ID_ANI_KOOPA_SLEEPING_REVERSE, ani);
 
-	ani = new CAnimation(50);
+	ani = new CAnimation(45);
+	ani->Add(ID_SPRITE_KOOPA_SLEEP + 1);
 	ani->Add(ID_SPRITE_KOOPA_SLIP + 1);
 	ani->Add(ID_SPRITE_KOOPA_SLIP + 2);
 	ani->Add(ID_SPRITE_KOOPA_SLIP + 3);
-	ani->Add(ID_SPRITE_KOOPA_SLIP + 4);
 	animations->Add(ID_ANI_KOOPA_SLIPPING, ani);
 
 	ani = new CAnimation(100);
@@ -558,6 +561,13 @@ void LoadAssetsKoopa()
 	ani->Add(ID_SPRITE_KOOPA_SLEEP_REVERSE + 1);
 	ani->Add(ID_SPRITE_KOOPA_REBORN_REVERSE + 1);
 	animations->Add(ID_ANI_KOOPA_REBORN_REVERSE, ani);
+
+	ani = new CAnimation(45);
+	ani->Add(ID_SPRITE_KOOPA_SLEEP_REVERSE + 1);
+	ani->Add(ID_SPRITE_KOOPA_SLIP_REVERSE + 1);
+	ani->Add(ID_SPRITE_KOOPA_SLIP_REVERSE + 2);
+	ani->Add(ID_SPRITE_KOOPA_SLIP_REVERSE + 3);
+	animations->Add(ID_ANI_KOOPA_SLIPPING_REVERSE, ani);
 }
 void LoadAssetsBrick()
 {
