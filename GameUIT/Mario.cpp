@@ -187,7 +187,9 @@ void CMario::HandleCollisionUpperDirectionWithKoopa(CKoopa* koopa)
 					koopa->SetState(KOOPA_STATE_SLIP);
 				}
 			}
-			else if (koopa->GetState() == KOOPA_STATE_SLEEP_REVERSE || koopa->GetState() == KOOPA_STATE_SLEEP_REVERSE_SPECIAL)
+			else if (koopa->GetState() == KOOPA_STATE_SLEEP_REVERSE 
+				|| koopa->GetState() == KOOPA_STATE_SLEEP_REVERSE_SPECIAL 
+				|| koopa->GetState() == KOOPA_STATE_REBORN_REVERSE)
 			{
 				if (this->nx > 0)
 				{
