@@ -15,7 +15,6 @@ CKoopa::CKoopa(float x, float y, int type) :CGameObject(x, y)
 	reborn_start = -1;
 	knock_off_start = -1;
 	isOnPlatform = false;
-	isBeingKnockOff = false;
 	SetState(KOOPA_STATE_WALKING);
 }
 
@@ -25,7 +24,7 @@ void CKoopa::GetBoundingBox(float& left, float& top, float& right, float& bottom
 	if (state == KOOPA_STATE_SLEEP || state == KOOPA_STATE_DIE
 		|| state == KOOPA_STATE_SLIP || state == KOOPA_STATE_REBORN
 		|| state == KOOPA_STATE_SLEEP_REVERSE || state == KOOPA_STATE_REBORN_REVERSE
-		|| state == KOOPA_STATE_SLIP_REVERSE)
+		|| state == KOOPA_STATE_SLIP_REVERSE || state == KOOPA_STATE_SLEEP_REVERSE_SPECIAL)
 	{
 		left = x - KOOPA_BBOX_WIDTH / 2;
 		top = y - KOOPA_IN_SHELL_BBOX_HEIGHT / 2;
@@ -71,7 +70,10 @@ void CKoopa::OnCollisionWith(LPCOLLISIONEVENT e)
 		else
 			SetState(KOOPA_STATE_JUMPING); //Loại 2 chạm sàn thì bắt đầu nhảy
 
-		isOnPlatform = true;
+		//isOnPlatform = true;
+
+		if (state == KOOPA_STATE_SLEEP || state == KOOPA_STATE_SLEEP_REVERSE)
+			vx = 0;
 	}
 	else if (e->nx != 0)
 	{
@@ -88,11 +90,6 @@ void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	vx += ax * dt;
 	vy += ay * dt;
 
-	if ((state == KOOPA_STATE_SLEEP_REVERSE) && (GetTickCount64() - knock_off_start > KOOPA_FLY_TIMEOUT) && isBeingKnockOff)
-	{
-		vx = 0;
-		isBeingKnockOff = false;
-	}
 
 	if ((state == KOOPA_STATE_DIE) && (GetTickCount64() - die_start > KOOPA_DIE_TIMEOUT))
 	{
@@ -119,7 +116,6 @@ void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		}
 
 	CCollision::GetInstance()->Process(this, dt, coObjects);
-	//DebugOutTitle(L"Vx, Vy, Ay: %f, %f, %f", vx, vy, ay);
 }
 
 
@@ -147,15 +143,25 @@ void CKoopa::SetState(int state)
 		y -= (KOOPA_BBOX_HEIGHT - KOOPA_IN_SHELL_BBOX_HEIGHT) / 2;
 		break;
 
-	case KOOPA_STATE_SLEEP_REVERSE:
-		if (mario->GetMarioNormalX() > 0 && mario->GetMarioPositionX() > this->x)
-			vx = vx * KOOPA_KNOCK_OFF_FACTOR_X;
-		else if (mario->GetMarioNormalX() < 0 && mario->GetMarioPositionX() < this->x)
-			vx = -vx * KOOPA_KNOCK_OFF_FACTOR_X;
-		vy = -KOOPA_KNOCK_OFF_FACTOR_Y;
+	case KOOPA_STATE_SLEEP_REVERSE: //chú ý 2 hướng:
+		//1.bị đánh
+		//2.bị nhảy lên khi đang trạng thái này
+
+		if (this->x > mario->GetMarioPositionX()) //Dựa vào vị trí để đẩy con Koopa đi xa khỏi Mario
+			vx = KOOPA_KNOCK_OFF_VELO_X * KOOPA_KNOCK_OFF_FACTOR_X;
+		else
+			vx = -KOOPA_KNOCK_OFF_VELO_X * KOOPA_KNOCK_OFF_FACTOR_X;
+		
+		vy = -KOOPA_KNOCK_OFF_FACTOR_Y;	
 		isOnPlatform = true;
 		sleep_start = GetTickCount64();
-		knock_off_start = GetTickCount64();
+		y -= (KOOPA_BBOX_HEIGHT - KOOPA_IN_SHELL_BBOX_HEIGHT) / 2;
+		break;
+
+	case KOOPA_STATE_SLEEP_REVERSE_SPECIAL:
+		vx = 0;
+		isOnPlatform = true;
+		sleep_start = GetTickCount64();
 		y -= (KOOPA_BBOX_HEIGHT - KOOPA_IN_SHELL_BBOX_HEIGHT) / 2;
 		break;
 
@@ -180,11 +186,19 @@ void CKoopa::SetState(int state)
 		break;
 
 	case KOOPA_STATE_SLIP:
+		if (mario->GetMarioNormalX() > 0)
+			vx = KOOPA_SLIPPING_SPEED;
+		else 
+			vx = -KOOPA_SLIPPING_SPEED;
 		vy = 0;
 		y -= (KOOPA_BBOX_HEIGHT - KOOPA_IN_SHELL_BBOX_HEIGHT) / 2;
 		break;
 
 	case KOOPA_STATE_SLIP_REVERSE:
+		if (mario->GetMarioNormalX() > 0)
+			vx = KOOPA_SLIPPING_SPEED;
+		else
+			vx = -KOOPA_SLIPPING_SPEED;
 		vy = 0;
 		y -= (KOOPA_BBOX_HEIGHT - KOOPA_IN_SHELL_BBOX_HEIGHT) / 2;
 		break;

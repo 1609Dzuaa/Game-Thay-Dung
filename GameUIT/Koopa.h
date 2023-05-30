@@ -15,6 +15,7 @@
 #define KOOPA_WALKING_SPEED 0.05f
 #define KOOPA_SLIPPING_SPEED 0.2f
 #define KOOPA_JUMP_SPEED 0.35f
+#define KOOPA_KNOCK_OFF_VELO_X 0.1f
 #define KOOPA_KNOCK_OFF_FACTOR_X 1.7f
 #define KOOPA_KNOCK_OFF_FACTOR_Y 0.4f
 
@@ -26,11 +27,12 @@
 #define KOOPA_DIE_TIMEOUT 500
 #define KOOPA_SLEEP_TIMEOUT 4500
 #define KOOPA_REBORN_TIMEOUT 2500
-#define KOOPA_FLY_TIMEOUT 500
+#define KOOPA_KNOCK_OFF_TIMEOUT 500
 
 #define KOOPA_STATE_WALKING 1000
 #define KOOPA_STATE_SLEEP 2000
-#define KOOPA_STATE_SLEEP_REVERSE 2050
+#define KOOPA_STATE_SLEEP_REVERSE 2050 //Trạng thái NGỦ LẬT MAI nhưng vẫn có vx
+#define KOOPA_STATE_SLEEP_REVERSE_SPECIAL 2077 //Trạng thái NGỦ LẬT MAI mà không chịu có vx (vx=0)
 #define KOOPA_STATE_SLIP 2100
 #define KOOPA_STATE_SLIP_REVERSE 2150
 #define KOOPA_STATE_DIE 2200
@@ -63,7 +65,6 @@ protected:
 	ULONGLONG reborn_start;
 	ULONGLONG knock_off_start;
 	BOOLEAN isOnPlatform;
-	BOOLEAN isBeingKnockOff;
 
 	virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom);
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
@@ -89,5 +90,4 @@ public:
 	virtual void SetState(int state);
 	int GetType() { return type; };
 	void SetType(int para) { this->type = para; };
-	void SetKnockOff(BOOLEAN para) { this->isBeingKnockOff = para; }
 };

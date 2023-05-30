@@ -44,7 +44,6 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	isOnPlatform = false;
 
 	CCollision::GetInstance()->Process(this, dt, coObjects);
-	//DebugOutTitle(L"STATE: %d", state);
 }
 
 void CMario::OnNoCollision(DWORD dt)
@@ -166,14 +165,14 @@ void CMario::HandleCollisionUpperDirectionWithKoopa(CKoopa* koopa)
 		}
 		else
 		{
-			if (koopa->GetState() == KOOPA_STATE_SLIP) //Mayber slip, slip_reverse, sleep_reverse, normal
+			if (koopa->GetState() == KOOPA_STATE_SLIP)
 			{
 				koopa->SetState(KOOPA_STATE_SLEEP);
 				vy = -MARIO_JUMP_DEFLECT_SPEED;
 			}
 			else if (koopa->GetState() == KOOPA_STATE_SLIP_REVERSE)
 			{
-				koopa->SetState(KOOPA_STATE_SLEEP_REVERSE);
+				koopa->SetState(KOOPA_STATE_SLEEP_REVERSE_SPECIAL);
 				vy = -MARIO_JUMP_DEFLECT_SPEED;
 			}
 			else if(koopa->GetState() == KOOPA_STATE_SLEEP) //Koopa ĐANG NGỦ
@@ -182,40 +181,27 @@ void CMario::HandleCollisionUpperDirectionWithKoopa(CKoopa* koopa)
 				if (this->nx > 0)
 				{
 					koopa->SetState(KOOPA_STATE_SLIP);
-					koopa->SetSpeed(abs(KOOPA_SLIPPING_SPEED), 0);
 				}
 				else if (this->nx < 0)
 				{
 					koopa->SetState(KOOPA_STATE_SLIP);
-					koopa->SetSpeed(-KOOPA_SLIPPING_SPEED, 0);
 				}
 			}
-			else if (koopa->GetState() == KOOPA_STATE_SLEEP_REVERSE)
+			else if (koopa->GetState() == KOOPA_STATE_SLEEP_REVERSE || koopa->GetState() == KOOPA_STATE_SLEEP_REVERSE_SPECIAL)
 			{
 				if (this->nx > 0)
 				{
 					koopa->SetState(KOOPA_STATE_SLIP_REVERSE);
-					koopa->SetSpeed(abs(KOOPA_SLIPPING_SPEED), 0);
 				}
 				else if (this->nx < 0)
 				{
 					koopa->SetState(KOOPA_STATE_SLIP_REVERSE);
-					koopa->SetSpeed(-KOOPA_SLIPPING_SPEED, 0);
 				}
 			}
 			else
 			{
-				if (this->nx > 0)
-				{
-					koopa->SetState(KOOPA_STATE_SLIP);
-					koopa->SetSpeed(abs(KOOPA_SLIPPING_SPEED), 0);
-				}
-				else if (this->nx < 0)
-				{
-					koopa->SetState(KOOPA_STATE_SLIP);
-					koopa->SetSpeed(-KOOPA_SLIPPING_SPEED, 0);
-				}
-
+				koopa->SetState(KOOPA_STATE_SLEEP);
+				vy = -MARIO_JUMP_DEFLECT_SPEED;
 			}
 		}
 	}
@@ -228,14 +214,13 @@ void CMario::HandleCollisionOtherDirectionWithKoopa(LPCOLLISIONEVENT e, CKoopa* 
 	{
 		if (koopa->GetState() != KOOPA_STATE_DIE)
 		{
-			if (this->isAttacking)
+			if (this->isAttacking) //thêm check if tấn công vào koopa đang ngủ
 			{
 				koopa->SetState(KOOPA_STATE_SLEEP_REVERSE);
-				koopa->SetKnockOff(true);
 			}
 			else 
 			{
-				if (koopa->GetState() != KOOPA_STATE_SLEEP && koopa->GetState() != KOOPA_STATE_SLEEP_REVERSE)
+				if (koopa->GetState() != KOOPA_STATE_SLEEP && koopa->GetState() != KOOPA_STATE_SLEEP_REVERSE && koopa->GetState() != KOOPA_STATE_SLEEP_REVERSE_SPECIAL)
 				{
 					if (level == MARIO_LEVEL_RACOON)
 					{
@@ -252,19 +237,19 @@ void CMario::HandleCollisionOtherDirectionWithKoopa(LPCOLLISIONEVENT e, CKoopa* 
 						SetState(MARIO_STATE_DIE);
 					}
 				}
-				else if (koopa->GetState() == KOOPA_STATE_SLEEP_REVERSE)
+				else if (koopa->GetState() == KOOPA_STATE_SLEEP_REVERSE 
+					|| koopa->GetState() == KOOPA_STATE_REBORN_REVERSE 
+					|| koopa->GetState() == KOOPA_STATE_SLEEP_REVERSE_SPECIAL)
 				{
 					if (e->nx == -1)
 					{
 						this->SetState(MARIO_STATE_KICKING_RIGHT);
 						koopa->SetState(KOOPA_STATE_SLIP_REVERSE);
-						koopa->SetSpeed(abs(KOOPA_SLIPPING_SPEED), 0);
 					}
 					else if (e->nx == 1)
 					{
 						this->SetState(MARIO_STATE_KICKING_LEFT);
 						koopa->SetState(KOOPA_STATE_SLIP_REVERSE);
-						koopa->SetSpeed(-KOOPA_SLIPPING_SPEED, 0);
 					}
 				}
 				else //Đang Ngủ Bình Thường
@@ -273,13 +258,11 @@ void CMario::HandleCollisionOtherDirectionWithKoopa(LPCOLLISIONEVENT e, CKoopa* 
 					{
 						this->SetState(MARIO_STATE_KICKING_RIGHT);
 						koopa->SetState(KOOPA_STATE_SLIP);
-						koopa->SetSpeed(abs(KOOPA_SLIPPING_SPEED), 0);
 					}
 					else if (e->nx == 1)
 					{
 						this->SetState(MARIO_STATE_KICKING_LEFT);
 						koopa->SetState(KOOPA_STATE_SLIP);
-						koopa->SetSpeed(-KOOPA_SLIPPING_SPEED, 0);
 					}
 				}
 			}

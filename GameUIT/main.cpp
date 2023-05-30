@@ -424,7 +424,7 @@ void LoadAssetsMario()
 	ani->Add(ID_SPRITE_MARIO_RACOON_KICK_LEFT + 1);
 	animations->Add(ID_ANI_MARIO_RACOON_KICKING_LEFT, ani);
 
-	ani = new CAnimation(50);
+	ani = new CAnimation(70);
 	ani->Add(ID_SPRITE_MARIO_RACOON_ATTACK_LEFT + 1);
 	ani->Add(ID_SPRITE_MARIO_RACOON_ATTACK_LEFT + 2);
 	ani->Add(ID_SPRITE_MARIO_RACOON_ATTACK_LEFT + 3);
@@ -432,7 +432,7 @@ void LoadAssetsMario()
 	ani->Add(ID_SPRITE_MARIO_RACOON_ATTACK_LEFT + 5);
 	animations->Add(ID_ANI_MARIO_RACOON_ATTACKING_LEFT, ani);
 
-	ani = new CAnimation(50);
+	ani = new CAnimation(70);
 	ani->Add(ID_SPRITE_MARIO_RACOON_ATTACK_RIGHT + 1);
 	ani->Add(ID_SPRITE_MARIO_RACOON_ATTACK_RIGHT + 2);
 	ani->Add(ID_SPRITE_MARIO_RACOON_ATTACK_RIGHT + 3);
