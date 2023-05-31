@@ -7,7 +7,10 @@ extern CMario* mario;
 void CMushroom::Render()
 {
 	CAnimations* animations = CAnimations::GetInstance();
-	animations->Get(ID_ANI_MUSHROOM)->Render(x, y);
+	if (state == IN_THE_BRICK)
+		animations->Get(ID_ANI_MUSHROOM_IN_BRICK)->Render(x, y);
+	else
+		animations->Get(ID_ANI_MUSHROOM_OUT_BRICK)->Render(x, y);
 }
 
 void CMushroom::GetBoundingBox(float& l, float& t, float& r, float& b)
@@ -20,16 +23,13 @@ void CMushroom::GetBoundingBox(float& l, float& t, float& r, float& b)
 
 void CMushroom::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
-	if (state != OUT_OF_BRICK)
+    if (state != OUT_OF_BRICK)
 	{
-		if (y <= brickminY)
+		if (y <= brickminY )//&& GetTickCount64() - hitted_time >= MUSHROOM_RISEN_UP_TIME)
 		{
+			hitted_time = 0;
 			y = brickminY;
 			this->SetState(OUT_OF_BRICK);
-		}
-		else
-		{
-			y -= MUSHROOM_RISE_UP_SPEED * dt;
 		}
 	}
 	else 
@@ -39,7 +39,7 @@ void CMushroom::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	}
 
 	CCollision::GetInstance()->Process(this, dt, coObjects);
-	DebugOutTitle(L"State and X and Mario X: %d, %f, %f", state, x, mario->GetMarioPositionX());
+	DebugOutTitle(L"Y: %f", y);
 }
 
 void CMushroom::OnNoCollision(DWORD dt)
@@ -49,12 +49,21 @@ void CMushroom::OnNoCollision(DWORD dt)
 		x += vx * dt;
 		y += vy * dt;
 	}
+	else
+	{
+		y += -vy * dt;
+	}
 }
 
 void CMushroom::OnCollisionWith(LPCOLLISIONEVENT e)
 {
 	if (!e->obj->IsBlocking()) return;
 
+	HandleCollisionWithBlockingObjects(e);
+}
+
+void CMushroom::HandleCollisionWithBlockingObjects(LPCOLLISIONEVENT e)
+{
 	if (e->ny != 0)
 	{
 		vy = 0;

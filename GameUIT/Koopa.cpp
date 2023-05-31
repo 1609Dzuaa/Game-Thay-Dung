@@ -101,7 +101,7 @@ void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 	UpdateKoopaState();
 	CCollision::GetInstance()->Process(this, dt, coObjects);
-	DebugOutTitle(L"STATE: %d", state);
+	//DebugOutTitle(L"STATE: %d", state);
 }
 
 void CKoopa::UpdateKoopaState()

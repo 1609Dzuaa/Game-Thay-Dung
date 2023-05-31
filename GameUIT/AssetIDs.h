@@ -164,7 +164,8 @@
 
 #pragma region MUSHROOM
 
-#define ID_SPRITE_MUSHROOM 45000
+#define ID_SPRITE_MUSHROOM_IN_BRICK 45000
+#define ID_SPRITE_MUSHROOM_OUT_BRICK 45031
 
 #pragma endregion 
 

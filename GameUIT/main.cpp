@@ -642,13 +642,29 @@ void LoadAssetMushroom()
 	CSprites* sprites = CSprites::GetInstance();
 	CAnimations* animations = CAnimations::GetInstance();
 
-	LPTEXTURE texMisc = textures->Get(ID_TEX_MISC);
+	LPTEXTURE texMisc = textures->Get(ID_TEX_MISC_2);
 
-	sprites->Add(ID_SPRITE_MUSHROOM + 1, 300, 189, 315, 204, texMisc);
+	sprites->Add(ID_SPRITE_MUSHROOM_IN_BRICK + 1, 162, 386, 174, 388, texMisc);
+	sprites->Add(ID_SPRITE_MUSHROOM_IN_BRICK + 2, 182, 384, 196, 388, texMisc);
+	sprites->Add(ID_SPRITE_MUSHROOM_IN_BRICK + 3, 203, 382, 219, 388, texMisc);
+	sprites->Add(ID_SPRITE_MUSHROOM_IN_BRICK + 4, 225, 380, 241, 388, texMisc);
+	sprites->Add(ID_SPRITE_MUSHROOM_IN_BRICK + 5, 246, 376, 262, 388, texMisc);
+	sprites->Add(ID_SPRITE_MUSHROOM_IN_BRICK + 6, 268, 373, 284, 388, texMisc);
 
-	LPANIMATION ani = new CAnimation(100);
-	ani->Add(ID_SPRITE_MUSHROOM + 1);
-	animations->Add(ID_ANI_MUSHROOM, ani);
+	sprites->Add(ID_SPRITE_MUSHROOM_OUT_BRICK + 1, 156, 121, 172, 137, texMisc);
+
+	LPANIMATION ani = new CAnimation(135);
+	ani->Add(ID_SPRITE_MUSHROOM_IN_BRICK + 1);
+	ani->Add(ID_SPRITE_MUSHROOM_IN_BRICK + 2);
+	ani->Add(ID_SPRITE_MUSHROOM_IN_BRICK + 3);
+	ani->Add(ID_SPRITE_MUSHROOM_IN_BRICK + 4);
+	ani->Add(ID_SPRITE_MUSHROOM_IN_BRICK + 5);
+	ani->Add(ID_SPRITE_MUSHROOM_IN_BRICK + 6);
+	animations->Add(ID_ANI_MUSHROOM_IN_BRICK, ani);
+
+	ani = new CAnimation(100);
+	ani->Add(ID_SPRITE_MUSHROOM_OUT_BRICK + 1);
+	animations->Add(ID_ANI_MUSHROOM_OUT_BRICK, ani);
 }
 
 void LoadAssetsOther()
@@ -773,7 +789,7 @@ void Reload()
 
 	for (int i = 0; i < 2; i++)
 	{
-		CQuestionBrick* qb = new CQuestionBrick(BRICK_X + 200.0f + i * 16.0f, 105.0f, HAS_LEAF);
+		CQuestionBrick* qb = new CQuestionBrick(BRICK_X + 200.0f + i * 16.0f, 125.0f, HAS_MUSHROOM);
 		objects.push_back(qb);
 	}
 
@@ -785,7 +801,7 @@ void Reload()
 	mario = new CMario(MARIO_START_X, MARIO_START_Y);
 	objects.push_back(mario);
 
-	for (int j = 0; j < 1; j++)
+	/*for (int j = 0; j < 1; j++)
 	{
 		CGoomba* goomba = new CGoomba(GOOMBA_X + j * 60, GROUND_Y - 120.0f);
 		objects.push_back(goomba);
@@ -793,9 +809,9 @@ void Reload()
 
 	for (int j = 0; j < 1; j++)
 	{
-		CKoopa* koopa = new CKoopa(KOOPA_X + j * 60, GROUND_Y - 120.0f, 1);
+		CKoopa* koopa = new CKoopa(KOOPA_X + j * 60, GROUND_Y - 120.0f, 2);
 		objects.push_back(koopa);
-	}
+	}*/
 
 	/*for (int j = 0; j < 1; j++)
 	{

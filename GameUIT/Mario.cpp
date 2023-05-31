@@ -162,9 +162,9 @@ void CMario::HandleCollisionUpperDirectionWithKoopa(CKoopa* koopa)
 	//Va chạm Hướng TRÊN (UP) => đưa Koopa về trạng thái ngủ/lăn
 	if (koopa->GetState() != KOOPA_STATE_DIE)
 	{
-		if (koopa->GetType() == 2)
+		if (koopa->GetType() == GREEN_FLYING_KOOPA)
 		{
-			koopa->SetType(1);
+			koopa->SetType(GREEN_KOOPA);
 			koopa->SetState(KOOPA_STATE_WALKING);
 			vy = -MARIO_JUMP_DEFLECT_SPEED;
 		}
@@ -221,9 +221,15 @@ void CMario::HandleCollisionOtherDirectionWithKoopa(LPCOLLISIONEVENT e, CKoopa* 
 	{
 		if (koopa->GetState() != KOOPA_STATE_DIE)
 		{
-			if (this->isAttacking) //thêm check if tấn công vào koopa đang ngủ
+			if (this->isAttacking) 
 			{
-				koopa->SetState(KOOPA_STATE_SLEEP_REVERSE);
+				if (koopa->GetType() == GREEN_FLYING_KOOPA)
+				{
+					koopa->SetType(GREEN_KOOPA);
+					koopa->SetState(KOOPA_STATE_SLEEP_REVERSE);
+				}
+				else
+					koopa->SetState(KOOPA_STATE_SLEEP_REVERSE);
 			}
 			else 
 			{
