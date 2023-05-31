@@ -79,9 +79,12 @@ protected:
 
 	virtual void OnNoCollision(DWORD dt);
 	virtual void OnCollisionWith(LPCOLLISIONEVENT e);
+	void KindOfCollisionWith(LPCOLLISIONEVENT e);
 	void OnCollisionWithGoomba(LPCOLLISIONEVENT e);
 	void OnCollisionWithKoopa(LPCOLLISIONEVENT e);
 	void OnCollisionWithQuesBrick(LPCOLLISIONEVENT e);
+	void UpdateKoopaState();
+	void HandleCollisionWithBlockingObjects(LPCOLLISIONEVENT e);
 
 	int GetAniIdGreenKoopa();
 	int GetAniIdFlyingKoopa();

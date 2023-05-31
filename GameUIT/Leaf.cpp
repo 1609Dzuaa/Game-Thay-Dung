@@ -7,18 +7,17 @@ CLeaf::CLeaf(float x, float y) : CGameObject(x, y)
 	this->ay = 0;
 	this->SetState(LEAF_STATE_FLY_AWAY_FROM_BRICK);
 	minY = -1;
-	minY_2 = -1;
 	minX = x;
 	maxX = x + 31.0f;
 	Fall_Up_start = -1;
-	reachMinMax_X = false;
+	reachMinOrMax_X = false;
 }
 
 void CLeaf::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	vx += ax * dt;
 	vy += ay * dt;
-	reachMinMax_X = false;
+	reachMinOrMax_X = false;
 
 	if (y <= minY)
 	{
@@ -29,12 +28,12 @@ void CLeaf::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	if (x >= maxX)
 	{
 		vx = -LEAF_FALL_DOWN_SPEED_X;
-		reachMinMax_X = true;
+		reachMinOrMax_X = true;
 	}
 	if (x < minX)
 	{
 		vx = LEAF_FALL_DOWN_SPEED_X;
-		reachMinMax_X = true;
+		reachMinOrMax_X = true;
 		//Set vận tốc trục y trong thoáng chốc mà không ảnh hướng đến vận tốc chính
 	}
 
@@ -54,7 +53,7 @@ void CLeaf::Render()
 
 void CLeaf::OnNoCollision(DWORD dt)
 {
-	if (!reachMinMax_X)
+	if (!reachMinOrMax_X)
 	{
 		x += vx * dt;
 		y += vy * dt;

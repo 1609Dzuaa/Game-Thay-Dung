@@ -3,7 +3,7 @@
 
 #define GOOMBA_GRAVITY 0.002f
 #define GOOMBA_WALKING_SPEED 0.05f
-#define GOOMBA_DIE_REVERSE_FACTOR_X 1.2f
+#define GOOMBA_DIE_REVERSE_FACTOR_X 1.7f
 #define GOOMBA_DIE_REVERSE_FACTOR_Y 0.5f
 
 
@@ -34,6 +34,8 @@ protected:
 	virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom);
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
 	virtual void Render();
+	void UpdateGoombaState();
+	void HandleCollisionWithBlockingObjects(LPCOLLISIONEVENT e);
 
     int IsCollidable() 
 	{ 

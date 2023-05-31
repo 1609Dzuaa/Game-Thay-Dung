@@ -27,12 +27,14 @@ class CQuestionBrick :public CBrick
 {
 	float minY, currentY;
 	bool isEmpty;
+	int type;
 public:
 
-	CQuestionBrick(float x, float y) : CBrick(x, y)
+	CQuestionBrick(float x, float y, int type) : CBrick(x, y)
 	{
 		this->currentY = y;
 		this->minY = y - QBRICK_BBOX_HEIGHT; //Càng lên cao y càng giảm
+		this->type = type;
 		isEmpty = false;
 	}
 

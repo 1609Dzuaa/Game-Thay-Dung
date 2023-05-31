@@ -54,6 +54,14 @@ void CMario::OnNoCollision(DWORD dt)
 
 void CMario::OnCollisionWith(LPCOLLISIONEVENT e)
 {
+	HandleCollisionWithBlockingObjects(e);
+
+	//Va chạm với vật KHÔNG CÓ thuộc tính BLOCK HOẶC Question Brick
+	KindOfOnCollisionWith(e);
+}
+
+void CMario::HandleCollisionWithBlockingObjects(LPCOLLISIONEVENT e)
+{
 	if (e->ny != 0 && e->obj->IsBlocking())
 	{
 		vy = 0;
@@ -64,11 +72,8 @@ void CMario::OnCollisionWith(LPCOLLISIONEVENT e)
 	}
 	else if (e->nx != 0 && e->obj->IsBlocking())
 	{
-		vx = 0; 
+		vx = 0;
 	}
-
-	//Va chạm với vật không có thuộc tính block hoặc Question Brick
-	KindOfOnCollisionWith(e);
 }
 
 void CMario::KindOfOnCollisionWith(LPCOLLISIONEVENT e)
@@ -222,12 +227,14 @@ void CMario::HandleCollisionOtherDirectionWithKoopa(LPCOLLISIONEVENT e, CKoopa* 
 			}
 			else 
 			{
-				if (koopa->GetState() != KOOPA_STATE_SLEEP && koopa->GetState() != KOOPA_STATE_SLEEP_REVERSE && koopa->GetState() != KOOPA_STATE_SLEEP_REVERSE_SPECIAL)
+				if (koopa->GetState() != KOOPA_STATE_SLEEP 
+					&& koopa->GetState() != KOOPA_STATE_SLEEP_REVERSE 
+					&& koopa->GetState() != KOOPA_STATE_SLEEP_REVERSE_SPECIAL)
 				{
 					if (level == MARIO_LEVEL_RACOON)
 					{
 						level = MARIO_LEVEL_BIG;
-						StartUntouchable();
+						StartUntouchable(); //Thêm hiệu ứng untouchable cho Mario
 					}
 					else if (level == MARIO_LEVEL_BIG)
 					{

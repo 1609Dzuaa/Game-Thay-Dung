@@ -179,9 +179,9 @@ void LoadAssetsMario()
 	animations->Add(ID_ANI_MARIO_IDLE_LEFT, ani);
 
 	ani = new CAnimation(100);
-	//ani->Add(ID_SPRITE_MARIO_BIG_IDLE_RIGHT + 1);
-	ani->Add(ID_SPRITE_MARIO_BIG_HOLDING_RIGHT + 1);
-	ani->Add(ID_SPRITE_MARIO_BIG_HOLDING_RIGHT + 2);
+	ani->Add(ID_SPRITE_MARIO_BIG_IDLE_RIGHT + 1);
+	ani->Add(ID_SPRITE_MARIO_BIG_WALKING_RIGHT + 2);
+	ani->Add(ID_SPRITE_MARIO_BIG_WALKING_RIGHT + 3);
 	animations->Add(ID_ANI_MARIO_WALKING_RIGHT, ani);
 
 	ani = new CAnimation(100);
@@ -773,7 +773,7 @@ void Reload()
 
 	for (int i = 0; i < 2; i++)
 	{
-		CQuestionBrick* qb = new CQuestionBrick(BRICK_X + 200.0f + i * 16.0f, 105.0f);
+		CQuestionBrick* qb = new CQuestionBrick(BRICK_X + 200.0f + i * 16.0f, 105.0f, HAS_LEAF);
 		objects.push_back(qb);
 	}
 

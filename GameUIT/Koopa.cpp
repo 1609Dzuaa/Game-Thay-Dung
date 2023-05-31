@@ -54,23 +54,33 @@ void CKoopa::OnCollisionWith(LPCOLLISIONEVENT e)
 	//1.Rơi vào chế độ ngủ đông và bị Mario quăng đập vào enemy khác
 	//2.Va chạm với Koopa mà bị Mario quăng
 	
-	if (dynamic_cast<CGoomba*>(e->obj) && this->state == KOOPA_STATE_SLIP)
-		this->OnCollisionWithGoomba(e);
-	if (dynamic_cast<CKoopa*>(e->obj) && this->state == KOOPA_STATE_SLIP)
-		this->OnCollisionWithKoopa(e);
-	if (dynamic_cast<CQuestionBrick*>(e->obj) && this->state == KOOPA_STATE_SLIP && e->obj->GetState() != QBRICK_STATE_HITTED)
-		this->OnCollisionWithQuesBrick(e);
+	KindOfCollisionWith(e);
 	if (!e->obj->IsBlocking()) return;
 
+	HandleCollisionWithBlockingObjects(e);
+}
 
+void CKoopa::KindOfCollisionWith(LPCOLLISIONEVENT e)
+{
+	if (dynamic_cast<CGoomba*>(e->obj) && this->state == KOOPA_STATE_SLIP
+		|| dynamic_cast<CGoomba*>(e->obj) && this->state == KOOPA_STATE_SLIP_REVERSE)
+		this->OnCollisionWithGoomba(e);
+	if (dynamic_cast<CKoopa*>(e->obj) && this->state == KOOPA_STATE_SLIP
+		|| dynamic_cast<CKoopa*>(e->obj) && this->state == KOOPA_STATE_SLIP_REVERSE)
+		this->OnCollisionWithKoopa(e);
+	if (dynamic_cast<CQuestionBrick*>(e->obj) && this->state == KOOPA_STATE_SLIP && e->obj->GetState() != QBRICK_STATE_HITTED
+		|| dynamic_cast<CQuestionBrick*>(e->obj) && this->state == KOOPA_STATE_SLIP_REVERSE && e->obj->GetState() != QBRICK_STATE_HITTED)
+		this->OnCollisionWithQuesBrick(e);
+}
+
+void CKoopa::HandleCollisionWithBlockingObjects(LPCOLLISIONEVENT e)
+{
 	if (e->ny < 0) //Nếu object có thuộc tính block
 	{
-		if (type != 2)
+		if (type != GREEN_FLYING_KOOPA)
 			vy = 0;
 		else
 			SetState(KOOPA_STATE_JUMPING); //Loại 2 chạm sàn thì bắt đầu nhảy
-
-		//isOnPlatform = true;
 
 		if (state == KOOPA_STATE_SLEEP || state == KOOPA_STATE_SLEEP_REVERSE)
 			vx = 0;
@@ -79,7 +89,6 @@ void CKoopa::OnCollisionWith(LPCOLLISIONEVENT e)
 	{
 		vx = -vx;
 	}
-	//DebugOutTitle(L"OCW: %f, %f, %d", vx, vy, isOnPlatform);
 }
 
 void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
@@ -90,7 +99,13 @@ void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	vx += ax * dt;
 	vy += ay * dt;
 
+	UpdateKoopaState();
+	CCollision::GetInstance()->Process(this, dt, coObjects);
+	DebugOutTitle(L"STATE: %d", state);
+}
 
+void CKoopa::UpdateKoopaState()
+{
 	if ((state == KOOPA_STATE_DIE) && (GetTickCount64() - die_start > KOOPA_DIE_TIMEOUT))
 	{
 		isDeleted = true;
@@ -100,32 +115,32 @@ void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	{
 		sleep_start = 0;
 		SetState(KOOPA_STATE_REBORN);
+		//Hết thời gian ngủ
 	}
-	else if ((state == KOOPA_STATE_SLEEP_REVERSE) && (GetTickCount64() - sleep_start >= KOOPA_SLEEP_TIMEOUT))
+	else if ((state == KOOPA_STATE_SLEEP_REVERSE) && (GetTickCount64() - sleep_start >= KOOPA_SLEEP_TIMEOUT)
+		|| (state == KOOPA_STATE_SLEEP_REVERSE_SPECIAL) && (GetTickCount64() - sleep_start >= KOOPA_SLEEP_TIMEOUT))
 	{
 		sleep_start = 0;
 		SetState(KOOPA_STATE_REBORN_REVERSE);
+		//Hết thời gian ngủ lật mai
 	}
-	else 
+	else
 		if ((state == KOOPA_STATE_REBORN) && (GetTickCount64() - reborn_start >= KOOPA_REBORN_TIMEOUT)
 			|| (state == KOOPA_STATE_REBORN_REVERSE) && (GetTickCount64() - reborn_start >= KOOPA_REBORN_TIMEOUT))
 		{
-			//Should Get Mario's position after reborn
 			reborn_start = 0;
 			SetState(KOOPA_STATE_WALKING);
+			//Hết thời gian reborn => Walking như bình thường
 		}
-
-	CCollision::GetInstance()->Process(this, dt, coObjects);
 }
-
 
 void CKoopa::Render()
 {
 	int aniId = 0;
 	
-	if (type == 1)
+	if (type == GREEN_KOOPA)
 		aniId = GetAniIdGreenKoopa();
-	else if (type == 2)
+	else if (type == GREEN_FLYING_KOOPA)
 		aniId = GetAniIdFlyingKoopa();
 
 	CAnimations::GetInstance()->Get(aniId)->Render(x, y);
@@ -143,10 +158,7 @@ void CKoopa::SetState(int state)
 		y -= (KOOPA_BBOX_HEIGHT - KOOPA_IN_SHELL_BBOX_HEIGHT) / 2;
 		break;
 
-	case KOOPA_STATE_SLEEP_REVERSE: //chú ý 2 hướng:
-		//1.bị đánh
-		//2.bị nhảy lên khi đang trạng thái này
-
+	case KOOPA_STATE_SLEEP_REVERSE: 
 		if (this->x > mario->GetMarioPositionX()) //Dựa vào vị trí để đẩy con Koopa đi xa khỏi Mario
 			vx = KOOPA_KNOCK_OFF_VELO_X * KOOPA_KNOCK_OFF_FACTOR_X;
 		else

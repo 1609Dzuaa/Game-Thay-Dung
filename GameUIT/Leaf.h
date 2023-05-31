@@ -25,8 +25,8 @@
 
 class CLeaf : public CGameObject 
 {
-	float ax, ay, minY, minX, maxX, minY_2;
-	bool reachMinMax_X;
+	float ax, ay, minY, minX, maxX;
+	bool reachMinOrMax_X;
 	ULONGLONG Fall_Up_start;
 public:
 	CLeaf(float x, float y);

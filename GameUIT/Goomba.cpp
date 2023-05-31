@@ -36,8 +36,6 @@ void CGoomba::OnNoCollision(DWORD dt)
 {
 	x += vx * dt;
 	y += vy * dt;
-	//0 có va chạm thì di chuyển như thường
-	//x = x0 + vt;
 };
 
 void CGoomba::OnCollisionWith(LPCOLLISIONEVENT e)
@@ -47,6 +45,12 @@ void CGoomba::OnCollisionWith(LPCOLLISIONEVENT e)
 	if (!e->obj->IsBlocking()) return; //Nếu nó không có thuộc tính block thì kết thúc hàm này (On no collision inside here)
 	if (dynamic_cast<CGoomba*>(e->obj)) return; //Nếu VẬT KHÁC LÀ Goomba thì cũng bỏ qua hàm này 
 
+	HandleCollisionWithBlockingObjects(e);
+	//DebugOutTitle(L"Coins: %f", e->ny);
+}
+
+void CGoomba::HandleCollisionWithBlockingObjects(LPCOLLISIONEVENT e)
+{
 	//Xét vật có thuộc tính BLOCK
 	if (e->ny != 0)
 	{
@@ -56,7 +60,6 @@ void CGoomba::OnCollisionWith(LPCOLLISIONEVENT e)
 	{
 		vx = -vx;
 	}
-	//DebugOutTitle(L"Coins: %f", e->ny);
 }
 
 void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
@@ -64,6 +67,13 @@ void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	vy += ay * dt;
 	vx += ax * dt;
 
+	UpdateGoombaState();
+	CCollision::GetInstance()->Process(this, dt, coObjects);
+	//DebugOutTitle(L"GOOMBA STATE: %d", state);
+}
+
+void CGoomba::UpdateGoombaState()
+{
 	if ((state == GOOMBA_STATE_DIE) && (GetTickCount64() - die_start > GOOMBA_DIE_TIMEOUT))
 	{
 		isDeleted = true;
@@ -76,14 +86,7 @@ void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		isDead = true;
 		return;
 	}
-
-	CGameObject::Update(dt, coObjects);
-	CCollision::GetInstance()->Process(this, dt, coObjects);
-
-	//DebugOutTitle(L"GOOMBA STATE: %d", state);
-
 }
-
 
 void CGoomba::Render()
 {
@@ -94,15 +97,12 @@ void CGoomba::Render()
 		aniId = ID_ANI_GOOMBA_DIE_REVERSE;
 
 	CAnimations::GetInstance()->Get(aniId)->Render(x, y);
-	//RenderBoundingBox();
+	RenderBoundingBox();
 	//DebugOutTitle(L"Value vy: %f", vy);
 }
 
 void CGoomba::SetState(int state)
 {
-	CGameObject::SetState(state);
-	//if (state == GOOMBA_STATE_DIE || GOOMBA_STATE_DIE_REVERSE)
-		//return;
 	switch (state)
 	{
 	case GOOMBA_STATE_DIE:
@@ -115,9 +115,9 @@ void CGoomba::SetState(int state)
 
 	case GOOMBA_STATE_DIE_REVERSE:
 		die_reverse_start = GetTickCount64();
-		if (mario->GetMarioNormalX() > 0 && mario->GetMarioPositionX() > this->x)
+		if (this->x > mario->GetMarioPositionX())
 			vx = vx * GOOMBA_DIE_REVERSE_FACTOR_X;
-		else if (mario->GetMarioNormalX() < 0 && mario->GetMarioPositionX() < this->x)
+		else
 			vx = -vx * GOOMBA_DIE_REVERSE_FACTOR_X;
 		vy = -GOOMBA_DIE_REVERSE_FACTOR_Y;
 		break;
@@ -126,4 +126,6 @@ void CGoomba::SetState(int state)
 		vx = -GOOMBA_WALKING_SPEED;
 		break;
 	}
+
+	CGameObject::SetState(state);
 }

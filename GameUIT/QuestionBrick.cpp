@@ -25,7 +25,7 @@ void CQuestionBrick::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	isEmpty = false;
 	HandleBouncingBrick();
-	if (isEmpty)
+	if (isEmpty && this->type == HAS_MUSHROOM)
 		SpawnMushroom(x, y);
 	CGameObject::Update(dt,coObjects);
 	CCollision::GetInstance()->Process(this, dt, coObjects);
@@ -83,7 +83,8 @@ void CQuestionBrick::SetState(int state)
 	case QBRICK_STATE_HITTED:
 		//SpawnCoin(x, y, -COIN_FLY_SPEED);
 		//SpawnMushroom(x, y);
-		SpawnLeaf(x, y);
+		if (this->type == HAS_LEAF)
+			SpawnLeaf(x, y);
 		vy = -BOUNCING_SPEED;
 		break;
 	}
