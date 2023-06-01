@@ -8,6 +8,7 @@
 #include "Sprites.h"
 #include "Portal.h"
 #include "Coin.h"
+#include "QuestionBrick.h"
 #include "Platform.h"
 
 #include "SampleKeyEventHandler.h"
@@ -53,6 +54,7 @@ void CPlayScene::_ParseSection_SPRITES(string line)
 	}
 
 	CSprites::GetInstance()->Add(ID, l, t, r, b, tex);
+	DebugOut(L"[INFO] Load Sprites Succcess! ID: %d\n", ID);
 }
 
 void CPlayScene::_ParseSection_ASSETS(string line)
@@ -119,7 +121,7 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 		DebugOut(L"[INFO] Player object has been created!\n");
 		break;
 	case OBJECT_TYPE_GOOMBA: obj = new CGoomba(x, y); break;
-	case OBJECT_TYPE_BRICK: obj = new CBrick(x, y); break;
+	case OBJECT_TYPE_BRICK: obj = new CQuestionBrick(x, y,HAS_COIN); break;
 	case OBJECT_TYPE_COIN: obj = new CCoin(x, y); break;
 
 	case OBJECT_TYPE_PLATFORM:

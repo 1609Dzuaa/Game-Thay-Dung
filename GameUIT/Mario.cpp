@@ -38,7 +38,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	if (isAttacking && GetTickCount64() - attack_start >= MARIO_RACOON_ATTACK_TIME)
 	{
 		isAttacking = false;
-		kick_start = 0;
+		attack_start = 0;
 	}
 
 	isOnPlatform = false;
@@ -613,7 +613,7 @@ void CMario::SetState(int state)
 		break;
 
 	case MARIO_STATE_SIT:
-		if (isOnPlatform && level == MARIO_LEVEL_BIG)
+		/*if (isOnPlatform && level == MARIO_LEVEL_BIG)
 		{
 			state = MARIO_STATE_IDLE;
 			isSitting = true;
@@ -626,6 +626,13 @@ void CMario::SetState(int state)
 			isSitting = true;
 			vx = 0; vy = 0.0f;
 			y += MARIO_SIT_HEIGHT_ADJUST;
+		}*/
+		if (isOnPlatform && level != MARIO_LEVEL_SMALL)
+		{
+			state = MARIO_STATE_IDLE;
+			isSitting = true;
+			vx = 0; vy = 0.0f;
+			y +=MARIO_SIT_HEIGHT_ADJUST;
 		}
 		break;
 
