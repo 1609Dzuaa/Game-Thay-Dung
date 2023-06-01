@@ -4,7 +4,7 @@
 #include "Leaf.h"
 #include "debug.h"
 
-extern list<LPGAMEOBJECT> objects;
+//extern list<LPGAMEOBJECT> objects;
 
 void CQuestionBrick::Render()
 {
@@ -49,7 +49,7 @@ void CQuestionBrick::SpawnCoin(float xBrick, float yBrick, float veloY)
 {
 	CCoin* coin = new CCoin(xBrick, yBrick, veloY);
 	coin->SetSpeed(0, -COIN_FLY_SPEED);
-	objects.push_back(coin);
+	//objects.push_back(coin);
 }
 
 void CQuestionBrick::SpawnMushroom(float xBrick, float yBrick)
@@ -57,7 +57,7 @@ void CQuestionBrick::SpawnMushroom(float xBrick, float yBrick)
 	CMushroom* mushroom = new CMushroom(xBrick, yBrick - QBRICK_BBOX_HEIGHT / 2 - 2.5f, 109.0f, GetTickCount64());
 	mushroom->SetBrickMinY(minY);
 	mushroom->SetMushroomX(x);
-	objects.push_back(mushroom);
+	//objects.push_back(mushroom);
 }
 
 void CQuestionBrick::SpawnLeaf(float xBrick, float yBrick)
@@ -65,7 +65,7 @@ void CQuestionBrick::SpawnLeaf(float xBrick, float yBrick)
 	CLeaf* leaf = new CLeaf(xBrick, yBrick);
 	leaf->SetMinY(y - 70.0f);
 	//leaf->setMinX(x);
-	objects.push_back(leaf);
+	//objects.push_back(leaf);
 }
 
 void CQuestionBrick::GetBoundingBox(float& l, float& t, float& r, float& b)

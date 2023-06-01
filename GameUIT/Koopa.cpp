@@ -4,7 +4,7 @@
 #include "QuestionBrick.h"
 #include "debug.h"
 
-extern CMario* mario;
+//extern CMario* mario;
 
 CKoopa::CKoopa(float x, float y, int type) :CGameObject(x, y)
 {
@@ -159,10 +159,10 @@ void CKoopa::SetState(int state)
 		break;
 
 	case KOOPA_STATE_SLEEP_REVERSE: 
-		if (this->x > mario->GetMarioPositionX()) //Dựa vào vị trí để đẩy con Koopa đi xa khỏi Mario
+		//if (this->x > mario->GetMarioPositionX()) //Dựa vào vị trí để đẩy con Koopa đi xa khỏi Mario
 			vx = KOOPA_KNOCK_OFF_VELO_X * KOOPA_KNOCK_OFF_FACTOR_X;
-		else
-			vx = -KOOPA_KNOCK_OFF_VELO_X * KOOPA_KNOCK_OFF_FACTOR_X;
+		//else
+			//vx = -KOOPA_KNOCK_OFF_VELO_X * KOOPA_KNOCK_OFF_FACTOR_X;
 		
 		vy = -KOOPA_KNOCK_OFF_FACTOR_Y;	
 		isOnPlatform = true;
@@ -198,28 +198,28 @@ void CKoopa::SetState(int state)
 		break;
 
 	case KOOPA_STATE_SLIP:
-		if (mario->GetMarioNormalX() > 0)
+		//if (mario->GetMarioNormalX() > 0)
 			vx = KOOPA_SLIPPING_SPEED;
-		else 
-			vx = -KOOPA_SLIPPING_SPEED;
+		//else 
+			//vx = -KOOPA_SLIPPING_SPEED;
 		vy = 0;
 		y -= (KOOPA_BBOX_HEIGHT - KOOPA_IN_SHELL_BBOX_HEIGHT) / 2;
 		break;
 
 	case KOOPA_STATE_SLIP_REVERSE:
-		if (mario->GetMarioNormalX() > 0)
+		//if (mario->GetMarioNormalX() > 0)
 			vx = KOOPA_SLIPPING_SPEED;
-		else
-			vx = -KOOPA_SLIPPING_SPEED;
+		//else
+			//vx = -KOOPA_SLIPPING_SPEED;
 		vy = 0;
 		y -= (KOOPA_BBOX_HEIGHT - KOOPA_IN_SHELL_BBOX_HEIGHT) / 2;
 		break;
 
 	case KOOPA_STATE_WALKING:
-		if (this->x > mario->GetMarioPositionX())
+		//if (this->x > mario->GetMarioPositionX())
 			vx = -KOOPA_WALKING_SPEED;
-		else 
-			vx = KOOPA_WALKING_SPEED;
+		//else 
+			//vx = KOOPA_WALKING_SPEED;
 
 		y -= (KOOPA_BBOX_HEIGHT - KOOPA_IN_SHELL_BBOX_HEIGHT) / 2; 
 		//Cập nhật vị trí y mới sau khi từ trạng thái NGỦ đến lúc hồi sinh

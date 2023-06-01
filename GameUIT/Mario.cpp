@@ -715,10 +715,6 @@ void CMario::SetLevel(int l)
 	{
 		y -= (MARIO_BIG_BBOX_HEIGHT - MARIO_SMALL_BBOX_HEIGHT) / 2;
 	}
-	else
-	{
-		//y -= (MARIO_BIG_BBOX_HEIGHT) / 2;
-	}
 	level = l;
 }
 

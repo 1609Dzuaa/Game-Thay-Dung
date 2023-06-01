@@ -2,7 +2,7 @@
 #include "Mario.h"
 #include "debug.h"
 
-extern CMario* mario;
+//extern CMario* mario;
 
 CGoomba::CGoomba(float x, float y) :CGameObject(x, y)
 {
@@ -115,10 +115,10 @@ void CGoomba::SetState(int state)
 
 	case GOOMBA_STATE_DIE_REVERSE:
 		die_reverse_start = GetTickCount64();
-		if (this->x > mario->GetMarioPositionX())
+		//if (this->x > mario->GetMarioPositionX())
 			vx = vx * GOOMBA_DIE_REVERSE_FACTOR_X;
-		else
-			vx = -vx * GOOMBA_DIE_REVERSE_FACTOR_X;
+		//else
+			//vx = -vx * GOOMBA_DIE_REVERSE_FACTOR_X;
 		vy = -GOOMBA_DIE_REVERSE_FACTOR_Y;
 		break;
 
