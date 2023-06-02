@@ -3,23 +3,47 @@
 
 #define GOOMBA_GRAVITY 0.002f
 #define GOOMBA_WALKING_SPEED 0.05f
+#define GOOMBA_READY_TO_FLY_SPEED 0.2f
+#define GOOMBA_FLYING_SPEED 0.6f
 #define GOOMBA_DIE_REVERSE_FACTOR_X 1.7f
-#define GOOMBA_DIE_REVERSE_FACTOR_Y 0.5f
+#define GOOMBA_DIE_REVERSE_FACTOR_Y 0.4f
 
+#define GOOMBA 1
+#define PARA_GOOMBA 2
+
+#define PARA_GOOMBA_LEVEL_NO_WINGS 1
+#define PARA_GOOMBA_LEVEL_HAS_WINGS 2
 
 #define GOOMBA_BBOX_WIDTH 16
 #define GOOMBA_BBOX_HEIGHT 14
 #define GOOMBA_BBOX_HEIGHT_DIE 7
 
+#define PARA_GOOMBA_BBOX_WIDTH 19
+#define PARA_GOOMBA_BBOX_HEIGHT 18
+#define PARA_GOOMBA_SPREAD_WINGS_BBOX_WIDTH 19
+#define PARA_GOOMBA_SPREAD_WINGS_BBOX_HEIGHT 21
+
 #define GOOMBA_DIE_TIMEOUT 650
+#define GOOMBA_CALM_TIMEOUT 500
+#define GOOMBA_FLY_TIMEOUT 400
 
 #define GOOMBA_STATE_WALKING 100
 #define GOOMBA_STATE_DIE 200
 #define GOOMBA_STATE_DIE_REVERSE 201
+#define GOOMBA_STATE_CALM 202 //202, 203 & 204 Only use for Para Goomba (Has Wings)
+#define GOOMBA_STATE_READY_TO_FLY 203
+#define GOOMBA_STATE_FLYING 204
 
 #define ID_ANI_GOOMBA_WALKING 5000
 #define ID_ANI_GOOMBA_DIE 5001
 #define ID_ANI_GOOMBA_DIE_REVERSE 5002
+
+#define ID_ANI_PARA_GOOMBA_WALKING 5100
+#define ID_ANI_PARA_GOOMBA_DIE 5101
+#define ID_ANI_PARA_GOOMBA_DIE_REVERSE 5102
+#define ID_ANI_PARA_GOOMBA_CALM 5103
+#define ID_ANI_PARA_GOOMBA_READY_TO_FLY 5104
+#define ID_ANI_PARA_GOOMBA_FLYING 5105
 
 class CGoomba : public CGameObject
 {
@@ -29,7 +53,12 @@ protected:
 
 	ULONGLONG die_start;
 	ULONGLONG die_reverse_start;
+	ULONGLONG calm_start;
+	ULONGLONG fly_start;
+	ULONGLONG end_walk;
 	BOOLEAN isDead;
+	BOOLEAN isSpreadWings;
+	int type, level, count_step;;
 
 	virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom);
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
@@ -49,6 +78,7 @@ protected:
 	virtual void OnCollisionWith(LPCOLLISIONEVENT e);
 
 public:
-	CGoomba(float x, float y);
+	CGoomba(float x, float y, int type);
 	virtual void SetState(int state);
+	int GetType() { return this->type; };
 };

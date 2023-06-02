@@ -21,13 +21,20 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 	if (abs(vx) > abs(maxVx)) vx = maxVx;
 
+	UpdateMarioState();
+
+	isOnPlatform = false;
+	CCollision::GetInstance()->Process(this, dt, coObjects);
+}
+
+void CMario::UpdateMarioState()
+{
 	// reset untouchable timer if untouchable time has passed
 	if (GetTickCount64() - untouchable_start > MARIO_UNTOUCHABLE_TIME)
 	{
 		untouchable_start = 0;
 		untouchable = 0;
 	}
-	//Maybe use a function and call it here
 
 	if (isKicking && GetTickCount64() - kick_start >= MARIO_KICK_TIME)
 	{
@@ -40,10 +47,6 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		isAttacking = false;
 		attack_start = 0;
 	}
-
-	isOnPlatform = false;
-
-	CCollision::GetInstance()->Process(this, dt, coObjects);
 }
 
 void CMario::OnNoCollision(DWORD dt)

@@ -1,34 +1,60 @@
 ﻿#include "Goomba.h"
 #include "Mario.h"
+#include "PlayScene.h"
 #include "debug.h"
 
 //extern CMario* mario;
 
-CGoomba::CGoomba(float x, float y) :CGameObject(x, y)
+CGoomba::CGoomba(float x, float y, int type) :CGameObject(x, y)
 {
 	this->ax = 0;
 	this->ay = GOOMBA_GRAVITY;
+	this->type = type;
 	die_start = -1;
 	die_reverse_start = -1;
+	calm_start = -1;
+	fly_start = -1;
+	count_step = 0;
 	isDead = false;
-	SetState(GOOMBA_STATE_WALKING);
+	isSpreadWings = false;
+	this->SetState(GOOMBA_STATE_WALKING);
 }
 
 void CGoomba::GetBoundingBox(float& left, float& top, float& right, float& bottom)
 {
-	if (state == GOOMBA_STATE_DIE)
+	if (this->type == PARA_GOOMBA && this->level == PARA_GOOMBA_LEVEL_NO_WINGS || this->type != PARA_GOOMBA)
 	{
-		left = x - GOOMBA_BBOX_WIDTH / 2;
-		top = y - GOOMBA_BBOX_HEIGHT_DIE / 2;
-		right = left + GOOMBA_BBOX_WIDTH;
-		bottom = top + GOOMBA_BBOX_HEIGHT_DIE;
+		if (state == GOOMBA_STATE_DIE)
+		{
+			left = x - GOOMBA_BBOX_WIDTH / 2;
+			top = y - GOOMBA_BBOX_HEIGHT_DIE / 2;
+			right = left + GOOMBA_BBOX_WIDTH;
+			bottom = top + GOOMBA_BBOX_HEIGHT_DIE;
+		}
+		else
+		{
+			left = x - GOOMBA_BBOX_WIDTH / 2;
+			top = y - GOOMBA_BBOX_HEIGHT / 2;
+			right = left + GOOMBA_BBOX_WIDTH;
+			bottom = top + GOOMBA_BBOX_HEIGHT;
+		}
 	}
-	else
+	else //Loại 2 có cánh
 	{
-		left = x - GOOMBA_BBOX_WIDTH / 2;
-		top = y - GOOMBA_BBOX_HEIGHT / 2;
-		right = left + GOOMBA_BBOX_WIDTH;
-		bottom = top + GOOMBA_BBOX_HEIGHT;
+		if (isSpreadWings)
+		{
+			left = x - PARA_GOOMBA_SPREAD_WINGS_BBOX_WIDTH / 2;
+			top = y - PARA_GOOMBA_SPREAD_WINGS_BBOX_HEIGHT / 2;
+			right = left + PARA_GOOMBA_SPREAD_WINGS_BBOX_WIDTH;
+			bottom = top + PARA_GOOMBA_SPREAD_WINGS_BBOX_HEIGHT;
+		}
+		else 
+		{
+			left = x - PARA_GOOMBA_BBOX_WIDTH / 2;
+			top = y - PARA_GOOMBA_BBOX_HEIGHT / 2;
+			right = left + PARA_GOOMBA_BBOX_WIDTH;
+			bottom = top + PARA_GOOMBA_BBOX_HEIGHT;
+		}
 	}
 }
 
@@ -52,9 +78,17 @@ void CGoomba::OnCollisionWith(LPCOLLISIONEVENT e)
 void CGoomba::HandleCollisionWithBlockingObjects(LPCOLLISIONEVENT e)
 {
 	//Xét vật có thuộc tính BLOCK
+		
 	if (e->ny != 0)
 	{
-		vy = 0;
+		if (e->ny < 0 && this->type > GOOMBA)
+		{
+			vy = 0;
+			count_step++;
+			this->SetState(GOOMBA_STATE_READY_TO_FLY);
+		}
+		else
+			vy = 0;
 	}
 	else if (e->nx != 0)
 	{
@@ -69,7 +103,7 @@ void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 	UpdateGoombaState();
 	CCollision::GetInstance()->Process(this, dt, coObjects);
-	//DebugOutTitle(L"GOOMBA STATE: %d", state);
+	DebugOutTitle(L"GOOMBA STATE AND COUNT_STEP: %d, %d", state, count_step);
 }
 
 void CGoomba::UpdateGoombaState()
@@ -86,15 +120,48 @@ void CGoomba::UpdateGoombaState()
 		isDead = true;
 		return;
 	}
+
+	else if ((state == GOOMBA_STATE_CALM) && (GetTickCount64() - calm_start > GOOMBA_CALM_TIMEOUT))
+	{
+		calm_start = 0;
+		this->SetState(GOOMBA_STATE_READY_TO_FLY);
+	}
+	else if ((state == GOOMBA_STATE_READY_TO_FLY) && count_step % 3 == 0)
+	{
+		this->SetState(GOOMBA_STATE_FLYING);
+	}
+	else if ((state == GOOMBA_STATE_FLYING) && (GetTickCount64() - fly_start > GOOMBA_FLY_TIMEOUT))
+	{
+		fly_start = 0;
+		this->SetState(GOOMBA_STATE_CALM);
+	}
 }
 
 void CGoomba::Render()
 {
-	int aniId = ID_ANI_GOOMBA_WALKING;
-	if (state == GOOMBA_STATE_DIE)
-		aniId = ID_ANI_GOOMBA_DIE;
-	if (state == GOOMBA_STATE_DIE_REVERSE)
-		aniId = ID_ANI_GOOMBA_DIE_REVERSE;
+	int aniId;
+	if (type == GOOMBA)
+	{
+		aniId = ID_ANI_GOOMBA_WALKING;
+		if (state == GOOMBA_STATE_DIE)
+			aniId = ID_ANI_GOOMBA_DIE;
+		if (state == GOOMBA_STATE_DIE_REVERSE)
+			aniId = ID_ANI_GOOMBA_DIE_REVERSE;
+	}
+	else
+	{
+		aniId = ID_ANI_PARA_GOOMBA_WALKING;
+		if (state == GOOMBA_STATE_DIE)
+			aniId = ID_ANI_PARA_GOOMBA_DIE;
+		if (state == GOOMBA_STATE_DIE_REVERSE)
+			aniId = ID_ANI_PARA_GOOMBA_DIE_REVERSE;
+		if (state == GOOMBA_STATE_CALM)
+			aniId = ID_ANI_PARA_GOOMBA_CALM;
+		if (state == GOOMBA_STATE_READY_TO_FLY)
+			aniId = ID_ANI_PARA_GOOMBA_READY_TO_FLY;
+		if (state == GOOMBA_STATE_FLYING)
+			aniId = ID_ANI_PARA_GOOMBA_FLYING;
+	}
 
 	CAnimations::GetInstance()->Get(aniId)->Render(x, y);
 	RenderBoundingBox();
@@ -103,6 +170,8 @@ void CGoomba::Render()
 
 void CGoomba::SetState(int state)
 {
+	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
+
 	switch (state)
 	{
 	case GOOMBA_STATE_DIE:
@@ -115,15 +184,30 @@ void CGoomba::SetState(int state)
 
 	case GOOMBA_STATE_DIE_REVERSE:
 		die_reverse_start = GetTickCount64();
-		//if (this->x > mario->GetMarioPositionX())
+		if (this->x > mario->GetMarioPositionX())
+			vx = abs(vx) * GOOMBA_DIE_REVERSE_FACTOR_X;
+		else if (this->x <= mario->GetMarioPositionX() && this->vx < 0)
 			vx = vx * GOOMBA_DIE_REVERSE_FACTOR_X;
-		//else
-			//vx = -vx * GOOMBA_DIE_REVERSE_FACTOR_X;
+		else
+			vx = -vx * GOOMBA_DIE_REVERSE_FACTOR_X;
 		vy = -GOOMBA_DIE_REVERSE_FACTOR_Y;
 		break;
 
 	case GOOMBA_STATE_WALKING:
 		vx = -GOOMBA_WALKING_SPEED;
+		break;
+
+	case GOOMBA_STATE_CALM:
+		calm_start = GetTickCount64();
+		break;
+		
+	case GOOMBA_STATE_READY_TO_FLY:
+		vy = -GOOMBA_READY_TO_FLY_SPEED;
+		break;
+
+	case GOOMBA_STATE_FLYING:
+		fly_start = GetTickCount64();
+		vy = -GOOMBA_FLYING_SPEED;
 		break;
 	}
 

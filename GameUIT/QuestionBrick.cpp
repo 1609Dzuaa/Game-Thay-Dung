@@ -4,8 +4,6 @@
 #include "Leaf.h"
 #include "debug.h"
 
-//extern list<LPGAMEOBJECT> objects;
-
 void CQuestionBrick::Render()
 {
 	CAnimations* animations = CAnimations::GetInstance();

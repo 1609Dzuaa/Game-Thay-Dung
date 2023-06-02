@@ -6,11 +6,10 @@
 #include "Mario.h"
 #include "PlayScene.h"
 
-//extern void Reload();
-
 void CSampleKeyHandler::OnKeyDown(int KeyCode)
 {
 	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
+	CGame* game = CGame::GetInstance();
 	DebugOut(L"[INFO] KeyDown: %d\n", KeyCode);
 	switch (KeyCode)
 	{
@@ -35,9 +34,6 @@ void CSampleKeyHandler::OnKeyDown(int KeyCode)
 		break;
 	case DIK_3:
 		mario->SetLevel(MARIO_LEVEL_RACOON);
-		break;
-	case DIK_R: // reset
-		//Reload();
 		break;
 		//set racoon attack by A here
 	}
@@ -77,8 +73,8 @@ void CSampleKeyHandler::KeyState(BYTE* states)
 		else
 			mario->SetState(MARIO_STATE_WALKING_LEFT);
 	}
-	else if (game->IsKeyDown(DIK_Z) && mario->GetLevel() == MARIO_LEVEL_RACOON)
-		mario->SetState(MARIO_RACOON_STATE_ATTACK);
+	//else if (game->IsKeyDown(DIK_Z) && mario->GetLevel() == MARIO_LEVEL_RACOON)
+		//mario->SetState(MARIO_RACOON_STATE_ATTACK);
 	else
 		mario->SetState(MARIO_STATE_IDLE);
 }

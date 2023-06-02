@@ -120,9 +120,28 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 
 		DebugOut(L"[INFO] Player object has been created!\n");
 		break;
-	case OBJECT_TYPE_GOOMBA: obj = new CGoomba(x, y); break;
-	case OBJECT_TYPE_BRICK: obj = new CQuestionBrick(x, y,HAS_COIN); break;
+	case OBJECT_TYPE_GOOMBAS: 
+	{
+		int Goombas_type = atoi(tokens[3].c_str());
+		obj = new CGoomba(x, y, Goombas_type);
+
+		break;
+	}
+	case OBJECT_TYPE_BRICK: obj = new CBrick(x, y); break;
+	/*{
+		int QuesBrick_type = atoi(tokens[3].c_str());
+		obj = new CQuestionBrick(x, y, QuesBrick_type);
+
+		break;
+	}*/
 	case OBJECT_TYPE_COIN: obj = new CCoin(x, y); break;
+	case OBJECT_TYPE_KOOPAS: 
+	{
+		int Koopas_type = atoi(tokens[3].c_str());
+		obj = new CKoopa(x, y, Koopas_type);
+
+		break;
+	}
 
 	case OBJECT_TYPE_PLATFORM:
 	{

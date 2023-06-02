@@ -4,6 +4,7 @@ Mario.txt
 Brick.txt
 Coin.txt
 Goomba.txt
+#Koopa.txt
 #cloud.txt
 #
 [OBJECTS]
@@ -53,7 +54,11 @@ Goomba.txt
 4	180	120
 
 #Goomba
-2	300	10
+2	250	10	2
+
+#Koopa
+#3	300	15	2
+#3	350	20	1
 
 #Platform
 #5	90	136	16	15	16	51000	52000	53000

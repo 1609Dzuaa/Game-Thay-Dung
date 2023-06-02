@@ -1,5 +1,7 @@
 # id	left	top	right	bottom	texture_id
+#Goomba Type: 1. Normal || 2. Para Goomba(Goomba with Wings)
 [SPRITES]
+########### Normal Goomba ###################
 #WALK
 31001	31	348	48	364	10
 31002	53	348	68	365	10
@@ -20,3 +22,38 @@
 
 #DIE_REVERSE
 5002	32002	100
+
+########### Para Goomba ###################
+[SPRITES]
+#WALK
+33101	31	373	48	389	10
+33102	52	373	69	389	10
+
+#CALM (có cánh nhưng đi bộ)
+33401	71	370	92	390	10
+33402	93	370	112	390	10
+
+#FLY
+33301	113	365	133	390	10
+33302	135	365	155	390	10
+
+#DIE
+33201	10	380	27	389	10
+
+#ani_id	sprite1_id	time1	sprite2_id	time2	...
+[ANIMATIONS]
+#WALK
+5100	33101	100	33102	100
+
+#CALM
+5103	33401	100	33402	100
+
+#READY_TO_FLY
+5104	33401	150	33301	150	33402	150	33302	150
+
+#FLY
+5105	33401	50	33301	50	33402	50	33302	50
+
+#DIE
+5101	33201	100
+
