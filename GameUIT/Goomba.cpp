@@ -19,6 +19,8 @@ CGoomba::CGoomba(float x, float y, int type) :CGameObject(x, y)
 	isDead = false;
 	isSpreadWings = false;
 	this->SetState(GOOMBA_STATE_WALKING);
+	if (this->type == PARA_GOOMBA)
+		this->level = PARA_GOOMBA_LEVEL_HAS_WINGS;
 }
 
 void CGoomba::GetBoundingBox(float& left, float& top, float& right, float& bottom)
@@ -109,7 +111,7 @@ void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 	UpdateGoombaState();
 	CCollision::GetInstance()->Process(this, dt, coObjects);
-	DebugOutTitle(L"GOOMBA STATE AND COUNT_STEP: %d, %d, %d", state, count_step, count_step_to_jump);
+	DebugOutTitle(L"Type, Level: %d, %d", type, level);
 }
 
 void CGoomba::UpdateGoombaState()
@@ -127,7 +129,10 @@ void CGoomba::UpdateGoombaState()
 		return;
 	}
 
-	else if ((state == GOOMBA_STATE_WALKING) && count_step % 60 == 0 && count_step != 0)
+	else if ((state == GOOMBA_STATE_WALKING) && count_step % 60 == 0 
+		&& count_step != 0 && this->level == PARA_GOOMBA_LEVEL_HAS_WINGS) 
+		//Nó muốn chuyển từ trạng thái đi bộ sang bay thì phải thoả 4 ĐK: 
+		//Đang đi bộ, đủ count_step và count_step khác 0 cũng như đang là level có cánh
 	{
 		count_step = 0;
 		this->SetState(GOOMBA_STATE_READY_TO_FLY);
@@ -159,7 +164,7 @@ void CGoomba::Render()
 	{
 		aniId = ID_ANI_PARA_GOOMBA_HAS_WINGS_WALKING;
 		if(state == GOOMBA_STATE_WALKING && level == PARA_GOOMBA_LEVEL_NO_WINGS)
-			aniId = ID_ANI_PARA_GOOMBA_WALKING;
+			aniId = ID_ANI_PARA_GOOMBA_NO_WINGS_WALKING;
 		if (state == GOOMBA_STATE_DIE)
 			aniId = ID_ANI_PARA_GOOMBA_DIE;
 		if (state == GOOMBA_STATE_DIE_REVERSE)
