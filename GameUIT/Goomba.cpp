@@ -7,14 +7,15 @@
 
 CGoomba::CGoomba(float x, float y, int type) :CGameObject(x, y)
 {
+	this->vx = -GOOMBA_WALKING_SPEED;
 	this->ax = 0;
 	this->ay = GOOMBA_GRAVITY;
 	this->type = type;
 	die_start = -1;
 	die_reverse_start = -1;
-	calm_start = -1;
-	fly_start = -1;
+	fly_start = 0;
 	count_step = 0;
+	count_step_to_jump = 0;
 	isDead = false;
 	isSpreadWings = false;
 	this->SetState(GOOMBA_STATE_WALKING);
@@ -81,11 +82,16 @@ void CGoomba::HandleCollisionWithBlockingObjects(LPCOLLISIONEVENT e)
 		
 	if (e->ny != 0)
 	{
-		if (e->ny < 0 && this->type > GOOMBA)
+		if (e->ny < 0 && this->type > GOOMBA && state == GOOMBA_STATE_READY_TO_FLY)
+		{
+			vy = 0;
+			count_step_to_jump++;
+			this->SetState(GOOMBA_STATE_READY_TO_FLY);
+		}
+		else if (e->ny < 0 && this->type > GOOMBA)
 		{
 			vy = 0;
 			count_step++;
-			this->SetState(GOOMBA_STATE_READY_TO_FLY);
 		}
 		else
 			vy = 0;
@@ -103,7 +109,7 @@ void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 	UpdateGoombaState();
 	CCollision::GetInstance()->Process(this, dt, coObjects);
-	DebugOutTitle(L"GOOMBA STATE AND COUNT_STEP: %d, %d", state, count_step);
+	DebugOutTitle(L"GOOMBA STATE AND COUNT_STEP: %d, %d, %d", state, count_step, count_step_to_jump);
 }
 
 void CGoomba::UpdateGoombaState()
@@ -121,19 +127,20 @@ void CGoomba::UpdateGoombaState()
 		return;
 	}
 
-	else if ((state == GOOMBA_STATE_CALM) && (GetTickCount64() - calm_start > GOOMBA_CALM_TIMEOUT))
+	else if ((state == GOOMBA_STATE_WALKING) && count_step % 60 == 0 && count_step != 0)
 	{
-		calm_start = 0;
+		count_step = 0;
 		this->SetState(GOOMBA_STATE_READY_TO_FLY);
 	}
-	else if ((state == GOOMBA_STATE_READY_TO_FLY) && count_step % 3 == 0)
+	else if ((state == GOOMBA_STATE_READY_TO_FLY) && count_step_to_jump % 3 == 0 && count_step_to_jump != 0)
 	{
+		count_step_to_jump = 0;
 		this->SetState(GOOMBA_STATE_FLYING);
 	}
 	else if ((state == GOOMBA_STATE_FLYING) && (GetTickCount64() - fly_start > GOOMBA_FLY_TIMEOUT))
 	{
 		fly_start = 0;
-		this->SetState(GOOMBA_STATE_CALM);
+		this->SetState(GOOMBA_STATE_WALKING);
 	}
 }
 
@@ -150,13 +157,13 @@ void CGoomba::Render()
 	}
 	else
 	{
-		aniId = ID_ANI_PARA_GOOMBA_WALKING;
+		aniId = ID_ANI_PARA_GOOMBA_HAS_WINGS_WALKING;
+		if(state == GOOMBA_STATE_WALKING && level == PARA_GOOMBA_LEVEL_NO_WINGS)
+			aniId = ID_ANI_PARA_GOOMBA_WALKING;
 		if (state == GOOMBA_STATE_DIE)
 			aniId = ID_ANI_PARA_GOOMBA_DIE;
 		if (state == GOOMBA_STATE_DIE_REVERSE)
 			aniId = ID_ANI_PARA_GOOMBA_DIE_REVERSE;
-		if (state == GOOMBA_STATE_CALM)
-			aniId = ID_ANI_PARA_GOOMBA_CALM;
 		if (state == GOOMBA_STATE_READY_TO_FLY)
 			aniId = ID_ANI_PARA_GOOMBA_READY_TO_FLY;
 		if (state == GOOMBA_STATE_FLYING)
@@ -194,11 +201,6 @@ void CGoomba::SetState(int state)
 		break;
 
 	case GOOMBA_STATE_WALKING:
-		vx = -GOOMBA_WALKING_SPEED;
-		break;
-
-	case GOOMBA_STATE_CALM:
-		calm_start = GetTickCount64();
 		break;
 		
 	case GOOMBA_STATE_READY_TO_FLY:

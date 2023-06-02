@@ -3,8 +3,8 @@
 
 #define GOOMBA_GRAVITY 0.002f
 #define GOOMBA_WALKING_SPEED 0.05f
-#define GOOMBA_READY_TO_FLY_SPEED 0.2f
-#define GOOMBA_FLYING_SPEED 0.6f
+#define GOOMBA_READY_TO_FLY_SPEED 0.274f
+#define GOOMBA_FLYING_SPEED 0.548f
 #define GOOMBA_DIE_REVERSE_FACTOR_X 1.7f
 #define GOOMBA_DIE_REVERSE_FACTOR_Y 0.4f
 
@@ -30,9 +30,8 @@
 #define GOOMBA_STATE_WALKING 100
 #define GOOMBA_STATE_DIE 200
 #define GOOMBA_STATE_DIE_REVERSE 201
-#define GOOMBA_STATE_CALM 202 //202, 203 & 204 Only use for Para Goomba (Has Wings)
-#define GOOMBA_STATE_READY_TO_FLY 203
-#define GOOMBA_STATE_FLYING 204
+#define GOOMBA_STATE_READY_TO_FLY 202
+#define GOOMBA_STATE_FLYING 203
 
 #define ID_ANI_GOOMBA_WALKING 5000
 #define ID_ANI_GOOMBA_DIE 5001
@@ -41,7 +40,7 @@
 #define ID_ANI_PARA_GOOMBA_WALKING 5100
 #define ID_ANI_PARA_GOOMBA_DIE 5101
 #define ID_ANI_PARA_GOOMBA_DIE_REVERSE 5102
-#define ID_ANI_PARA_GOOMBA_CALM 5103
+#define ID_ANI_PARA_GOOMBA_HAS_WINGS_WALKING 5103
 #define ID_ANI_PARA_GOOMBA_READY_TO_FLY 5104
 #define ID_ANI_PARA_GOOMBA_FLYING 5105
 
@@ -53,12 +52,12 @@ protected:
 
 	ULONGLONG die_start;
 	ULONGLONG die_reverse_start;
-	ULONGLONG calm_start;
 	ULONGLONG fly_start;
-	ULONGLONG end_walk;
 	BOOLEAN isDead;
 	BOOLEAN isSpreadWings;
-	int type, level, count_step;;
+	int type, level, count_step, count_step_to_jump;
+	//count_step: Dùng để đếm bước để bắt đầu nhảy thấp
+	//count_step_to_jump: Dùng để đếm bước để bắt đầu nhảy cao
 
 	virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom);
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
@@ -81,4 +80,6 @@ public:
 	CGoomba(float x, float y, int type);
 	virtual void SetState(int state);
 	int GetType() { return this->type; };
+	void SetLevel(int para) { this->level = para; this->state = GOOMBA_STATE_WALKING; }
+	int GetLevel() { return this->level; }
 };

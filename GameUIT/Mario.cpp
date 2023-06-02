@@ -57,13 +57,13 @@ void CMario::OnNoCollision(DWORD dt)
 
 void CMario::OnCollisionWith(LPCOLLISIONEVENT e)
 {
-	HandleCollisionWithBlockingObjects(e);
+	OnCollisionWithBlockingObjects(e);
 
 	//Va chạm với vật KHÔNG CÓ thuộc tính BLOCK HOẶC Question Brick
 	KindOfOnCollisionWith(e);
 }
 
-void CMario::HandleCollisionWithBlockingObjects(LPCOLLISIONEVENT e)
+void CMario::OnCollisionWithBlockingObjects(LPCOLLISIONEVENT e)
 {
 	if (e->ny != 0 && e->obj->IsBlocking())
 	{
@@ -108,8 +108,21 @@ void CMario::HandleCollisionUpperDirectionWithGoomba(CGoomba* goomba)
 {
 	if (goomba->GetState() != GOOMBA_STATE_DIE && goomba->GetState() != GOOMBA_STATE_DIE_REVERSE)
 	{
-		goomba->SetState(GOOMBA_STATE_DIE);
-		vy = -MARIO_JUMP_DEFLECT_SPEED; //nảy lên
+		if (goomba->GetType() == PARA_GOOMBA && goomba->GetLevel() == PARA_GOOMBA_LEVEL_HAS_WINGS)
+		{
+			goomba->SetLevel(PARA_GOOMBA_LEVEL_NO_WINGS);
+			vy = -MARIO_JUMP_DEFLECT_SPEED;
+		}
+		else if (goomba->GetType() == PARA_GOOMBA && goomba->GetLevel() == PARA_GOOMBA_LEVEL_NO_WINGS)
+		{
+			goomba->SetState(GOOMBA_STATE_DIE);
+			vy = -MARIO_JUMP_DEFLECT_SPEED; //nảy lên
+		}
+		else
+		{
+			goomba->SetState(GOOMBA_STATE_DIE);
+			vy = -MARIO_JUMP_DEFLECT_SPEED; //nảy lên
+		}
 	}
 }
 

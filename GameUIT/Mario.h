@@ -181,7 +181,7 @@ class CMario : public CGameObject
 	void OnCollisionWithLeaf(LPCOLLISIONEVENT e);
 	void OnCollisionWithPortal(LPCOLLISIONEVENT e);
 
-	void HandleCollisionWithBlockingObjects(LPCOLLISIONEVENT e);
+	void OnCollisionWithBlockingObjects(LPCOLLISIONEVENT e);
 	void HandleCollisionUpperDirectionWithGoomba(CGoomba* goomba);
 	void HandleCollisionOtherDirectionWithGoomba(LPCOLLISIONEVENT e, CGoomba* goomba); 
 	void HandleCollisionUpperDirectionWithKoopa(CKoopa* koopa);
