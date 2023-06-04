@@ -26,6 +26,7 @@ void CPlatform::Render()
 
 void CPlatform::GetBoundingBox(float& l, float& t, float& r, float& b)
 {
+	//top right co van de
 	float cellWidth_div_2 = this->cellWidth / 2;
 	l = x - cellWidth_div_2;
 	t = y - this->cellHeight / 2;

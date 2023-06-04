@@ -19,3 +19,4 @@ height	240
 10	textures\enemies_transparent.png
 20	textures\misc.png
 30	textures\misc_2.png
+40	Mario Map\TilesetMap1-1.png

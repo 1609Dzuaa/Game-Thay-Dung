@@ -180,6 +180,7 @@ class CMario : public CGameObject
 	void OnCollisionWithCoin(LPCOLLISIONEVENT e);
 	void OnCollisionWithLeaf(LPCOLLISIONEVENT e);
 	void OnCollisionWithPortal(LPCOLLISIONEVENT e);
+	void OnCollisionWithColorBox(LPCOLLISIONEVENT e);
 
 	void OnCollisionWithBlockingObjects(LPCOLLISIONEVENT e);
 	void HandleCollisionUpperDirectionWithGoomba(CGoomba* goomba);

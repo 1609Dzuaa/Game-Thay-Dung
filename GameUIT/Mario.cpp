@@ -11,6 +11,7 @@
 #include "QuestionBrick.h"
 #include "Mushroom.h"
 #include "Leaf.h"
+#include "ColorBox.h"
 
 #include "Collision.h"
 
@@ -91,8 +92,10 @@ void CMario::KindOfOnCollisionWith(LPCOLLISIONEVENT e)
 		OnCollisionWithMushroom(e);
 	if (dynamic_cast<CLeaf*>(e->obj))
 		OnCollisionWithLeaf(e);
-	else if (dynamic_cast<CCoin*>(e->obj))
+	if (dynamic_cast<CCoin*>(e->obj))
 		OnCollisionWithCoin(e);
+	if (dynamic_cast<CColorBox*>(e->obj))
+		OnCollisionWithColorBox(e);
 }
 
 void CMario::OnCollisionWithGoomba(LPCOLLISIONEVENT e)
@@ -329,6 +332,14 @@ void CMario::OnCollisionWithLeaf(LPCOLLISIONEVENT e)
 	leaf->Delete();
 }
 
+void CMario::OnCollisionWithColorBox(LPCOLLISIONEVENT e)
+{
+	if (e->ny == -1)
+	{
+		this->vy = 0;
+	}
+}
+
 //
 // Get animation ID for small Mario
 //
@@ -563,7 +574,7 @@ void CMario::Render()
 		aniId = GetAniIdRacoon();
 
 	animations->Get(aniId)->Render(x, y);
-	RenderBoundingBox();
+	//RenderBoundingBox();
 }
 
 void CMario::SetState(int state)

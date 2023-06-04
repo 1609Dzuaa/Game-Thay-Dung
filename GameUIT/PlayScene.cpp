@@ -120,6 +120,7 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 
 		DebugOut(L"[INFO] Player object has been created!\n");
 		break;
+
 	case OBJECT_TYPE_GOOMBAS: 
 	{
 		int Goombas_type = atoi(tokens[3].c_str());
@@ -127,6 +128,7 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 
 		break;
 	}
+
 	case OBJECT_TYPE_BRICK: obj = new CBrick(x, y); break;
 	/*{
 		int QuesBrick_type = atoi(tokens[3].c_str());
@@ -135,6 +137,7 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 		break;
 	}*/
 	case OBJECT_TYPE_COIN: obj = new CCoin(x, y); break;
+
 	case OBJECT_TYPE_KOOPAS: 
 	{
 		int Koopas_type = atoi(tokens[3].c_str());
@@ -162,6 +165,13 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 		break;
 	}
 
+	case OBJECT_TYPE_COLOR_BOX:
+	{
+
+
+		break;
+	}
+
 	case OBJECT_TYPE_PORTAL:
 	{
 		float r = (float)atof(tokens[3].c_str());
@@ -170,7 +180,6 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 		obj = new CPortal(x, y, r, b, scene_id);
 	}
 	break;
-
 
 	default:
 		DebugOut(L"[ERROR] Invalid object type: %d\n", object_type);

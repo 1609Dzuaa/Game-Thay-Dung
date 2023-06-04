@@ -176,7 +176,7 @@ void CGoomba::Render()
 	}
 
 	CAnimations::GetInstance()->Get(aniId)->Render(x, y);
-	RenderBoundingBox();
+	//RenderBoundingBox();
 	//DebugOutTitle(L"Value vy: %f", vy);
 }
 
