@@ -9,6 +9,8 @@ Platform.txt
 #Koopa.txt
 #cloud.txt
 #
+[MAP]
+Map1-1.txt
 [OBJECTS]
 # type	x	y	extra_settings per object type
 # type: 0 = Mario , 1 = Brick, 2 = Goomba, 3 = Koopas,	5 = Platform
@@ -61,7 +63,7 @@ Platform.txt
 4	180	120
 
 #Goomba
-2	250	10	2
+2	230	179	1
 
 #Koopa
 #3	300	15	2

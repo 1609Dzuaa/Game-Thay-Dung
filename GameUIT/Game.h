@@ -60,6 +60,8 @@ class CGame
 	void _ParseSection_SETTINGS(string line);
 	void _ParseSection_SCENES(string line);
 
+	int ScreenWidth, ScreenHeight;
+
 public:
 	// Init DirectX, Sprite Handler
 	void Init(HWND hWnd, HINSTANCE hInstance);
@@ -112,8 +114,10 @@ public:
 	void SwitchScene();
 	void InitiateSwitchScene(int scene_id);
 
-	void _ParseSection_TEXTURES(string line);
+	int GetScreenWidth() { return ScreenWidth; }
+	int GetScreenHeight() { return ScreenHeight; }
 
+	void _ParseSection_TEXTURES(string line);
 
 	~CGame();
 };
