@@ -166,7 +166,6 @@
     <ClCompile Include="Brick.cpp" />
     <ClCompile Include="Coin.cpp" />
     <ClCompile Include="Collision.cpp" />
-    <ClCompile Include="ColorBox.cpp" />
     <ClCompile Include="ColorPlatform.cpp" />
     <ClCompile Include="debug.cpp" />
     <ClCompile Include="GameMap.cpp" />

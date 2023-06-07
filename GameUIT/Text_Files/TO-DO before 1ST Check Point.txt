@@ -4,3 +4,12 @@ Chỉnh sửa lại nút A sao cho chạy nhanh dần đều chứ 0 phải ch�
 Thêm hoa chui từ ống và bắn đạn
 Koopa đỏ
 Thêm vật phẩm vào scene hiện tại
+BoundingBox of Platform
+
+One common approach is to perform collision detection based on the object's position in the game world
+rather than relying solely on the drawing order
+
+Giải quyết cho vấn đề hồi nãy:
+By performing collision detection based on the object's position and bounding boxes, 
+we can accurately detect collisions regardless of the drawing order. 
+This ensures that collisions are properly detected even if one object is drawn on top of another.
