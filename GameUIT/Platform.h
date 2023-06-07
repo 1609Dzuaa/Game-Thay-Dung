@@ -32,7 +32,8 @@ public:
 
 	void Render();
 	void Update(DWORD dt) {}
-	int IsBlocking() { return type != 2; } //Platform là loại Object đặc biệt
+	int IsBlocking() { return 1; } //Platform là loại Object đặc biệt
+	//int IsCollidable() { return 1; }
 	int GetType() { return type; }
 	void GetBoundingBox(float& l, float& t, float& r, float& b);
 	//void RenderBoundingBox();

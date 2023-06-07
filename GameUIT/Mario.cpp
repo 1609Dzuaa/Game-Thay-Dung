@@ -54,7 +54,6 @@ void CMario::OnNoCollision(DWORD dt)
 {
 	x += vx * dt; //x = x0 + vx * dt
 	y += vy * dt; //y = y0 + vy * dt
-	DebugOutTitle(L"ONC");
 }
 
 void CMario::OnCollisionWith(LPCOLLISIONEVENT e)
@@ -63,13 +62,11 @@ void CMario::OnCollisionWith(LPCOLLISIONEVENT e)
 
 	//Va chạm với vật KHÔNG CÓ thuộc tính BLOCK HOẶC Question Brick
 	OnCollisionWithNonBlockingObjects(e);
-
-	DebugOutTitle(L"OCW");
 }
 
 void CMario::OnCollisionWithBlockingObjects(LPCOLLISIONEVENT e)
 {
-	if (e->ny !=0 && e->obj->IsBlocking())
+	if (e->ny != 0 && e->obj->IsBlocking())
 	{
 		vy = 0;
 		if (e->ny < 0)
@@ -105,8 +102,52 @@ void CMario::OnCollisionWithColorPlatform(LPCOLLISIONEVENT e)
 {
 	if (e->ny < 0)
 	{
-		vy = 0;
-		isOnPlatform = true;
+		CColorPlatform* cl_pf = dynamic_cast<CColorPlatform*>(e->obj);
+		HandleCollisionWithColorPlatform(e, cl_pf);
+	}
+}
+
+void CMario::HandleCollisionWithColorPlatform(LPCOLLISIONEVENT e, CColorPlatform* color_platf)
+{
+	//Hàm này để xử lý vị trí của Mario khi nhảy lên Color Platform
+	//Nhằm tránh việc nó bị rơi xuống dù có va chạm
+	// 
+	//Tương tự như hàm SetLevel trong framework của thầy.
+
+	//Tham khảo mục "Snapping to an Edge" của bài viết: 
+	// https://happycoding.io/tutorials/processing/collision-detection
+	//"we want the position of the bottom of the player to equal the position of the top of the ground. 
+	//And since our player’s position is usually stored as its top Y value and a height, 
+	//that means we want the position of the top of our player to equal the ground’s top minus the player’s height."
+	if (this->level != MARIO_LEVEL_SMALL) //level gấu mèo và BIG dùng chung BBox được vì diff 0 đáng kể
+	{
+		if (!isSitting) 
+		{
+			if (MARIO_BIG_BBOX_HEIGHT + this->y > color_platf->GetY())
+			{
+				this->y = (color_platf->GetY() - MARIO_BIG_BBOX_HEIGHT + 4.5); //cộng một lượng vừa đủ
+				vy = 0;
+				isOnPlatform = true;
+			}
+		}
+		else 
+		{
+			if (MARIO_BIG_BBOX_HEIGHT / 2 + 3.5 + this->y > color_platf->GetY())
+			{
+				this->y = (color_platf->GetY() - MARIO_BIG_BBOX_HEIGHT / 2 - 3.5); //trừ một lượng vừa đủ
+				vy = 0;
+				isOnPlatform = true;
+			}
+		}
+	}
+	else 
+	{
+		if (MARIO_SMALL_BBOX_HEIGHT + this->y + 1.5 > color_platf->GetY())
+		{
+			this->y = (color_platf->GetY() - MARIO_SMALL_BBOX_HEIGHT - 1.5);
+			vy = 0;
+			isOnPlatform = true;
+		}
 	}
 }
 

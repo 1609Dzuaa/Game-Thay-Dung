@@ -309,8 +309,9 @@ void CPlayScene::Load()
 
 void CPlayScene::Update(DWORD dt)
 {
+	//Problem here: if Draw Mario later it will affect the collision proccess
 	// We know that Mario is the first object in the list hence we won't add him into the colliable object list
-	// TO-DO: This is a "dirty" way, need a more organized way 
+	// TO-DO: This is a "dirty" way, need a more organized way!
 
 	vector<LPGAMEOBJECT> coObjects;
 	for (size_t i = 1; i < objects.size(); i++)
@@ -344,9 +345,9 @@ void CPlayScene::Update(DWORD dt)
 void CPlayScene::Render()
 {
 	if (map != NULL)
-		map->Render();
+		map->Render(); //vẽ map trước, vẽ object sau
 	else
-		DebugOut(L"[INFO] Map was NULL\n");
+		;// DebugOut(L"[INFO] Map was NULL\n");
 	for (int i = 0; i < objects.size(); i++)
 		objects[i]->Render();
 }

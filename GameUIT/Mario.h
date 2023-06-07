@@ -4,6 +4,7 @@
 #include "Koopa.h"
 #include "Animation.h"
 #include "Animations.h"
+#include "ColorPlatform.h"
 
 #include "debug.h"
 
@@ -187,6 +188,7 @@ class CMario : public CGameObject
 	void HandleCollisionOtherDirectionWithGoomba(LPCOLLISIONEVENT e, CGoomba* goomba); 
 	void HandleCollisionUpperDirectionWithKoopa(CKoopa* koopa);
 	void HandleCollisionOtherDirectionWithKoopa(LPCOLLISIONEVENT e, CKoopa* koopa);
+	void HandleCollisionWithColorPlatform(LPCOLLISIONEVENT e, CColorPlatform* color_platf);
 
 	void OnCollisionWithNonBlockingObjects(LPCOLLISIONEVENT e);
 

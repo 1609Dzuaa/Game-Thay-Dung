@@ -64,7 +64,8 @@ class CGame
 	void _ParseSection_SETTINGS(string line);
 	void _ParseSection_SCENES(string line);
 
-	int ScreenWidth, ScreenHeight;
+	int ScreenWidth = -1;
+	int ScreenHeight = -1;
 
 public:
 	float GetCamX() { return cam_x; }

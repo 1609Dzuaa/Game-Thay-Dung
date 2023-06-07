@@ -1,23 +1,22 @@
 # list of object assets to load in this scene
 [MAP]
-Game_Maps\Map1_1.txt
+Mario Map\Map1_1.txt
 [ASSETS]
-Text_Files\Mario.txt
-Text_Files\Brick.txt
-Text_Files\Coin.txt
-Text_Files\Goomba.txt
-Text_Files\Platform.txt
-Text_Files\ColorPlatform.txt
+Mario.txt
+Brick.txt
+Coin.txt
+Goomba.txt
+Platform.txt
+ColorPlatform.txt
 #ColorBox.txt
 #Koopa.txt
 #cloud.txt
-
 [OBJECTS]
 # type	x	y	extra_settings per object type
 # type: 0 = Mario , 1 = Brick, 2 = Goomba, 3 = Koopas,	5 = Platform
 # See OBJECT_TYPE constants in AssetIDs.h 
 
-# MARIO | Thứ tự vẽ ảnh hưởng đến tính toán va chạm
+# MARIO
 0	40	40
 
 #QUESTION BRICK |  1:HAS_COIN    2:HAS_MUSHROOM
@@ -37,7 +36,7 @@ Text_Files\ColorPlatform.txt
 #5	272	122	16	32	3	400016	400017	400018
 
 #Pink box Vẽ Blue trước vì nó BỊ che khuất 1 phần	
-6	224	208	16	15	3	400007	400008	400009
+6	215	200	30	15	3	400007	400008	400009
 
 #Portal 
 #50	300	110	316	140	2

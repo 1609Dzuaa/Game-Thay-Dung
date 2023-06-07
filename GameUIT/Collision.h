@@ -41,6 +41,10 @@ struct CCollisionEvent
 	{
 		return a->t < b->t;
 	}
+	/*static bool compare(CGameObject* a, CGameObject* b)
+	{
+		return a->GetY() > b->GetY();
+	}*/
 };
 
 class CCollision

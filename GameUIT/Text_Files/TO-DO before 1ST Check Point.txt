@@ -1,0 +1,6 @@
+Thêm hiệu ứng (giết quái, tăng giảm level, ...)
+Thêm ma sát cho Mario cũng như cải thiện khả năng bay nhảy của Racoon
+Chỉnh sửa lại nút A sao cho chạy nhanh dần đều chứ 0 phải chạy nhanh ngay tức khắc như hiện tại
+Thêm hoa chui từ ống và bắn đạn
+Koopa đỏ
+Thêm vật phẩm vào scene hiện tại
