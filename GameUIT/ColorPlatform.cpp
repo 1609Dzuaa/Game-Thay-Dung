@@ -1,9 +1,6 @@
-#include "Platform.h"
+#include "ColorPlatform.h"
 
-#include "Sprite.h"
-#include "Sprites.h"
-
-void CPlatform::Render()
+void CColorPlatform::Render()
 {
 	if (this->length <= 0) return;
 	float xx = x;
@@ -18,13 +15,9 @@ void CPlatform::Render()
 	}
 	if (length > 1)
 		s->Get(this->spriteIdEnd)->Draw(xx, y);
-
-	//
-	//RenderBoundingBox();
-	//
 }
 
-void CPlatform::GetBoundingBox(float& l, float& t, float& r, float& b)
+void CColorPlatform::GetBoundingBox(float& l, float& t, float& r, float& b)
 {
 	float cellWidth_div_2 = this->cellWidth / 2;
 	l = x - cellWidth_div_2;

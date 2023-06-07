@@ -173,6 +173,7 @@ class CMario : public CGameObject
 	BOOLEAN isOnPlatform;
 	int coin;
 
+	void OnCollisionWithColorPlatform(LPCOLLISIONEVENT e);
 	void OnCollisionWithGoomba(LPCOLLISIONEVENT e);
 	void OnCollisionWithKoopa(LPCOLLISIONEVENT e);
 	void OnCollisionWithQuesBrick(LPCOLLISIONEVENT e);
@@ -180,7 +181,6 @@ class CMario : public CGameObject
 	void OnCollisionWithCoin(LPCOLLISIONEVENT e);
 	void OnCollisionWithLeaf(LPCOLLISIONEVENT e);
 	void OnCollisionWithPortal(LPCOLLISIONEVENT e);
-	void OnCollisionWithColorBox(LPCOLLISIONEVENT e);
 
 	void OnCollisionWithBlockingObjects(LPCOLLISIONEVENT e);
 	void HandleCollisionUpperDirectionWithGoomba(CGoomba* goomba);
@@ -188,7 +188,7 @@ class CMario : public CGameObject
 	void HandleCollisionUpperDirectionWithKoopa(CKoopa* koopa);
 	void HandleCollisionOtherDirectionWithKoopa(LPCOLLISIONEVENT e, CKoopa* koopa);
 
-	void KindOfOnCollisionWith(LPCOLLISIONEVENT e);
+	void OnCollisionWithNonBlockingObjects(LPCOLLISIONEVENT e);
 
 	int GetAniIdBig();
 	int GetAniIdSmall();

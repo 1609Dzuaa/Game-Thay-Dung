@@ -15,9 +15,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="framework.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Game.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -105,10 +102,10 @@
     <ClInclude Include="MarioAssetIDs.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ColorBox.h">
+    <ClInclude Include="GameMap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="GameMap.h">
+    <ClInclude Include="ColorPlatform.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -189,6 +186,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="GameMap.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ColorPlatform.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

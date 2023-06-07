@@ -3,6 +3,7 @@
 #include "Mushroom.h"
 #include "Leaf.h"
 #include "debug.h"
+#include "PlayScene.h"
 
 void CQuestionBrick::Render()
 {
@@ -11,7 +12,6 @@ void CQuestionBrick::Render()
 		animations->Get(ID_ANI_QUESTION_BRICK)->Render(x, y);
 	else 
 		animations->Get(ID_ANI_QUESTION_BRICK_HITTED)->Render(x, y);
-	RenderBoundingBox();
 }
 
 void CQuestionBrick::OnNoCollision(DWORD dt)
@@ -45,9 +45,10 @@ void CQuestionBrick::HandleBouncingBrick()
 
 void CQuestionBrick::SpawnCoin(float xBrick, float yBrick, float veloY)
 {
+	CPlayScene* current_scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
 	CCoin* coin = new CCoin(xBrick, yBrick, veloY);
+	current_scene->AddObjectToScene(coin);
 	coin->SetSpeed(0, -COIN_FLY_SPEED);
-	//objects.push_back(coin);
 }
 
 void CQuestionBrick::SpawnMushroom(float xBrick, float yBrick)

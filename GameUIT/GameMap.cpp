@@ -21,16 +21,6 @@ CMap::~CMap()
 	//release
 }
 
-bool CMap::checkObjectInCamera(float x, float y) {
-	float w = 32.0f;
-	float h = 32.0f;
-	if (x + w <= (CGame::GetInstance()->GetCamX()) || (CGame::GetInstance()->GetCamX()) + SCREEN_WIDTH <= x)
-		return false;
-	if (y + h <= (CGame::GetInstance()->GetCamY()) || (CGame::GetInstance()->GetCamY()) + SCREEN_HEIGHT + h <= y)
-		return false;
-	return true;
-}
-
 void CMap::ClipSpritesFromTileset()
 {
 	DebugOut(L"Start Clipping Sprite\n");
@@ -43,16 +33,26 @@ void CMap::ClipSpritesFromTileset()
 		//Công thức từ sách thầy
 
 		LPSPRITE sprite = new CSprite(TileNum, left, top, right, bottom, Texture_TileSet);
-		this->SpritesSplited.push_back(sprite);
+		this->SpritesSplitted.push_back(sprite);
 	}
 	//Hàm này để cắt từng sprites có trong Tileset
 	//Và lưu nó vào vector 
 	DebugOut(L"Clip Sprites Successfully!\n");
 }
 
+bool CMap::isInCamera(float x, float y)
+{
+	float w = 32.0f;
+	float h = 32.0f;
+	if (x + w <= (CGame::GetInstance()->GetCamX()) || (CGame::GetInstance()->GetCamX()) + SCREEN_WIDTH <= x)
+		return false;
+	if (y + h <= (CGame::GetInstance()->GetCamY()) || (CGame::GetInstance()->GetCamY()) + SCREEN_HEIGHT + h <= y)
+		return false;
+	return true;
+}
+
 void CMap::Render()
 {
-	//Problem here, 1st & last = 0
 	int FirstColumn = int(floor(CamX / TILE_WIDTH));
 	int LastColumn = int(ceil((CamX * TILE_WIDTH + CGame::GetInstance()->GetScreenWidth()) / TILE_WIDTH));
 	if (LastColumn >= MapCollums)
@@ -61,20 +61,20 @@ void CMap::Render()
 		for (int CurrentColumn = FirstColumn; CurrentColumn <= LastColumn; CurrentColumn++)
 		{
 			int index = Map_Matrix[CurrentRow][CurrentColumn];
+			//Chỉ số ID của Sprites trong Tileset sẽ tương ứng với chỉ số trong vector SpritesSplited
 			if (index < NumberofSprites)
 			{
-				float xDraw = float(CurrentColumn * TILE_WIDTH) + float(startX * TILE_WIDTH);
-				float yDraw = float(CurrentRow * TILE_HEIGHT) - float(startY * TILE_HEIGHT);
-				//if (checkObjectInCamera(xDraw, yDraw))
-				//{
-					SpritesSplited.at(index)->Draw(xDraw, yDraw);
-				//}
+				float Draw_X = float(CurrentColumn * TILE_WIDTH) + float(startX * TILE_WIDTH);
+				float Draw_Y = float(CurrentRow * TILE_HEIGHT) - float(startY * TILE_HEIGHT);
+				if (isInCamera(Draw_X, Draw_Y))
+					SpritesSplitted.at(index)->Draw(Draw_X, Draw_Y);
+				//Chỉ render những thứ trong Camera để tránh lãng phí tài nguyên
 			}
 		}
 
 }
 
-void CMap::SetTileMapData(int** map_mat)
+void CMap::SetMapMatrix(int** map_mat)
 {
 	Map_Matrix = map_mat;
 }

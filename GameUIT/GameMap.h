@@ -15,7 +15,7 @@ class CMap
 	int startX;
 	int startY;
 	LPTEXTURE Texture_TileSet; //nguồn ảnh Tileset
-	vector<LPSPRITE> SpritesSplited; //vector chứa từng Sprite được cắt ra từ nguồn ảnh Tileset
+	vector<LPSPRITE> SpritesSplitted; //vector chứa từng Sprite được cắt ra từ nguồn ảnh Tileset
 	int** Map_Matrix;  //Ma trận map là con trỏ cấp 2
 	float CamX, CamY;
 public:
@@ -24,8 +24,8 @@ public:
 	~CMap();
 	void ClipSpritesFromTileset(); //cắt từng Sprites từ Tileset
 	void Render();
-	void SetTileMapData(int** TileMapData);
+	void SetMapMatrix(int** TileMapData);
 	int GetMapWidth();
 	int GetMapHeight();
-	bool checkObjectInCamera(float x, float y);
+	bool isInCamera(float x, float y);
 };

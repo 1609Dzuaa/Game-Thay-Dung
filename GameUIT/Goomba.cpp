@@ -111,7 +111,6 @@ void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 	UpdateGoombaState();
 	CCollision::GetInstance()->Process(this, dt, coObjects);
-	DebugOutTitle(L"Type, Level: %d, %d", type, level);
 }
 
 void CGoomba::UpdateGoombaState()

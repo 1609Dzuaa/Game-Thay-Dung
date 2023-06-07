@@ -10,6 +10,7 @@
 #include "Coin.h"
 #include "QuestionBrick.h"
 #include "Platform.h"
+#include "ColorPlatform.h"
 
 #include "SampleKeyEventHandler.h"
 #include "GameMap.h"
@@ -86,16 +87,13 @@ void CPlayScene::_ParseSection_MAP_MATRIX(string line)
 	{
 		TileMapData[i] = new int[columnMap];
 		for (int j = 0; j < columnMap; j++)
-		{
-			f >> TileMapData[i][j]; //Ma trận map
-		}
-
+			f >> TileMapData[i][j]; //Đọc và tạo Ma trận map
 	}
 	f.close();
 
 	map = new CMap(ID, rowMap, columnMap, rowTile, columnTile, totalTiles, startX, startY);
 	map->ClipSpritesFromTileset(); //bóc từng sprite từ tileSet
-	map->SetTileMapData(TileMapData);
+	map->SetMapMatrix(TileMapData);
 	DebugOut(L"[INFO] Parse Map Matrix Success: %s \n", path);
 }
 
@@ -160,12 +158,14 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 	}
 
 	case OBJECT_TYPE_BRICK: obj = new CBrick(x, y); break;
-	/*{
+
+	case OBJECT_TYPE_QUESTION_BRICK:
+	{
 		int QuesBrick_type = atoi(tokens[3].c_str());
 		obj = new CQuestionBrick(x, y, QuesBrick_type);
 
 		break;
-	}*/
+	}
 	case OBJECT_TYPE_COIN: obj = new CCoin(x, y); break;
 
 	case OBJECT_TYPE_KOOPAS: 
@@ -195,9 +195,20 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 		break;
 	}
 
-	case OBJECT_TYPE_COLOR_BOX:
+	case OBJECT_TYPE_COLOR_PLATFORM:
 	{
+		float cell_width = (float)atof(tokens[3].c_str());
+		float cell_height = (float)atof(tokens[4].c_str());
+		int length = atoi(tokens[5].c_str());
+		int sprite_begin = atoi(tokens[6].c_str());
+		int sprite_middle = atoi(tokens[7].c_str());
+		int sprite_end = atoi(tokens[8].c_str());
 
+		obj = new CColorPlatform(
+			x, y,
+			cell_width, cell_height, length,
+			sprite_begin, sprite_middle, sprite_end
+		);
 
 		break;
 	}
@@ -390,4 +401,9 @@ void CPlayScene::PurgeDeletedObjects()
 	objects.erase(
 		std::remove_if(objects.begin(), objects.end(), CPlayScene::IsGameObjectDeleted),
 		objects.end());
+}
+
+void CPlayScene::AddObjectToScene(LPGAMEOBJECT game_object)
+{
+	this->objects.push_back(game_object);
 }

@@ -44,6 +44,7 @@ public:
 	void PurgeDeletedObjects();
 
 	static bool IsGameObjectDeleted(const LPGAMEOBJECT& o);
+	void AddObjectToScene(LPGAMEOBJECT game_object);
 };
 
 typedef CPlayScene* LPPLAYSCENE;

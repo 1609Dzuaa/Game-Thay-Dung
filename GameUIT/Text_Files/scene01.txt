@@ -1,0 +1,48 @@
+# list of object assets to load in this scene
+[MAP]
+Game_Maps\Map1_1.txt
+[ASSETS]
+Text_Files\Mario.txt
+Text_Files\Brick.txt
+Text_Files\Coin.txt
+Text_Files\Goomba.txt
+Text_Files\Platform.txt
+Text_Files\ColorPlatform.txt
+#ColorBox.txt
+#Koopa.txt
+#cloud.txt
+
+[OBJECTS]
+# type	x	y	extra_settings per object type
+# type: 0 = Mario , 1 = Brick, 2 = Goomba, 3 = Koopas,	5 = Platform
+# See OBJECT_TYPE constants in AssetIDs.h 
+
+# MARIO
+0	40	40
+
+#QUESTION BRICK |  1:HAS_COIN    2:HAS_MUSHROOM
+7	176	183	1
+7	192	183	1
+7	640	225	2
+
+#Platform
+#Normal ground, Higher ground
+5	0	256	16	15	38	400001	400002	400003
+5	608	240	16	15	29	400001	400002	400003
+
+#Blue box VẼ đè lên nhau
+#5	272	176	16	32	3	400019	400020	400021
+#5	272	154	16	32	3	400016	400017	400018
+#5	272	138	16	32	3	400016	400017	400018
+#5	272	122	16	32	3	400016	400017	400018
+
+#Pink box Vẽ Blue trước vì nó BỊ che khuất 1 phần	
+6	215	200	30	15	3	400007	400008	400009
+
+#Portal 
+#50	300	110	316	140	2
+
+#Goomba if(inCamera) => Spawn
+#2	600	150	1
+#2	640	150	1
+#2	660	150	2

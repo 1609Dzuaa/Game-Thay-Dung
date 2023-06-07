@@ -11,7 +11,7 @@
 #include "QuestionBrick.h"
 #include "Mushroom.h"
 #include "Leaf.h"
-#include "ColorBox.h"
+#include "ColorPlatform.h"
 
 #include "Collision.h"
 
@@ -54,6 +54,7 @@ void CMario::OnNoCollision(DWORD dt)
 {
 	x += vx * dt; //x = x0 + vx * dt
 	y += vy * dt; //y = y0 + vy * dt
+	DebugOutTitle(L"ONC");
 }
 
 void CMario::OnCollisionWith(LPCOLLISIONEVENT e)
@@ -61,12 +62,14 @@ void CMario::OnCollisionWith(LPCOLLISIONEVENT e)
 	OnCollisionWithBlockingObjects(e);
 
 	//Va chạm với vật KHÔNG CÓ thuộc tính BLOCK HOẶC Question Brick
-	KindOfOnCollisionWith(e);
+	OnCollisionWithNonBlockingObjects(e);
+
+	DebugOutTitle(L"OCW");
 }
 
 void CMario::OnCollisionWithBlockingObjects(LPCOLLISIONEVENT e)
 {
-	if (e->ny != 0 && e->obj->IsBlocking())
+	if (e->ny !=0 && e->obj->IsBlocking())
 	{
 		vy = 0;
 		if (e->ny < 0)
@@ -80,8 +83,10 @@ void CMario::OnCollisionWithBlockingObjects(LPCOLLISIONEVENT e)
 	}
 }
 
-void CMario::KindOfOnCollisionWith(LPCOLLISIONEVENT e)
+void CMario::OnCollisionWithNonBlockingObjects(LPCOLLISIONEVENT e)
 {
+	if (dynamic_cast<CColorPlatform*>(e->obj))
+		OnCollisionWithColorPlatform(e);
 	if (dynamic_cast<CGoomba*>(e->obj))
 		OnCollisionWithGoomba(e);
 	if (dynamic_cast<CKoopa*>(e->obj))
@@ -94,8 +99,15 @@ void CMario::KindOfOnCollisionWith(LPCOLLISIONEVENT e)
 		OnCollisionWithLeaf(e);
 	if (dynamic_cast<CCoin*>(e->obj))
 		OnCollisionWithCoin(e);
-	if (dynamic_cast<CColorBox*>(e->obj))
-		OnCollisionWithColorBox(e);
+}
+
+void CMario::OnCollisionWithColorPlatform(LPCOLLISIONEVENT e)
+{
+	if (e->ny < 0)
+	{
+		vy = 0;
+		isOnPlatform = true;
+	}
 }
 
 void CMario::OnCollisionWithGoomba(LPCOLLISIONEVENT e)
@@ -330,14 +342,6 @@ void CMario::OnCollisionWithLeaf(LPCOLLISIONEVENT e)
 	CLeaf* leaf = dynamic_cast<CLeaf*>(e->obj);
 	this->SetLevel(MARIO_LEVEL_RACOON);
 	leaf->Delete();
-}
-
-void CMario::OnCollisionWithColorBox(LPCOLLISIONEVENT e)
-{
-	if (e->ny == -1)
-	{
-		this->vy = 0;
-	}
 }
 
 //
