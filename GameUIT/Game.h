@@ -14,6 +14,10 @@ using namespace std;
 #include "Scene.h"
 #include <string>
 
+#define SCREEN_WIDTH 272
+#define SCREEN_HEIGHT 256
+#define MAP1_1_WIDTH 2816
+
 #define MAX_FRAME_RATE 100
 #define KEYBOARD_BUFFER_SIZE 1024
 #define KEYBOARD_STATE_SIZE 256
@@ -63,6 +67,8 @@ class CGame
 	int ScreenWidth, ScreenHeight;
 
 public:
+	float GetCamX() { return cam_x; }
+	float GetCamY() { return cam_y; }
 	// Init DirectX, Sprite Handler
 	void Init(HWND hWnd, HINSTANCE hInstance);
 

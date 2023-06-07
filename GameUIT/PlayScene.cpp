@@ -37,7 +37,7 @@ CPlayScene::CPlayScene(int id, LPCWSTR filePath) :
 
 void CPlayScene::_ParseSection_MAP_MATRIX(string line)
 {
-	DebugOut(L"[INFO] Start Parse Map");
+	DebugOut(L"[INFO] Start Parse Map From File: %s\n", line);
 	int ID, rowMap, columnMap, columnTile, rowTile, totalTiles, startX, startY;
 	LPCWSTR path = ToLPCWSTR(line);
 	ifstream f;
@@ -60,7 +60,7 @@ void CPlayScene::_ParseSection_MAP_MATRIX(string line)
 	map = new CMap(ID, rowMap, columnMap, rowTile, columnTile, totalTiles, startX, startY);
 	map->ClipSpritesFromTileset(); //bóc từng sprite từ tileSet
 	map->SetTileMapData(TileMapData);
-	DebugOut(L"[INFO] Load MAP Succcess");
+	DebugOut(L"[INFO] Load MAP Succcess: %s\n", line);
 }
 
 void CPlayScene::_ParseSection_SPRITES(string line)
@@ -334,6 +334,7 @@ void CPlayScene::Render()
 {
 	for (int i = 0; i < objects.size(); i++)
 		objects[i]->Render();
+	map->Render();
 }
 
 /*

@@ -8,8 +8,6 @@
 #define TILE_HEIGHT 16
 class CMap
 {
-	//Tham khảo ý tưởng từ: https://github.com/lequockhanh19521680/gamemario/blob/master/05-SceneManager/Map.h
-
 	//Vì map là mảng 2 chiều nên cần lưu thông tin:
 	//Số hàng, số cột của map cũng như số hàng và số cột của Tileset
 	int MapRows, MapCollums, TilesetRows, TilesetCollums;

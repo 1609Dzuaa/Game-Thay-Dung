@@ -23,7 +23,7 @@ CMap::~CMap()
 
 void CMap::ClipSpritesFromTileset()
 {
-	DebugOut(L"Start Clip Sprite");
+	DebugOut(L"Start Clipping Sprite\n");
 	for (int TileNum = 0; TileNum < NumberofSprites; TileNum++)
 	{
 		int left = TileNum % TilesetCollums * TILE_WIDTH;
@@ -37,27 +37,28 @@ void CMap::ClipSpritesFromTileset()
 	}
 	//Hàm này để cắt từng sprites có trong Tileset
 	//Và lưu nó vào vector 
-	DebugOut(L"Clip Sprite Success!");
+	DebugOut(L"Clip Sprites Successfully!\n");
 }
 
 void CMap::Render()
 {
+	//Problem here, 1st & last = 0
 	int FirstColumn = int(floor(CamX / TILE_WIDTH));
 	int LastColumn = int(ceil((CamX * TILE_WIDTH + CGame::GetInstance()->GetScreenWidth()) / TILE_WIDTH));
 	if (LastColumn >= MapCollums)
 		LastColumn = MapCollums - 1;
-	int d = 0;
 	for (int CurrentRow = 0; CurrentRow < MapRows; CurrentRow++)
 		for (int CurrentColumn = FirstColumn; CurrentColumn <= LastColumn; CurrentColumn++)
 		{
-			int index = Map_Matrix[CurrentRow][CurrentColumn] - 1;
+			int index = Map_Matrix[CurrentRow][CurrentColumn];
 			if (index < NumberofSprites)
 			{
 				float xDraw = float(CurrentColumn * TILE_WIDTH) + float(startX * TILE_WIDTH);
 				float yDraw = float(CurrentRow * TILE_HEIGHT) - float(startY * TILE_HEIGHT);
-					SpritesSplited.at(index)->Draw(xDraw, yDraw);
+				SpritesSplited.at(index)->Draw(xDraw, yDraw);
 			}
 		}
+
 }
 
 void CMap::SetTileMapData(int** map_mat)

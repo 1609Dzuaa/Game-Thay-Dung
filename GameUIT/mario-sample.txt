@@ -21,3 +21,4 @@ height	240
 20	textures\misc.png
 30	textures\misc_2.png
 40	Mario Map\Tileset-Map1_1.png
+#40	Mario Map\world1-1_bank.png
