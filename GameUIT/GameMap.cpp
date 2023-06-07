@@ -21,6 +21,16 @@ CMap::~CMap()
 	//release
 }
 
+bool CMap::checkObjectInCamera(float x, float y) {
+	float w = 32.0f;
+	float h = 32.0f;
+	if (x + w <= (CGame::GetInstance()->GetCamX()) || (CGame::GetInstance()->GetCamX()) + SCREEN_WIDTH <= x)
+		return false;
+	if (y + h <= (CGame::GetInstance()->GetCamY()) || (CGame::GetInstance()->GetCamY()) + SCREEN_HEIGHT + h <= y)
+		return false;
+	return true;
+}
+
 void CMap::ClipSpritesFromTileset()
 {
 	DebugOut(L"Start Clipping Sprite\n");
@@ -55,7 +65,10 @@ void CMap::Render()
 			{
 				float xDraw = float(CurrentColumn * TILE_WIDTH) + float(startX * TILE_WIDTH);
 				float yDraw = float(CurrentRow * TILE_HEIGHT) - float(startY * TILE_HEIGHT);
-				SpritesSplited.at(index)->Draw(xDraw, yDraw);
+				//if (checkObjectInCamera(xDraw, yDraw))
+				//{
+					SpritesSplited.at(index)->Draw(xDraw, yDraw);
+				//}
 			}
 		}
 

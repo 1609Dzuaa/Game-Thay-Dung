@@ -35,34 +35,6 @@ CPlayScene::CPlayScene(int id, LPCWSTR filePath) :
 
 #define MAX_SCENE_LINE 1024
 
-void CPlayScene::_ParseSection_MAP_MATRIX(string line)
-{
-	DebugOut(L"[INFO] Start Parse Map From File: %s\n", line);
-	int ID, rowMap, columnMap, columnTile, rowTile, totalTiles, startX, startY;
-	LPCWSTR path = ToLPCWSTR(line);
-	ifstream f;
-
-	f.open(path);
-	f >> ID >> rowMap >> columnMap >> rowTile >> columnTile >> totalTiles >> startX >> startY;
-
-	int** TileMapData = new int* [rowMap];
-	for (int i = 0; i < rowMap; i++)
-	{
-		TileMapData[i] = new int[columnMap];
-		for (int j = 0; j < columnMap; j++)
-		{
-			f >> TileMapData[i][j]; //Ma trận map
-		}
-
-	}
-	f.close();
-
-	map = new CMap(ID, rowMap, columnMap, rowTile, columnTile, totalTiles, startX, startY);
-	map->ClipSpritesFromTileset(); //bóc từng sprite từ tileSet
-	map->SetTileMapData(TileMapData);
-	DebugOut(L"[INFO] Load MAP Succcess: %s\n", line);
-}
-
 void CPlayScene::_ParseSection_SPRITES(string line)
 {
 	vector<string> tokens = split(line);
@@ -97,6 +69,34 @@ void CPlayScene::_ParseSection_ASSETS(string line)
 	wstring path = ToWSTR(tokens[0]);
 
 	LoadAssets(path.c_str());
+}
+
+void CPlayScene::_ParseSection_MAP_MATRIX(string line)
+{
+	int ID, rowMap, columnMap, columnTile, rowTile, totalTiles, startX, startY;
+	LPCWSTR path = ToLPCWSTR(line);
+	ifstream f;
+	DebugOut(L"[INFO] Start Parse Map From File: %s\n", path);
+
+	f.open(path);
+	f >> ID >> rowMap >> columnMap >> rowTile >> columnTile >> totalTiles >> startX >> startY;
+
+	int** TileMapData = new int* [rowMap];
+	for (int i = 0; i < rowMap; i++)
+	{
+		TileMapData[i] = new int[columnMap];
+		for (int j = 0; j < columnMap; j++)
+		{
+			f >> TileMapData[i][j]; //Ma trận map
+		}
+
+	}
+	f.close();
+
+	map = new CMap(ID, rowMap, columnMap, rowTile, columnTile, totalTiles, startX, startY);
+	map->ClipSpritesFromTileset(); //bóc từng sprite từ tileSet
+	map->SetTileMapData(TileMapData);
+	DebugOut(L"[INFO] Parse Map Matrix Success: %s \n", path);
 }
 
 void CPlayScene::_ParseSection_ANIMATIONS(string line)
@@ -332,9 +332,12 @@ void CPlayScene::Update(DWORD dt)
 
 void CPlayScene::Render()
 {
+	if (map != NULL)
+		map->Render();
+	else
+		DebugOut(L"[INFO] Map was NULL\n");
 	for (int i = 0; i < objects.size(); i++)
 		objects[i]->Render();
-	map->Render();
 }
 
 /*

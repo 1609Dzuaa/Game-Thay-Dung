@@ -1,4 +1,6 @@
 # list of object assets to load in this scene
+[MAP]
+Mario Map\Map1_1.txt
 [ASSETS]
 Mario.txt
 Brick.txt
@@ -8,17 +10,15 @@ Platform.txt
 #ColorBox.txt
 #Koopa.txt
 #cloud.txt
-#
-[MAP]
-Map1_1.txt
+#[MAP]
+#Mario Map\Map1_1.txt
 [OBJECTS]
 # type	x	y	extra_settings per object type
 # type: 0 = Mario , 1 = Brick, 2 = Goomba, 3 = Koopas,	5 = Platform
-# See OBJECT_TYPE constants in AssetIDs.h
-#Những thứ 0 cần file txt riêng: cây, mây, 
+# See OBJECT_TYPE constants in AssetIDs.h 
 
 # MARIO
-0	20	10
+0	40	40
 
 # BRICKS
 #1	0	148
@@ -63,7 +63,7 @@ Map1_1.txt
 4	180	120
 
 #Goomba
-#2	230	179	1
+2	230	150	1
 
 #Koopa
 #3	300	15	2
@@ -71,7 +71,7 @@ Map1_1.txt
 
 #Platform
 #Normal ground, Higher ground, Deeper ground
-5	0	194	16	15	39	400001	400002	400003
+5	0	254	16	15	39	400001	400002	400003
 #5	623	178	16	15	39	400001	400002	400003
 #5	623	194	16	15	39	400004	400005	400006
 

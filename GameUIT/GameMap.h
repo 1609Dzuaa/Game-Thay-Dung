@@ -19,6 +19,7 @@ class CMap
 	int** Map_Matrix;  //Ma trận map là con trỏ cấp 2
 	float CamX, CamY;
 public:
+	//Only render & update things in Camera
 	CMap(int TileSetID, int TotalRowsOfMap, int TotalColumnsOfMap, int TotalRowsOfTileSet, int  TotalColumnsOfTileSet, int TotalTiles, int startX, int startY);
 	~CMap();
 	void ClipSpritesFromTileset(); //cắt từng Sprites từ Tileset
@@ -26,4 +27,5 @@ public:
 	void SetTileMapData(int** TileMapData);
 	int GetMapWidth();
 	int GetMapHeight();
+	bool checkObjectInCamera(float x, float y);
 };
