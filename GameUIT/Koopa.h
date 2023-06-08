@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "GameObject.h"
+#include "ColorPlatform.h"
 
 #pragma region KOOPA_TYPE 
 
@@ -12,7 +13,7 @@
 
 #define KOOPA_GRAVITY 0.002f
 #define KOOPA_STEP_ON_GRAVITY 0.001f
-#define KOOPA_WALKING_SPEED 0.05f
+#define KOOPA_WALKING_SPEED 0.03f
 #define KOOPA_SLIPPING_SPEED 0.2f
 #define KOOPA_JUMP_SPEED 0.35f
 #define KOOPA_KNOCK_OFF_VELO_X 0.1f
@@ -52,6 +53,21 @@
 #define ID_ANI_KOOPA_JUMPING_LEFT 60000
 #define ID_ANI_KOOPA_JUMPING_RIGHT 60500
 
+//
+//======
+//
+
+#define ID_ANI_RED_KOOPA_WALKING_LEFT 52000
+#define ID_ANI_RED_KOOPA_WALKING_RIGHT 52500
+#define ID_ANI_RED_KOOPA_SLEEPING 52005
+#define ID_ANI_RED_KOOPA_SLEEPING_REVERSE 52010
+#define ID_ANI_RED_KOOPA_SLIPPING 52015
+#define ID_ANI_RED_KOOPA_SLIPPING_REVERSE 52020
+#define ID_ANI_RED_KOOPA_DIE 52025 
+#define ID_ANI_RED_KOOPA_REBORN 52030
+#define ID_ANI_RED_KOOPA_REBORN_REVERSE 52035
+
+
 class CKoopa : public CGameObject
 {
 protected:
@@ -85,9 +101,11 @@ protected:
 	void OnCollisionWithQuesBrick(LPCOLLISIONEVENT e);
 	void UpdateKoopaState();
 	void HandleCollisionWithBlockingObjects(LPCOLLISIONEVENT e);
+	void HandleCollisionWithColorPlatform(LPCOLLISIONEVENT e, CColorPlatform* color_platf);
 
 	int GetAniIdGreenKoopa();
 	int GetAniIdFlyingKoopa();
+	int GetAniIdRedKoopa();
 public:
 	CKoopa(float x, float y, int type);
 	virtual void SetState(int state);

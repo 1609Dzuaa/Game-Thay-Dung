@@ -8,11 +8,10 @@ Text_Files\Coin.txt
 Text_Files\Leaf.txt
 Text_Files\Mushroom.txt
 Text_Files\Goomba.txt
+Text_Files\Koopa.txt
 Text_Files\Platform.txt
 Text_Files\ColorPlatform.txt
-#ColorBox.txt
-#Koopa.txt
-#cloud.txt
+#Those 0 - SpriteID use for ? => Read class ColorPlatform.h
 
 [OBJECTS]
 # type	x	y	extra_settings per object type
@@ -35,47 +34,48 @@ Text_Files\ColorPlatform.txt
 5	608	240	16	15	29	400001	400002	400003
 
 #Pink platform 	
-6	224	208	16	15	3	500001	500002	500003
+6	224	208	16	15	3	0	0	0
 
 #Blue platform
-6	256	175	16	15	3	500004	500005	500006
+6	256	175	16	15	3	0	0	0
 
 #Tube
 5	334	208	11	16	3	400007	400008	400009
 5	334	225	11	16	3	400010	400011	400012
 5	334	240	11	16	3	400010	400011	400012
 
-
 #Green platform
-6	384	208	16	15	5	500007	500008	500009
+6	384	208	16	15	5	0	0	0
 
 #Pink platform - 2
-6	448	176	16	15	4	500001	500002	500003
+6	448	176	16	15	4	0	0	0
 
 #Green platform - 2
-6	496	224	16	15	6	500007	500008	500009
+6	496	224	16	15	6	0	0	0
+
+#Red Koopa ON Green Platform
+3	655	174	3
 
 #White platform
-6	496	144	16	15	4	500010	500011	500012
+6	496	144	16	15	4	0	0	0
 
 #Normal ground - 2
 5	1120	256	16	15	24	400001	400002	400003
 
 #Green platform - 3
-6	1232	224	16	15	8	500007	500008	500009
+6	1232	224	16	15	8	0	0	0
 
 #Pink platform - 3
-6	1264	192	16	15	8	500001	500002	500003
+6	1264	192	16	15	8	0	0	0
 
 #Blue platform - 2
-6	1296	160	16	15	8	500004	500005	500006
+6	1296	160	16	15	8	0	0	0
 
 #Pink platform - 4 (SKY)
-6	1280	32	16	15	4	500001	500002	500003
+6	1280	32	16	15	4	0	0	0
 
 #Stripe Brick
-1	1504	176
-1	1520	176	
+1	1504	176	
 
 #Portal 
 #50	300	62	316	140	2

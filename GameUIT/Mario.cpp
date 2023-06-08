@@ -277,7 +277,7 @@ void CMario::HandleCollisionUpperDirectionWithKoopa(CKoopa* koopa)
 					koopa->SetState(KOOPA_STATE_SLIP_REVERSE);
 				}
 			}
-			else
+			else //Trạng thái đi bộ vuốt râu
 			{
 				koopa->SetState(KOOPA_STATE_SLEEP);
 				vy = -MARIO_JUMP_DEFLECT_SPEED;
@@ -301,7 +301,9 @@ void CMario::HandleCollisionOtherDirectionWithKoopa(LPCOLLISIONEVENT e, CKoopa* 
 					koopa->SetState(KOOPA_STATE_SLEEP_REVERSE);
 				}
 				else
+				{
 					koopa->SetState(KOOPA_STATE_SLEEP_REVERSE);
+				}
 			}
 			else 
 			{
@@ -619,7 +621,7 @@ void CMario::Render()
 		aniId = GetAniIdRacoon();
 
 	animations->Get(aniId)->Render(x, y);
-	RenderBoundingBox();
+	//RenderBoundingBox();
 }
 
 void CMario::SetState(int state)

@@ -11,10 +11,12 @@ CKoopa::CKoopa(float x, float y, int type) :CGameObject(x, y)
 	this->ay = KOOPA_GRAVITY;
 	this->type = type;
 	die_start = -1;
+	sleep_start = -1;
 	reborn_start = -1;
 	knock_off_start = -1;
 	isOnPlatform = false;
 	SetState(KOOPA_STATE_WALKING);
+	//this->vx = -KOOPA_WALKING_SPEED;
 }
 
 void CKoopa::GetBoundingBox(float& left, float& top, float& right, float& bottom)
@@ -61,6 +63,11 @@ void CKoopa::OnCollisionWith(LPCOLLISIONEVENT e)
 
 void CKoopa::KindOfCollisionWith(LPCOLLISIONEVENT e)
 {
+	if(dynamic_cast<CColorPlatform*>(e->obj))
+	{
+		CColorPlatform* cl_pf = dynamic_cast<CColorPlatform*>(e->obj);
+		HandleCollisionWithColorPlatform(e, cl_pf);
+	}
 	if (dynamic_cast<CGoomba*>(e->obj) && this->state == KOOPA_STATE_SLIP
 		|| dynamic_cast<CGoomba*>(e->obj) && this->state == KOOPA_STATE_SLIP_REVERSE)
 		this->OnCollisionWithGoomba(e);
@@ -99,7 +106,7 @@ void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 	UpdateKoopaState();
 	CCollision::GetInstance()->Process(this, dt, coObjects);
-	//DebugOutTitle(L"STATE: %d", state);
+	DebugOutTitle(L"STATE: %d", state);
 }
 
 void CKoopa::UpdateKoopaState()
@@ -140,6 +147,8 @@ void CKoopa::Render()
 		aniId = GetAniIdGreenKoopa();
 	else if (type == GREEN_FLYING_KOOPA)
 		aniId = GetAniIdFlyingKoopa();
+	else
+		aniId = GetAniIdRedKoopa();
 
 	CAnimations::GetInstance()->Get(aniId)->Render(x, y);
 	RenderBoundingBox();
@@ -283,4 +292,51 @@ int CKoopa::GetAniIdFlyingKoopa()
 		return ID_ANI_KOOPA_JUMPING_RIGHT;
 	else
 		return ID_ANI_KOOPA_JUMPING_LEFT;
+}
+
+int CKoopa::GetAniIdRedKoopa()
+{
+	int id = -1;
+	if (state == KOOPA_STATE_WALKING && this->vx > 0)
+		id = ID_ANI_RED_KOOPA_WALKING_RIGHT;
+	else if (state == KOOPA_STATE_WALKING && this->vx < 0)
+		id = ID_ANI_RED_KOOPA_WALKING_LEFT;
+	else if (state == KOOPA_STATE_SLEEP)
+		id = ID_ANI_RED_KOOPA_SLEEPING;
+	else if (state == KOOPA_STATE_SLIP)
+		id = ID_ANI_RED_KOOPA_SLIPPING;
+	else if (state == KOOPA_STATE_SLIP_REVERSE)
+		id = ID_ANI_RED_KOOPA_SLIPPING_REVERSE;
+	else if (state == KOOPA_STATE_REBORN)
+		id = ID_ANI_RED_KOOPA_REBORN;
+	else if (state == KOOPA_STATE_REBORN_REVERSE)
+		id = ID_ANI_RED_KOOPA_REBORN_REVERSE;
+	else
+		id = ID_ANI_RED_KOOPA_DIE;
+
+	return id;
+}
+
+void CKoopa::HandleCollisionWithColorPlatform(LPCOLLISIONEVENT e, CColorPlatform* color_platf)
+{
+	//if()
+	if (state == KOOPA_STATE_SLEEP || state == KOOPA_STATE_DIE
+		|| state == KOOPA_STATE_SLIP || state == KOOPA_STATE_REBORN
+		|| state == KOOPA_STATE_SLEEP_REVERSE || state == KOOPA_STATE_REBORN_REVERSE
+		|| state == KOOPA_STATE_SLIP_REVERSE || state == KOOPA_STATE_SLEEP_REVERSE_SPECIAL)
+	{
+		if (KOOPA_BBOX_HEIGHT / 2 + 3.5 + this->y > color_platf->GetY())
+		{
+			this->y = (color_platf->GetY() - KOOPA_BBOX_HEIGHT / 2 - 3.5);
+			vy = 0;
+		}
+	}
+	else 
+	{
+		if (KOOPA_BBOX_HEIGHT + this->y > color_platf->GetY())
+		{
+			this->y = (color_platf->GetY() - KOOPA_BBOX_HEIGHT + 3);
+			vy = 0;
+		}
+	}
 }
