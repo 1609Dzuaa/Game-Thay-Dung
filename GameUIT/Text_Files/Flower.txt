@@ -1,0 +1,13 @@
+# id	left	top	right	bottom	texture_id
+[SPRITES]
+#FLOWER_IN_BRICK //nếu mario lại gần 1 khoảng nhất định thì trồi lên bắn
+81001	15	545	30	550	15
+81002	15	545	30	565	15
+81003	15	545	30	577	15
+
+#MUSHROOM_OUT_BRICK
+45316	156	121	171	136	15
+
+[ANIMATIONS]
+81500	81001	100	81002	100	81003	100
+9001	45316	100

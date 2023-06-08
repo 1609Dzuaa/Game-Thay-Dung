@@ -15,6 +15,7 @@ height	240
 -100	textures\bbox.png
 0	textures\mario_trans.png
 10	textures\enemies_transparent.png
+15	textures\enemies_transparent_3.png
 20	textures\misc.png
 30	textures\misc_2.png
 40	Game_Maps\Tileset-Map1_1.png

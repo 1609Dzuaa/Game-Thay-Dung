@@ -1,12 +1,12 @@
 ﻿#pragma once
-#include"GameObject.h"
+#include "GameObject.h"
+#include "ColorPlatform.h"
 
 
 #define MUSHROOM_BBOX_WIDTH 16
 #define MUSHROOM_BBOX_HEIGHT 16
 
-#define MUSHROOM_SPEED_X 0.1f
-#define MUSHROOM_ACCELERATION_X 0.0005f
+#define MUSHROOM_SPEED_X 0.075f
 #define MUSHROOM_GRAVITY 0.002f
 #define MUSHROOM_RISE_UP_SPEED 0.009f
 #define MUSHROOM_STATE_IN_THE_BRICK 0
@@ -44,6 +44,8 @@ public:
 	virtual void OnCollisionWith(LPCOLLISIONEVENT e);
 
 	void HandleCollisionWithBlockingObjects(LPCOLLISIONEVENT e);
+
+	void HandleCollisionWithColorPlatform(LPCOLLISIONEVENT e, CColorPlatform* color_platf);
 
 	void GetBoundingBox(float& l, float& t, float& r, float& b);
 

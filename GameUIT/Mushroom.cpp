@@ -1,6 +1,7 @@
 ﻿#include "Mushroom.h"
 #include "Mario.h"
 #include "PlayScene.h"
+#include "ColorPlatform.h"
 #include "debug.h"
 
 void CMushroom::Render()
@@ -54,9 +55,24 @@ void CMushroom::OnNoCollision(DWORD dt)
 
 void CMushroom::OnCollisionWith(LPCOLLISIONEVENT e)
 {
-	if (!e->obj->IsBlocking()) return;
+	if (dynamic_cast<CColorPlatform*>(e->obj))
+	{
+		CColorPlatform* cl_pf = dynamic_cast<CColorPlatform*>(e->obj);
+		HandleCollisionWithColorPlatform(e, cl_pf);
+	}
+	else if (!e->obj->IsBlocking())
+		return;
 
 	HandleCollisionWithBlockingObjects(e);
+}
+
+void CMushroom::HandleCollisionWithColorPlatform(LPCOLLISIONEVENT e, CColorPlatform* color_platf)
+{
+	if (MUSHROOM_BBOX_HEIGHT + this->y > color_platf->GetY())
+	{
+		this->y = (color_platf->GetY() - MUSHROOM_BBOX_HEIGHT);
+		vy = 0;
+	}
 }
 
 void CMushroom::HandleCollisionWithBlockingObjects(LPCOLLISIONEVENT e)
