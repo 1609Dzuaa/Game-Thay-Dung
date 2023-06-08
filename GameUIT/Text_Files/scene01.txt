@@ -5,6 +5,8 @@ Game_Maps\Map1_1.txt
 Text_Files\Mario.txt
 Text_Files\Brick.txt
 Text_Files\Coin.txt
+Text_Files\Leaf.txt
+Text_Files\Mushroom.txt
 Text_Files\Goomba.txt
 Text_Files\Platform.txt
 Text_Files\ColorPlatform.txt
@@ -20,12 +22,12 @@ Text_Files\ColorPlatform.txt
 # MARIO | Thứ tự vẽ ảnh hưởng đến tính toán va chạm
 0	40	40
 
-#QUESTION BRICK |  1:HAS_COIN    2:HAS_MUSHROOM
+#QUESTION BRICK |  1:HAS_COIN    2:HAS_MUSHROOM	  3:HAS_LEAF
 7	165	196	1
 7	181	196	1
-7	206	150	1
-7	222	150	2
-7	640	225	2
+7	206	140	1
+7	222	140	2
+7	640	225	3
 
 #Platform: ID	X	Y	WIDTH	HEIGHT	SIZE	3SPRITES
 #Normal ground, Higher ground
@@ -71,7 +73,8 @@ Text_Files\ColorPlatform.txt
 6	1280	32	16	15	4	500001	500002	500003
 
 #Stripe Brick
-5	1488	176	11	15	3	400013	400014	400015	
+1	1504	176
+1	1520	176	
 
 #Portal 
 #50	300	62	316	140	2

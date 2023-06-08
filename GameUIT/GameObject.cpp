@@ -40,5 +40,5 @@ void CGameObject::RenderBoundingBox()
 
 CGameObject::~CGameObject()
 {
-
+	//should clean up
 }

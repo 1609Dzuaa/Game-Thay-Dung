@@ -11,7 +11,7 @@
 class CPlatform : public CGameObject
 {
 protected:
-	int length, type;				// Unit: cell 
+	int length;				// Unit: cell 
 	float cellWidth;
 	float cellHeight;
 	int spriteIdBegin, spriteIdMiddle, spriteIdEnd;
@@ -21,7 +21,6 @@ public:
 		float cell_width, float cell_height, int length,
 		int sprite_id_begin, int sprite_id_middle, int sprite_id_end) :CGameObject(x, y)
 	{
-		this->type = type;
 		this->length = length;
 		this->cellWidth = cell_width;
 		this->cellHeight = cell_height;
@@ -34,7 +33,6 @@ public:
 	void Update(DWORD dt) {}
 	int IsBlocking() { return 1; } //Platform là loại Object đặc biệt
 	//int IsCollidable() { return 1; }
-	int GetType() { return type; }
 	void GetBoundingBox(float& l, float& t, float& r, float& b);
 	//void RenderBoundingBox();
 };

@@ -3,8 +3,6 @@
 #include "PlayScene.h"
 #include "debug.h"
 
-//extern CMario* mario;
-
 CGoomba::CGoomba(float x, float y, int type) :CGameObject(x, y)
 {
 	this->vx = -GOOMBA_WALKING_SPEED;
@@ -150,6 +148,7 @@ void CGoomba::UpdateGoombaState()
 
 void CGoomba::Render()
 {
+	//if()
 	int aniId;
 	if (type == GOOMBA)
 	{

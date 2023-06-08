@@ -344,10 +344,11 @@ void CPlayScene::Update(DWORD dt)
 
 void CPlayScene::Render()
 {
+	//Trước khi vẽ, hãy thử sắp xếp lại thứ tự vector object
 	if (map != NULL)
 		map->Render(); //vẽ map trước, vẽ object sau
 	else
-		;// DebugOut(L"[INFO] Map was NULL\n");
+		DebugOut(L"[INFO] Map was NULL\n");
 	for (int i = 0; i < objects.size(); i++)
 		objects[i]->Render();
 }
@@ -407,4 +408,5 @@ void CPlayScene::PurgeDeletedObjects()
 void CPlayScene::AddObjectToScene(LPGAMEOBJECT game_object)
 {
 	this->objects.push_back(game_object);
+	//Thêm vật thể vào scene hiện tại
 }

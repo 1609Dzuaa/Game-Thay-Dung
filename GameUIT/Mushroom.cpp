@@ -1,13 +1,12 @@
 ﻿#include "Mushroom.h"
 #include "Mario.h"
+#include "PlayScene.h"
 #include "debug.h"
-
-//extern CMario* mario;
 
 void CMushroom::Render()
 {
 	CAnimations* animations = CAnimations::GetInstance();
-	if (state == IN_THE_BRICK)
+	if (state == MUSHROOM_STATE_IN_THE_BRICK)
 		animations->Get(ID_ANI_MUSHROOM_IN_BRICK)->Render(x, y);
 	else
 		animations->Get(ID_ANI_MUSHROOM_OUT_BRICK)->Render(x, y);
@@ -23,13 +22,12 @@ void CMushroom::GetBoundingBox(float& l, float& t, float& r, float& b)
 
 void CMushroom::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
-    if (state != OUT_OF_BRICK)
+    if (state != MUSHROOM_STATE_OUT_OF_BRICK)
 	{
-		if (y <= brickminY )//&& GetTickCount64() - hitted_time >= MUSHROOM_RISEN_UP_TIME)
+		if (y <= brickminY )
 		{
-			hitted_time = 0;
 			y = brickminY;
-			this->SetState(OUT_OF_BRICK);
+			this->SetState(MUSHROOM_STATE_OUT_OF_BRICK);
 		}
 	}
 	else 
@@ -39,12 +37,11 @@ void CMushroom::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	}
 
 	CCollision::GetInstance()->Process(this, dt, coObjects);
-	DebugOutTitle(L"Y: %f", y);
 }
 
 void CMushroom::OnNoCollision(DWORD dt)
 {
-	if (state != IN_THE_BRICK)
+	if (state != MUSHROOM_STATE_IN_THE_BRICK)
 	{
 		x += vx * dt;
 		y += vy * dt;
@@ -76,15 +73,16 @@ void CMushroom::HandleCollisionWithBlockingObjects(LPCOLLISIONEVENT e)
 
 void CMushroom::SetState(int state)
 {
+	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
 	switch (state)
 	{
-	case OUT_OF_BRICK:
-		//if (this->x > mario->GetMarioPositionX())
+	case MUSHROOM_STATE_OUT_OF_BRICK:
+		if (this->x > mario->GetMarioPositionX())
 			vx = MUSHROOM_SPEED_X;
-		//else if(this->x < mario->GetMarioPositionX())
-			//vx = -MUSHROOM_SPEED_X;
+		else
+			vx = -MUSHROOM_SPEED_X;
 		break;
 	}
-	//Nếu qua trái mà gần với Mario thì nấm qua phải
+	//Để nấm lúc chui ra thì tiến ra xa khỏi Mario
 	CGameObject::SetState(state);
 }

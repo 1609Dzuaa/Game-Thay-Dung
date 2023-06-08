@@ -24,7 +24,7 @@ public:
 	~CMap();
 	void ClipSpritesFromTileset(); //cắt từng Sprites từ Tileset
 	void Render();
-	void SetMapMatrix(int** TileMapData);
+	void SetMapMatrix(int** map_matrix);
 	int GetMapWidth();
 	int GetMapHeight();
 	bool isInCamera(float x, float y);

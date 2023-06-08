@@ -53,16 +53,20 @@ void CQuestionBrick::SpawnCoin(float xBrick, float yBrick, float veloY)
 
 void CQuestionBrick::SpawnMushroom(float xBrick, float yBrick)
 {
+	CPlayScene* current_scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
 	CMushroom* mushroom = new CMushroom(xBrick, yBrick - QBRICK_BBOX_HEIGHT / 2 - 2.5f, 109.0f, GetTickCount64());
 	mushroom->SetBrickMinY(minY);
 	mushroom->SetMushroomX(x);
+	current_scene->AddObjectToScene(mushroom);
 	//objects.push_back(mushroom);
 }
 
 void CQuestionBrick::SpawnLeaf(float xBrick, float yBrick)
 {
+	CPlayScene* current_scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
 	CLeaf* leaf = new CLeaf(xBrick, yBrick);
 	leaf->SetMinY(y - 70.0f);
+	current_scene->AddObjectToScene(leaf);
 	//leaf->setMinX(x);
 	//objects.push_back(leaf);
 }
@@ -84,6 +88,8 @@ void CQuestionBrick::SetState(int state)
 		//SpawnMushroom(x, y);
 		if (this->type == HAS_LEAF)
 			SpawnLeaf(x, y);
+		else if(this->type == HAS_COIN)
+			SpawnCoin(x, y, -COIN_FLY_SPEED);
 		vy = -BOUNCING_SPEED;
 		break;
 	}

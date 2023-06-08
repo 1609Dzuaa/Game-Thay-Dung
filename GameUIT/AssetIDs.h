@@ -23,6 +23,7 @@
 
 #pragma region BRICK 
 
+#define ID_SPRITE_STRIPE_BRICK 19000
 #define ID_SPRITE_BRICK 20000
 #define ID_SPRITE_QBRICK 20500
 
@@ -38,7 +39,7 @@
 #pragma region MUSHROOM
 
 #define ID_SPRITE_MUSHROOM_IN_BRICK 45000
-#define ID_SPRITE_MUSHROOM_OUT_BRICK 45031
+#define ID_SPRITE_MUSHROOM_OUT_BRICK 45316
 
 #pragma endregion 
 
