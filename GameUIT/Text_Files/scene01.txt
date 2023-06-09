@@ -19,7 +19,7 @@ Text_Files\ColorPlatform.txt
 # See OBJECT_TYPE constants in AssetIDs.h 
 
 # MARIO | Thứ tự vẽ ảnh hưởng đến tính toán va chạm
-0	40	40
+0	20	40
 
 #QUESTION BRICK |  1:HAS_COIN    2:HAS_MUSHROOM	  3:HAS_LEAF
 7	169	196	1
@@ -29,6 +29,9 @@ Text_Files\ColorPlatform.txt
 7	404	157	1
 7	640	225	3
 7	688	187	1
+
+#GOOMBA
+2	335	160	1
 
 #Platform: ID	X	Y	WIDTH	HEIGHT	SIZE	3SPRITES
 #Normal ground, Higher ground
@@ -56,13 +59,21 @@ Text_Files\ColorPlatform.txt
 6	496	224	16	15	6	0	0	0
 
 #Red Koopa ON Green Platform
-3	655	174	3
+3	555	174	3
+
+#GOOMBA
+2	495	160	1
 
 #White platform
 6	496	144	16	15	4	0	0	0
 
 #Normal ground - 2
 5	1120	256	16	15	24	400001	400002	400003
+
+#GOOMBA
+2	920	40	1
+2	1000	40	1
+2	1070	40	2
 
 #Green platform - 3
 6	1232	224	16	15	8	0	0	0

@@ -15,6 +15,7 @@ CKoopa::CKoopa(float x, float y, int type) :CGameObject(x, y)
 	reborn_start = -1;
 	knock_off_start = -1;
 	isOnPlatform = false;
+	isFallOffColorPlatform = false;
 	SetState(KOOPA_STATE_WALKING);
 	//this->vx = -KOOPA_WALKING_SPEED;
 }
@@ -95,6 +96,8 @@ void CKoopa::HandleCollisionWithBlockingObjects(LPCOLLISIONEVENT e)
 	{
 		vx = -vx;
 	}
+	if (this->type)
+		isFallOffColorPlatform = true;
 }
 
 void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
@@ -151,7 +154,7 @@ void CKoopa::Render()
 		aniId = GetAniIdRedKoopa();
 
 	CAnimations::GetInstance()->Get(aniId)->Render(x, y);
-	RenderBoundingBox();
+	//RenderBoundingBox();
 }
 
 void CKoopa::SetState(int state)
@@ -321,15 +324,30 @@ int CKoopa::GetAniIdRedKoopa()
 
 void CKoopa::HandleCollisionWithColorPlatform(LPCOLLISIONEVENT e, CColorPlatform* color_platf)
 {
-	//if()
+	if (isFallOffColorPlatform) return;
+
+	if (this->type == RED_KOOPA && state == KOOPA_STATE_WALKING)
+	{
+		if (this->x >= (color_platf->GetX() + (color_platf->GetLength() - 1) * color_platf->GetCellWidth()))
+		{
+			this->x = (color_platf->GetX() + (color_platf->GetLength() - 1) * color_platf->GetCellWidth());
+			vx = -vx;
+		}
+		if (this->x < color_platf->GetX() - KOOPA_BBOX_WIDTH / 3)
+		{
+			this->x = color_platf->GetX() - KOOPA_BBOX_WIDTH / 3;
+			vx = -vx;
+		}
+	}
+
 	if (state == KOOPA_STATE_SLEEP || state == KOOPA_STATE_DIE
 		|| state == KOOPA_STATE_SLIP || state == KOOPA_STATE_REBORN
 		|| state == KOOPA_STATE_SLEEP_REVERSE || state == KOOPA_STATE_REBORN_REVERSE
 		|| state == KOOPA_STATE_SLIP_REVERSE || state == KOOPA_STATE_SLEEP_REVERSE_SPECIAL)
 	{
-		if (KOOPA_BBOX_HEIGHT / 2 + 3.5 + this->y > color_platf->GetY())
+		if (KOOPA_IN_SHELL_BBOX_HEIGHT + 0.5f + this->y > color_platf->GetY())
 		{
-			this->y = (color_platf->GetY() - KOOPA_BBOX_HEIGHT / 2 - 3.5);
+			this->y = (color_platf->GetY() - KOOPA_IN_SHELL_BBOX_HEIGHT -0.5f);
 			vy = 0;
 		}
 	}

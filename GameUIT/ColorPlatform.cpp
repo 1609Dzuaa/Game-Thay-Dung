@@ -1,5 +1,6 @@
 #include "ColorPlatform.h"
 #include "Textures.h"
+#include "debug.h"
 
 void CColorPlatform::Render()
 {
@@ -17,9 +18,12 @@ void CColorPlatform::Render()
 			xx += this->cellWidth;
 		}
 		if (length > 1)
+		{
 			s->Get(this->spriteIdEnd)->Draw(xx, y);
+		}
 	}
-	RenderBoundingBox();
+	//RenderBoundingBox();
+	
 }
 
 void CColorPlatform::GetBoundingBox(float& l, float& t, float& r, float& b)

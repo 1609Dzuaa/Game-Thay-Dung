@@ -73,7 +73,5 @@ public:
 
 	~CGameObject();
 
-	//bool IsInTheCamera();
-
 	static bool IsDeleted(const LPGAMEOBJECT& o) { return o->isDeleted; }
 };

@@ -24,8 +24,10 @@ void CSampleKeyHandler::OnKeyDown(int KeyCode)
 		break;
 	case DIK_S: //nếu là racoon mario thì bơm thêm vận tốc theo trục y để bay
 		if (mario->GetCanFly() && mario->GetLevel() == MARIO_LEVEL_RACOON)
-			;
-		else
+			mario->SetState(MARIO_STATE_JUMP_AT_MAX_SPEED);
+		else if (mario->GetisAtMaxSpeed())
+			mario->SetState(MARIO_STATE_JUMP_AT_MAX_SPEED);
+		else 
 			mario->SetState(MARIO_STATE_JUMP);
 		break;
 	//case DIK_Z:
@@ -56,6 +58,11 @@ void CSampleKeyHandler::OnKeyUp(int KeyCode)
 	case DIK_S:
 		mario->SetState(MARIO_STATE_RELEASE_JUMP);
 		break;
+
+	case DIK_A:
+		mario->SetisAtMaxSpeed(false);
+		break;
+
 	case DIK_DOWN:
 		mario->SetState(MARIO_STATE_SIT_RELEASE);
 		break;

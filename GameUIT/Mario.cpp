@@ -24,7 +24,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 	isOnPlatform = false;
 	CCollision::GetInstance()->Process(this, dt, coObjects);
-	DebugOutTitle(L"STATE: %f", vx);
+	//DebugOutTitle(L"Pos X: %f", x);
 }
 
 void CMario::UpdateMarioState()
@@ -54,6 +54,8 @@ void CMario::UpdateMarioState()
 				this->SetState(MARIO_STATE_RUNNING_AT_MAX_VX_LEFT);
 		}
 	}
+	else if (this->isAtMaxSpeed && isJumping)
+		this->SetState(MARIO_STATE_JUMP_AT_MAX_SPEED);
 
 	// reset untouchable timer if untouchable time has passed
 	if (GetTickCount64() - untouchable_start > MARIO_UNTOUCHABLE_TIME)
@@ -136,7 +138,6 @@ void CMario::HandleCollisionWithColorPlatform(LPCOLLISIONEVENT e, CColorPlatform
 {
 	//Hàm này để xử lý vị trí của Mario khi nhảy lên Color Platform
 	//Nhằm tránh việc nó bị rơi xuống dù có va chạm
-	// 
 	//Tương tự như hàm SetLevel trong framework của thầy.
 
 	//Tham khảo mục "Snapping to an Edge" của bài viết: 
@@ -146,7 +147,7 @@ void CMario::HandleCollisionWithColorPlatform(LPCOLLISIONEVENT e, CColorPlatform
 	//that means we want the position of the top of our player to equal the ground’s top minus the player’s height."
 	if (this->level != MARIO_LEVEL_SMALL) //level gấu mèo và BIG dùng chung BBox được vì diff 0 đáng kể
 	{
-		if (!isSitting) 
+		if (!isSitting)
 		{
 			if (MARIO_BIG_BBOX_HEIGHT + this->y > color_platf->GetY())
 			{
@@ -155,7 +156,7 @@ void CMario::HandleCollisionWithColorPlatform(LPCOLLISIONEVENT e, CColorPlatform
 				isOnPlatform = true;
 			}
 		}
-		else 
+		else
 		{
 			if (MARIO_BIG_BBOX_HEIGHT / 2 + 3.5 + this->y > color_platf->GetY())
 			{
@@ -165,7 +166,7 @@ void CMario::HandleCollisionWithColorPlatform(LPCOLLISIONEVENT e, CColorPlatform
 			}
 		}
 	}
-	else 
+	else
 	{
 		if (MARIO_SMALL_BBOX_HEIGHT + this->y + 1.5 > color_platf->GetY())
 		{
@@ -277,7 +278,7 @@ void CMario::HandleCollisionUpperDirectionWithKoopa(CKoopa* koopa)
 				koopa->SetState(KOOPA_STATE_SLEEP_REVERSE_SPECIAL);
 				vy = -MARIO_JUMP_DEFLECT_SPEED;
 			}
-			else if(koopa->GetState() == KOOPA_STATE_SLEEP) //Koopa ĐANG NGỦ
+			else if (koopa->GetState() == KOOPA_STATE_SLEEP) //Koopa ĐANG NGỦ
 			{
 				//Dựa vào hướng của Mario để quyết định dấu vận tốc của Koopa
 				if (this->nx > 0)
@@ -289,8 +290,8 @@ void CMario::HandleCollisionUpperDirectionWithKoopa(CKoopa* koopa)
 					koopa->SetState(KOOPA_STATE_SLIP);
 				}
 			}
-			else if (koopa->GetState() == KOOPA_STATE_SLEEP_REVERSE 
-				|| koopa->GetState() == KOOPA_STATE_SLEEP_REVERSE_SPECIAL 
+			else if (koopa->GetState() == KOOPA_STATE_SLEEP_REVERSE
+				|| koopa->GetState() == KOOPA_STATE_SLEEP_REVERSE_SPECIAL
 				|| koopa->GetState() == KOOPA_STATE_REBORN_REVERSE)
 			{
 				if (this->nx > 0)
@@ -318,7 +319,7 @@ void CMario::HandleCollisionOtherDirectionWithKoopa(LPCOLLISIONEVENT e, CKoopa* 
 	{
 		if (koopa->GetState() != KOOPA_STATE_DIE)
 		{
-			if (this->isAttacking) 
+			if (this->isAttacking)
 			{
 				if (koopa->GetType() == GREEN_FLYING_KOOPA)
 				{
@@ -330,10 +331,10 @@ void CMario::HandleCollisionOtherDirectionWithKoopa(LPCOLLISIONEVENT e, CKoopa* 
 					koopa->SetState(KOOPA_STATE_SLEEP_REVERSE);
 				}
 			}
-			else 
+			else
 			{
-				if (koopa->GetState() != KOOPA_STATE_SLEEP 
-					&& koopa->GetState() != KOOPA_STATE_SLEEP_REVERSE 
+				if (koopa->GetState() != KOOPA_STATE_SLEEP
+					&& koopa->GetState() != KOOPA_STATE_SLEEP_REVERSE
 					&& koopa->GetState() != KOOPA_STATE_SLEEP_REVERSE_SPECIAL)
 				{
 					if (level == MARIO_LEVEL_RACOON)
@@ -351,8 +352,8 @@ void CMario::HandleCollisionOtherDirectionWithKoopa(LPCOLLISIONEVENT e, CKoopa* 
 						SetState(MARIO_STATE_DIE);
 					}
 				}
-				else if (koopa->GetState() == KOOPA_STATE_SLEEP_REVERSE 
-					|| koopa->GetState() == KOOPA_STATE_REBORN_REVERSE 
+				else if (koopa->GetState() == KOOPA_STATE_SLEEP_REVERSE
+					|| koopa->GetState() == KOOPA_STATE_REBORN_REVERSE
 					|| koopa->GetState() == KOOPA_STATE_SLEEP_REVERSE_SPECIAL)
 				{
 					if (e->nx == -1)
@@ -386,7 +387,7 @@ void CMario::HandleCollisionOtherDirectionWithKoopa(LPCOLLISIONEVENT e, CKoopa* 
 
 void CMario::OnCollisionWithQuesBrick(LPCOLLISIONEVENT e)
 {
-	CQuestionBrick *qb = dynamic_cast<CQuestionBrick*>(e->obj);
+	CQuestionBrick* qb = dynamic_cast<CQuestionBrick*>(e->obj);
 
 	if (e->ny == 1)
 		qb->SetState(QBRICK_STATE_HITTED);
@@ -422,12 +423,12 @@ int CMario::GetAniIdSmall()
 
 	if (!isOnPlatform)
 	{
-		if (abs(ax) == MARIO_ACCEL_RUN_X)
+		if (isAtMaxSpeed)
 		{
-			if (nx >= 0)
-				aniId = ID_ANI_MARIO_SMALL_JUMP_RUN_RIGHT;
-			else
-				aniId = ID_ANI_MARIO_SMALL_JUMP_RUN_LEFT;
+			if (nx > 0)  //prob here
+				aniId = ID_ANI_MARIO_SMALL_JUMP_AT_MAX_SPEED_RIGHT;
+			else if (nx < 0)
+				aniId = ID_ANI_MARIO_SMALL_JUMP_AT_MAX_SPEED_LEFT;
 		}
 		else
 		{
@@ -490,14 +491,14 @@ int CMario::GetAniIdSmall()
 int CMario::GetAniIdBig()
 {
 	int aniId = -1;
-	if (!isOnPlatform)
+	if (!isOnPlatform) //ĐANG BAY || LƯỢN
 	{
-		if (abs(ax) == MARIO_ACCEL_RUN_X)
+		if (isAtMaxSpeed)
 		{
-			if (nx >= 0)
-				aniId = ID_ANI_MARIO_JUMP_RUN_RIGHT;
-			else
-				aniId = ID_ANI_MARIO_JUMP_RUN_LEFT;
+			if (nx > 0)  //prob here
+				aniId = ID_ANI_MARIO_BIG_JUMP_AT_MAX_SPEED_RIGHT;
+			else if(nx < 0)
+				aniId = ID_ANI_MARIO_BIG_JUMP_AT_MAX_SPEED_LEFT;
 		}
 		else
 		{
@@ -534,7 +535,7 @@ int CMario::GetAniIdBig()
 			{
 				if (ax < 0)
 					aniId = ID_ANI_MARIO_BRACE_RIGHT;
-				else if (vx >= maxRunningSpeed)  //prob here
+				else if (isAtMaxSpeed)  //prob here
 					aniId = ID_ANI_MARIO_BIG_RUNNING_MAX_SPEED_RIGHT;
 				else if (ax == MARIO_ACCEL_RUN_X)
 					aniId = ID_ANI_MARIO_RUNNING_RIGHT;
@@ -545,7 +546,7 @@ int CMario::GetAniIdBig()
 			{
 				if (ax > 0)
 					aniId = ID_ANI_MARIO_BRACE_LEFT;
-				else if (abs(vx) >= maxRunningSpeed)  //prob here
+				else if (isAtMaxSpeed) 
 					aniId = ID_ANI_MARIO_BIG_RUNNING_MAX_SPEED_LEFT;
 				else if (ax == -MARIO_ACCEL_RUN_X)
 					aniId = ID_ANI_MARIO_RUNNING_LEFT;
@@ -568,22 +569,22 @@ int CMario::GetAniIdRacoon()
 	int aniId = -1;
 	if (!isOnPlatform)
 	{
-		if (vy >= 0 && nx < 0)
+		if (vy > 0 && nx < 0)
 		{
 			aniId = ID_ANI_MARIO_RACOON_FALLING_LEFT;
 		}
-		else if (vy >= 0 && nx > 0)
+		else if (vy > 0 && nx > 0)
 		{
 			aniId = ID_ANI_MARIO_RACOON_FALLING_RIGHT;
 		}
-		else 
+		else
 		{
-			if (abs(ax) == MARIO_ACCEL_RUN_X)
+			if (isAtMaxSpeed)
 			{
-				if (nx >= 0)
-					aniId = ID_ANI_MARIO_RACOON_JUMP_RUN_RIGHT;
-				else
-					aniId = ID_ANI_MARIO_RACOON_JUMP_RUN_LEFT;
+				if (nx > 0)  //prob here
+					aniId = ID_ANI_MARIO_RACOON_JUMP_AT_MAX_SPEED_RIGHT;
+				else if (nx < 0)
+					aniId = ID_ANI_MARIO_RACOON_JUMP_AT_MAX_SPEED_LEFT;
 			}
 			else
 			{
@@ -688,6 +689,7 @@ void CMario::SetState(int state)
 
 	case MARIO_STATE_RUNNING_AT_MAX_VX_RIGHT:
 		if (isSitting) break;
+		isAtMaxSpeed = true;
 		if (this->level == MARIO_LEVEL_RACOON)
 			canFly = true;
 		break;
@@ -701,6 +703,7 @@ void CMario::SetState(int state)
 
 	case MARIO_STATE_RUNNING_AT_MAX_VX_LEFT:
 		if (isSitting) break;
+		isAtMaxSpeed = true;
 		if (this->level == MARIO_LEVEL_RACOON)
 			canFly = true;
 		break;
@@ -733,7 +736,7 @@ void CMario::SetState(int state)
 
 	case MARIO_STATE_JUMP:
 		if (isSitting) break;
-		if (isOnPlatform) 
+		if (isOnPlatform)
 		{
 			isJumping = true;
 			if (abs(this->vx) == MARIO_RUNNING_SPEED)
@@ -743,14 +746,33 @@ void CMario::SetState(int state)
 		}
 		break;
 
+	case MARIO_STATE_JUMP_AT_MAX_SPEED:
+		if (isSitting) break;
+		if (isOnPlatform)
+		{
+			isJumping = true;
+			if (abs(this->vx) == MARIO_RUNNING_SPEED)
+				vy = -MARIO_JUMP_RUN_SPEED_Y;
+			else
+				vy = -MARIO_JUMP_SPEED_Y;
+			break;
+		}
+
 	case MARIO_RACOON_STATE_FALLING:
 	{
 		isJumping = false;
 		break;
 	}
 
+	case MARIO_RACOON_STATE_FLYING:
+	{
+
+		break;
+	}
+
 	case MARIO_STATE_RELEASE_JUMP:
 		if (vy < 0) vy += MARIO_JUMP_SPEED_Y / 2;
+		isJumping = false;
 		break;
 
 	case MARIO_STATE_SIT:
@@ -773,7 +795,7 @@ void CMario::SetState(int state)
 			state = MARIO_STATE_IDLE;
 			isSitting = true;
 			vx = 0; vy = 0.0f;
-			y +=MARIO_SIT_HEIGHT_ADJUST;
+			y += MARIO_SIT_HEIGHT_ADJUST;
 		}
 		break;
 
@@ -865,4 +887,3 @@ void CMario::SetLevel(int l)
 	}
 	level = l;
 }
-

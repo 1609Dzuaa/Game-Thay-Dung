@@ -81,6 +81,7 @@ protected:
 	ULONGLONG reborn_start;
 	ULONGLONG knock_off_start;
 	BOOLEAN isOnPlatform;
+	BOOLEAN isFallOffColorPlatform; //use for Red Koopa only
 	//Maybe using bool var isFallOffColorPlatf ?
 
 	virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom);

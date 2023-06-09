@@ -46,6 +46,8 @@
 
 #define MARIO_RACOON_STATE_FLYING 720
 
+#define MARIO_STATE_JUMP_AT_MAX_SPEED 730
+
 #pragma region ANIMATION_ID
 
 #define ID_ANI_MARIO_IDLE_RIGHT 400
@@ -78,6 +80,10 @@
 #define ID_ANI_MARIO_BIG_RUNNING_MAX_SPEED_LEFT	1030	
 #define ID_ANI_MARIO_BIG_RUNNING_MAX_SPEED_RIGHT	1031
 
+#define ID_ANI_MARIO_BIG_JUMP_AT_MAX_SPEED_LEFT	1050	
+#define ID_ANI_MARIO_BIG_JUMP_AT_MAX_SPEED_RIGHT	1051
+
+
 #define ID_ANI_MARIO_DIE 999
 
 // SMALL MARIO
@@ -107,6 +113,9 @@
 
 #define ID_ANI_MARIO_SMALL_RUNNING_MAX_SPEED_RIGHT 1750
 #define ID_ANI_MARIO_SMALL_RUNNING_MAX_SPEED_LEFT 1751
+
+#define ID_ANI_MARIO_SMALL_JUMP_AT_MAX_SPEED_LEFT	1760	
+#define ID_ANI_MARIO_SMALL_JUMP_AT_MAX_SPEED_RIGHT	1761
 //
 //RACOON MARIO
 //
@@ -144,8 +153,11 @@
 #define ID_ANI_MARIO_RACOON_RUNNING_MAX_SPEED_LEFT	2810	
 #define ID_ANI_MARIO_RACOON_RUNNING_MAX_SPEED_RIGHT	2811
 
-#define ID_ANI_MARIO_RACOON_FLYING_LEFT	2820	
-#define ID_ANI_MARIO_RACOON_FLYING_RIGHT	2821
+#define ID_ANI_MARIO_RACOON_JUMP_AT_MAX_SPEED_LEFT	2820	
+#define ID_ANI_MARIO_RACOON_JUMP_AT_MAX_SPEED_RIGHT	2821
+
+//#define ID_ANI_MARIO_RACOON_FLYING_LEFT	2820	
+//#define ID_ANI_MARIO_RACOON_FLYING_RIGHT	2821
 
 #pragma endregion
 
@@ -210,7 +222,7 @@ class CMario : public CGameObject
 
 	void OnCollisionWithBlockingObjects(LPCOLLISIONEVENT e);
 	void HandleCollisionUpperDirectionWithGoomba(CGoomba* goomba);
-	void HandleCollisionOtherDirectionWithGoomba(LPCOLLISIONEVENT e, CGoomba* goomba); 
+	void HandleCollisionOtherDirectionWithGoomba(LPCOLLISIONEVENT e, CGoomba* goomba);
 	void HandleCollisionUpperDirectionWithKoopa(CKoopa* koopa);
 	void HandleCollisionOtherDirectionWithKoopa(LPCOLLISIONEVENT e, CKoopa* koopa);
 	void HandleCollisionWithColorPlatform(LPCOLLISIONEVENT e, CColorPlatform* color_platf);
@@ -270,4 +282,7 @@ public:
 	float GetMarioPositionX() { return x; }
 	int GetMarioNormalX() { return nx; }
 	BOOLEAN GetCanFly() { return canFly; }
+	BOOLEAN GetisAtMaxSpeed() { return isAtMaxSpeed; }
+	void SetisJumping(BOOLEAN para) { this->isJumping = para; }
+	void SetisAtMaxSpeed(BOOLEAN para) { this->isAtMaxSpeed = para; }
 };

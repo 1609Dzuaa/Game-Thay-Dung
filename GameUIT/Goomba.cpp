@@ -148,7 +148,7 @@ void CGoomba::UpdateGoombaState()
 
 void CGoomba::Render()
 {
-	//if()
+	//should check if the object is in the camera => then RENDER it! 
 	int aniId;
 	if (type == GOOMBA)
 	{
