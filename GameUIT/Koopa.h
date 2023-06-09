@@ -54,7 +54,7 @@
 #define ID_ANI_KOOPA_JUMPING_RIGHT 60500
 
 //
-//======
+//======RED KOOPA
 //
 
 #define ID_ANI_RED_KOOPA_WALKING_LEFT 52000
@@ -81,6 +81,7 @@ protected:
 	ULONGLONG reborn_start;
 	ULONGLONG knock_off_start;
 	BOOLEAN isOnPlatform;
+	//Maybe using bool var isFallOffColorPlatf ?
 
 	virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom);
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);

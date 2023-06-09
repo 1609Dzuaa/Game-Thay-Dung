@@ -17,14 +17,22 @@ void CSampleKeyHandler::OnKeyDown(int KeyCode)
 		mario->SetState(MARIO_STATE_SIT);
 		break;
 	case DIK_A:
-
-		break;
-	case DIK_S:
-		mario->SetState(MARIO_STATE_JUMP);
-		break;
-	case DIK_Z:
+		if (mario->GetState() == MARIO_RACOON_STATE_ATTACK) break;
 		if (mario->GetLevel() == MARIO_LEVEL_RACOON)
 			mario->SetState(MARIO_RACOON_STATE_ATTACK);
+
+		break;
+	case DIK_S: //nếu là racoon mario thì bơm thêm vận tốc theo trục y để bay
+		if (mario->GetCanFly() && mario->GetLevel() == MARIO_LEVEL_RACOON)
+			;
+		else
+			mario->SetState(MARIO_STATE_JUMP);
+		break;
+	//case DIK_Z:
+		//if (mario->GetState() == MARIO_RACOON_STATE_ATTACK) break;
+		//if (mario->GetLevel() == MARIO_LEVEL_RACOON)
+		//	mario->SetState(MARIO_RACOON_STATE_ATTACK);
+
 		break;
 	case DIK_1:
 		mario->SetLevel(MARIO_LEVEL_SMALL);

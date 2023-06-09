@@ -19,7 +19,7 @@ void CColorPlatform::Render()
 		if (length > 1)
 			s->Get(this->spriteIdEnd)->Draw(xx, y);
 	}
-	//RenderBoundingBox();
+	RenderBoundingBox();
 }
 
 void CColorPlatform::GetBoundingBox(float& l, float& t, float& r, float& b)
@@ -33,10 +33,10 @@ void CColorPlatform::GetBoundingBox(float& l, float& t, float& r, float& b)
 
 void CColorPlatform::RenderBoundingBox()
 {
+	LPTEXTURE bbox = CTextures::GetInstance()->Get(ID_TEX_BBOX);
+
 	D3DXVECTOR3 p(x, y, 0);
 	RECT rect;
-
-	LPTEXTURE bbox = CTextures::GetInstance()->Get(ID_TEX_BBOX);
 
 	float l, t, r, b;
 
@@ -51,5 +51,5 @@ void CColorPlatform::RenderBoundingBox()
 
 	float xx = x - this->cellWidth / 2 + rect.right / 2;
 
-	CGame::GetInstance()->Draw(xx - cx, y - cy, bbox, nullptr, BBOX_ALPHA, rect.right - 1, rect.bottom - 1);
+	CGame::GetInstance()->Draw(xx - cx + 5, y - cy, bbox, nullptr, BBOX_ALPHA, rect.right + 10, rect.bottom - 1);
 }

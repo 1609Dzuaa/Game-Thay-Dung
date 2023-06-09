@@ -106,7 +106,7 @@ void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 	UpdateKoopaState();
 	CCollision::GetInstance()->Process(this, dt, coObjects);
-	DebugOutTitle(L"STATE: %d", state);
+	//DebugOutTitle(L"STATE: %d", state);
 }
 
 void CKoopa::UpdateKoopaState()
@@ -303,6 +303,8 @@ int CKoopa::GetAniIdRedKoopa()
 		id = ID_ANI_RED_KOOPA_WALKING_LEFT;
 	else if (state == KOOPA_STATE_SLEEP)
 		id = ID_ANI_RED_KOOPA_SLEEPING;
+	else if (state == KOOPA_STATE_SLEEP_REVERSE)
+		id = ID_ANI_RED_KOOPA_SLEEPING_REVERSE;
 	else if (state == KOOPA_STATE_SLIP)
 		id = ID_ANI_RED_KOOPA_SLIPPING;
 	else if (state == KOOPA_STATE_SLIP_REVERSE)
