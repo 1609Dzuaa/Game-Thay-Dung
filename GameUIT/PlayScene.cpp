@@ -11,6 +11,7 @@
 #include "QuestionBrick.h"
 #include "Platform.h"
 #include "ColorPlatform.h"
+#include "Tube.h"
 
 #include "SampleKeyEventHandler.h"
 #include "GameMap.h"
@@ -209,6 +210,14 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 			cell_width, cell_height, length,
 			sprite_begin, sprite_middle, sprite_end
 		);
+
+		break;
+	}
+
+	case OBJECT_TYPE_TUBE:
+	{
+		int Tube_type = atoi(tokens[3].c_str());
+		obj = new CTube(x, y, Tube_type);
 
 		break;
 	}

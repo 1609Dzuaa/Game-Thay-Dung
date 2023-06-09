@@ -44,6 +44,7 @@
 #define MARIO_RACOON_STATE_ATTACK 700
 #define MARIO_RACOON_STATE_FALLING 710
 
+#define MARIO_RACOON_STATE_LANDING 715
 #define MARIO_RACOON_STATE_FLYING 720
 
 #define MARIO_STATE_JUMP_AT_MAX_SPEED 730
@@ -156,6 +157,9 @@
 #define ID_ANI_MARIO_RACOON_JUMP_AT_MAX_SPEED_LEFT	2820	
 #define ID_ANI_MARIO_RACOON_JUMP_AT_MAX_SPEED_RIGHT	2821
 
+#define ID_ANI_MARIO_RACOON_LANDING_LEFT	2830	
+#define ID_ANI_MARIO_RACOON_LANDING_RIGHT	2831
+
 //#define ID_ANI_MARIO_RACOON_FLYING_LEFT	2820	
 //#define ID_ANI_MARIO_RACOON_FLYING_RIGHT	2821
 
@@ -198,6 +202,7 @@ class CMario : public CGameObject
 	BOOLEAN isFlying;
 	BOOLEAN canFly;
 	BOOLEAN isAtMaxSpeed;
+	BOOLEAN isLanding;
 	float maxVx;
 	float maxRunningSpeed;
 	float ax;				// acceleration on x 
@@ -243,6 +248,7 @@ public:
 		isFlying = false;
 		canFly = false;
 		isAtMaxSpeed = false;
+		isLanding = false;
 
 		maxVx = 0;
 		maxRunningSpeed = MARIO_RUNNING_SPEED;
@@ -285,4 +291,6 @@ public:
 	BOOLEAN GetisAtMaxSpeed() { return isAtMaxSpeed; }
 	void SetisJumping(BOOLEAN para) { this->isJumping = para; }
 	void SetisAtMaxSpeed(BOOLEAN para) { this->isAtMaxSpeed = para; }
+	BOOLEAN GetIsJumping() { return isJumping; }
+	void SetIsLanding(bool para) { this->isLanding = para; }
 };

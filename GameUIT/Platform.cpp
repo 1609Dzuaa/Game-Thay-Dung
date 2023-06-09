@@ -1,7 +1,16 @@
-#include "Platform.h"
+﻿#include "Platform.h"
+#include "ShootingFlower.h"
 
 #include "Sprite.h"
 #include "Sprites.h"
+#include "Mario.h"
+#include "PlayScene.h"
+
+void CPlatform::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
+{
+
+
+}
 
 void CPlatform::Render()
 {

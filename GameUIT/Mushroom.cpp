@@ -8,7 +8,7 @@ void CMushroom::Render()
 {
 	CAnimations* animations = CAnimations::GetInstance();
 	if (state == MUSHROOM_STATE_IN_THE_BRICK)
-		animations->Get(ID_ANI_MUSHROOM_IN_BRICK)->Render(x, y);
+		animations->Get(ID_ANI_MUSHROOM_IN_BRICK)->Render(x, y); //Vẽ chui lên dần dần
 	else
 		animations->Get(ID_ANI_MUSHROOM_OUT_BRICK)->Render(x, y);
 }

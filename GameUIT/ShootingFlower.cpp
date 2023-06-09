@@ -2,33 +2,65 @@
 #include "Mario.h"
 #include "PlayScene.h"
 
-CShootingFlower::CShootingFlower()
+CShootingFlower::CShootingFlower(float x, float y)
 {
+	this->x = x;
+	this->y = y;
+	this->vy = SHOOTING_FLOWER_RISE_SPEED;
 	this->state = SHOOTING_FLOWER_STATE_IN_TUBE;
+	minY = y - FLOWER_HEIGHT;
 }
 
 void CShootingFlower::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
-	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
-	if (this->x - mario->GetMarioPositionX() <= ATTACK_RANGE)
-		this->SetState(SHOOTING_FLOWER_STATE_RISE_UP);
-	//Nếu Mario ở trong tầm tấn công thì trồi lên
+	if (state != SHOOTING_FLOWER_STATE_OUT_TUBE)
+	{
+		if (y <= minY)
+		{
+			y = minY;
+			this->SetState(SHOOTING_FLOWER_STATE_OUT_TUBE); //Idle
+		}
+	}
+	else
+	{
+		vy += ay * dt;
+	}
+
+	CCollision::GetInstance()->Process(this, dt, coObjects);
+	
 
 	//SHOULD ADD RIGHT LEFT LOGIC TO FLOWER HERE
+}
+
+void CShootingFlower::OnNoCollision(DWORD dt)
+{
+	if (state != SHOOTING_FLOWER_STATE_IN_TUBE)
+	{
+		y += vy * dt;
+	}
+	else
+	{
+		y += -vy * dt;
+	}
+}
+
+void CShootingFlower::OnCollisionWith(LPCOLLISIONEVENT e)
+{
+
 }
 
 void CShootingFlower::Render()
 {
 	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
 	CAnimations* animations = CAnimations::GetInstance();
-	if (state == SHOOTING_FLOWER_STATE_RISE_UP)
+	if (state == SHOOTING_FLOWER_STATE_IN_TUBE)
 	{
 		if (mario->GetMarioPositionX() > this->x)
-			animations->Get(ID_ANI_FLOWER_RISE_UP_RIGHT)->Render(x, y);
+			animations->Get(ID_ANI_FLOWER_RISE_UP_LEFT)->Render(x, y);
 		else 
 			animations->Get(ID_ANI_FLOWER_RISE_UP_LEFT)->Render(x, y);
 	}
-	else if (state == SHOOTING_FLOWER_STATE_IDLE)
+	else if (state == SHOOTING_FLOWER_STATE_OUT_TUBE)
 	{
 		if (mario->GetMarioPositionX() > this->x)
 			animations->Get(ID_ANI_FLOWER_IDLE_RIGHT)->Render(x, y);
@@ -45,8 +77,8 @@ void CShootingFlower::SetState(int state)
 
 		break;
 
-	case SHOOTING_FLOWER_STATE_IDLE:
-
+	case SHOOTING_FLOWER_STATE_OUT_TUBE:
+		Shoot();
 		break;
 	}
 }
@@ -54,4 +86,12 @@ void CShootingFlower::SetState(int state)
 void CShootingFlower::Shoot()
 {
 
+}
+
+void CShootingFlower::GetBoundingBox(float& l, float& t, float& r, float& b)
+{
+	l = x - FLOWER_WIDTH / 2;
+	t = y - FLOWER_HEIGHT / 2;
+	r = l + FLOWER_WIDTH;
+	b = t + FLOWER_HEIGHT;
 }

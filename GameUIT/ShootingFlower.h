@@ -4,11 +4,15 @@
 //Quite similiar to Mushroom
 //Chui từ vật thể ra
 
-#define ATTACK_RANGE 150.0f
+#define ATTACK_RANGE 50.0f
+#define SHOOTING_FLOWER_RISE_SPEED 0.002f
+
+#define FLOWER_WIDTH 16
+#define FLOWER_HEIGHT 16
 
 #define SHOOTING_FLOWER_STATE_IN_TUBE -1
 #define SHOOTING_FLOWER_STATE_RISE_UP 0
-#define SHOOTING_FLOWER_STATE_IDLE 1
+#define SHOOTING_FLOWER_STATE_OUT_TUBE 1
 
 #define ID_ANI_FLOWER_RISE_UP_LEFT 81500
 #define ID_ANI_FLOWER_RISE_UP_RIGHT 81600
@@ -17,14 +21,16 @@
 
 class CShootingFlower :public CGameObject 
 {
+	float minY, ay;
 public:
-	CShootingFlower();
+	CShootingFlower(float x, float y);
 	void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
 	void Render();
 	void SetState(int para);
 	void Shoot();
+	void GetBoundingBox(float& left, float& top, float& right, float& bottom);
 
-	//virtual void OnNoCollision(DWORD dt);
+	void OnNoCollision(DWORD dt);
 
-	//virtual void OnCollisionWith(LPCOLLISIONEVENT e);
+	void OnCollisionWith(LPCOLLISIONEVENT e);
 };

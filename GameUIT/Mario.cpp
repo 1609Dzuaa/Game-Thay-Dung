@@ -24,7 +24,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 	isOnPlatform = false;
 	CCollision::GetInstance()->Process(this, dt, coObjects);
-	//DebugOutTitle(L"Pos X: %f", x);
+	DebugOutTitle(L"Pos X: %d, %d", isJumping, canFly);
 }
 
 void CMario::UpdateMarioState()
@@ -497,7 +497,7 @@ int CMario::GetAniIdBig()
 		{
 			if (nx > 0)  //prob here
 				aniId = ID_ANI_MARIO_BIG_JUMP_AT_MAX_SPEED_RIGHT;
-			else if(nx < 0)
+			else if (nx < 0)
 				aniId = ID_ANI_MARIO_BIG_JUMP_AT_MAX_SPEED_LEFT;
 		}
 		else
@@ -546,7 +546,7 @@ int CMario::GetAniIdBig()
 			{
 				if (ax > 0)
 					aniId = ID_ANI_MARIO_BRACE_LEFT;
-				else if (isAtMaxSpeed) 
+				else if (isAtMaxSpeed)
 					aniId = ID_ANI_MARIO_BIG_RUNNING_MAX_SPEED_LEFT;
 				else if (ax == -MARIO_ACCEL_RUN_X)
 					aniId = ID_ANI_MARIO_RUNNING_LEFT;
@@ -567,9 +567,17 @@ int CMario::GetAniIdBig()
 int CMario::GetAniIdRacoon()
 {
 	int aniId = -1;
-	if (!isOnPlatform)
+	if (!isOnPlatform) //included fly, jump, landing, fall
 	{
-		if (vy > 0 && nx < 0)
+		if (vy > 0 && nx < 0 && isLanding)
+		{
+			aniId = ID_ANI_MARIO_RACOON_LANDING_LEFT;
+		}
+		else if (vy > 0 && nx > 0 && isLanding)
+		{
+			aniId = ID_ANI_MARIO_RACOON_LANDING_RIGHT;
+		}
+		else if (vy > 0 && nx < 0)
 		{
 			aniId = ID_ANI_MARIO_RACOON_FALLING_LEFT;
 		}
@@ -761,6 +769,14 @@ void CMario::SetState(int state)
 	case MARIO_RACOON_STATE_FALLING:
 	{
 		isJumping = false;
+		isLanding = false;
+		break;
+	}
+
+	case MARIO_RACOON_STATE_LANDING:
+	{
+		//isLanding = true;
+		vy = 0.0005f;
 		break;
 	}
 

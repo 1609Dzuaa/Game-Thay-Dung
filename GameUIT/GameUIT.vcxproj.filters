@@ -111,6 +111,9 @@
     <ClInclude Include="ShootingFlower.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Tube.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -192,6 +195,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ShootingFlower.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Tube.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
