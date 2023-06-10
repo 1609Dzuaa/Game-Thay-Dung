@@ -15,7 +15,7 @@ void CTube::SpawnShootingFlower()
 	this->Flower_Arise = true;
 	CPlayScene* current_scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
 	CShootingFlower* flower = new CShootingFlower(this->x, this->y - TUBE_BBOX_HEIGHT / 2);
-	flower->SetFlowerMinY(this->y - TUBE_BBOX_HEIGHT / 2 - FLOWER_HEIGHT / 2);
+	flower->SetFlowerMinY(this->y - TUBE_BBOX_HEIGHT / 2 - FLOWER_HEIGHT / 2 - 1.5f);
 	current_scene->AddObjectToScene(flower);
 }
 

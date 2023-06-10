@@ -1,6 +1,6 @@
 # list of object assets to load in this scene
 [MAP]
-Game_Maps\Map1_1.txt
+Game_Maps\Map1_1_New.txt
 [ASSETS]
 Text_Files\Mario.txt
 Text_Files\Brick.txt
@@ -22,7 +22,7 @@ Text_Files\FireBullet.txt
 # See OBJECT_TYPE constants in AssetIDs.h 
 
 # MARIO | Thứ tự vẽ ảnh hưởng đến tính toán va chạm
-0	120	170
+0	20	170
 
 #QUESTION BRICK |  1:HAS_COIN    2:HAS_MUSHROOM	  3:HAS_LEAF
 7	169	196	1
@@ -49,10 +49,6 @@ Text_Files\FireBullet.txt
 
 #TUBE - CLASS
 9	344	224	1
-#Tube
-#5	334	208	10	16	3	400007	400008	400009
-#5	334	225	10	16	3	400010	400011	400012
-#5	334	240	10	16	3	400010	400011	400012
 
 #Green platform
 6	384	208	16	15	5	0	0	0
