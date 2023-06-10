@@ -12,6 +12,8 @@
 #include "Mushroom.h"
 #include "Leaf.h"
 #include "ColorPlatform.h"
+#include "ShootingFlower.h"
+#include "FireBullet.h"
 
 #include "Collision.h"
 
@@ -24,11 +26,18 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 	isOnPlatform = false;
 	CCollision::GetInstance()->Process(this, dt, coObjects);
-	DebugOutTitle(L"Pos X: %d, %d", isJumping, canFly);
 }
 
 void CMario::UpdateMarioState()
 {
+	//May be affect collision with Fire Bullet
+	// reset untouchable timer if untouchable time has passed
+	if (GetTickCount64() - untouchable_start > MARIO_UNTOUCHABLE_TIME)
+	{
+		untouchable_start = 0;
+		untouchable = 0;
+	}
+
 	if (this->isJumping && this->level == MARIO_LEVEL_RACOON && this->vy >= 0)
 	{
 		this->SetState(MARIO_RACOON_STATE_FALLING);
@@ -56,13 +65,6 @@ void CMario::UpdateMarioState()
 	}
 	else if (this->isAtMaxSpeed && isJumping)
 		this->SetState(MARIO_STATE_JUMP_AT_MAX_SPEED);
-
-	// reset untouchable timer if untouchable time has passed
-	if (GetTickCount64() - untouchable_start > MARIO_UNTOUCHABLE_TIME)
-	{
-		untouchable_start = 0;
-		untouchable = 0;
-	}
 
 	if (isKicking && GetTickCount64() - kick_start >= MARIO_KICK_TIME)
 	{
@@ -121,6 +123,10 @@ void CMario::OnCollisionWithNonBlockingObjects(LPCOLLISIONEVENT e)
 		OnCollisionWithMushroom(e);
 	if (dynamic_cast<CLeaf*>(e->obj))
 		OnCollisionWithLeaf(e);
+	if (dynamic_cast<CShootingFlower*>(e->obj))
+		OnCollisionWithFlower(e);
+	if (dynamic_cast<CFireBullet*>(e->obj))
+		OnCollisionWithFireBullet(e);
 	if (dynamic_cast<CCoin*>(e->obj))
 		OnCollisionWithCoin(e);
 }
@@ -411,6 +417,38 @@ void CMario::OnCollisionWithLeaf(LPCOLLISIONEVENT e)
 	CLeaf* leaf = dynamic_cast<CLeaf*>(e->obj);
 	this->SetLevel(MARIO_LEVEL_RACOON);
 	leaf->Delete();
+}
+
+void CMario::OnCollisionWithFlower(LPCOLLISIONEVENT e)
+{
+	if (this->level > MARIO_LEVEL_BIG)
+	{
+		this->SetLevel(MARIO_LEVEL_BIG);
+		StartUntouchable();
+	}
+	else if (this->level > MARIO_LEVEL_SMALL)
+	{
+		this->SetLevel(MARIO_LEVEL_SMALL);
+		StartUntouchable();
+	}
+	else
+		this->SetState(MARIO_STATE_DIE);
+}
+
+void CMario::OnCollisionWithFireBullet(LPCOLLISIONEVENT e)
+{
+	if (this->level > MARIO_LEVEL_BIG)
+	{
+		this->SetLevel(MARIO_LEVEL_BIG);
+		StartUntouchable();
+	}
+	else if (this->level > MARIO_LEVEL_SMALL)
+	{
+		this->SetLevel(MARIO_LEVEL_SMALL);
+		StartUntouchable();
+	}
+	else if (this->level == MARIO_LEVEL_SMALL)
+		this->SetState(MARIO_STATE_DIE);
 }
 
 //

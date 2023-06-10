@@ -12,6 +12,7 @@
 #include "Platform.h"
 #include "ColorPlatform.h"
 #include "Tube.h"
+#include "FireBullet.h"
 
 #include "SampleKeyEventHandler.h"
 #include "GameMap.h"

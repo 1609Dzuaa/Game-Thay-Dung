@@ -19,4 +19,4 @@ height	240
 20	textures\misc.png
 30	textures\misc_2.png
 40	Game_Maps\Tileset-Map1_1.png
-50	textures\enemies_transparent_2.png
+50	Game_Maps\Tileset_2.png

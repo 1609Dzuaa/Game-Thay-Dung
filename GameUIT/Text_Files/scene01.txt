@@ -13,6 +13,7 @@ Text_Files\Platform.txt
 Text_Files\ColorPlatform.txt
 Text_Files\Tube.txt
 Text_Files\Flower.txt
+Text_Files\FireBullet.txt
 #Those 0 - SpriteID use for ? => Read class ColorPlatform.h
 
 [OBJECTS]
@@ -21,7 +22,7 @@ Text_Files\Flower.txt
 # See OBJECT_TYPE constants in AssetIDs.h 
 
 # MARIO | Thứ tự vẽ ảnh hưởng đến tính toán va chạm
-0	20	170
+0	120	170
 
 #QUESTION BRICK |  1:HAS_COIN    2:HAS_MUSHROOM	  3:HAS_LEAF
 7	169	196	1
@@ -47,7 +48,7 @@ Text_Files\Flower.txt
 6	256	175	16	15	3	0	0	0
 
 #TUBE - CLASS
-9	344	208	1
+9	344	224	1
 #Tube
 #5	334	208	10	16	3	400007	400008	400009
 #5	334	225	10	16	3	400010	400011	400012
@@ -75,9 +76,9 @@ Text_Files\Flower.txt
 5	1120	256	16	15	24	400001	400002	400003
 
 #GOOMBA
-2	920	40	1
-2	1000	40	1
-2	1070	40	2
+#2	920	40	1
+#2	1000	40	1
+#2	1070	40	2
 
 #Green platform - 3
 6	1232	224	16	15	8	0	0	0

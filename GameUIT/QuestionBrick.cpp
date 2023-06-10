@@ -4,6 +4,7 @@
 #include "Leaf.h"
 #include "debug.h"
 #include "PlayScene.h"
+#include "FireBullet.h"
 
 void CQuestionBrick::Render()
 {
@@ -58,7 +59,6 @@ void CQuestionBrick::SpawnMushroom(float xBrick, float yBrick)
 	mushroom->SetBrickMinY(minY);
 	mushroom->SetMushroomX(x);
 	current_scene->AddObjectToScene(mushroom);
-	//objects.push_back(mushroom);
 }
 
 void CQuestionBrick::SpawnLeaf(float xBrick, float yBrick)
@@ -67,8 +67,6 @@ void CQuestionBrick::SpawnLeaf(float xBrick, float yBrick)
 	CLeaf* leaf = new CLeaf(xBrick, yBrick);
 	leaf->SetMinY(y - 70.0f);
 	current_scene->AddObjectToScene(leaf);
-	//leaf->setMinX(x);
-	//objects.push_back(leaf);
 }
 
 void CQuestionBrick::GetBoundingBox(float& l, float& t, float& r, float& b)
@@ -84,8 +82,6 @@ void CQuestionBrick::SetState(int state)
 	switch (state)
 	{
 	case QBRICK_STATE_HITTED:
-		//SpawnCoin(x, y, -COIN_FLY_SPEED);
-		//SpawnMushroom(x, y);
 		if (this->type == HAS_LEAF)
 			SpawnLeaf(x, y);
 		else if(this->type == HAS_COIN)

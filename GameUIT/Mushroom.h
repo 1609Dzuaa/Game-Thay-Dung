@@ -31,17 +31,17 @@ public:
 		brickminY = brickY;
 		state = MUSHROOM_STATE_IN_THE_BRICK; //Ban đầu sẽ ở trong cục gạch
 	}
-	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
+	void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
 
-	virtual void Render();
+	void Render();
 
-	virtual int IsBlocking() { return 0; }
+	int IsBlocking() { return 0; }
 
-	virtual int IsCollidable() { return 1; };
+	int IsCollidable() { return 1; };
 
-	virtual void OnNoCollision(DWORD dt);
+	void OnNoCollision(DWORD dt);
 
-	virtual void OnCollisionWith(LPCOLLISIONEVENT e);
+	void OnCollisionWith(LPCOLLISIONEVENT e);
 
 	void HandleCollisionWithBlockingObjects(LPCOLLISIONEVENT e);
 
