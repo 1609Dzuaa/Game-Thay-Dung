@@ -14,6 +14,8 @@
 #include "ColorPlatform.h"
 #include "ShootingFlower.h"
 #include "FireBullet.h"
+#include "EffectScore.h"
+#include "PlayScene.h"
 
 #include "Collision.h"
 
@@ -209,9 +211,18 @@ void CMario::HandleCollisionUpperDirectionWithGoomba(CGoomba* goomba)
 		else
 		{
 			goomba->SetState(GOOMBA_STATE_DIE);
+			SpawnScore(goomba);
 			vy = -MARIO_JUMP_DEFLECT_SPEED; //nảy lên
 		}
 	}
+}
+
+void CMario::SpawnScore(LPGAMEOBJECT obj)
+{
+	//Từng loại va chạm kiếm đc từng số điểm khác nhau
+	CEffectScore* eff_scr = new CEffectScore(obj->GetX(), obj->GetY() - 15.0f, obj->GetY() - 45.0f, 100);
+	CPlayScene* current_scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
+	current_scene->AddObjectToScene(eff_scr);
 }
 
 void CMario::HandleCollisionOtherDirectionWithGoomba(LPCOLLISIONEVENT e, CGoomba* goomba)
@@ -270,6 +281,7 @@ void CMario::HandleCollisionUpperDirectionWithKoopa(CKoopa* koopa)
 		{
 			koopa->SetType(GREEN_KOOPA);
 			koopa->SetState(KOOPA_STATE_WALKING);
+			SpawnScore(koopa);
 			vy = -MARIO_JUMP_DEFLECT_SPEED;
 		}
 		else
@@ -312,6 +324,7 @@ void CMario::HandleCollisionUpperDirectionWithKoopa(CKoopa* koopa)
 			else //Trạng thái đi bộ vuốt râu
 			{
 				koopa->SetState(KOOPA_STATE_SLEEP);
+				SpawnScore(koopa);
 				vy = -MARIO_JUMP_DEFLECT_SPEED;
 			}
 		}
@@ -404,7 +417,7 @@ void CMario::OnCollisionWithQuesBrick(LPCOLLISIONEVENT e)
 void CMario::OnCollisionWithMushroom(LPCOLLISIONEVENT e)
 {
 	CMushroom* mr = dynamic_cast<CMushroom*>(e->obj);
-
+	SpawnScore(mr);
 	mr->Delete();
 
 	this->SetLevel(2);

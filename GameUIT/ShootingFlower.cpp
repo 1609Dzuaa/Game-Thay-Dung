@@ -127,7 +127,7 @@ void CShootingFlower::Shoot()
 
 	current_scene->AddObjectToScene(fire_bullet);
 
-	//có vấn đề với đoạn mã trên
+	
 
 	SetState(SHOOTING_FLOWER_STATE_DIVE);
 }

@@ -31,4 +31,5 @@ public:
 	int IsCollidable() { return 1; }
 	void SpawnShootingFlower();
 	void SetState(int state);
+	void SetArise(bool para) { this->Flower_Arise = para; }
 };

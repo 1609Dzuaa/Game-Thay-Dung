@@ -5,7 +5,7 @@
 //Chui từ vật thể ra
 
 #define ATTACK_RANGE 50.0f
-#define SHOOTING_FLOWER_RISE_SPEED 0.02f
+#define SHOOTING_FLOWER_RISE_SPEED 0.011f
 
 #define FLOWER_WIDTH 16
 #define FLOWER_HEIGHT 32

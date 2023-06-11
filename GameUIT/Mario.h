@@ -295,4 +295,5 @@ public:
 	void SetisAtMaxSpeed(BOOLEAN para) { this->isAtMaxSpeed = para; }
 	BOOLEAN GetIsJumping() { return isJumping; }
 	void SetIsLanding(bool para) { this->isLanding = para; }
+	void SpawnScore(LPGAMEOBJECT obj);
 };

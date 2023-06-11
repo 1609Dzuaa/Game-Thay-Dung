@@ -55,4 +55,6 @@ public:
 	void OnNoCollision(DWORD dt);
 
 	void HandleBouncingBrick();
+
+	bool HasCoin() { return HAS_COIN; }
 };

@@ -1,4 +1,5 @@
 #include "Coin.h"
+#include "PlayScene.h"
 #include "debug.h"
 
 void CCoin::Render()
@@ -28,6 +29,7 @@ void CCoin::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 void CCoin::HandleFlyingCoin()
 {
+	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
 	if (y <= minY)
 	{
 		vy = COIN_FLY_SPEED;
@@ -37,6 +39,7 @@ void CCoin::HandleFlyingCoin()
 		y = currentY;
 		vy = 0;
 		this->Delete();
+		mario->SpawnScore(this);
 	}
 }
 
