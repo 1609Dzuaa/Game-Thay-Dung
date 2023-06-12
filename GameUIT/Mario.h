@@ -17,7 +17,7 @@
 #define MARIO_JUMP_SPEED_Y		0.5f
 #define MARIO_JUMP_RUN_SPEED_Y	0.6f
 
-#define MARIO_GRAVITY			0.002f
+#define MARIO_GRAVITY			0.0018f
 
 #define MARIO_JUMP_DEFLECT_SPEED  0.4f
 
@@ -193,6 +193,12 @@
 #define MARIO_KICK_TIME 150
 #define MARIO_RACOON_ATTACK_TIME 450
 
+#define NORMAL_SCORE 10
+#define DOUBLE_SCORE 20
+#define QUADRA_SCORE 40
+#define DOUBLE_QUADRA_SCORE 80
+#define ITEM_SCORE 100 //Mushroom, Leaf
+
 class CMario : public CGameObject
 {
 	BOOLEAN isSitting;
@@ -214,6 +220,7 @@ class CMario : public CGameObject
 	ULONGLONG kick_start; //Tính thời gian sút để giải phóng Mario khỏi hành động sút
 	ULONGLONG attack_start;
 	BOOLEAN isOnPlatform;
+	int CountJumpOnEnemies; //Đếm số bước nhảy 0 CHẠM ĐẤT để có số điểm tương ứng
 	int coin;
 
 	void OnCollisionWithColorPlatform(LPCOLLISIONEVENT e);
@@ -251,6 +258,7 @@ public:
 		canFly = false;
 		isAtMaxSpeed = false;
 		isLanding = false;
+		CountJumpOnEnemies = 0;
 
 		maxVx = 0;
 		maxRunningSpeed = MARIO_RUNNING_SPEED;

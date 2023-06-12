@@ -54,4 +54,6 @@ public:
 	void SetMushroomX(float x) { this->x = x; }
 
 	void SetState(int state);
+
+	int IsSpecialItem() { return 1; }
 };

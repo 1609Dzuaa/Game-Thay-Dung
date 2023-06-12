@@ -40,4 +40,5 @@ public:
 	void SetMinY(float para) { this->minY = para; }
 	void setMinX(float para) { this->minX = para; }
 	void SetState(int state);
+	int IsSpecialItem() { return 1; }
 };

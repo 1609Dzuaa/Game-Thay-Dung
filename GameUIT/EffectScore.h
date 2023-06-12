@@ -3,7 +3,13 @@
 
 #define EFFECT_SCORE_VELO_Y 0.03f
 
-#define ID_ANI_SCORE_EFFECT_100 100
+#define ID_ANI_SCORE_EFFECT_100 10
+#define ID_ANI_SCORE_EFFECT_200 20
+#define ID_ANI_SCORE_EFFECT_400 40
+#define ID_ANI_SCORE_EFFECT_800 80
+#define ID_ANI_SCORE_EFFECT_1000 100
+
+
 
 class CEffectScore :public CEffect 
 {

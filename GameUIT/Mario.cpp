@@ -28,6 +28,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 	isOnPlatform = false;
 	CCollision::GetInstance()->Process(this, dt, coObjects);
+	//DebugOutTitle(L"%d", CountJumpOnEnemies);
 }
 
 void CMario::UpdateMarioState()
@@ -103,6 +104,7 @@ void CMario::OnCollisionWithBlockingObjects(LPCOLLISIONEVENT e)
 		if (e->ny < 0)
 		{
 			isOnPlatform = true;
+			CountJumpOnEnemies = 0; //Chạm đất thì reset số lần nhảy
 		}
 	}
 	else if (e->nx != 0 && e->obj->IsBlocking())
@@ -119,7 +121,7 @@ void CMario::OnCollisionWithNonBlockingObjects(LPCOLLISIONEVENT e)
 		OnCollisionWithGoomba(e);
 	if (dynamic_cast<CKoopa*>(e->obj))
 		OnCollisionWithKoopa(e);
-	if (dynamic_cast<CQuestionBrick*>(e->obj) && e->obj->GetState() != QBRICK_STATE_HITTED)
+	if (dynamic_cast<CQuestionBrick*>(e->obj) && e->obj->GetState() != QBRICK_STATE_HITTED) //chưa bị đụng thì mới có collision
 		OnCollisionWithQuesBrick(e);
 	if (dynamic_cast<CMushroom*>(e->obj))
 		OnCollisionWithMushroom(e);
@@ -201,16 +203,21 @@ void CMario::HandleCollisionUpperDirectionWithGoomba(CGoomba* goomba)
 		if (goomba->GetType() == PARA_GOOMBA && goomba->GetLevel() == PARA_GOOMBA_LEVEL_HAS_WINGS)
 		{
 			goomba->SetLevel(PARA_GOOMBA_LEVEL_NO_WINGS);
+			CountJumpOnEnemies++;
+			SpawnScore(goomba);
 			vy = -MARIO_JUMP_DEFLECT_SPEED;
 		}
 		else if (goomba->GetType() == PARA_GOOMBA && goomba->GetLevel() == PARA_GOOMBA_LEVEL_NO_WINGS)
 		{
 			goomba->SetState(GOOMBA_STATE_DIE);
+			CountJumpOnEnemies++;
+			SpawnScore(goomba);
 			vy = -MARIO_JUMP_DEFLECT_SPEED; //nảy lên
 		}
-		else
+		else //Goomba thường
 		{
 			goomba->SetState(GOOMBA_STATE_DIE);
+			CountJumpOnEnemies++;
 			SpawnScore(goomba);
 			vy = -MARIO_JUMP_DEFLECT_SPEED; //nảy lên
 		}
@@ -220,8 +227,29 @@ void CMario::HandleCollisionUpperDirectionWithGoomba(CGoomba* goomba)
 void CMario::SpawnScore(LPGAMEOBJECT obj)
 {
 	//Từng loại va chạm kiếm đc từng số điểm khác nhau
-	CEffectScore* eff_scr = new CEffectScore(obj->GetX(), obj->GetY() - 15.0f, obj->GetY() - 45.0f, 100);
+	CEffectScore* eff_scr = new CEffectScore(obj->GetX(), obj->GetY() - 15.0f, obj->GetY() - 45.0f, NORMAL_SCORE);
 	CPlayScene* current_scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
+	if (!obj->IsSpecialItem())
+	{
+		switch (CountJumpOnEnemies)
+		{
+		case 1:
+			eff_scr = new CEffectScore(obj->GetX(), obj->GetY() - 15.0f, obj->GetY() - 45.0f, NORMAL_SCORE);
+			break;
+		case 2:
+			eff_scr = new CEffectScore(obj->GetX(), obj->GetY() - 15.0f, obj->GetY() - 45.0f, DOUBLE_SCORE);
+			break;
+		case 3:
+			eff_scr = new CEffectScore(obj->GetX(), obj->GetY() - 15.0f, obj->GetY() - 45.0f, QUADRA_SCORE);
+			break;
+		case 4:
+			eff_scr = new CEffectScore(obj->GetX(), obj->GetY() - 15.0f, obj->GetY() - 45.0f, DOUBLE_QUADRA_SCORE);
+			break;
+		}
+	}
+	else
+		eff_scr = new CEffectScore(obj->GetX(), obj->GetY() - 15.0f, obj->GetY() - 45.0f, ITEM_SCORE);
+
 	current_scene->AddObjectToScene(eff_scr);
 }
 
@@ -234,6 +262,7 @@ void CMario::HandleCollisionOtherDirectionWithGoomba(LPCOLLISIONEVENT e, CGoomba
 		{
 			if (this->isAttacking)
 			{
+				SpawnScore(goomba);
 				goomba->SetState(GOOMBA_STATE_DIE_REVERSE);
 			}
 			else
@@ -279,34 +308,43 @@ void CMario::HandleCollisionUpperDirectionWithKoopa(CKoopa* koopa)
 	{
 		if (koopa->GetType() == GREEN_FLYING_KOOPA)
 		{
-			koopa->SetType(GREEN_KOOPA);
+			koopa->SetType(GREEN_KOOPA); //biến nó thành Koopa thường
 			koopa->SetState(KOOPA_STATE_WALKING);
+			CountJumpOnEnemies++;
 			SpawnScore(koopa);
 			vy = -MARIO_JUMP_DEFLECT_SPEED;
 		}
-		else
+		else //Koopa thường
 		{
 			if (koopa->GetState() == KOOPA_STATE_SLIP)
 			{
 				koopa->SetState(KOOPA_STATE_SLEEP);
+				CountJumpOnEnemies++;
+				SpawnScore(koopa);
 				vy = -MARIO_JUMP_DEFLECT_SPEED;
 			}
 			else if (koopa->GetState() == KOOPA_STATE_SLIP_REVERSE)
 			{
 				koopa->SetState(KOOPA_STATE_SLEEP_REVERSE_SPECIAL);
+				CountJumpOnEnemies++;
+				SpawnScore(koopa);
 				vy = -MARIO_JUMP_DEFLECT_SPEED;
 			}
 			else if (koopa->GetState() == KOOPA_STATE_SLEEP) //Koopa ĐANG NGỦ
 			{
 				//Dựa vào hướng của Mario để quyết định dấu vận tốc của Koopa
-				if (this->nx > 0)
+				/*if (this->nx > 0)
 				{
+
 					koopa->SetState(KOOPA_STATE_SLIP);
 				}
 				else if (this->nx < 0)
 				{
 					koopa->SetState(KOOPA_STATE_SLIP);
-				}
+				}*/
+				CountJumpOnEnemies++;
+				SpawnScore(koopa);
+				koopa->SetState(KOOPA_STATE_SLIP);
 			}
 			else if (koopa->GetState() == KOOPA_STATE_SLEEP_REVERSE
 				|| koopa->GetState() == KOOPA_STATE_SLEEP_REVERSE_SPECIAL
@@ -324,6 +362,7 @@ void CMario::HandleCollisionUpperDirectionWithKoopa(CKoopa* koopa)
 			else //Trạng thái đi bộ vuốt râu
 			{
 				koopa->SetState(KOOPA_STATE_SLEEP);
+				CountJumpOnEnemies++;
 				SpawnScore(koopa);
 				vy = -MARIO_JUMP_DEFLECT_SPEED;
 			}
@@ -429,6 +468,7 @@ void CMario::OnCollisionWithLeaf(LPCOLLISIONEVENT e)
 {
 	CLeaf* leaf = dynamic_cast<CLeaf*>(e->obj);
 	this->SetLevel(MARIO_LEVEL_RACOON);
+	SpawnScore(leaf);
 	leaf->Delete();
 }
 

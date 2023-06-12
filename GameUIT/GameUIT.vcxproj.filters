@@ -212,9 +212,6 @@
     <ClCompile Include="FireBullet.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Effect.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="EffectScore.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

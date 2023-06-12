@@ -6,8 +6,6 @@ void CEffectScore::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		this->Delete();
 	else
 		y += vy * dt;
-
-	//CGameObject::Update(dt, coObjects);
 }
 
 void CEffectScore::Render()

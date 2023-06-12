@@ -173,7 +173,6 @@
     <ClCompile Include="Collision.cpp" />
     <ClCompile Include="ColorPlatform.cpp" />
     <ClCompile Include="debug.cpp" />
-    <ClCompile Include="Effect.cpp" />
     <ClCompile Include="EffectScore.cpp" />
     <ClCompile Include="FireBullet.cpp" />
     <ClCompile Include="GameMap.cpp" />

@@ -29,7 +29,7 @@ protected:
 	int state;
 
 	bool isDeleted;
-
+	int isItem, isSpecialItem;
 public:
 	void SetPosition(float x, float y) { this->x = x, this->y = y; }
 	void SetSpeed(float vx, float vy) { this->vx = vx, this->vy = vy; }
@@ -74,4 +74,5 @@ public:
 	~CGameObject();
 
 	static bool IsDeleted(const LPGAMEOBJECT& o) { return o->isDeleted; }
+	virtual int IsSpecialItem() { return 0; } //Khởi tạo mặc định mọi vật thể trong game đều 0 PHẢI item ĐẶC BIỆT
 };

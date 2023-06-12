@@ -248,15 +248,24 @@ void CKoopa::SetState(int state)
 void CKoopa::OnCollisionWithGoomba(LPCOLLISIONEVENT e)
 {
 	CGoomba* goomba = dynamic_cast<CGoomba*>(e->obj);
+	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
+
 	if (goomba->GetState() != GOOMBA_STATE_DIE_REVERSE)
+	{
 		goomba->SetState(GOOMBA_STATE_DIE_REVERSE);
+		mario->SpawnScore(goomba);
+	}
 }
 
 void CKoopa::OnCollisionWithKoopa(LPCOLLISIONEVENT e)
 {
 	CKoopa* koopa = dynamic_cast<CKoopa*>(e->obj);
+	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
 	if (koopa->GetState() != KOOPA_STATE_DIE)
+	{
 		koopa->SetState(KOOPA_STATE_DIE);
+		mario->SpawnScore(koopa);
+	}
 }
 
 void CKoopa::OnCollisionWithQuesBrick(LPCOLLISIONEVENT e)

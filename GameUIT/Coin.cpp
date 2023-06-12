@@ -39,7 +39,7 @@ void CCoin::HandleFlyingCoin()
 		y = currentY;
 		vy = 0;
 		this->Delete();
-		mario->SpawnScore(this);
+		mario->SpawnScore(this); //only give 100
 	}
 }
 
