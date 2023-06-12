@@ -15,6 +15,7 @@
 #include "ShootingFlower.h"
 #include "FireBullet.h"
 #include "EffectScore.h"
+#include "EffectCollision.h"
 #include "PlayScene.h"
 
 #include "Collision.h"
@@ -28,7 +29,6 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 	isOnPlatform = false;
 	CCollision::GetInstance()->Process(this, dt, coObjects);
-	//DebugOutTitle(L"%d", CountJumpOnEnemies);
 }
 
 void CMario::UpdateMarioState()
@@ -224,35 +224,6 @@ void CMario::HandleCollisionUpperDirectionWithGoomba(CGoomba* goomba)
 	}
 }
 
-void CMario::SpawnScore(LPGAMEOBJECT obj)
-{
-	//Từng loại va chạm kiếm đc từng số điểm khác nhau
-	CEffectScore* eff_scr = new CEffectScore(obj->GetX(), obj->GetY() - 15.0f, obj->GetY() - 45.0f, NORMAL_SCORE);
-	CPlayScene* current_scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
-	if (!obj->IsSpecialItem())
-	{
-		switch (CountJumpOnEnemies)
-		{
-		case 1:
-			eff_scr = new CEffectScore(obj->GetX(), obj->GetY() - 15.0f, obj->GetY() - 45.0f, NORMAL_SCORE);
-			break;
-		case 2:
-			eff_scr = new CEffectScore(obj->GetX(), obj->GetY() - 15.0f, obj->GetY() - 45.0f, DOUBLE_SCORE);
-			break;
-		case 3:
-			eff_scr = new CEffectScore(obj->GetX(), obj->GetY() - 15.0f, obj->GetY() - 45.0f, QUADRA_SCORE);
-			break;
-		case 4:
-			eff_scr = new CEffectScore(obj->GetX(), obj->GetY() - 15.0f, obj->GetY() - 45.0f, DOUBLE_QUADRA_SCORE);
-			break;
-		}
-	}
-	else
-		eff_scr = new CEffectScore(obj->GetX(), obj->GetY() - 15.0f, obj->GetY() - 45.0f, ITEM_SCORE);
-
-	current_scene->AddObjectToScene(eff_scr);
-}
-
 void CMario::HandleCollisionOtherDirectionWithGoomba(LPCOLLISIONEVENT e, CGoomba* goomba)
 {
 	if (untouchable == 0)
@@ -263,6 +234,7 @@ void CMario::HandleCollisionOtherDirectionWithGoomba(LPCOLLISIONEVENT e, CGoomba
 			if (this->isAttacking)
 			{
 				SpawnScore(goomba);
+				SpawnEffect(e);
 				goomba->SetState(GOOMBA_STATE_DIE_REVERSE);
 			}
 			else
@@ -332,16 +304,6 @@ void CMario::HandleCollisionUpperDirectionWithKoopa(CKoopa* koopa)
 			}
 			else if (koopa->GetState() == KOOPA_STATE_SLEEP) //Koopa ĐANG NGỦ
 			{
-				//Dựa vào hướng của Mario để quyết định dấu vận tốc của Koopa
-				/*if (this->nx > 0)
-				{
-
-					koopa->SetState(KOOPA_STATE_SLIP);
-				}
-				else if (this->nx < 0)
-				{
-					koopa->SetState(KOOPA_STATE_SLIP);
-				}*/
 				CountJumpOnEnemies++;
 				SpawnScore(koopa);
 				koopa->SetState(KOOPA_STATE_SLIP);
@@ -383,10 +345,12 @@ void CMario::HandleCollisionOtherDirectionWithKoopa(LPCOLLISIONEVENT e, CKoopa* 
 				{
 					koopa->SetType(GREEN_KOOPA);
 					koopa->SetState(KOOPA_STATE_SLEEP_REVERSE);
+					SpawnEffect(e);
 				}
 				else
 				{
 					koopa->SetState(KOOPA_STATE_SLEEP_REVERSE);
+					SpawnEffect(e);
 				}
 			}
 			else
@@ -993,4 +957,52 @@ void CMario::SetLevel(int l)
 		y -= (MARIO_BIG_BBOX_HEIGHT - MARIO_SMALL_BBOX_HEIGHT) / 2;
 	}
 	level = l;
+}
+
+void CMario::SpawnScore(LPGAMEOBJECT obj)
+{
+	CEffectScore* eff_scr = new CEffectScore(obj->GetX(), obj->GetY() - 15.0f, obj->GetY() - 45.0f, NORMAL_SCORE);
+	CPlayScene* current_scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
+	current_scene->AddObjectToScene(ClassifyScore(obj, eff_scr));
+}
+
+CEffectScore* CMario::ClassifyScore(LPGAMEOBJECT obj, CEffectScore* eff_scr)
+{
+	if (!obj->IsSpecialItem())
+	{
+		switch (CountJumpOnEnemies)
+		{
+		case 1:
+			eff_scr = new CEffectScore(obj->GetX(), obj->GetY() - 15.0f, obj->GetY() - 45.0f, NORMAL_SCORE);
+			break;
+		case 2:
+			eff_scr = new CEffectScore(obj->GetX(), obj->GetY() - 15.0f, obj->GetY() - 45.0f, DOUBLE_SCORE);
+			break;
+		case 3:
+			eff_scr = new CEffectScore(obj->GetX(), obj->GetY() - 15.0f, obj->GetY() - 45.0f, QUADRA_SCORE);
+			break;
+		case 4:
+			eff_scr = new CEffectScore(obj->GetX(), obj->GetY() - 15.0f, obj->GetY() - 45.0f, DOUBLE_QUADRA_SCORE);
+			break;
+		}
+	}
+	else
+		eff_scr = new CEffectScore(obj->GetX(), obj->GetY() - 15.0f, obj->GetY() - 45.0f, ITEM_SCORE);
+
+	return eff_scr;
+	//Hàm sàng lọc điểm
+}
+
+void CMario::SpawnEffect(LPCOLLISIONEVENT e)
+{
+	float x;
+	if (e->nx > 0)
+		x = this->x - MARIO_RACOON_BBOX_WIDTH / 2;
+	else
+		x = this->x + MARIO_RACOON_BBOX_WIDTH / 2;
+
+	float y = this->y + MARIO_RACOON_BBOX_HEIGHT / 4;
+	CEffectCollision* eff_col = new CEffectCollision(x, y, GetTickCount64());
+	CPlayScene* current_scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
+	current_scene->AddObjectToScene(eff_col);
 }

@@ -123,6 +123,9 @@
     <ClInclude Include="EffectScore.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="EffectCollision.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -213,6 +216,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="EffectScore.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="EffectCollision.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

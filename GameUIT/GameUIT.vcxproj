@@ -138,6 +138,7 @@
     <ClInclude Include="ColorPlatform.h" />
     <ClInclude Include="debug.h" />
     <ClInclude Include="Effect.h" />
+    <ClInclude Include="EffectCollision.h" />
     <ClInclude Include="EffectScore.h" />
     <ClInclude Include="FireBullet.h" />
     <ClInclude Include="GameMap.h" />
@@ -173,6 +174,7 @@
     <ClCompile Include="Collision.cpp" />
     <ClCompile Include="ColorPlatform.cpp" />
     <ClCompile Include="debug.cpp" />
+    <ClCompile Include="EffectCollision.cpp" />
     <ClCompile Include="EffectScore.cpp" />
     <ClCompile Include="FireBullet.cpp" />
     <ClCompile Include="GameMap.cpp" />

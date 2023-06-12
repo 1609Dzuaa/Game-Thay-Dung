@@ -5,6 +5,7 @@
 #include "Animation.h"
 #include "Animations.h"
 #include "ColorPlatform.h"
+#include "EffectScore.h"
 
 #include "debug.h"
 
@@ -302,6 +303,8 @@ public:
 	void SetisJumping(BOOLEAN para) { this->isJumping = para; }
 	void SetisAtMaxSpeed(BOOLEAN para) { this->isAtMaxSpeed = para; }
 	BOOLEAN GetIsJumping() { return isJumping; }
+	CEffectScore* ClassifyScore(LPGAMEOBJECT obj, CEffectScore* eff_scr);
 	void SetIsLanding(bool para) { this->isLanding = para; }
 	void SpawnScore(LPGAMEOBJECT obj);
+	void SpawnEffect(LPCOLLISIONEVENT e);
 };

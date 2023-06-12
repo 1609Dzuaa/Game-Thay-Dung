@@ -16,7 +16,7 @@ void CSampleKeyHandler::OnKeyDown(int KeyCode)
 	case DIK_DOWN:
 		mario->SetState(MARIO_STATE_SIT);
 		break;
-	case DIK_A:
+	case DIK_Z: //Tạm cài nút Z vì nút A có lỗi ch fix đc
 		if (mario->GetState() == MARIO_RACOON_STATE_ATTACK) break;
 		if (mario->GetLevel() == MARIO_LEVEL_RACOON)
 			mario->SetState(MARIO_RACOON_STATE_ATTACK);

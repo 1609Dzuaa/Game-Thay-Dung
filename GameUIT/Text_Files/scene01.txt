@@ -15,6 +15,7 @@ Text_Files\Tube.txt
 Text_Files\Flower.txt
 Text_Files\FireBullet.txt
 Text_Files\EffectScore.txt
+Text_Files\EffectCollision.txt
 #Those 0 - SpriteID use for ? => Read class ColorPlatform.h
 
 [OBJECTS]
@@ -37,7 +38,7 @@ Text_Files\EffectScore.txt
 #GOOMBA
 2	315	160	1
 2	335	160	1
-3	345	160	1
+3	345	160	2
 
 #Platform: ID	X	Y	WIDTH	HEIGHT	SIZE	3SPRITES
 #Normal ground, Higher ground
