@@ -6,17 +6,15 @@ void CTube::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	//Nếu Mario ở trong tầm tấn công thì trồi lên
 	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
-	if (mario->GetMarioPositionX() >= this->x - ATTACK_ZONE && !Flower_Arise) //ở gần VÀ ở trong tầm tấn công
+	if (mario->GetX() >= this->x - ATTACK_ZONE && !shoot_flower->IsDeleted())  //ở gần VÀ ở trong tầm tấn công
 		 SpawnShootingFlower(); //Tạm để đây xem lại sau
 }
 
 void CTube::SpawnShootingFlower()
 {
-	this->Flower_Arise = true;
-	CPlayScene* current_scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
-	CShootingFlower* flower = new CShootingFlower(this->x, this->y - TUBE_BBOX_HEIGHT / 2 - 1.5f);
-	flower->SetFlowerMinY(this->y - TUBE_BBOX_HEIGHT / 2 - FLOWER_HEIGHT / 2);
-	current_scene->AddObjectToScene(flower);
+	this->shoot_flower->SetState(SHOOTING_FLOWER_STATE_OUT_OF_TUBE);
+	
+	
 }
 
 void CTube::Render()

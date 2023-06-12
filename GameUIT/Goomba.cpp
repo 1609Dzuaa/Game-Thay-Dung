@@ -192,9 +192,9 @@ void CGoomba::SetState(int state)
 
 	case GOOMBA_STATE_DIE_REVERSE:
 		die_reverse_start = GetTickCount64();
-		if (this->x > mario->GetMarioPositionX())
+		if (this->x > mario->GetX())
 			vx = abs(vx) * GOOMBA_DIE_REVERSE_FACTOR_X;
-		else if (this->x <= mario->GetMarioPositionX() && this->vx < 0)
+		else if (this->x <= mario->GetX() && this->vx < 0)
 			vx = vx * GOOMBA_DIE_REVERSE_FACTOR_X;
 		else
 			vx = -vx * GOOMBA_DIE_REVERSE_FACTOR_X;

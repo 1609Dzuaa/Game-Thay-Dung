@@ -296,7 +296,6 @@ public:
 	void StartUntouchable() { untouchable = 1; untouchable_start = GetTickCount64(); }
 
 	void GetBoundingBox(float& left, float& top, float& right, float& bottom);
-	float GetMarioPositionX() { return x; }
 	int GetMarioNormalX() { return nx; }
 	BOOLEAN GetCanFly() { return canFly; }
 	BOOLEAN GetisAtMaxSpeed() { return isAtMaxSpeed; }

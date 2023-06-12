@@ -4,42 +4,12 @@
 #include "FireBullet.h"
 #include "debug.h"
 
-CShootingFlower::CShootingFlower(float x, float y)
-{
-	this->x = x;
-	this->y = y;
-	this->vy = SHOOTING_FLOWER_RISE_SPEED;
-	this->state = SHOOTING_FLOWER_STATE_IN_TUBE;
-	//minY = y - FLOWER_HEIGHT / 2; Finding Why initialize value in constructor failed??
-}
-
 void CShootingFlower::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
-	if (state != SHOOTING_FLOWER_STATE_OUT_OF_TUBE) //dive || rise
+	if (y <= minY)
 	{
-		if (state == SHOOTING_FLOWER_STATE_IN_TUBE)
-		{
-			if (y <= minY)
-			{
-				y = minY;
-				this->SetState(SHOOTING_FLOWER_STATE_OUT_OF_TUBE); //Idle
-			}
-		}
-		else
-		{
-			if (y >= minY)
-			{
-				this->SetState(SHOOTING_FLOWER_STATE_REST);
-			}
-		}
-	}
-	else if(state == SHOOTING_FLOWER_STATE_OUT_OF_TUBE)
-	{
-		Shoot();
-	}
-	else 
-	{
-		vy += ay * dt;
+		this->SetState(SHOOTING_FLOWER_STATE_ATTACK);
+		this->minY = y;
 	}
 
 	CCollision::GetInstance()->Process(this, dt, coObjects);
@@ -50,46 +20,45 @@ void CShootingFlower::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 void CShootingFlower::OnNoCollision(DWORD dt)
 {
-	if (state != SHOOTING_FLOWER_STATE_IN_TUBE)
-	{
-		if (state == SHOOTING_FLOWER_STATE_DIVE)
-			y += vy * dt;
-	}
-	else
-	{
-		y += -vy * dt; //Nếu nó đang ở trong ống thì trỗi dậy
-	}
+	y += vy * dt;
 }
 
 void CShootingFlower::Render()
 {
-	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
 	CAnimations* animations = CAnimations::GetInstance();
-	if (state == SHOOTING_FLOWER_STATE_IN_TUBE)
-	{
-		if (mario->GetMarioPositionX() >= this->x)
-			animations->Get(ID_ANI_FLOWER_RISE_UP_RIGHT)->Render(x, y);
-		else 
-			animations->Get(ID_ANI_FLOWER_RISE_UP_LEFT)->Render(x, y);
-	}
-	else if (state == SHOOTING_FLOWER_STATE_OUT_OF_TUBE)
-	{
-		if (mario->GetMarioPositionX() >= this->x)
-			animations->Get(ID_ANI_FLOWER_IDLE_RIGHT)->Render(x, y);
-		else
-			animations->Get(ID_ANI_FLOWER_IDLE_LEFT)->Render(x, y);
-	}
-	else if (state == SHOOTING_FLOWER_STATE_REST)
-	{
-		//NO RENDER
-	}
+	if (GetAniID() == -1);
 	else
+		animations->Get(GetAniID())->Render(x, y);
+}
+
+int CShootingFlower::GetAniID()
+{
+	int aniID = -1;
+	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
+
+	if (state == SHOOTING_FLOWER_STATE_OUT_OF_TUBE)
 	{
-		if (mario->GetMarioPositionX() > this->x)
-			animations->Get(ID_ANI_FLOWER_DIVE_RIGHT)->Render(x, y);
-		else
-			animations->Get(ID_ANI_FLOWER_DIVE_LEFT)->Render(x, y);
+		if (mario->GetX() > this->x)
+			aniID = ID_ANI_FLOWER_RISE_UP_RIGHT;
+		else if(mario->GetX() < this->x)
+			aniID = ID_ANI_FLOWER_RISE_UP_LEFT;
 	}
+	else if (state == SHOOTING_FLOWER_STATE_DIVE)
+	{
+		if (mario->GetX() > this->x)
+			aniID = ID_ANI_FLOWER_DIVE_RIGHT;
+		else if (mario->GetX() < this->x)
+			aniID = ID_ANI_FLOWER_DIVE_LEFT;
+	}
+	else if (state == SHOOTING_FLOWER_STATE_ATTACK)
+	{
+		if (mario->GetX() > this->x)
+			aniID = ID_ANI_FLOWER_IDLE_RIGHT;
+		else if (mario->GetX() < this->x)
+			aniID = ID_ANI_FLOWER_IDLE_LEFT;
+	}
+
+	return aniID;
 }
 
 void CShootingFlower::SetState(int state)
@@ -102,11 +71,12 @@ void CShootingFlower::SetState(int state)
 		break;
 
 	case SHOOTING_FLOWER_STATE_OUT_OF_TUBE:
-		vy = 0;
+		vy = -SHOOTING_FLOWER_RISE_SPEED;
 
 		break;
 
-	case SHOOTING_FLOWER_STATE_REST:
+	case SHOOTING_FLOWER_STATE_ATTACK:
+		vy = 0;
 
 		break;
 	}
@@ -114,20 +84,18 @@ void CShootingFlower::SetState(int state)
 	CGameObject::SetState(state);
 }
 
-void CShootingFlower::Shoot()
+void CShootingFlower::AimAndShoot()
 {
 	CPlayScene* current_scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
 	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
 	CFireBullet* fire_bullet = new CFireBullet(this->x, this->y);
 	fire_bullet->SetPosition(this->x, this->y);
-	if (this->x <= mario->GetMarioPositionX())
+	if (this->x <= mario->GetX())
 		fire_bullet->SetVX(FIRE_BULLET_VX);
 	else 
 		fire_bullet->SetVX(-FIRE_BULLET_VX);
 
 	current_scene->AddObjectToScene(fire_bullet);
-
-	
 
 	SetState(SHOOTING_FLOWER_STATE_DIVE);
 }

@@ -170,7 +170,7 @@ void CKoopa::SetState(int state)
 		break;
 
 	case KOOPA_STATE_SLEEP_REVERSE: 
-		if (this->x > mario->GetMarioPositionX()) //Dựa vào vị trí để đẩy con Koopa đi xa khỏi Mario
+		if (this->x > mario->GetX()) //Dựa vào vị trí để đẩy con Koopa đi xa khỏi Mario
 			vx = KOOPA_KNOCK_OFF_VELO_X * KOOPA_KNOCK_OFF_FACTOR_X;
 		else
 			vx = -KOOPA_KNOCK_OFF_VELO_X * KOOPA_KNOCK_OFF_FACTOR_X;
@@ -227,7 +227,7 @@ void CKoopa::SetState(int state)
 		break;
 
 	case KOOPA_STATE_WALKING:
-		if (this->x > mario->GetMarioPositionX())
+		if (this->x > mario->GetX())
 			vx = -KOOPA_WALKING_SPEED;
 		else 
 			vx = KOOPA_WALKING_SPEED;
