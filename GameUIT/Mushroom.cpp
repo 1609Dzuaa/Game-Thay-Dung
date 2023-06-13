@@ -7,10 +7,9 @@
 void CMushroom::Render()
 {
 	CAnimations* animations = CAnimations::GetInstance();
-	if (state == MUSHROOM_STATE_IN_THE_BRICK)
-		animations->Get(ID_ANI_MUSHROOM_IN_BRICK)->Render(x, y); //Vẽ chui lên dần dần
-	else
+	if (state != MUSHROOM_STATE_IN_THE_BRICK)
 		animations->Get(ID_ANI_MUSHROOM_OUT_BRICK)->Render(x, y);
+	//Out of brick & rise up share the same animation
 }
 
 void CMushroom::GetBoundingBox(float& l, float& t, float& r, float& b)
@@ -42,14 +41,14 @@ void CMushroom::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 void CMushroom::OnNoCollision(DWORD dt)
 {
-	if (state != MUSHROOM_STATE_IN_THE_BRICK)
+	if (state != MUSHROOM_STATE_RISE_UP)
 	{
 		x += vx * dt;
 		y += vy * dt;
 	}
 	else
 	{
-		y += -vy * dt;
+		y += vy * dt;
 	}
 }
 
@@ -92,6 +91,10 @@ void CMushroom::SetState(int state)
 	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
 	switch (state)
 	{
+	case MUSHROOM_STATE_RISE_UP:
+		this->vy = -MUSHROOM_RISE_UP_SPEED;
+		break;
+
 	case MUSHROOM_STATE_OUT_OF_BRICK:
 		if (this->x > mario->GetX())
 			vx = MUSHROOM_SPEED_X;

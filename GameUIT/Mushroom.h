@@ -10,6 +10,7 @@
 #define MUSHROOM_GRAVITY 0.002f
 #define MUSHROOM_RISE_UP_SPEED 0.016f
 #define MUSHROOM_STATE_IN_THE_BRICK 0
+#define MUSHROOM_STATE_RISE_UP 5
 #define MUSHROOM_STATE_OUT_OF_BRICK 10
 
 #define MUSHROOM_RISEN_UP_TIME 300
@@ -22,14 +23,14 @@ class CMushroom : public CGameObject
 	//2 loại Nấm: Đỏ và Xanh
 	float ax, ay, brickminY;
 public:
-	CMushroom(float x, float y, float brickY, ULONGLONG Hitted_time) : CGameObject(x, y)
+	CMushroom(float x, float y, float brickmin_Y) : CGameObject(x, y)
 	{
 		this->vx = 0;
 		this->ax = 0;
 		this->ay = MUSHROOM_GRAVITY;
-		this->vy = MUSHROOM_RISE_UP_SPEED;
-		brickminY = brickY;
-		state = MUSHROOM_STATE_IN_THE_BRICK; //Ban đầu sẽ ở trong cục gạch
+		this->vy = 0;
+		brickminY = brickmin_Y;
+		state = MUSHROOM_STATE_IN_THE_BRICK; //Ban đầu sẽ ở trong cục gạch -> không vẽ
 	}
 	void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
 
@@ -37,7 +38,7 @@ public:
 
 	int IsBlocking() { return 0; }
 
-	int IsCollidable() { return 1; };
+	int IsCollidable() { return state != MUSHROOM_STATE_IN_THE_BRICK; };
 
 	void OnNoCollision(DWORD dt);
 

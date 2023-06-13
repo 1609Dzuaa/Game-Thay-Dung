@@ -54,11 +54,7 @@ void CQuestionBrick::SpawnCoin(float xBrick, float yBrick, float veloY)
 
 void CQuestionBrick::SpawnMushroom(float xBrick, float yBrick)
 {
-	CPlayScene* current_scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
-	CMushroom* mushroom = new CMushroom(xBrick, yBrick - QBRICK_BBOX_HEIGHT / 2 - 2.5f, 109.0f, GetTickCount64());
-	mushroom->SetBrickMinY(minY);
-	mushroom->SetMushroomX(x);
-	current_scene->AddObjectToScene(mushroom);
+	mr->SetState(MUSHROOM_STATE_RISE_UP);
 }
 
 void CQuestionBrick::SpawnLeaf(float xBrick, float yBrick)

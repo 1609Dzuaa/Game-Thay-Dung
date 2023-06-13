@@ -420,11 +420,13 @@ void CMario::OnCollisionWithQuesBrick(LPCOLLISIONEVENT e)
 void CMario::OnCollisionWithMushroom(LPCOLLISIONEVENT e)
 {
 	CMushroom* mr = dynamic_cast<CMushroom*>(e->obj);
-	SpawnScore(mr);
-	mr->Delete();
+	if (mr->GetState() != MUSHROOM_STATE_IN_THE_BRICK)
+	{
+		SpawnScore(mr);
+		mr->Delete();
 
-	this->SetLevel(2);
-
+		this->SetLevel(2);
+	}
 	//Da Fuq Mario blocking Mushroom ??
 }
 

@@ -6,15 +6,17 @@ void CTube::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	//Nếu Mario ở trong tầm tấn công thì trồi lên
 	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
-	if (mario->GetX() >= this->x - ATTACK_ZONE && !shoot_flower->IsDeleted())  //ở gần VÀ ở trong tầm tấn công
+	if (mario->GetX() >= this->x - ATTACK_ZONE && !shoot_flower->IsDeleted())
 		 SpawnShootingFlower(); //Tạm để đây xem lại sau
 }
 
 void CTube::SpawnShootingFlower()
 {
-	this->shoot_flower->SetState(SHOOTING_FLOWER_STATE_OUT_OF_TUBE);
-	
-	
+	if (shoot_flower->GetState() == SHOOTING_FLOWER_STATE_IN_TUBE) //chỉ khi đang ở trong Tube thì mới trỗi dậy
+		this->shoot_flower->SetState(SHOOTING_FLOWER_STATE_OUT_OF_TUBE);
+	//problem here
+	//Khi Mario trong tầm nguy hiểm thì hàm này sẽ bị gọi nhiều lần dẫn đến 
+	//việc hoa luôn trong tình trạng out_of_tube
 }
 
 void CTube::Render()

@@ -1,6 +1,8 @@
 ﻿#include "Animation.h"
 #include "Animations.h"
 #include "Brick.h"
+#include "Mushroom.h"
+#include "PlayScene.h"
 
 //Map 1-1 Question Brick cho ra 3 loại items: coin, nấm, lá
 #pragma region QUESTION_BRICK_TYPE 
@@ -28,13 +30,21 @@ class CQuestionBrick :public CBrick
 	float minY, currentY;
 	bool isEmpty;
 	int type;
+	CMushroom* mr = NULL;
 public:
 
 	CQuestionBrick(float x, float y, int type) : CBrick(x, y)
 	{
+		CPlayScene* current_scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
 		this->currentY = y;
 		this->minY = y - QBRICK_BBOX_HEIGHT; //Càng lên cao y càng giảm
 		this->type = type;
+		if (type == HAS_MUSHROOM)
+		{
+			mr = new CMushroom(x, y, y - MUSHROOM_BBOX_HEIGHT + 0.2f);
+			current_scene->AddObjectToScene(mr);
+		}
+		//Tạo sẵn nấm và xếp nó ở đây, mục đích để vẽ "đè" khi nấm đang chui lên
 		isEmpty = false;
 	}
 

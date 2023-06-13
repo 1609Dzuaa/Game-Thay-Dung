@@ -333,7 +333,7 @@ void CCollision::Process(LPGAMEOBJECT objSrc, DWORD dt, vector<LPGAMEOBJECT>* co
 				objSrc->OnCollisionWith(colX);
 			}
 			else
-				if (colY != NULL)
+				/*if (colY != NULL)
 				{
 					//maybe check here ?
 					float objX, objY;
@@ -350,13 +350,13 @@ void CCollision::Process(LPGAMEOBJECT objSrc, DWORD dt, vector<LPGAMEOBJECT>* co
 					objSrc->OnCollisionWith(colY);
 					//Phần mới thêm vào tránh việc rùa bị rơi xuống nền
 					//ngay cả khi trong trạng thái ngủ
-				}
-		        /*if (colY != NULL)
+				}*/
+		        if (colY != NULL)
 				{
 					x += dx;
 					y += colY->t * dy + colY->ny * BLOCK_PUSH_FACTOR;
 					objSrc->OnCollisionWith(colY);
-				}*/ //Phần cũ của thầy
+				} //Phần cũ của thầy
 				else // both colX & colY are NULL 
 				{
 					x += dx;

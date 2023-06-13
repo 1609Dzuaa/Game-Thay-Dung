@@ -17,6 +17,7 @@ using namespace std;
 #define SCREEN_WIDTH 272
 #define SCREEN_HEIGHT 256
 #define MAP1_1_WIDTH 2816
+#define MAP1_1_HEIGHT 432
 
 #define MAX_FRAME_RATE 100
 #define KEYBOARD_BUFFER_SIZE 1024

@@ -8,27 +8,37 @@ void CShootingFlower::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	if (y <= minY)
 	{
-		this->SetState(SHOOTING_FLOWER_STATE_ATTACK);
-		this->minY = y;
+		this->SetState(SHOOTING_FLOWER_STATE_ATTACK); //chui lên cao nhất thì tấn công
+		this->y = minY;
 	}
+
+	if (y >= maxY)
+	{
+		this->SetState(SHOOTING_FLOWER_STATE_IN_TUBE); //chui xuống thấp nhất thì ngưng vẽ, cập nhật
+		this->y = maxY;
+	}
+
+	if (state == SHOOTING_FLOWER_STATE_ATTACK)
+		AimAndShoot();
 
 	CCollision::GetInstance()->Process(this, dt, coObjects);
 	
-	DebugOutTitle(L"Flower Y: %f", y);
-	//SHOULD ADD RIGHT LEFT LOGIC TO FLOWER HERE
+	//DebugOutTitle(L"State: %d", state);
+	//SHOULD ADD RIGHT LEFT LOGIC TO FLOWER HERE?
 }
 
 void CShootingFlower::OnNoCollision(DWORD dt)
 {
 	y += vy * dt;
+	DebugOutTitle(L"State: %d", state);
 }
 
 void CShootingFlower::Render()
 {
 	CAnimations* animations = CAnimations::GetInstance();
-	if (GetAniID() == -1);
-	else
-		animations->Get(GetAniID())->Render(x, y);
+	int animation_ID = GetAniID();
+	if (animation_ID != -1)
+		animations->Get(animation_ID)->Render(x, y);
 }
 
 int CShootingFlower::GetAniID()
@@ -36,21 +46,21 @@ int CShootingFlower::GetAniID()
 	int aniID = -1;
 	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
 
-	if (state == SHOOTING_FLOWER_STATE_OUT_OF_TUBE)
+	if (state == SHOOTING_FLOWER_STATE_OUT_OF_TUBE) //trỗi dậy
 	{
 		if (mario->GetX() > this->x)
 			aniID = ID_ANI_FLOWER_RISE_UP_RIGHT;
 		else if(mario->GetX() < this->x)
 			aniID = ID_ANI_FLOWER_RISE_UP_LEFT;
 	}
-	else if (state == SHOOTING_FLOWER_STATE_DIVE)
+	else if (state == SHOOTING_FLOWER_STATE_DIVE) //chui xuống
 	{
 		if (mario->GetX() > this->x)
 			aniID = ID_ANI_FLOWER_DIVE_RIGHT;
 		else if (mario->GetX() < this->x)
 			aniID = ID_ANI_FLOWER_DIVE_LEFT;
 	}
-	else if (state == SHOOTING_FLOWER_STATE_ATTACK)
+	else if (state == SHOOTING_FLOWER_STATE_ATTACK) //đứng yên ngắm bắn
 	{
 		if (mario->GetX() > this->x)
 			aniID = ID_ANI_FLOWER_IDLE_RIGHT;
@@ -67,11 +77,13 @@ void CShootingFlower::SetState(int state)
 	{
 	case SHOOTING_FLOWER_STATE_DIVE:
 		vy = SHOOTING_FLOWER_RISE_SPEED;
+		isArise = false;
 
 		break;
 
 	case SHOOTING_FLOWER_STATE_OUT_OF_TUBE:
 		vy = -SHOOTING_FLOWER_RISE_SPEED;
+		isArise = true;
 
 		break;
 

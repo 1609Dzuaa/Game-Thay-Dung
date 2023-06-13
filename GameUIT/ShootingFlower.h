@@ -14,7 +14,7 @@
 #define FLOWER_HEIGHT 32
 
 #define SHOOTING_FLOWER_STATE_IN_TUBE -1 //Chờ được vẽ và cập nhật
-#define SHOOTING_FLOWER_STATE_DIVE 0
+#define SHOOTING_FLOWER_STATE_DIVE 0 //dive tới một đoạn nhất định trong ống
 #define SHOOTING_FLOWER_STATE_OUT_OF_TUBE 1 //Đc Vẽ và cập nhật
 #define SHOOTING_FLOWER_STATE_ATTACK 2
 #define SHOOTING_FLOWER_STATE_DIE 3
@@ -28,9 +28,10 @@
 
 class CShootingFlower :public CGameObject 
 {
-	float minY;
+	float minY, maxY;
+	bool isArise;
 public:
-	CShootingFlower() { minY = -1; };
+	CShootingFlower() { minY = -1; maxY = -1; isArise = false; };
 	CShootingFlower(float x, float y) :CGameObject(x, y)
 	{
 		this->x = x;
@@ -38,6 +39,8 @@ public:
 		this->vy = 0;
 		this->state = SHOOTING_FLOWER_STATE_IN_TUBE;
 		minY = y - FLOWER_HEIGHT / 2 + 1.5f;
+		maxY = y + FLOWER_HEIGHT / 2 + 1.5f;
+		isArise = false;
 	}
 	void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
 	void Render();
@@ -50,4 +53,6 @@ public:
 	void SetFlowerMinY(float min_Y) { this->minY = min_Y; }
 
 	int GetAniID();
+
+	bool GetIsArise() { return isArise; }
 };
