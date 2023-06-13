@@ -4,20 +4,16 @@
 
 void CFireBullet::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
-	vx += ax * dt;
-	vy += ay * dt;
-
 	CCollision::GetInstance()->Process(this, dt, coObjects);
 }
 
 void CFireBullet::OnCollisionWith(LPCOLLISIONEVENT e)
 {
-	if (!e->obj->IsBlocking()) return;
+	if (e->obj->IsBlocking()) return;
 }
 
 void CFireBullet::OnNoCollision(DWORD dt)
 {
-	//y = ax + b
 	x += vx * dt;
 	y += vy * dt;
 }

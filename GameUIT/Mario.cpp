@@ -440,34 +440,53 @@ void CMario::OnCollisionWithLeaf(LPCOLLISIONEVENT e)
 
 void CMario::OnCollisionWithFlower(LPCOLLISIONEVENT e)
 {
-	if (this->level > MARIO_LEVEL_BIG)
+	if (isAttacking)
 	{
-		this->SetLevel(MARIO_LEVEL_BIG);
-		StartUntouchable();
+		e->obj->Delete();
+		SpawnScore(e->obj);
+		SpawnEffect(e);
 	}
-	else if (this->level > MARIO_LEVEL_SMALL)
+	else 
 	{
-		this->SetLevel(MARIO_LEVEL_SMALL);
-		StartUntouchable();
+		if (!untouchable)
+		{
+			if (level > MARIO_LEVEL_BIG)
+			{
+				level = MARIO_LEVEL_BIG;
+				StartUntouchable();
+			}
+			else if (level > MARIO_LEVEL_SMALL)
+			{
+				level = MARIO_LEVEL_SMALL;
+				StartUntouchable();
+			}
+			else
+			{
+				SetState(MARIO_STATE_DIE);
+			}
+		}
 	}
-	else
-		this->SetState(MARIO_STATE_DIE);
 }
 
 void CMario::OnCollisionWithFireBullet(LPCOLLISIONEVENT e)
 {
-	if (this->level > MARIO_LEVEL_BIG)
+	if (!untouchable)
 	{
-		this->SetLevel(MARIO_LEVEL_BIG);
-		StartUntouchable();
+		if (level > MARIO_LEVEL_BIG)
+		{
+			level = MARIO_LEVEL_BIG;
+			StartUntouchable();
+		}
+		else if (level > MARIO_LEVEL_SMALL)
+		{
+			level = MARIO_LEVEL_SMALL;
+			StartUntouchable();
+		}
+		else
+		{
+			SetState(MARIO_STATE_DIE);
+		}
 	}
-	else if (this->level > MARIO_LEVEL_SMALL)
-	{
-		this->SetLevel(MARIO_LEVEL_SMALL);
-		StartUntouchable();
-	}
-	else if (this->level == MARIO_LEVEL_SMALL)
-		this->SetState(MARIO_STATE_DIE);
 }
 
 //
@@ -1003,8 +1022,15 @@ void CMario::SpawnEffect(LPCOLLISIONEVENT e)
 	else
 		x = this->x + MARIO_RACOON_BBOX_WIDTH / 2;
 
-	float y = this->y + MARIO_RACOON_BBOX_HEIGHT / 4;
-	CEffectCollision* eff_col = new CEffectCollision(x, y, GetTickCount64());
-	CPlayScene* current_scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
-	current_scene->AddObjectToScene(eff_col);
+	if (dynamic_cast<CShootingFlower*>(e->obj))
+	{
+
+	}
+	else 
+	{
+		float y = this->y + MARIO_RACOON_BBOX_HEIGHT / 4;
+		CEffectCollision* eff_col = new CEffectCollision(x, y, GetTickCount64());
+		CPlayScene* current_scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
+		current_scene->AddObjectToScene(eff_col);
+	}
 }

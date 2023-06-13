@@ -2,6 +2,7 @@
 #include "Effect.h"
 
 #define ANI_ID_EFFECT_COLLISION 15
+#define ANI_ID_EFFECT_COLLISION_SMOKE 20
 
 #define EFFECT_COLLISION_TIME_OUT 180
 
