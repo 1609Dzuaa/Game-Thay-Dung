@@ -22,11 +22,19 @@ void CQuestionBrick::OnNoCollision(DWORD dt)
 
 void CQuestionBrick::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
+	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
+	if (this->HasItem)
+	{
+		if (mario->GetLevel() != MARIO_LEVEL_SMALL) //level lớn thì cho lá
+			this->type = HAS_LEAF;
+		else //level nhỏ thì cho nấm
+			this->type = HAS_MUSHROOM;
+	}
+
 	isEmpty = false;
 	HandleBouncingBrick();
 	if (isEmpty && this->type == HAS_MUSHROOM)
 		SpawnMushroom(x, y);
-	CGameObject::Update(dt,coObjects);
 	CCollision::GetInstance()->Process(this, dt, coObjects);
 }
 

@@ -41,6 +41,13 @@ void CMario::UpdateMarioState()
 		untouchable = 0;
 	}
 
+	if (GetTickCount64() - evolve_start > MARIO_EVOLVE_TIME && isEvolving)
+	{
+		this->SetLevel(MARIO_LEVEL_BIG);
+		isEvolving = false;
+		evolve_start = 0;
+	}
+
 	if (this->isJumping && this->level == MARIO_LEVEL_RACOON && this->vy >= 0)
 	{
 		this->SetState(MARIO_RACOON_STATE_FALLING);
@@ -425,7 +432,7 @@ void CMario::OnCollisionWithMushroom(LPCOLLISIONEVENT e)
 		SpawnScore(mr);
 		mr->Delete();
 
-		this->SetLevel(2);
+		this->SetState(MARIO_STATE_EVOLVING);
 	}
 	//Da Fuq Mario blocking Mushroom ??
 }
@@ -522,6 +529,13 @@ int CMario::GetAniIdSmall()
 				aniId = ID_ANI_MARIO_SMALL_KICKING_RIGHT;
 			else
 				aniId = ID_ANI_MARIO_SMALL_KICKING_LEFT;
+		}
+		else if (isEvolving)
+		{
+			if (nx > 0)
+				aniId = ID_ANI_MARIO_SMALL_EVOLVE_TO_BIG_RIGHT;
+			else
+				aniId = ID_ANI_MARIO_SMALL_EVOLVE_TO_BIG_LEFT;
 		}
 		else
 		{
@@ -875,13 +889,7 @@ void CMario::SetState(int state)
 			vx = 0; vy = 0.0f;
 			y += MARIO_SIT_HEIGHT_ADJUST;
 		}
-		else if (isOnPlatform && level == MARIO_LEVEL_RACOON)
-		{
-			state = MARIO_STATE_IDLE;
-			isSitting = true;
-			vx = 0; vy = 0.0f;
-			y += MARIO_SIT_HEIGHT_ADJUST;
-		}*/
+		else*/
 		if (isOnPlatform && level != MARIO_LEVEL_SMALL)
 		{
 			state = MARIO_STATE_IDLE;
@@ -902,15 +910,21 @@ void CMario::SetState(int state)
 
 	case MARIO_RACOON_STATE_ATTACK:
 		if (isSitting) break;
+		attack_start = GetTickCount64();
 		isAttacking = true;
 		isKicking = false;
 		isSitting = false;
-		attack_start = GetTickCount64();
 		break;
 
 	case MARIO_STATE_IDLE:
 		ax = 0.0f;
 		vx = 0.0f;
+		break;
+
+	case MARIO_STATE_EVOLVING:
+		evolve_start = GetTickCount64();
+		isEvolving = true;
+		y -= MARIO_BIG_BBOX_HEIGHT / 2;
 		break;
 
 	case MARIO_STATE_DIE:
@@ -948,16 +962,16 @@ void CMario::GetBoundingBox(float& left, float& top, float& right, float& bottom
 		if (isSitting)
 		{
 			left = x - MARIO_RACOON_SITTING_BBOX_WIDTH / 2;
-			top = y - MARIO_RACOON_SITTING_BBOX_HEIGHT / 2;
+			top = y - MARIO_BIG_SITTING_BBOX_HEIGHT / 2;
 			right = left + MARIO_RACOON_SITTING_BBOX_WIDTH;
-			bottom = top + MARIO_RACOON_SITTING_BBOX_HEIGHT;
+			bottom = top + MARIO_BIG_SITTING_BBOX_HEIGHT;
 		}
 		else
 		{
 			left = x - MARIO_RACOON_BBOX_WIDTH / 2;
-			top = y - MARIO_RACOON_BBOX_HEIGHT / 2;
+			top = y - MARIO_BIG_BBOX_HEIGHT / 2;
 			right = left + MARIO_RACOON_BBOX_WIDTH;
-			bottom = top + MARIO_RACOON_BBOX_HEIGHT;
+			bottom = top + MARIO_BIG_BBOX_HEIGHT;
 		}
 	}
 	else
@@ -1022,15 +1036,15 @@ void CMario::SpawnEffect(LPCOLLISIONEVENT e)
 	else
 		x = this->x + MARIO_RACOON_BBOX_WIDTH / 2;
 
-	if (dynamic_cast<CShootingFlower*>(e->obj))
-	{
+	//if (dynamic_cast<CShootingFlower*>(e->obj))
+	//{
 
-	}
-	else 
-	{
-		float y = this->y + MARIO_RACOON_BBOX_HEIGHT / 4;
-		CEffectCollision* eff_col = new CEffectCollision(x, y, GetTickCount64());
-		CPlayScene* current_scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
-		current_scene->AddObjectToScene(eff_col);
-	}
+	//}
+	//else 
+	//{
+	float y = this->y + MARIO_BIG_BBOX_HEIGHT / 4;
+	CEffectCollision* eff_col = new CEffectCollision(x, y, GetTickCount64());
+	CPlayScene* current_scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
+	current_scene->AddObjectToScene(eff_col);
+	//}
 }

@@ -35,7 +35,7 @@ void CMushroom::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		vy += ay * dt;
 		vx += ax * dt;
 	}
-
+	DebugOutTitle(L"Vx: %f", vx);
 	CCollision::GetInstance()->Process(this, dt, coObjects);
 }
 
@@ -98,7 +98,7 @@ void CMushroom::SetState(int state)
 	case MUSHROOM_STATE_OUT_OF_BRICK:
 		if (this->x > mario->GetX())
 			vx = MUSHROOM_SPEED_X;
-		else
+		else if(this->x<mario->GetX())
 			vx = -MUSHROOM_SPEED_X;
 		break;
 	}

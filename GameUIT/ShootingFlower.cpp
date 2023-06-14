@@ -27,7 +27,6 @@ void CShootingFlower::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 void CShootingFlower::OnNoCollision(DWORD dt)
 {
 	y += vy * dt;
-	DebugOutTitle(L"State: %d", state);
 }
 
 void CShootingFlower::Render()

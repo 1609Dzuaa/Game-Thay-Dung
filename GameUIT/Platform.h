@@ -5,13 +5,8 @@
 // The most popular type of object in Mario! 
 // 
 
-#define TRADITIONAL_PLATFORM 1
-#define COLOR_PLATFORM 2
-
 class CPlatform : public CGameObject
 {
-	int HasFlowerInside;
-	int TypeOfFlower;
 protected:
 	int length;				// Unit: cell 
 	float cellWidth;
@@ -34,7 +29,6 @@ public:
 	void Render();
 	void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
 	int IsBlocking() { return 1; } //Platform là loại Object đặc biệt
-	//int IsCollidable() { return 1; }
 	void GetBoundingBox(float& l, float& t, float& r, float& b);
 	//void RenderBoundingBox();
 };

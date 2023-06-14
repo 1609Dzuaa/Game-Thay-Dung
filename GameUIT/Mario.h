@@ -48,6 +48,8 @@
 #define MARIO_RACOON_STATE_LANDING 715
 #define MARIO_RACOON_STATE_FLYING 720
 
+#define MARIO_STATE_EVOLVING 725
+
 #define MARIO_STATE_JUMP_AT_MAX_SPEED 730
 
 #pragma region ANIMATION_ID
@@ -85,7 +87,6 @@
 #define ID_ANI_MARIO_BIG_JUMP_AT_MAX_SPEED_LEFT	1050	
 #define ID_ANI_MARIO_BIG_JUMP_AT_MAX_SPEED_RIGHT	1051
 
-
 #define ID_ANI_MARIO_DIE 999
 
 // SMALL MARIO
@@ -118,6 +119,10 @@
 
 #define ID_ANI_MARIO_SMALL_JUMP_AT_MAX_SPEED_LEFT	1760	
 #define ID_ANI_MARIO_SMALL_JUMP_AT_MAX_SPEED_RIGHT	1761
+
+#define ID_ANI_MARIO_SMALL_EVOLVE_TO_BIG_LEFT 1770
+#define ID_ANI_MARIO_SMALL_EVOLVE_TO_BIG_RIGHT 1771
+
 //
 //RACOON MARIO
 //
@@ -171,28 +176,25 @@
 
 #define	MARIO_LEVEL_SMALL	1
 #define	MARIO_LEVEL_BIG		2
-#define MARIO_LEVEL_RACOON 3
+#define MARIO_LEVEL_RACOON	3
 
 #define MARIO_BIG_BBOX_WIDTH  14
 #define MARIO_BIG_BBOX_HEIGHT 24
 #define MARIO_BIG_SITTING_BBOX_WIDTH  14
-#define MARIO_BIG_SITTING_BBOX_HEIGHT 16
+#define MARIO_BIG_SITTING_BBOX_HEIGHT 16 //Big & Racoon share the same Height when SIT
 
 #define MARIO_RACOON_BBOX_WIDTH  24 //USED TO BE 21
-#define MARIO_RACOON_BBOX_HEIGHT 24
 #define MARIO_RACOON_SITTING_BBOX_WIDTH  22
-#define MARIO_RACOON_SITTING_BBOX_HEIGHT 16
 
 #define MARIO_SIT_HEIGHT_ADJUST ((MARIO_BIG_BBOX_HEIGHT - MARIO_BIG_SITTING_BBOX_HEIGHT) / 2)
-#define MARIO_RACOON_SIT_HEIGHT_ADJSUT ((MARIO_RACOON_BBOX_HEIGHT - MARIO_RACOON_SITTING_BBOX_HEIGHT) / 2)
 
 #define MARIO_SMALL_BBOX_WIDTH  12 //USED TO BE 13
 #define MARIO_SMALL_BBOX_HEIGHT 12 //CALCULATE RA 16 17 ??
 
-
 #define MARIO_UNTOUCHABLE_TIME 2500
 #define MARIO_KICK_TIME 150
 #define MARIO_RACOON_ATTACK_TIME 450
+#define MARIO_EVOLVE_TIME 800
 
 #define NORMAL_SCORE 10
 #define DOUBLE_SCORE 20
@@ -210,6 +212,7 @@ class CMario : public CGameObject
 	BOOLEAN canFly;
 	BOOLEAN isAtMaxSpeed;
 	BOOLEAN isLanding;
+	BOOLEAN isEvolving;
 	float maxVx;
 	float maxRunningSpeed;
 	float ax;				// acceleration on x 
@@ -220,6 +223,7 @@ class CMario : public CGameObject
 	ULONGLONG untouchable_start;
 	ULONGLONG kick_start; //Tính thời gian sút để giải phóng Mario khỏi hành động sút
 	ULONGLONG attack_start;
+	ULONGLONG evolve_start;
 	BOOLEAN isOnPlatform;
 	int CountJumpOnEnemies; //Đếm số bước nhảy 0 CHẠM ĐẤT để có số điểm tương ứng
 	int coin;
@@ -259,6 +263,7 @@ public:
 		canFly = false;
 		isAtMaxSpeed = false;
 		isLanding = false;
+		isEvolving = false;
 		CountJumpOnEnemies = 0;
 
 		maxVx = 0;
@@ -271,6 +276,7 @@ public:
 		untouchable_start = -1;
 		kick_start = 0;
 		attack_start = 0;
+		evolve_start = 0;
 		isOnPlatform = false;
 		coin = 0;
 	}

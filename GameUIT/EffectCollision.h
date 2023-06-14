@@ -1,10 +1,15 @@
-#pragma once
+﻿#pragma once
 #include "Effect.h"
+
+#define EFFECT_COLLISION_TYPE_NORMAL 0
+#define EFFECT_COLLISION_TYPE_SMOKE 1
 
 #define ANI_ID_EFFECT_COLLISION 15
 #define ANI_ID_EFFECT_COLLISION_SMOKE 20
 
 #define EFFECT_COLLISION_TIME_OUT 180
+
+//Vụt cây sinh ra cả hiệu ứng vụt lẫn hiệu ứng khói
 
 class CEffectCollision : public CEffect 
 {

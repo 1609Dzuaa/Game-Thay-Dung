@@ -7,9 +7,12 @@
 //Map 1-1 Question Brick cho ra 3 loại items: coin, nấm, lá
 #pragma region QUESTION_BRICK_TYPE 
 
-#define HAS_COIN 1
-#define HAS_MUSHROOM 2
-#define HAS_LEAF 3
+#define HAS_NO_ITEM 0
+#define HAS_ITEM 1
+
+#define HAS_COIN 2
+#define HAS_MUSHROOM 3
+#define HAS_LEAF 4
 
 #pragma endregion 
 
@@ -21,30 +24,34 @@
 
 #define QBRICK_STATE_HITTED 10
 
-
 #define BOUNCING_DISTANCE 5.0f
 #define BOUNCING_SPEED 0.1f
 
 class CQuestionBrick :public CBrick 
 {
 	float minY, currentY;
-	bool isEmpty;
+	bool isEmpty; //check đã bóc hàng hay chưa
+	int HasItem; //Có quà hay không
 	int type;
 	CMushroom* mr = NULL;
 public:
 
-	CQuestionBrick(float x, float y, int type) : CBrick(x, y)
+	CQuestionBrick(float x, float y, int Has_Item) : CBrick(x, y)
 	{
 		CPlayScene* current_scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
 		this->currentY = y;
 		this->minY = y - QBRICK_BBOX_HEIGHT; //Càng lên cao y càng giảm
-		this->type = type;
-		if (type == HAS_MUSHROOM)
+		this->HasItem = Has_Item;
+		this->type = -1;
+		if (!this->HasItem)
+			this->type = HAS_COIN;
+		else 
 		{
 			mr = new CMushroom(x, y, y - MUSHROOM_BBOX_HEIGHT + 0.2f);
 			current_scene->AddObjectToScene(mr);
+			//Tạo sẵn nấm và thêm nó vào scene, mục đích để vẽ "đè" khi nấm đang chui lên
+			//Careful: How 'bout mario level > small & this mr had never been used ?!
 		}
-		//Tạo sẵn nấm và xếp nó ở đây, mục đích để vẽ "đè" khi nấm đang chui lên
 		isEmpty = false;
 	}
 
