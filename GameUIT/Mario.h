@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "GameObject.h"
+#include "Tail.h"
 #include "Goomba.h"
 #include "Koopa.h"
 #include "Animation.h"
@@ -183,9 +184,6 @@
 #define MARIO_BIG_SITTING_BBOX_WIDTH  14
 #define MARIO_BIG_SITTING_BBOX_HEIGHT 16 //Big & Racoon share the same Height when SIT
 
-#define MARIO_RACOON_BBOX_WIDTH  24 //USED TO BE 21
-#define MARIO_RACOON_SITTING_BBOX_WIDTH  22
-
 #define MARIO_SIT_HEIGHT_ADJUST ((MARIO_BIG_BBOX_HEIGHT - MARIO_BIG_SITTING_BBOX_HEIGHT) / 2)
 
 #define MARIO_SMALL_BBOX_WIDTH  12 //USED TO BE 13
@@ -217,6 +215,7 @@ class CMario : public CGameObject
 	float maxRunningSpeed;
 	float ax;				// acceleration on x 
 	float ay;				// acceleration on y 
+	CTail* tail;
 
 	int level;
 	int untouchable;
@@ -251,7 +250,6 @@ class CMario : public CGameObject
 	int GetAniIdBig();
 	int GetAniIdSmall();
 	int GetAniIdRacoon();
-
 public:
 	CMario(float x, float y) : CGameObject(x, y)
 	{
@@ -265,6 +263,7 @@ public:
 		isLanding = false;
 		isEvolving = false;
 		CountJumpOnEnemies = 0;
+		tail = nullptr;
 
 		maxVx = 0;
 		maxRunningSpeed = MARIO_RUNNING_SPEED;

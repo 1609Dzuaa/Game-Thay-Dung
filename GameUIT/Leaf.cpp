@@ -48,7 +48,6 @@ void CLeaf::Render()
 		animations->Get(ID_ANI_LEAF_RIGHT)->Render(x, y);
 	else
 		animations->Get(ID_ANI_LEAF_LEFT)->Render(x, y);
-	RenderBoundingBox();
 }
 
 void CLeaf::OnNoCollision(DWORD dt)

@@ -29,6 +29,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 	isOnPlatform = false;
 	CCollision::GetInstance()->Process(this, dt, coObjects);
+	//DebugOutTitle(L"Pos Y: %f", y);
 }
 
 void CMario::UpdateMarioState()
@@ -148,6 +149,7 @@ void CMario::OnCollisionWithColorPlatform(LPCOLLISIONEVENT e)
 	{
 		CColorPlatform* cl_pf = dynamic_cast<CColorPlatform*>(e->obj);
 		HandleCollisionWithColorPlatform(e, cl_pf);
+		CountJumpOnEnemies = 0;
 	}
 }
 
@@ -242,7 +244,7 @@ void CMario::HandleCollisionOtherDirectionWithGoomba(LPCOLLISIONEVENT e, CGoomba
 			{
 				SpawnScore(goomba);
 				SpawnEffect(e);
-				goomba->SetState(GOOMBA_STATE_DIE_REVERSE);
+				tail->OnCollisionWithGoomba(e);
 			}
 			else
 			{
@@ -768,7 +770,7 @@ void CMario::Render()
 		aniId = GetAniIdRacoon();
 
 	animations->Get(aniId)->Render(x, y);
-	//RenderBoundingBox();
+	RenderBoundingBox();
 }
 
 void CMario::SetState(int state)
@@ -882,15 +884,15 @@ void CMario::SetState(int state)
 		break;
 
 	case MARIO_STATE_SIT:
-		/*if (isOnPlatform && level == MARIO_LEVEL_BIG)
+
+		if (isOnPlatform && level == MARIO_LEVEL_BIG)
 		{
 			state = MARIO_STATE_IDLE;
 			isSitting = true;
 			vx = 0; vy = 0.0f;
-			y += MARIO_SIT_HEIGHT_ADJUST;
+			y += MARIO_SIT_HEIGHT_ADJUST - 4.0f;
 		}
-		else*/
-		if (isOnPlatform && level != MARIO_LEVEL_SMALL)
+		else if (isOnPlatform && level == MARIO_LEVEL_RACOON)
 		{
 			state = MARIO_STATE_IDLE;
 			isSitting = true;
@@ -924,7 +926,7 @@ void CMario::SetState(int state)
 	case MARIO_STATE_EVOLVING:
 		evolve_start = GetTickCount64();
 		isEvolving = true;
-		y -= MARIO_BIG_BBOX_HEIGHT / 2;
+		//y -= MARIO_BIG_BBOX_HEIGHT / 2;
 		break;
 
 	case MARIO_STATE_DIE:
@@ -940,7 +942,7 @@ void CMario::SetState(int state)
 void CMario::GetBoundingBox(float& left, float& top, float& right, float& bottom)
 {
 	//Really IMPORTANT
-	if (level == MARIO_LEVEL_BIG)
+	if (level != MARIO_LEVEL_SMALL) //Big or Racoon
 	{
 		if (isSitting)
 		{
@@ -957,23 +959,6 @@ void CMario::GetBoundingBox(float& left, float& top, float& right, float& bottom
 			bottom = top + MARIO_BIG_BBOX_HEIGHT;
 		}
 	}
-	else if (level == MARIO_LEVEL_RACOON)
-	{
-		if (isSitting)
-		{
-			left = x - MARIO_RACOON_SITTING_BBOX_WIDTH / 2;
-			top = y - MARIO_BIG_SITTING_BBOX_HEIGHT / 2;
-			right = left + MARIO_RACOON_SITTING_BBOX_WIDTH;
-			bottom = top + MARIO_BIG_SITTING_BBOX_HEIGHT;
-		}
-		else
-		{
-			left = x - MARIO_RACOON_BBOX_WIDTH / 2;
-			top = y - MARIO_BIG_BBOX_HEIGHT / 2;
-			right = left + MARIO_RACOON_BBOX_WIDTH;
-			bottom = top + MARIO_BIG_BBOX_HEIGHT;
-		}
-	}
 	else
 	{
 		left = x - MARIO_SMALL_BBOX_WIDTH / 2;
@@ -981,7 +966,7 @@ void CMario::GetBoundingBox(float& left, float& top, float& right, float& bottom
 		right = left + MARIO_SMALL_BBOX_WIDTH;
 		bottom = top + MARIO_SMALL_BBOX_HEIGHT;
 	}
-	//DebugOutTitle(L"x, y, l, t, r, b: %f, %f, %f, %f, %f, %f", x, y, left, top, right, bottom);
+	//DebugOutTitle(L"y, l, t, r, b: %f, %f, %f, %f, %f, %f", y, left, top, right, bottom);
 }
 
 void CMario::SetLevel(int l)
@@ -991,7 +976,13 @@ void CMario::SetLevel(int l)
 	{
 		y -= (MARIO_BIG_BBOX_HEIGHT - MARIO_SMALL_BBOX_HEIGHT) / 2;
 	}
+	else if (level == MARIO_LEVEL_BIG)
+	{
+		tail = new CTail(x, y);
+		DebugOutTitle(L"Tail was created");
+	}
 	level = l;
+
 }
 
 void CMario::SpawnScore(LPGAMEOBJECT obj)
@@ -1030,11 +1021,11 @@ CEffectScore* CMario::ClassifyScore(LPGAMEOBJECT obj, CEffectScore* eff_scr)
 
 void CMario::SpawnEffect(LPCOLLISIONEVENT e)
 {
-	float x;
-	if (e->nx > 0)
-		x = this->x - MARIO_RACOON_BBOX_WIDTH / 2;
-	else
-		x = this->x + MARIO_RACOON_BBOX_WIDTH / 2;
+	/*float x;
+	//if (e->nx > 0)
+	//	x = this->x - MARIO_RACOON_BBOX_WIDTH / 2;
+	//else
+		//x = this->x + MARIO_RACOON_BBOX_WIDTH / 2;
 
 	//if (dynamic_cast<CShootingFlower*>(e->obj))
 	//{
@@ -1046,5 +1037,5 @@ void CMario::SpawnEffect(LPCOLLISIONEVENT e)
 	CEffectCollision* eff_col = new CEffectCollision(x, y, GetTickCount64());
 	CPlayScene* current_scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
 	current_scene->AddObjectToScene(eff_col);
-	//}
+	//}*/
 }

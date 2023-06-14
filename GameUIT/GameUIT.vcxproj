@@ -144,6 +144,7 @@
     <ClInclude Include="GameMap.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="Game.h" />
+    <ClInclude Include="GhostObject.h" />
     <ClInclude Include="Goomba.h" />
     <ClInclude Include="GoombaAssetIDs.h" />
     <ClInclude Include="KeyEventHandler.h" />
@@ -162,6 +163,7 @@
     <ClInclude Include="ShootingFlower.h" />
     <ClInclude Include="Sprite.h" />
     <ClInclude Include="Sprites.h" />
+    <ClInclude Include="Tail.h" />
     <ClInclude Include="Textures.h" />
     <ClInclude Include="Tube.h" />
     <ClInclude Include="Utils.h" />
@@ -194,6 +196,7 @@
     <ClCompile Include="ShootingFlower.cpp" />
     <ClCompile Include="Sprite.cpp" />
     <ClCompile Include="Sprites.cpp" />
+    <ClCompile Include="Tail.cpp" />
     <ClCompile Include="Textures.cpp" />
     <ClCompile Include="Tube.cpp" />
     <ClCompile Include="Utils.cpp" />

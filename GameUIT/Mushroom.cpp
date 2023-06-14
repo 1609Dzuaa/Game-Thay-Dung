@@ -35,7 +35,7 @@ void CMushroom::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		vy += ay * dt;
 		vx += ax * dt;
 	}
-	DebugOutTitle(L"Vx: %f", vx);
+	//DebugOutTitle(L"Vx: %f", vx);
 	CCollision::GetInstance()->Process(this, dt, coObjects);
 }
 
