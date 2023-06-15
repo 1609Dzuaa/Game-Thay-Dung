@@ -976,17 +976,21 @@ void CMario::SetLevel(int l)
 	{
 		if (tail != NULL) return;
 		tail = new CTail(x, y);
-		DebugOut(L"Tail was created\n");
+		CPlayScene* current_scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
+		current_scene->AddObjectToScene(tail);
+		DebugOut(L"Tail was created and add to object list\n");
 	}
 	else 
 	{
-		if (tail != NULL)
+		/*if (tail != NULL)
 		{
 			CTail* temp_tail = tail;
 			tail = NULL;
 			delete temp_tail;
+			CPlayScene* current_scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
+			current_scene->GetObjectsVector().erase(std::remove(current_scene->GetObjectsVector().begin(), current_scene->GetObjectsVector().end(), tail), current_scene->GetObjectsVector().end());
 			DebugOut(L"Delete Tail success!\n");
-		}
+		}*/
 	}
 
 	if (this->level == MARIO_LEVEL_SMALL)

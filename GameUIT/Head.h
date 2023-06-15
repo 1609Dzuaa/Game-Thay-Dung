@@ -2,8 +2,8 @@
 #include "GhostObject.h"
 #include "ColorPlatform.h"
 
-#define HEAD_BBOX_WIDTH	5
-#define HEAD_BBOX_HEIGHT	5
+#define HEAD_BBOX_WIDTH	16
+#define HEAD_BBOX_HEIGHT	14
 
 class CHead :public CGhostObject
 {
@@ -14,18 +14,17 @@ public:
 	{
 		this->x = x;
 		this->y = y;
-		this->ay = koopa_grav;
 		this->vx = koopa_vx;
-		isFallOff = 0;
+		this->ay = koopa_grav;
+		isFallOff = false;
 	};
 	void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
 	void Render();
 	void GetBoundingBox(float& left, float& top, float& right, float& bottom);
-	int IsBlocking() { return 0; }
-	int IsCollidable() { return 1; }
 	void OnNoCollision(DWORD dt);
 	void OnCollisionWith(LPCOLLISIONEVENT e);
+	void HandleCollisionWithBlockingObjects(LPCOLLISIONEVENT e);
 	void HandleCollisionWithColorPlatform(LPCOLLISIONEVENT e, CColorPlatform* color_platf);
-	int GetIsFallOff() { return isFallOff; }
+	bool GetIsFallOff() { return isFallOff; }
 	void SetIsFallOff(bool para) { this->isFallOff = para; }
 };

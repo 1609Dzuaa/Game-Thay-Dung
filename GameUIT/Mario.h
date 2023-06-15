@@ -1,12 +1,12 @@
 ﻿#pragma once
 #include "GameObject.h"
-#include "Tail.h"
 #include "Goomba.h"
 #include "Koopa.h"
 #include "Animation.h"
 #include "Animations.h"
 #include "ColorPlatform.h"
 #include "EffectScore.h"
+#include "Tail.h"
 
 #include "debug.h"
 

@@ -69,18 +69,9 @@ void CGoomba::OnNoCollision(DWORD dt)
 void CGoomba::OnCollisionWith(LPCOLLISIONEVENT e)
 {
 	//Xét va chạm giữa Goomba và VẬT KHÁC
-
-	if (dynamic_cast<CColorPlatform*>(e->obj))
-	{
-		CColorPlatform* cl_pf = dynamic_cast<CColorPlatform*>(e->obj);
-		HandleCollisionWithColorPlatform(e, cl_pf);
-	}
 	if (e->obj->IsBlocking()) HandleCollisionWithBlockingObjects(e);
 
 	if (!e->obj->IsBlocking()) return; //Nếu nó không có thuộc tính block thì kết thúc hàm này (On no collision inside here)
-	if (dynamic_cast<CGoomba*>(e->obj)) return; //Nếu VẬT KHÁC LÀ Goomba thì cũng bỏ qua hàm này 
-
-	//DebugOutTitle(L"Coins: %f", e->ny);
 }
 
 void CGoomba::HandleCollisionWithBlockingObjects(LPCOLLISIONEVENT e)
@@ -128,7 +119,6 @@ void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 void CGoomba::UpdateGoombaState()
 {
-	if (level == 3);// return;
 	if ((state == GOOMBA_STATE_DIE) && (GetTickCount64() - die_start > GOOMBA_DIE_TIMEOUT))
 	{
 		isDeleted = true;

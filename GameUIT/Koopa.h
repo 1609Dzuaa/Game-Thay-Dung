@@ -84,8 +84,7 @@ protected:
 	ULONGLONG knock_off_start;
 	BOOLEAN isOnPlatform;
 	BOOLEAN isFallOffColorPlatform; //use for Red Koopa only
-	//CHead* ghost_head; //use for Red Koopa
-	CGoomba* goomba;
+	CHead* ghost_head; //use for Red Koopa
 
 	virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom);
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);

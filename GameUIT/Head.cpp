@@ -4,15 +4,12 @@
 void CHead::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	vy += ay * dt;
-	//DebugOut(L"x, y: %f, %f", x, y);
 	CCollision::GetInstance()->Process(this, dt, coObjects);
 }
 
 void CHead::Render()
 {
-	
-	CAnimations::GetInstance()->Get(5000)->Render(x, y);
-	RenderBoundingBox();
+	//RenderBoundingBox();
 }
 
 void CHead::OnNoCollision(DWORD dt)
@@ -23,28 +20,29 @@ void CHead::OnNoCollision(DWORD dt)
 
 void CHead::OnCollisionWith(LPCOLLISIONEVENT e)
 {
-	if (e->obj->IsBlocking())
-	{
-		if (e->ny < 0)
-		{
-			vy = 0;
-			isFallOff = true;
-			return;
-		}
-	}
-
 	if (dynamic_cast<CColorPlatform*>(e->obj))
 	{
 		CColorPlatform* cl_pf = dynamic_cast<CColorPlatform*>(e->obj);
 		HandleCollisionWithColorPlatform(e, cl_pf);
 	}
+
+	if (e->obj->IsBlocking()) HandleCollisionWithBlockingObjects(e);
+}
+
+void CHead::HandleCollisionWithBlockingObjects(LPCOLLISIONEVENT e)
+{
+	if (e->ny < 0)
+	{
+		vy = 0;
+		isFallOff = true;
+	}
 }
 
 void CHead::HandleCollisionWithColorPlatform(LPCOLLISIONEVENT e, CColorPlatform* color_platf)
 {
-	if (HEAD_BBOX_HEIGHT + 3.0f + this->y > color_platf->GetY())
+	if (HEAD_BBOX_HEIGHT + this->y + 2.5f > color_platf->GetY())
 	{
-		this->y = (color_platf->GetY() - HEAD_BBOX_HEIGHT + 3);
+		this->y = (color_platf->GetY() - HEAD_BBOX_HEIGHT - 2.5f);
 		vy = 0;
 	}
 }

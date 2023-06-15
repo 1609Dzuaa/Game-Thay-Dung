@@ -10,15 +10,12 @@ CKoopa::CKoopa(float x, float y, int type) :CGameObject(x, y)
 	this->ax = 0; 
 	this->ay = KOOPA_GRAVITY;
 	this->type = type;
+	SetState(KOOPA_STATE_WALKING);
 	if (type == RED_KOOPA)
 	{
 		CPlayScene* current_scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
-		goomba = new CGoomba(x - KOOPA_BBOX_WIDTH / 2 - 5.0f, y, this->vx, this->ay);
-		goomba->SetX(547);
-		goomba->SetY(170);
-		goomba->SetVx(-0.03f);
-		goomba->SetAy(this->ay);
-		current_scene->AddObjectToScene(goomba);
+		ghost_head = new CHead(x - KOOPA_BBOX_WIDTH / 2 - 5.0f, y, this->vx, this->ay);
+		current_scene->AddObjectToScene(ghost_head);
 		DebugOut(L"Head was created\n");
 	}
 	die_start = -1;
@@ -27,8 +24,6 @@ CKoopa::CKoopa(float x, float y, int type) :CGameObject(x, y)
 	knock_off_start = -1;
 	isOnPlatform = false;
 	isFallOffColorPlatform = false;
-	SetState(KOOPA_STATE_WALKING);
-	//this->vx = -KOOPA_WALKING_SPEED;
 }
 
 void CKoopa::GetBoundingBox(float& left, float& top, float& right, float& bottom)
@@ -127,24 +122,15 @@ void CKoopa::UpdateKoopaState()
 {
 	if (type == RED_KOOPA)
 	{
-		if (goomba->GetIsFallOff())
+		if (ghost_head->GetIsFallOff()) //đầu ma rơi xuống platform 
 		{
 			this->vx = -vx;
-			goomba->SetIsFallOff(false);
+			ghost_head->SetSpeed(vx, 0);
+			ghost_head->SetIsFallOff(false);
 			if (this->vx < 0)
-			{
-				goomba->SetX(x - KOOPA_BBOX_WIDTH / 2 - 8.0f);
-				goomba->SetY(this->y);
-				goomba->SetVx(vx);
-				//goomba->SetPosition(x - KOOPA_BBOX_WIDTH / 2 - 10.0f, this->y);
-			}
+				ghost_head->SetPosition(x - KOOPA_BBOX_WIDTH / 2 - 10.0f, this->y);
 			else
-			{
-				goomba->SetX(x + KOOPA_BBOX_WIDTH / 2 + 5.0f);
-				goomba->SetY(this->y);
-				goomba->SetVx(vx);
-			}
-				//goomba->SetPosition(x + KOOPA_BBOX_WIDTH / 2 + 10.0f, this->y);
+				ghost_head->SetPosition(x + KOOPA_BBOX_WIDTH / 2 + 3.0f, this->y);
 		}
 	}
 
