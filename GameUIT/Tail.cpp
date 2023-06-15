@@ -3,7 +3,13 @@
 
 void CTail::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
+	CCollision::GetInstance()->Process(this, dt, coObjects);
+}
 
+void CTail::Render()
+{
+	RenderBoundingBox(); 
+	DebugOut(L"RENDER BBOX CALLED\n");
 }
 
 void CTail::OnNoCollision(DWORD dt)

@@ -1,6 +1,8 @@
 ﻿#pragma once
 #include "GameObject.h"
 #include "ColorPlatform.h"
+#include "Head.h"
+#include "Goomba.h"
 
 #pragma region KOOPA_TYPE 
 
@@ -82,7 +84,8 @@ protected:
 	ULONGLONG knock_off_start;
 	BOOLEAN isOnPlatform;
 	BOOLEAN isFallOffColorPlatform; //use for Red Koopa only
-	//Maybe using bool var isFallOffColorPlatf ?
+	//CHead* ghost_head; //use for Red Koopa
+	CGoomba* goomba;
 
 	virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom);
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);

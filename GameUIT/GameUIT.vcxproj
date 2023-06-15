@@ -147,6 +147,7 @@
     <ClInclude Include="GhostObject.h" />
     <ClInclude Include="Goomba.h" />
     <ClInclude Include="GoombaAssetIDs.h" />
+    <ClInclude Include="Head.h" />
     <ClInclude Include="KeyEventHandler.h" />
     <ClInclude Include="Koopa.h" />
     <ClInclude Include="KoopaAssetIDs.h" />
@@ -183,6 +184,7 @@
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Goomba.cpp" />
+    <ClCompile Include="Head.cpp" />
     <ClCompile Include="Koopa.cpp" />
     <ClCompile Include="Leaf.cpp" />
     <ClCompile Include="main.cpp" />

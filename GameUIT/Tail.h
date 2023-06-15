@@ -1,5 +1,6 @@
 #pragma once
 #include "GhostObject.h"
+#include "debug.h"
 //#include "Mario.h"
 
 #define TAIL_BBOX_WIDTH	10
@@ -14,10 +15,9 @@ public:
 		this->y = Mario_posY + 24 / 4;
 	};
 	void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
-	void Render() { RenderBoundingBox(); };
-	void GetBoundingBox(float& l, float& t, float& r, float& b);
+	void Render();
+	void GetBoundingBox(float& left, float& top, float& right, float& bottom);
 	void OnNoCollision(DWORD dt);
-	//void RenderBoundingBox();
 
 	//All collision_Func
 	void OnCollisionWith(LPCOLLISIONEVENT e);

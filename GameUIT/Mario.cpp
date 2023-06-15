@@ -972,17 +972,29 @@ void CMario::GetBoundingBox(float& left, float& top, float& right, float& bottom
 void CMario::SetLevel(int l)
 {
 	// Adjust position to avoid falling off platform
+	if (l == MARIO_LEVEL_RACOON)
+	{
+		if (tail != NULL) return;
+		tail = new CTail(x, y);
+		DebugOut(L"Tail was created\n");
+	}
+	else 
+	{
+		if (tail != NULL)
+		{
+			CTail* temp_tail = tail;
+			tail = NULL;
+			delete temp_tail;
+			DebugOut(L"Delete Tail success!\n");
+		}
+	}
+
 	if (this->level == MARIO_LEVEL_SMALL)
 	{
 		y -= (MARIO_BIG_BBOX_HEIGHT - MARIO_SMALL_BBOX_HEIGHT) / 2;
 	}
-	else if (level == MARIO_LEVEL_BIG)
-	{
-		tail = new CTail(x, y);
-		DebugOutTitle(L"Tail was created");
-	}
-	level = l;
 
+	level = l;
 }
 
 void CMario::SpawnScore(LPGAMEOBJECT obj)

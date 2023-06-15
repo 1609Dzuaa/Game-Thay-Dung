@@ -10,6 +10,17 @@ CKoopa::CKoopa(float x, float y, int type) :CGameObject(x, y)
 	this->ax = 0; 
 	this->ay = KOOPA_GRAVITY;
 	this->type = type;
+	if (type == RED_KOOPA)
+	{
+		CPlayScene* current_scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
+		goomba = new CGoomba(x - KOOPA_BBOX_WIDTH / 2 - 5.0f, y, this->vx, this->ay);
+		goomba->SetX(547);
+		goomba->SetY(170);
+		goomba->SetVx(-0.03f);
+		goomba->SetAy(this->ay);
+		current_scene->AddObjectToScene(goomba);
+		DebugOut(L"Head was created\n");
+	}
 	die_start = -1;
 	sleep_start = -1;
 	reborn_start = -1;
@@ -114,6 +125,29 @@ void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 void CKoopa::UpdateKoopaState()
 {
+	if (type == RED_KOOPA)
+	{
+		if (goomba->GetIsFallOff())
+		{
+			this->vx = -vx;
+			goomba->SetIsFallOff(false);
+			if (this->vx < 0)
+			{
+				goomba->SetX(x - KOOPA_BBOX_WIDTH / 2 - 8.0f);
+				goomba->SetY(this->y);
+				goomba->SetVx(vx);
+				//goomba->SetPosition(x - KOOPA_BBOX_WIDTH / 2 - 10.0f, this->y);
+			}
+			else
+			{
+				goomba->SetX(x + KOOPA_BBOX_WIDTH / 2 + 5.0f);
+				goomba->SetY(this->y);
+				goomba->SetVx(vx);
+			}
+				//goomba->SetPosition(x + KOOPA_BBOX_WIDTH / 2 + 10.0f, this->y);
+		}
+	}
+
 	if ((state == KOOPA_STATE_DIE) && (GetTickCount64() - die_start > KOOPA_DIE_TIMEOUT))
 	{
 		isDeleted = true;
@@ -335,7 +369,7 @@ void CKoopa::HandleCollisionWithColorPlatform(LPCOLLISIONEVENT e, CColorPlatform
 {
 	if (isFallOffColorPlatform) return;
 
-	if (this->type == RED_KOOPA && state == KOOPA_STATE_WALKING)
+	/*if (this->type == RED_KOOPA && state == KOOPA_STATE_WALKING)
 	{
 		if (this->x >= (color_platf->GetX() + (color_platf->GetLength() - 1) * color_platf->GetCellWidth()))
 		{
@@ -347,7 +381,7 @@ void CKoopa::HandleCollisionWithColorPlatform(LPCOLLISIONEVENT e, CColorPlatform
 			this->x = color_platf->GetX() - KOOPA_BBOX_WIDTH / 3;
 			vx = -vx;
 		}
-	}
+	}*/
 
 	if (state == KOOPA_STATE_SLEEP || state == KOOPA_STATE_DIE
 		|| state == KOOPA_STATE_SLIP || state == KOOPA_STATE_REBORN

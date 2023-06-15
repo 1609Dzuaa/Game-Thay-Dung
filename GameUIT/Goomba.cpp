@@ -1,6 +1,7 @@
 ﻿#include "Goomba.h"
 #include "Mario.h"
 #include "PlayScene.h"
+#include "ColorPlatform.h"
 #include "debug.h"
 
 CGoomba::CGoomba(float x, float y, int type) :CGameObject(x, y)
@@ -69,10 +70,16 @@ void CGoomba::OnCollisionWith(LPCOLLISIONEVENT e)
 {
 	//Xét va chạm giữa Goomba và VẬT KHÁC
 
+	if (dynamic_cast<CColorPlatform*>(e->obj))
+	{
+		CColorPlatform* cl_pf = dynamic_cast<CColorPlatform*>(e->obj);
+		HandleCollisionWithColorPlatform(e, cl_pf);
+	}
+	if (e->obj->IsBlocking()) HandleCollisionWithBlockingObjects(e);
+
 	if (!e->obj->IsBlocking()) return; //Nếu nó không có thuộc tính block thì kết thúc hàm này (On no collision inside here)
 	if (dynamic_cast<CGoomba*>(e->obj)) return; //Nếu VẬT KHÁC LÀ Goomba thì cũng bỏ qua hàm này 
 
-	HandleCollisionWithBlockingObjects(e);
 	//DebugOutTitle(L"Coins: %f", e->ny);
 }
 
@@ -82,6 +89,13 @@ void CGoomba::HandleCollisionWithBlockingObjects(LPCOLLISIONEVENT e)
 		
 	if (e->ny != 0)
 	{
+		if (type == 3)
+		{
+			vy = 0;
+			isFallOff = true;
+			return;
+		}
+
 		if (e->ny < 0 && this->type > GOOMBA && state == GOOMBA_STATE_READY_TO_FLY)
 		{
 			vy = 0;
@@ -109,10 +123,12 @@ void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 	UpdateGoombaState();
 	CCollision::GetInstance()->Process(this, dt, coObjects);
+	DebugOutTitle(L"x, y, vx, vy: %f, %f, %f, %f", x, y, vx, vy);
 }
 
 void CGoomba::UpdateGoombaState()
 {
+	if (level == 3);// return;
 	if ((state == GOOMBA_STATE_DIE) && (GetTickCount64() - die_start > GOOMBA_DIE_TIMEOUT))
 	{
 		isDeleted = true;
@@ -150,6 +166,7 @@ void CGoomba::Render()
 {
 	//should check if the object is in the camera => then RENDER it! 
 	int aniId;
+
 	if (type == GOOMBA)
 	{
 		aniId = ID_ANI_GOOMBA_WALKING;
@@ -172,6 +189,8 @@ void CGoomba::Render()
 		if (state == GOOMBA_STATE_FLYING)
 			aniId = ID_ANI_PARA_GOOMBA_FLYING;
 	}
+
+	if (type == 3) aniId = 5000;
 
 	CAnimations::GetInstance()->Get(aniId)->Render(x, y);
 }

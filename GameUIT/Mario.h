@@ -263,7 +263,7 @@ public:
 		isLanding = false;
 		isEvolving = false;
 		CountJumpOnEnemies = 0;
-		tail = nullptr;
+		tail = NULL;
 
 		maxVx = 0;
 		maxRunningSpeed = MARIO_RUNNING_SPEED;

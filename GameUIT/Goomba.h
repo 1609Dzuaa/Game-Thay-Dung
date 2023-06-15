@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "GameObject.h"
+#include "ColorPlatform.h"
 
 #define GOOMBA_GRAVITY 0.002f
 #define GOOMBA_WALKING_SPEED 0.035f
@@ -10,6 +11,7 @@
 
 #define GOOMBA 1
 #define PARA_GOOMBA 2
+#define STICK_WITH_KOOPA 3
 
 #define PARA_GOOMBA_LEVEL_NO_WINGS 1
 #define PARA_GOOMBA_LEVEL_HAS_WINGS 2
@@ -56,6 +58,7 @@ protected:
 	BOOLEAN isDead;
 	BOOLEAN isSpreadWings;
 	int type, level, count_step, count_step_to_jump;
+	int isFallOff;
 	//count_step: Dùng để đếm bước để bắt đầu nhảy thấp
 	//count_step_to_jump: Dùng để đếm bước để bắt đầu nhảy cao
 
@@ -78,8 +81,41 @@ protected:
 
 public:
 	CGoomba(float x, float y, int type);
+	CGoomba(float x, float y, float koopa_vx, float koopa_grav) //type 3
+	{
+		this->x = x;
+		this->y = y;
+		this->ay = koopa_grav;
+		this->ax = 0;
+		this->vx = koopa_vx;
+		this->level = 1;
+		fly_start = 0;
+		count_step = 0;
+		count_step_to_jump = 0;
+		isDead = false;
+		isSpreadWings = false;
+		die_start = -1;
+		die_reverse_start = -1;
+		isFallOff = 0;
+		type = 3;
+	}
 	virtual void SetState(int state);
 	int GetType() { return this->type; };
 	void SetLevel(int para) { this->level = para; this->state = GOOMBA_STATE_WALKING; }
 	int GetLevel() { return this->level; }
+
+	int GetIsFallOff() { return isFallOff; }
+	void SetIsFallOff(bool para) { this->isFallOff = para; }
+	void SetX(float x) { this->x = x; }
+	void SetY(float y) { this->y = y; }
+	void SetVx(float vx) { this->vx = vx; }
+	void SetAy(float ay) { this->ay = ay; }
+	void HandleCollisionWithColorPlatform(LPCOLLISIONEVENT e, CColorPlatform* color_platf)
+	{
+		if (GOOMBA_BBOX_HEIGHT + this->y +2.0f > color_platf->GetY())
+		{
+			this->y = (color_platf->GetY() - GOOMBA_BBOX_HEIGHT - 2.0f);
+			vy = 0;
+		}
+	}
 };
