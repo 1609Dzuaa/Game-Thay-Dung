@@ -47,7 +47,7 @@ HOW TO INSTALL Microsoft.DXSDK.D3DX
 #include "AssetIDs.h"
 
 #define WINDOW_CLASS_NAME L"SampleWindow"
-//#define MAIN_WINDOW_TITLE L"Super Mario Bros.3"
+#define MAIN_WINDOW_TITLE L"SE102 - Super Mario Bros.3"
 #define WINDOW_ICON_PATH L"mario.ico"
 
 #define BACKGROUND_COLOR D3DXCOLOR(200.0f/255, 200.0f/255, 255.0f/255, 0.0f)
@@ -125,7 +125,7 @@ HWND CreateGameWindow(HINSTANCE hInstance, int nCmdShow, int ScreenWidth, int Sc
 	HWND hWnd =
 		CreateWindow(
 			WINDOW_CLASS_NAME,
-			NULL,
+			MAIN_WINDOW_TITLE,
 			WS_OVERLAPPEDWINDOW, // WS_EX_TOPMOST | WS_VISIBLE | WS_POPUP,
 			CW_USEDEFAULT,
 			CW_USEDEFAULT,

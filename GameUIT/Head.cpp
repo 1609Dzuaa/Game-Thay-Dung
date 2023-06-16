@@ -9,7 +9,7 @@ void CHead::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 void CHead::Render()
 {
-	RenderBoundingBox();
+	//RenderBoundingBox();
 }
 
 void CHead::OnNoCollision(DWORD dt)

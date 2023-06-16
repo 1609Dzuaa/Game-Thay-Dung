@@ -3,6 +3,8 @@
 #include "Mario.h"
 #include "QuestionBrick.h"
 #include "PlayScene.h"
+#include "EffectScore.h"
+#include "EffectCollision.h"
 #include "debug.h"
 
 CKoopa::CKoopa(float x, float y, int type) :CGameObject(x, y)
@@ -115,7 +117,6 @@ void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 	UpdateKoopaState();
 	CCollision::GetInstance()->Process(this, dt, coObjects);
-	DebugOutTitle(L"fallOFF, ENALBE: %d, %d", isFallOffColorPlatform, enableInteractWColorPlat);
 }
 
 void CKoopa::UpdateKoopaState()
@@ -300,6 +301,7 @@ void CKoopa::OnCollisionWithGoomba(LPCOLLISIONEVENT e)
 	{
 		goomba->SetState(GOOMBA_STATE_DIE_REVERSE);
 		mario->SpawnScore(goomba);
+		mario->SpawnEffect(e, this);
 	}
 }
 

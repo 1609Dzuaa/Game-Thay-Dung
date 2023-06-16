@@ -26,6 +26,9 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	vx += ax * dt;
 
 	UpdateMarioState();
+	//UpdateTail here
+	if (tail != NULL)
+		UpdateTailPosition(tail);
 
 	isOnPlatform = false;
 	CCollision::GetInstance()->Process(this, dt, coObjects);
@@ -244,9 +247,11 @@ void CMario::HandleCollisionOtherDirectionWithGoomba(LPCOLLISIONEVENT e, CGoomba
 		{
 			if (this->isAttacking)
 			{
+				goomba->SetState(GOOMBA_STATE_DIE_REVERSE);
 				SpawnScore(goomba);
-				SpawnEffect(e);
-				tail->OnCollisionWithGoomba(e);
+				SpawnEffect(e, this);
+				//tail->SetState(TAIL_STATE_ATTACK);
+				//tail->OnCollisionWithGoomba(e);
 			}
 			else
 			{
@@ -356,12 +361,12 @@ void CMario::HandleCollisionOtherDirectionWithKoopa(LPCOLLISIONEVENT e, CKoopa* 
 				{
 					koopa->SetType(GREEN_KOOPA);
 					koopa->SetState(KOOPA_STATE_SLEEP_REVERSE);
-					SpawnEffect(e);
+					SpawnEffect(e, this);
 				}
 				else
 				{
 					koopa->SetState(KOOPA_STATE_SLEEP_REVERSE);
-					SpawnEffect(e);
+					SpawnEffect(e, this);
 				}
 			}
 			else
@@ -455,7 +460,7 @@ void CMario::OnCollisionWithFlower(LPCOLLISIONEVENT e)
 	{
 		e->obj->Delete();
 		SpawnScore(e->obj);
-		SpawnEffect(e);
+		SpawnEffect(e,this);
 	}
 	else 
 	{
@@ -772,7 +777,7 @@ void CMario::Render()
 		aniId = GetAniIdRacoon();
 
 	animations->Get(aniId)->Render(x, y);
-	RenderBoundingBox();
+	//RenderBoundingBox();
 }
 
 void CMario::SetState(int state)
@@ -974,10 +979,11 @@ void CMario::GetBoundingBox(float& left, float& top, float& right, float& bottom
 void CMario::SetLevel(int l)
 {
 	// Adjust position to avoid falling off platform
-	if (l == MARIO_LEVEL_RACOON)
+	/*if (l == MARIO_LEVEL_RACOON) //nếu là level Racoon thì check và tạo đuôi
 	{
-		if (tail != NULL) return;
-		tail = new CTail(x, y);
+		if (tail != NULL) return; //đã có đuôi thì không tạo nữa
+
+		tail = new CTail(x, y, MARIO_BIG_BBOX_WIDTH, this->nx);
 		CPlayScene* current_scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
 		current_scene->AddObjectToScene(tail);
 		DebugOut(L"Tail was created and add to object list\n");
@@ -992,8 +998,8 @@ void CMario::SetLevel(int l)
 			CPlayScene* current_scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
 			current_scene->GetObjectsVector().erase(std::remove(current_scene->GetObjectsVector().begin(), current_scene->GetObjectsVector().end(), tail), current_scene->GetObjectsVector().end());
 			DebugOut(L"Delete Tail success!\n");
-		}*/
-	}
+		}
+	}*/
 
 	if (this->level == MARIO_LEVEL_SMALL)
 	{
@@ -1037,23 +1043,33 @@ CEffectScore* CMario::ClassifyScore(LPGAMEOBJECT obj, CEffectScore* eff_scr)
 	//Hàm sàng lọc điểm
 }
 
-void CMario::SpawnEffect(LPCOLLISIONEVENT e)
+void CMario::SpawnEffect(LPCOLLISIONEVENT e, LPGAMEOBJECT obj)
 {
-	/*float x;
-	//if (e->nx > 0)
-	//	x = this->x - MARIO_RACOON_BBOX_WIDTH / 2;
-	//else
-		//x = this->x + MARIO_RACOON_BBOX_WIDTH / 2;
-
 	//if (dynamic_cast<CShootingFlower*>(e->obj))
 	//{
 
 	//}
 	//else 
 	//{
-	float y = this->y + MARIO_BIG_BBOX_HEIGHT / 4;
+	//Trường hợp tổng quát
+	float x;
+	float y;
+	if (e->nx > 0)
+		x = obj->GetX() - 15.0f;
+	else 
+		x = obj->GetX() + 15.0f;
+
+	y = obj->GetY();
+
 	CEffectCollision* eff_col = new CEffectCollision(x, y, GetTickCount64());
 	CPlayScene* current_scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
 	current_scene->AddObjectToScene(eff_col);
-	//}*/
+}
+
+void CMario::UpdateTailPosition(CTail* tail)
+{
+	if (this->nx > 0)
+		tail->SetPosition(this->x - MARIO_BIG_BBOX_WIDTH / 2, y + MARIO_BIG_BBOX_HEIGHT / 6 + 1.5f);
+	else
+		tail->SetPosition(this->x + MARIO_BIG_BBOX_WIDTH / 2, y + MARIO_BIG_BBOX_HEIGHT / 6 + 1.5f);
 }

@@ -24,7 +24,7 @@ Text_Files\EffectCollision.txt
 # See OBJECT_TYPE constants in AssetIDs.h 
 
 # MARIO | Thứ tự vẽ ảnh hưởng đến tính toán va chạm
-0	505	190
+0	25	190
 
 #QUESTION BRICK |  0: HAS NO ITEM - ONLY COIN |  1: HAS ITEM(MUSHROOM, LEAF, ...) | 
 7	169	196	0
@@ -36,8 +36,8 @@ Text_Files\EffectCollision.txt
 7	688	187	0
 
 #GOOMBA
-#2	315	160	1
-#2	375	160	1
+2	315	160	1
+2	415	160	1
 #3	345	160	2
 
 #Platform: ID	X	Y	WIDTH	HEIGHT	SIZE	3SPRITES

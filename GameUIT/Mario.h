@@ -184,6 +184,8 @@
 #define MARIO_BIG_SITTING_BBOX_WIDTH  14
 #define MARIO_BIG_SITTING_BBOX_HEIGHT 16 //Big & Racoon share the same Height when SIT
 
+#define MARIO_RACOON_BBOX_WIDTH  24 //USED TO BE 21
+
 #define MARIO_SIT_HEIGHT_ADJUST ((MARIO_BIG_BBOX_HEIGHT - MARIO_BIG_SITTING_BBOX_HEIGHT) / 2)
 
 #define MARIO_SMALL_BBOX_WIDTH  12 //USED TO BE 13
@@ -270,7 +272,7 @@ public:
 		ax = 0.0f;
 		ay = MARIO_GRAVITY;
 
-		level = 1;
+		level = MARIO_LEVEL_SMALL;
 		untouchable = 0;
 		untouchable_start = -1;
 		kick_start = 0;
@@ -310,5 +312,6 @@ public:
 	CEffectScore* ClassifyScore(LPGAMEOBJECT obj, CEffectScore* eff_scr);
 	void SetIsLanding(bool para) { this->isLanding = para; }
 	void SpawnScore(LPGAMEOBJECT obj);
-	void SpawnEffect(LPCOLLISIONEVENT e);
+	void SpawnEffect(LPCOLLISIONEVENT e, LPGAMEOBJECT obj);
+	void UpdateTailPosition(CTail* tail);
 };
