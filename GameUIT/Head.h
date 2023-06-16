@@ -1,9 +1,18 @@
-#pragma once
+﻿#pragma once
 #include "GhostObject.h"
 #include "ColorPlatform.h"
 
-#define HEAD_BBOX_WIDTH	16
+#define HEAD_BBOX_WIDTH	14
 #define HEAD_BBOX_HEIGHT	14
+
+#define HEAD_STATE_MOVE	0
+#define HEAD_STATE_IDLE	1	
+
+#define FALL_ZONE 7.0f
+
+//có lẽ nên chuyển sang từ va chạm với blocking objects thành xét y, nếu y của nó thay đổi đột ngột thì quay đầu
+//How 'bout comparison Y between ghost_head and koopa 
+//Tìm cách mà nó bao quát hết mọi trường hợp
 
 class CHead :public CGhostObject
 {
@@ -27,4 +36,6 @@ public:
 	void HandleCollisionWithColorPlatform(LPCOLLISIONEVENT e, CColorPlatform* color_platf);
 	bool GetIsFallOff() { return isFallOff; }
 	void SetIsFallOff(bool para) { this->isFallOff = para; }
+	void SetState(int state);
+	float GetVy() { return this->vy; }
 };

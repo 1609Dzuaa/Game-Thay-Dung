@@ -163,23 +163,25 @@ void CMario::HandleCollisionWithColorPlatform(LPCOLLISIONEVENT e, CColorPlatform
 	// https://happycoding.io/tutorials/processing/collision-detection
 	//"we want the position of the bottom of the player to equal the position of the top of the ground. 
 	//And since our player’s position is usually stored as its top Y value and a height, 
-	//that means we want the position of the top of our player to equal the ground’s top minus the player’s height."
+	//that means we want the position of the top of our player to equal the ground’s top minus the player’s height.":
+	//Condition that I learned: |Player.TopY + Player.Height > ColorPlat.TopY => SNAP|
 	if (this->level != MARIO_LEVEL_SMALL) //level gấu mèo và BIG dùng chung BBox được vì diff 0 đáng kể
 	{
 		if (!isSitting)
 		{
-			if (MARIO_BIG_BBOX_HEIGHT + this->y > color_platf->GetY())
+			if (this->y + MARIO_BIG_BBOX_HEIGHT / 2 + color_platf->GetCellHeight() / 2 > color_platf->GetY())
 			{
-				this->y = (color_platf->GetY() - MARIO_BIG_BBOX_HEIGHT + 4.5); //cộng một lượng vừa đủ
+				//SNAP: Player.Y = ColorPlat.Y - ColorPlat.Height / 2 - Player.Height / 2
+				this->y = color_platf->GetY() - color_platf->GetCellHeight() / 2 - MARIO_BIG_BBOX_HEIGHT / 2;
 				vy = 0;
 				isOnPlatform = true;
 			}
 		}
 		else
 		{
-			if (MARIO_BIG_BBOX_HEIGHT / 2 + 3.5 + this->y > color_platf->GetY())
+			if (this->y + MARIO_BIG_BBOX_HEIGHT / 2 + 3.5 > color_platf->GetY())
 			{
-				this->y = (color_platf->GetY() - MARIO_BIG_BBOX_HEIGHT / 2 - 3.5); //trừ một lượng vừa đủ
+				this->y = color_platf->GetY() - MARIO_BIG_BBOX_HEIGHT / 2 - 3.5; //trừ một lượng vừa đủ
 				vy = 0;
 				isOnPlatform = true;
 			}
@@ -187,9 +189,9 @@ void CMario::HandleCollisionWithColorPlatform(LPCOLLISIONEVENT e, CColorPlatform
 	}
 	else
 	{
-		if (MARIO_SMALL_BBOX_HEIGHT + this->y + 1.5 > color_platf->GetY())
+		if (this->y + MARIO_SMALL_BBOX_HEIGHT / 2 + color_platf->GetCellHeight() / 2 > color_platf->GetY())
 		{
-			this->y = (color_platf->GetY() - MARIO_SMALL_BBOX_HEIGHT - 1.5);
+			this->y = color_platf->GetY() - color_platf->GetCellHeight() / 2 - MARIO_SMALL_BBOX_HEIGHT / 2;
 			vy = 0;
 			isOnPlatform = true;
 		}
@@ -890,7 +892,7 @@ void CMario::SetState(int state)
 			state = MARIO_STATE_IDLE;
 			isSitting = true;
 			vx = 0; vy = 0.0f;
-			y += MARIO_SIT_HEIGHT_ADJUST - 4.0f;
+			y += MARIO_SIT_HEIGHT_ADJUST;
 		}
 		else if (isOnPlatform && level == MARIO_LEVEL_RACOON)
 		{

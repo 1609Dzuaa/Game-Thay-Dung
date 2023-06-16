@@ -24,7 +24,7 @@ Text_Files\EffectCollision.txt
 # See OBJECT_TYPE constants in AssetIDs.h 
 
 # MARIO | Thứ tự vẽ ảnh hưởng đến tính toán va chạm
-0	525	130
+0	505	190
 
 #QUESTION BRICK |  0: HAS NO ITEM - ONLY COIN |  1: HAS ITEM(MUSHROOM, LEAF, ...) | 
 7	169	196	0
@@ -52,7 +52,7 @@ Text_Files\EffectCollision.txt
 6	256	175	16	15	3	0	0	0
 
 #TUBE - CLASS
-#9	344	224	1
+9	344	224	1
 
 #Green platform
 6	384	208	16	15	5	0	0	0

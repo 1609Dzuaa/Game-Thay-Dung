@@ -9,7 +9,7 @@ void CHead::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 void CHead::Render()
 {
-	//RenderBoundingBox();
+	RenderBoundingBox();
 }
 
 void CHead::OnNoCollision(DWORD dt)
@@ -24,6 +24,7 @@ void CHead::OnCollisionWith(LPCOLLISIONEVENT e)
 	{
 		CColorPlatform* cl_pf = dynamic_cast<CColorPlatform*>(e->obj);
 		HandleCollisionWithColorPlatform(e, cl_pf);
+		//isFallOff = false;
 	}
 
 	if (e->obj->IsBlocking()) HandleCollisionWithBlockingObjects(e);
@@ -40,9 +41,9 @@ void CHead::HandleCollisionWithBlockingObjects(LPCOLLISIONEVENT e)
 
 void CHead::HandleCollisionWithColorPlatform(LPCOLLISIONEVENT e, CColorPlatform* color_platf)
 {
-	if (HEAD_BBOX_HEIGHT + this->y + 2.5f > color_platf->GetY())
+	if (this->y + HEAD_BBOX_HEIGHT / 2 + color_platf->GetCellHeight() / 2 > color_platf->GetY())
 	{
-		this->y = (color_platf->GetY() - HEAD_BBOX_HEIGHT - 2.5f);
+		this->y = color_platf->GetY() - color_platf->GetCellHeight() / 2 - static_cast<float>(HEAD_BBOX_HEIGHT / 2);
 		vy = 0;
 	}
 }
@@ -53,4 +54,20 @@ void CHead::GetBoundingBox(float& l, float& t, float& r, float& b)
 	t = y - HEAD_BBOX_HEIGHT / 2;
 	r = l + HEAD_BBOX_WIDTH;
 	b = t + HEAD_BBOX_HEIGHT;
+}
+
+void CHead::SetState(int state)
+{
+	switch (state)
+	{
+	case HEAD_STATE_MOVE:
+
+		break;
+
+	case HEAD_STATE_IDLE:
+		this->vx = 0;
+		this->vy=0;
+
+		break;
+	}
 }

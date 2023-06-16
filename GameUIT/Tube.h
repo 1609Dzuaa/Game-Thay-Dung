@@ -9,7 +9,7 @@
 #define TUBE_TYPE_SHOOTING_FLOWER 1
 
 #define ATTACK_ZONE 90.0f
-#define SAFE_ZONE 30.0f
+#define SAFE_ZONE 45.0f
 
 #define ID_ANI_TUBE 5500
 
