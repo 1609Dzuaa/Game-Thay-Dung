@@ -9,6 +9,7 @@
 #define ATTACK_RANGE 90.0f
 #define SHOOTING_FLOWER_RISE_SPEED 0.03f
 
+#define SHOOTING_FLOWER_REST_TIME 1500
 #define SHOOTING_FLOWER_AIM_TIME 500
 
 #define FLOWER_WIDTH 16
@@ -18,7 +19,8 @@
 #define SHOOTING_FLOWER_STATE_DIVE 0 //dive tới một đoạn nhất định trong ống
 #define SHOOTING_FLOWER_STATE_RISE_UP 1 //Đc Vẽ và cập nhật
 #define SHOOTING_FLOWER_STATE_SHOOT 2
-#define SHOOTING_FLOWER_STATE_DIE 3
+#define SHOOTING_FLOWER_STATE_REST 3
+#define SHOOTING_FLOWER_STATE_DIE 4
 
 //Mặc định không có face up thì là face down
 #define ID_ANI_FLOWER_RISE_UP_LEFT 81500
@@ -37,12 +39,15 @@
 class CShootingFlower :public CGameObject 
 {
 	float minY, maxY;
-	ULONGLONG aim_start;
+	ULONGLONG aim_start, rest_start;
+	BOOLEAN enableToShoot;
 public:
 	CShootingFlower() { 
 		minY = -1; 
 		maxY = -1; 
 		aim_start = 0;
+		rest_start = 0;
+		enableToShoot = true;
 	};
 	CShootingFlower(float x, float y) :CGameObject(x, y)
 	{
@@ -53,6 +58,8 @@ public:
 		minY = y - FLOWER_HEIGHT - 8.0f;
 		maxY = y;
 		aim_start = 0;
+		rest_start = 0;
+		enableToShoot = true;
 	}
 	void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
 	void Render();

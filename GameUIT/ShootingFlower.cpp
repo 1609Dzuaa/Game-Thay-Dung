@@ -6,7 +6,16 @@
 
 void CShootingFlower::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
-	if (state == SHOOTING_FLOWER_STATE_SHOOT)
+	/*if (state == SHOOTING_FLOWER_STATE_SHOOT)
+		AimAndShoot();*/
+
+	if (state == SHOOTING_FLOWER_STATE_REST && GetTickCount64() - rest_start > SHOOTING_FLOWER_REST_TIME)
+	{
+		enableToShoot = true;
+		rest_start = 0;
+	}
+
+	if (state == SHOOTING_FLOWER_STATE_SHOOT)// && enableToShoot)
 		AimAndShoot();
 
 	if (y <= minY && state == SHOOTING_FLOWER_STATE_RISE_UP)
@@ -86,6 +95,7 @@ void CShootingFlower::SetState(int state)
 	case SHOOTING_FLOWER_STATE_DIVE:
 		vy = SHOOTING_FLOWER_RISE_SPEED;
 		aim_start = 0;
+		rest_start = GetTickCount64();
 
 		break;
 
@@ -97,6 +107,12 @@ void CShootingFlower::SetState(int state)
 	case SHOOTING_FLOWER_STATE_SHOOT:
 		vy = 0;
 		aim_start = GetTickCount64();
+
+		break;
+
+	case SHOOTING_FLOWER_STATE_REST:
+		vy = 0;
+		enableToShoot = false;
 
 		break;
 	}

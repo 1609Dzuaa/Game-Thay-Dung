@@ -9,7 +9,7 @@ void CHead::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 void CHead::Render()
 {
-	//RenderBoundingBox();
+	RenderBoundingBox();
 }
 
 void CHead::OnNoCollision(DWORD dt)
@@ -24,7 +24,6 @@ void CHead::OnCollisionWith(LPCOLLISIONEVENT e)
 	{
 		CColorPlatform* cl_pf = dynamic_cast<CColorPlatform*>(e->obj);
 		HandleCollisionWithColorPlatform(e, cl_pf);
-		//isFallOff = false;
 	}
 
 	if (e->obj->IsBlocking()) HandleCollisionWithBlockingObjects(e);

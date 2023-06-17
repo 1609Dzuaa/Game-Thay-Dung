@@ -180,8 +180,6 @@ void CGoomba::Render()
 			aniId = ID_ANI_PARA_GOOMBA_FLYING;
 	}
 
-	if (type == 3) aniId = 5000;
-
 	CAnimations::GetInstance()->Get(aniId)->Render(x, y);
 }
 

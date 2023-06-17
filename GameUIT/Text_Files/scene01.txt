@@ -36,9 +36,9 @@ Text_Files\EffectCollision.txt
 7	688	187	0
 
 #GOOMBA
-2	315	160	1
-2	415	160	1
-#3	345	160	2
+3	335	160	1
+#3	355	160	2
+#3	295	160	3
 
 #Platform: ID	X	Y	WIDTH	HEIGHT	SIZE	3SPRITES
 #Normal ground, Higher ground
@@ -76,7 +76,7 @@ Text_Files\EffectCollision.txt
 5	1120	256	16	15	24	400001	400002	400003
 
 #GOOMBA
-#2	920	40	1
+3	920	40	1
 #2	1000	40	1
 #2	1070	40	2
 

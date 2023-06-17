@@ -220,7 +220,8 @@ void CKoopa::SetState(int state)
 		else
 			vx = -KOOPA_KNOCK_OFF_VELO_X * KOOPA_KNOCK_OFF_FACTOR_X;
 		
-		ghost_head->SetState(HEAD_STATE_IDLE);
+		if (type == RED_KOOPA)
+			ghost_head->SetState(HEAD_STATE_IDLE);
 		vy = -KOOPA_KNOCK_OFF_FACTOR_Y;	
 		isOnPlatform = true;
 		sleep_start = GetTickCount64();
@@ -231,7 +232,8 @@ void CKoopa::SetState(int state)
 		vx = 0;
 		isOnPlatform = true;
 		sleep_start = GetTickCount64();
-		ghost_head->SetPosition(x - KOOPA_BBOX_WIDTH / 2 - 5.0f, y); //cập nhật vị trí cho cái đầu để tránh nó đi quá xa
+		if (type == RED_KOOPA)
+			ghost_head->SetPosition(x - KOOPA_BBOX_WIDTH / 2 - 5.0f, y); //cập nhật vị trí cho cái đầu để tránh nó đi quá xa
 		//y -= (KOOPA_BBOX_HEIGHT - KOOPA_IN_SHELL_BBOX_HEIGHT) / 2;
 		break;
 
