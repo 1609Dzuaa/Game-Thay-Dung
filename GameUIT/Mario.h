@@ -198,6 +198,7 @@
 #define MARIO_KICK_TIME 150
 #define MARIO_RACOON_ATTACK_TIME 450
 #define MARIO_EVOLVE_TIME 750
+#define UNTOUCH_DRAW_TIME 100
 
 #define NORMAL_SCORE 10
 #define DOUBLE_SCORE 20
@@ -226,11 +227,15 @@ class CMario : public CGameObject
 	CTail* tail;
 
 	int level;
-	int untouchable;
+	int untouchable, untouchdraw;
 	ULONGLONG untouchable_start;
 	ULONGLONG kick_start; //Tính thời gian sút để giải phóng Mario khỏi hành động sút
 	ULONGLONG attack_start;
 	ULONGLONG evolve_start;
+	BOOLEAN untouch_0; // cờ 0 vẽ
+	BOOLEAN untouch_1; // cờ vẽ
+	ULONGLONG untouch_draw_0; //thgian 0 vẽ
+	ULONGLONG untouch_draw_1; //thgian vẽ
 	BOOLEAN isOnPlatform;
 	int CountJumpOnEnemies; //Đếm số bước nhảy 0 CHẠM ĐẤT để có số điểm tương ứng
 	int coin;
@@ -274,6 +279,11 @@ public:
 		isEvolveBackward = false;
 		isAteItem = false;
 		CountJumpOnEnemies = 0;
+		untouchdraw = -1;
+		untouch_draw_0 = 0;
+		untouch_draw_1 = 0;
+		untouch_0 = 0;
+		untouch_1 = 0;
 		tail = NULL;
 
 		maxVx = 0;
@@ -309,7 +319,7 @@ public:
 
 	void SetLevel(int l);
 	int GetLevel() { return level; };
-	void StartUntouchable() { untouchable = 1; untouchable_start = GetTickCount64(); }
+	void StartUntouchable() { untouchable = 1; untouchable_start = GetTickCount64(); untouch_0 = 1; untouch_draw_0 = GetTickCount64(); }
 
 	void GetBoundingBox(float& left, float& top, float& right, float& bottom);
 	int GetMarioNormalX() { return nx; }
@@ -323,6 +333,6 @@ public:
 	void SpawnScore(LPGAMEOBJECT obj);
 	void SpawnEffect(LPCOLLISIONEVENT e, LPGAMEOBJECT obj, int eff_type);
 	void UpdateTailPosition(CTail* tail);
-	//HandleMarioTransformToRacoon:
+	void HandleUntouchableDrawState();
 
 };

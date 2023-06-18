@@ -50,6 +50,9 @@ void CMario::UpdateMarioState()
 {
 	//May be affect collision with Fire Bullet
 	// reset untouchable timer if untouchable time has passed
+	//when untouchable, there are 2 states of drawing: Draw & NOT draw
+	HandleUntouchableDrawState();
+
 	if (GetTickCount64() - untouchable_start > MARIO_UNTOUCHABLE_TIME)
 	{
 		untouchable_start = 0;
@@ -75,15 +78,9 @@ void CMario::UpdateMarioState()
 		}
 		isEvolving = false;
 		isEvolveForward = false;
+		isEvolveBackward = false;
 		isAteItem = false;
 		evolve_start = 0;
-
-		/*if (this->level == MARIO_LEVEL_SMALL)
-			this->SetLevel(MARIO_LEVEL_BIG);
-		else
-			this->SetLevel(MARIO_LEVEL_RACOON);
-		isEvolving = false;
-		evolve_start = 0;*/
 	}
 
 	if (this->isJumping && this->level == MARIO_LEVEL_RACOON && this->vy >= 0)
@@ -124,6 +121,24 @@ void CMario::UpdateMarioState()
 	{
 		isAttacking = false;
 		attack_start = 0;
+	}
+}
+
+void CMario::HandleUntouchableDrawState()
+{
+	if (untouchable && GetTickCount64() - untouch_draw_0 >= UNTOUCH_DRAW_TIME && untouch_0)
+	{
+		untouch_0 = 0;
+		untouch_1 = 1;
+		untouch_draw_0 = 0;
+		untouch_draw_1 = GetTickCount64();
+	}
+	else if (untouchable && GetTickCount64() - untouch_draw_1 >= UNTOUCH_DRAW_TIME && untouch_1)
+	{
+		untouch_0 = 1;
+		untouch_1 = 0;
+		untouch_draw_0 = GetTickCount64();
+		untouch_draw_1 = 0;
 	}
 }
 
@@ -486,9 +501,6 @@ void CMario::OnCollisionWithMushroom(LPCOLLISIONEVENT e)
 		this->isEvolveForward = true;
 		this->SetState(MARIO_STATE_EVOLVING);
 		isAteItem = true;
-		//SetLevel(MARIO_LEVEL_BIG);
-		//this->SetState(MARIO_STATE_EVOLVING);
-		
 	}
 	//Da Fuq Mario blocking Mushroom ??
 }
@@ -857,6 +869,7 @@ void CMario::Render()
 {
 	if (isEvolving && level == MARIO_LEVEL_BIG && isEvolveForward) return; //Big biến thành gấu mèo thì 0 vẽ trong 1 khoảng thgian
 	if (isEvolving && level == MARIO_LEVEL_RACOON && isEvolveBackward) return; //Gấu mèo biến về Big thì cũng 0 vẽ
+	if (untouchable && untouch_0) return;
 
 	CAnimations* animations = CAnimations::GetInstance();
 	int aniId = -1;

@@ -312,7 +312,7 @@ void CKoopa::OnCollisionWithKoopa(LPCOLLISIONEVENT e)
 	CKoopa* koopa = dynamic_cast<CKoopa*>(e->obj);
 	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
 	if (koopa->GetState() != KOOPA_STATE_DIE)
-	{
+	{ 
 		koopa->SetState(KOOPA_STATE_DIE);
 		mario->SpawnScore(koopa);
 	}
