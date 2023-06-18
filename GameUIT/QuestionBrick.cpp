@@ -68,8 +68,8 @@ void CQuestionBrick::SpawnMushroom(float xBrick, float yBrick)
 void CQuestionBrick::SpawnLeaf(float xBrick, float yBrick)
 {
 	CPlayScene* current_scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
-	CLeaf* leaf = new CLeaf(xBrick, yBrick);
-	leaf->SetMinY(y - 70.0f);
+	CLeaf* leaf = new CLeaf(xBrick, yBrick - QBRICK_BBOX_HEIGHT / 2);
+	leaf->SetMinY(yBrick - QBRICK_BBOX_HEIGHT / 2 - 70.0f);
 	current_scene->AddObjectToScene(leaf);
 }
 

@@ -194,7 +194,7 @@
 #define MARIO_UNTOUCHABLE_TIME 2500
 #define MARIO_KICK_TIME 150
 #define MARIO_RACOON_ATTACK_TIME 450
-#define MARIO_EVOLVE_TIME 800
+#define MARIO_EVOLVE_TIME 750
 
 #define NORMAL_SCORE 10
 #define DOUBLE_SCORE 20
@@ -312,6 +312,6 @@ public:
 	CEffectScore* ClassifyScore(LPGAMEOBJECT obj, CEffectScore* eff_scr);
 	void SetIsLanding(bool para) { this->isLanding = para; }
 	void SpawnScore(LPGAMEOBJECT obj);
-	void SpawnEffect(LPCOLLISIONEVENT e, LPGAMEOBJECT obj);
+	void SpawnEffect(LPCOLLISIONEVENT e, LPGAMEOBJECT obj, int eff_type);
 	void UpdateTailPosition(CTail* tail);
 };

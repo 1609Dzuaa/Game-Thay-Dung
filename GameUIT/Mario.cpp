@@ -45,9 +45,12 @@ void CMario::UpdateMarioState()
 		untouchable = 0;
 	}
 
-	if (GetTickCount64() - evolve_start > MARIO_EVOLVE_TIME && isEvolving)
+	if (GetTickCount64() - evolve_start >= MARIO_EVOLVE_TIME && isEvolving)
 	{
-		this->SetLevel(MARIO_LEVEL_BIG);
+		if (this->level == MARIO_LEVEL_SMALL)
+			this->SetLevel(MARIO_LEVEL_BIG);
+		else 
+			this->SetLevel(MARIO_LEVEL_RACOON);
 		isEvolving = false;
 		evolve_start = 0;
 	}
@@ -95,6 +98,7 @@ void CMario::UpdateMarioState()
 
 void CMario::OnNoCollision(DWORD dt)
 {
+	if (isEvolving) return;
 	x += vx * dt; //x = x0 + vx * dt
 	y += vy * dt; //y = y0 + vy * dt
 }
@@ -184,7 +188,7 @@ void CMario::HandleCollisionWithColorPlatform(LPCOLLISIONEVENT e, CColorPlatform
 		{
 			if (this->y + MARIO_BIG_BBOX_HEIGHT / 2 + 3.5 > color_platf->GetY())
 			{
-				this->y = color_platf->GetY() - MARIO_BIG_BBOX_HEIGHT / 2 - 3.5; //trừ một lượng vừa đủ
+				this->y = color_platf->GetY() - MARIO_BIG_BBOX_HEIGHT / 2 - 3.5f; //trừ một lượng vừa đủ
 				vy = 0;
 				isOnPlatform = true;
 			}
@@ -249,7 +253,7 @@ void CMario::HandleCollisionOtherDirectionWithGoomba(LPCOLLISIONEVENT e, CGoomba
 			{
 				goomba->SetState(GOOMBA_STATE_DIE_REVERSE);
 				SpawnScore(goomba);
-				SpawnEffect(e, this);
+				SpawnEffect(e, this, EFF_COL_TYPE_NORMAL);
 				//tail->SetState(TAIL_STATE_ATTACK);
 				//tail->OnCollisionWithGoomba(e);
 			}
@@ -361,12 +365,12 @@ void CMario::HandleCollisionOtherDirectionWithKoopa(LPCOLLISIONEVENT e, CKoopa* 
 				{
 					koopa->SetType(GREEN_KOOPA);
 					koopa->SetState(KOOPA_STATE_SLEEP_REVERSE);
-					SpawnEffect(e, this);
+					SpawnEffect(e, this, EFF_COL_TYPE_NORMAL);
 				}
 				else
 				{
 					koopa->SetState(KOOPA_STATE_SLEEP_REVERSE);
-					SpawnEffect(e, this);
+					SpawnEffect(e, this, EFF_COL_TYPE_NORMAL);
 				}
 			}
 			else
@@ -440,7 +444,7 @@ void CMario::OnCollisionWithMushroom(LPCOLLISIONEVENT e)
 	{
 		SpawnScore(mr);
 		mr->Delete();
-
+		y -= MARIO_SMALL_BBOX_HEIGHT;
 		this->SetState(MARIO_STATE_EVOLVING);
 	}
 	//Da Fuq Mario blocking Mushroom ??
@@ -449,8 +453,9 @@ void CMario::OnCollisionWithMushroom(LPCOLLISIONEVENT e)
 void CMario::OnCollisionWithLeaf(LPCOLLISIONEVENT e)
 {
 	CLeaf* leaf = dynamic_cast<CLeaf*>(e->obj);
-	this->SetLevel(MARIO_LEVEL_RACOON);
+	this->SetState(MARIO_STATE_EVOLVING);
 	SpawnScore(leaf);
+	SpawnEffect(e, leaf, EFF_COL_TYPE_SMOKE_EVOLVE);
 	leaf->Delete();
 }
 
@@ -458,9 +463,9 @@ void CMario::OnCollisionWithFlower(LPCOLLISIONEVENT e)
 {
 	if (isAttacking)
 	{
-		e->obj->Delete();
+		e->obj->SetState(SHOOTING_FLOWER_STATE_DIE);
 		SpawnScore(e->obj);
-		SpawnEffect(e,this);
+		SpawnEffect(e, this, EFF_COL_TYPE_NORMAL);
 	}
 	else 
 	{
@@ -776,6 +781,8 @@ void CMario::Render()
 	else if (level == MARIO_LEVEL_RACOON)
 		aniId = GetAniIdRacoon();
 
+	if (isEvolving && level == MARIO_LEVEL_BIG) return; //Big biến thành gấu mèo thì 0 vẽ trong 1 khoảng thgian
+
 	animations->Get(aniId)->Render(x, y);
 	//RenderBoundingBox();
 }
@@ -891,7 +898,6 @@ void CMario::SetState(int state)
 		break;
 
 	case MARIO_STATE_SIT:
-
 		if (isOnPlatform && level == MARIO_LEVEL_BIG)
 		{
 			state = MARIO_STATE_IDLE;
@@ -931,13 +937,13 @@ void CMario::SetState(int state)
 		break;
 
 	case MARIO_STATE_EVOLVING:
+		//y -= MARIO_BIG_BBOX_HEIGHT / 2;
 		evolve_start = GetTickCount64();
 		isEvolving = true;
-		//y -= MARIO_BIG_BBOX_HEIGHT / 2;
 		break;
 
 	case MARIO_STATE_DIE:
-		vy = -MARIO_JUMP_DEFLECT_SPEED * 1.5;
+		vy = -MARIO_JUMP_DEFLECT_SPEED * 1.5f;
 		vx = 0;
 		ax = 0;
 		break;
@@ -1043,7 +1049,7 @@ CEffectScore* CMario::ClassifyScore(LPGAMEOBJECT obj, CEffectScore* eff_scr)
 	//Hàm sàng lọc điểm
 }
 
-void CMario::SpawnEffect(LPCOLLISIONEVENT e, LPGAMEOBJECT obj)
+void CMario::SpawnEffect(LPCOLLISIONEVENT e, LPGAMEOBJECT obj, int eff_type)
 {
 	//if (dynamic_cast<CShootingFlower*>(e->obj))
 	//{
@@ -1052,16 +1058,24 @@ void CMario::SpawnEffect(LPCOLLISIONEVENT e, LPGAMEOBJECT obj)
 	//else 
 	//{
 	//Trường hợp tổng quát
-	float x;
-	float y;
-	if (e->nx > 0)
-		x = obj->GetX() - 15.0f;
-	else 
-		x = obj->GetX() + 15.0f;
+	
+	float x = -1;
+	float y = -1;
+	if (eff_type != EFF_COL_TYPE_SMOKE_EVOLVE)
+	{
+		if (e->nx > 0)
+			x = obj->GetX() - 15.0f;
+		else
+			x = obj->GetX() + 15.0f;
+		y = obj->GetY();
+	}
+	else //tiến hoá, cây chết 
+	{
+		x = this->x;
+		y = this->y;
+	}
 
-	y = obj->GetY();
-
-	CEffectCollision* eff_col = new CEffectCollision(x, y, GetTickCount64());
+	CEffectCollision* eff_col = new CEffectCollision(x, y, GetTickCount64(), eff_type);
 	CPlayScene* current_scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
 	current_scene->AddObjectToScene(eff_col);
 }

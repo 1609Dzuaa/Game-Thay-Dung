@@ -2,6 +2,7 @@
 #include "GameObject.h"
 #include "FireBullet.h"
 #include "PlayScene.h"
+#include "EffectCollision.h"
 
 //Quite similiar to Mushroom
 //Chui từ vật thể ra
@@ -39,15 +40,19 @@
 class CShootingFlower :public CGameObject 
 {
 	float minY, maxY;
-	ULONGLONG aim_start, rest_start;
+	ULONGLONG aim_start, rest_start, die_start;
 	BOOLEAN enableToShoot;
+	CEffectCollision* eff_die;
 public:
-	CShootingFlower() { 
+	CShootingFlower() 
+	{ 
 		minY = -1; 
 		maxY = -1; 
 		aim_start = 0;
 		rest_start = 0;
+		die_start = 0;
 		enableToShoot = true;
+		eff_die = NULL;
 	};
 	CShootingFlower(float x, float y) :CGameObject(x, y)
 	{
@@ -59,7 +64,9 @@ public:
 		maxY = y;
 		aim_start = 0;
 		rest_start = 0;
+		die_start = 0;
 		enableToShoot = true;
+		eff_die = NULL;
 	}
 	void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
 	void Render();
@@ -72,6 +79,7 @@ public:
 	void SetFlowerMinY(float min_Y) { this->minY = min_Y; }
 
 	int GetAniID();
+	void HandleFlowerDeadEffect();
 
 	CFireBullet* SetSpeedFireBullet(CFireBullet* bullet, CMario* mario);
 };

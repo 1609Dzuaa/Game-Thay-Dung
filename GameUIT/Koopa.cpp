@@ -303,7 +303,7 @@ void CKoopa::OnCollisionWithGoomba(LPCOLLISIONEVENT e)
 	{
 		goomba->SetState(GOOMBA_STATE_DIE_REVERSE);
 		mario->SpawnScore(goomba);
-		mario->SpawnEffect(e, this);
+		mario->SpawnEffect(e, this, EFF_COL_TYPE_NORMAL);
 	}
 }
 

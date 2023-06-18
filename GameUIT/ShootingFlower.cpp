@@ -90,6 +90,8 @@ int CShootingFlower::GetAniID()
 
 void CShootingFlower::SetState(int state)
 {
+	if (this->state == SHOOTING_FLOWER_STATE_DIE) return;
+
 	switch (state)
 	{
 	case SHOOTING_FLOWER_STATE_DIVE:
@@ -115,9 +117,23 @@ void CShootingFlower::SetState(int state)
 		enableToShoot = false;
 
 		break;
+
+	case SHOOTING_FLOWER_STATE_DIE: //Cây sinh effect khi chết
+		this->Delete();
+		HandleFlowerDeadEffect();
+
+		break;
 	}
 
 	CGameObject::SetState(state);
+}
+
+void CShootingFlower::HandleFlowerDeadEffect()
+{
+	die_start = GetTickCount64();
+	eff_die = new CEffectCollision(x, y - FLOWER_HEIGHT / 2 + 3.0f, die_start, EFF_COL_TYPE_SMOKE_EVOLVE);
+	CPlayScene* current_scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
+	current_scene->AddObjectToScene(eff_die);
 }
 
 void CShootingFlower::AimAndShoot()
