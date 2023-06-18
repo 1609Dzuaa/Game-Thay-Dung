@@ -22,8 +22,19 @@
 
 void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
-	vy += ay * dt;
-	vx += ax * dt;
+	//Phải dừng vận tốc ở đây chứ 0 phải ở hàm OnNoCollision
+	//Vì ở đây gọi trc r mới đến OnNoCollision
+
+	if (!isEvolving)
+	{
+		vy += ay * dt;
+		vx += ax * dt;
+	}
+	else
+	{
+		vx = 0;
+		vy = 0;
+	}
 
 	UpdateMarioState();
 	//UpdateTail here
@@ -32,7 +43,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 	isOnPlatform = false;
 	CCollision::GetInstance()->Process(this, dt, coObjects);
-	//DebugOutTitle(L"Pos Y: %f", y);
+	DebugOutTitle(L"Pos Y: %f", y);
 }
 
 void CMario::UpdateMarioState()
@@ -47,12 +58,32 @@ void CMario::UpdateMarioState()
 
 	if (GetTickCount64() - evolve_start >= MARIO_EVOLVE_TIME && isEvolving)
 	{
-		if (this->level == MARIO_LEVEL_SMALL)
+		//Tiến hoá có 2 loại: tiến hoá lên và tiến hoá lùi
+		if (isEvolveForward)
+		{
+			if (this->level == MARIO_LEVEL_SMALL)
+				this->SetLevel(MARIO_LEVEL_BIG);
+			else
+				this->SetLevel(MARIO_LEVEL_RACOON);
+		}
+		else //Tiến hoá ngược
+		{
+			if (this->level == MARIO_LEVEL_RACOON)
+				this->SetLevel(MARIO_LEVEL_BIG);
+			else if(this->level == MARIO_LEVEL_BIG)
+				this->SetLevel(MARIO_LEVEL_SMALL);
+		}
+		isEvolving = false;
+		isEvolveForward = false;
+		isAteItem = false;
+		evolve_start = 0;
+
+		/*if (this->level == MARIO_LEVEL_SMALL)
 			this->SetLevel(MARIO_LEVEL_BIG);
-		else 
+		else
 			this->SetLevel(MARIO_LEVEL_RACOON);
 		isEvolving = false;
-		evolve_start = 0;
+		evolve_start = 0;*/
 	}
 
 	if (this->isJumping && this->level == MARIO_LEVEL_RACOON && this->vy >= 0)
@@ -98,7 +129,6 @@ void CMario::UpdateMarioState()
 
 void CMario::OnNoCollision(DWORD dt)
 {
-	if (isEvolving) return;
 	x += vx * dt; //x = x0 + vx * dt
 	y += vy * dt; //y = y0 + vy * dt
 }
@@ -259,14 +289,17 @@ void CMario::HandleCollisionOtherDirectionWithGoomba(LPCOLLISIONEVENT e, CGoomba
 			}
 			else
 			{
-				if (level > MARIO_LEVEL_BIG)
+				if (level > MARIO_LEVEL_BIG) //Racoon thì spawn khói sau khi giảm level
 				{
-					level = MARIO_LEVEL_BIG;
+					this->isEvolveBackward = true;
+					this->SetState(MARIO_STATE_EVOLVING);
+					SpawnEffect(e, this, EFF_COL_TYPE_SMOKE_EVOLVE);
 					StartUntouchable();
 				}
 				else if (level > MARIO_LEVEL_SMALL)
 				{
-					level = MARIO_LEVEL_SMALL;
+					this->isEvolveBackward = true;
+					this->SetState(MARIO_STATE_EVOLVING);
 					StartUntouchable();
 				}
 				else
@@ -375,25 +408,30 @@ void CMario::HandleCollisionOtherDirectionWithKoopa(LPCOLLISIONEVENT e, CKoopa* 
 			}
 			else
 			{
-				if (koopa->GetState() != KOOPA_STATE_SLEEP
-					&& koopa->GetState() != KOOPA_STATE_SLEEP_REVERSE
-					&& koopa->GetState() != KOOPA_STATE_SLEEP_REVERSE_SPECIAL)
+				//4 state của Koopa mà gây dmg lên Mario
+				if (koopa->GetState() == KOOPA_STATE_WALKING || 
+					koopa->GetState() == KOOPA_STATE_SLIP ||
+					koopa->GetState() == KOOPA_STATE_SLIP_REVERSE || 
+					koopa->GetState() == KOOPA_STATE_JUMPING)
 				{
-					if (level == MARIO_LEVEL_RACOON)
+					if (level > MARIO_LEVEL_BIG) //Racoon thì spawn khói sau khi giảm level
 					{
-						level = MARIO_LEVEL_BIG;
-						StartUntouchable(); //Thêm hiệu ứng untouchable cho Mario
+						this->isEvolveBackward = true;
+						this->SetState(MARIO_STATE_EVOLVING);
+						SpawnEffect(e, this, EFF_COL_TYPE_SMOKE_EVOLVE);
+						StartUntouchable();
 					}
-					else if (level == MARIO_LEVEL_BIG)
+					else if (level > MARIO_LEVEL_SMALL)
 					{
-						level = MARIO_LEVEL_SMALL;
+						this->isEvolveBackward = true;
+						this->SetState(MARIO_STATE_EVOLVING);
 						StartUntouchable();
 					}
 					else
 					{
 						SetState(MARIO_STATE_DIE);
 					}
-				}
+				} //các state không gây dmg cho Mario
 				else if (koopa->GetState() == KOOPA_STATE_SLEEP_REVERSE
 					|| koopa->GetState() == KOOPA_STATE_REBORN_REVERSE
 					|| koopa->GetState() == KOOPA_STATE_SLEEP_REVERSE_SPECIAL)
@@ -444,8 +482,13 @@ void CMario::OnCollisionWithMushroom(LPCOLLISIONEVENT e)
 	{
 		SpawnScore(mr);
 		mr->Delete();
-		y -= MARIO_SMALL_BBOX_HEIGHT;
+		y -= (MARIO_BIG_BBOX_HEIGHT - MARIO_SMALL_BBOX_HEIGHT) / 2; //Giảm y để tránh tình trạng "Sink" dưới nền
+		this->isEvolveForward = true;
 		this->SetState(MARIO_STATE_EVOLVING);
+		isAteItem = true;
+		//SetLevel(MARIO_LEVEL_BIG);
+		//this->SetState(MARIO_STATE_EVOLVING);
+		
 	}
 	//Da Fuq Mario blocking Mushroom ??
 }
@@ -453,9 +496,18 @@ void CMario::OnCollisionWithMushroom(LPCOLLISIONEVENT e)
 void CMario::OnCollisionWithLeaf(LPCOLLISIONEVENT e)
 {
 	CLeaf* leaf = dynamic_cast<CLeaf*>(e->obj);
-	this->SetState(MARIO_STATE_EVOLVING);
+	if (this->level == MARIO_LEVEL_SMALL)
+	{
+		this->isEvolveForward = true;
+		this->SetState(MARIO_STATE_EVOLVING);
+	}
+	else if (this->level == MARIO_LEVEL_BIG)
+	{
+		this->isEvolveForward = true;
+		this->SetState(MARIO_STATE_EVOLVING);
+		SpawnEffect(e, leaf, EFF_COL_TYPE_SMOKE_EVOLVE);
+	}
 	SpawnScore(leaf);
-	SpawnEffect(e, leaf, EFF_COL_TYPE_SMOKE_EVOLVE);
 	leaf->Delete();
 }
 
@@ -471,14 +523,17 @@ void CMario::OnCollisionWithFlower(LPCOLLISIONEVENT e)
 	{
 		if (!untouchable)
 		{
-			if (level > MARIO_LEVEL_BIG)
+			if (level > MARIO_LEVEL_BIG) //Racoon thì spawn khói sau khi giảm level
 			{
-				level = MARIO_LEVEL_BIG;
+				this->isEvolveBackward = true;
+				this->SetState(MARIO_STATE_EVOLVING);
+				SpawnEffect(e, this, EFF_COL_TYPE_SMOKE_EVOLVE);
 				StartUntouchable();
 			}
 			else if (level > MARIO_LEVEL_SMALL)
 			{
-				level = MARIO_LEVEL_SMALL;
+				this->isEvolveBackward = true;
+				this->SetState(MARIO_STATE_EVOLVING);
 				StartUntouchable();
 			}
 			else
@@ -493,14 +548,17 @@ void CMario::OnCollisionWithFireBullet(LPCOLLISIONEVENT e)
 {
 	if (!untouchable)
 	{
-		if (level > MARIO_LEVEL_BIG)
+		if (level > MARIO_LEVEL_BIG) //Racoon thì spawn khói sau khi giảm level
 		{
-			level = MARIO_LEVEL_BIG;
+			this->isEvolveBackward = true;
+			this->SetState(MARIO_STATE_EVOLVING);
+			SpawnEffect(e, this, EFF_COL_TYPE_SMOKE_EVOLVE);
 			StartUntouchable();
 		}
 		else if (level > MARIO_LEVEL_SMALL)
 		{
-			level = MARIO_LEVEL_SMALL;
+			this->isEvolveBackward = true;
+			this->SetState(MARIO_STATE_EVOLVING);
 			StartUntouchable();
 		}
 		else
@@ -520,7 +578,14 @@ int CMario::GetAniIdSmall()
 
 	if (!isOnPlatform)
 	{
-		if (isAtMaxSpeed)
+		if (isEvolving && isEvolveForward)
+		{
+			if (nx > 0)
+				aniId = ID_ANI_MARIO_SMALL_EVOLVE_TO_BIG_RIGHT;
+			else
+				aniId = ID_ANI_MARIO_SMALL_EVOLVE_TO_BIG_LEFT;
+		}
+		else if (isAtMaxSpeed)
 		{
 			if (nx > 0)  //prob here
 				aniId = ID_ANI_MARIO_SMALL_JUMP_AT_MAX_SPEED_RIGHT;
@@ -544,7 +609,7 @@ int CMario::GetAniIdSmall()
 			else
 				aniId = ID_ANI_MARIO_SMALL_KICKING_LEFT;
 		}
-		else if (isEvolving)
+		else if (isEvolving && isEvolveForward)
 		{
 			if (nx > 0)
 				aniId = ID_ANI_MARIO_SMALL_EVOLVE_TO_BIG_RIGHT;
@@ -597,7 +662,21 @@ int CMario::GetAniIdBig()
 	int aniId = -1;
 	if (!isOnPlatform) //ĐANG BAY || LƯỢN
 	{
-		if (isAtMaxSpeed)
+		if (isEvolving && isEvolveForward)
+		{
+			if (nx > 0)
+				aniId = ID_ANI_MARIO_SMALL_EVOLVE_TO_BIG_RIGHT;
+			else
+				aniId = ID_ANI_MARIO_SMALL_EVOLVE_TO_BIG_LEFT;
+		}
+		else if (isEvolving && isEvolveBackward)
+		{
+			if (nx > 0)
+				aniId = ID_ANI_MARIO_SMALL_EVOLVE_TO_BIG_RIGHT;
+			else
+				aniId = ID_ANI_MARIO_SMALL_EVOLVE_TO_BIG_LEFT;
+		}
+		else if (isAtMaxSpeed)
 		{
 			if (nx > 0)  //prob here
 				aniId = ID_ANI_MARIO_BIG_JUMP_AT_MAX_SPEED_RIGHT;
@@ -627,6 +706,13 @@ int CMario::GetAniIdBig()
 				aniId = ID_ANI_MARIO_KICKING_RIGHT;
 			else
 				aniId = ID_ANI_MARIO_KICKING_LEFT;
+		}
+		else if (isEvolving && isEvolveBackward) //tiến hoá lùi
+		{
+			if (nx > 0)
+				aniId = ID_ANI_MARIO_SMALL_EVOLVE_TO_BIG_RIGHT;
+			else
+				aniId = ID_ANI_MARIO_SMALL_EVOLVE_TO_BIG_LEFT;
 		}
 		else
 		{
@@ -769,6 +855,9 @@ int CMario::GetAniIdRacoon()
 
 void CMario::Render()
 {
+	if (isEvolving && level == MARIO_LEVEL_BIG && isEvolveForward) return; //Big biến thành gấu mèo thì 0 vẽ trong 1 khoảng thgian
+	if (isEvolving && level == MARIO_LEVEL_RACOON && isEvolveBackward) return; //Gấu mèo biến về Big thì cũng 0 vẽ
+
 	CAnimations* animations = CAnimations::GetInstance();
 	int aniId = -1;
 
@@ -780,8 +869,6 @@ void CMario::Render()
 		aniId = GetAniIdSmall();
 	else if (level == MARIO_LEVEL_RACOON)
 		aniId = GetAniIdRacoon();
-
-	if (isEvolving && level == MARIO_LEVEL_BIG) return; //Big biến thành gấu mèo thì 0 vẽ trong 1 khoảng thgian
 
 	animations->Get(aniId)->Render(x, y);
 	//RenderBoundingBox();
@@ -898,14 +985,7 @@ void CMario::SetState(int state)
 		break;
 
 	case MARIO_STATE_SIT:
-		if (isOnPlatform && level == MARIO_LEVEL_BIG)
-		{
-			state = MARIO_STATE_IDLE;
-			isSitting = true;
-			vx = 0; vy = 0.0f;
-			y += MARIO_SIT_HEIGHT_ADJUST;
-		}
-		else if (isOnPlatform && level == MARIO_LEVEL_RACOON)
+		if (isOnPlatform && level != MARIO_LEVEL_SMALL)
 		{
 			state = MARIO_STATE_IDLE;
 			isSitting = true;
@@ -937,7 +1017,6 @@ void CMario::SetState(int state)
 		break;
 
 	case MARIO_STATE_EVOLVING:
-		//y -= MARIO_BIG_BBOX_HEIGHT / 2;
 		evolve_start = GetTickCount64();
 		isEvolving = true;
 		break;
@@ -1007,9 +1086,10 @@ void CMario::SetLevel(int l)
 		}
 	}*/
 
+	if(!isAteItem) //Nếu đc SetLevel bằng cách nhấn phím thì giảm y để Mario kh bị rơi xuống nền
 	if (this->level == MARIO_LEVEL_SMALL)
 	{
-		y -= (MARIO_BIG_BBOX_HEIGHT - MARIO_SMALL_BBOX_HEIGHT) / 2;
+		y -= (MARIO_BIG_BBOX_HEIGHT - MARIO_SMALL_BBOX_HEIGHT) / 2; //Key problem here
 	}
 
 	level = l;
@@ -1019,7 +1099,7 @@ void CMario::SpawnScore(LPGAMEOBJECT obj)
 {
 	CEffectScore* eff_scr = new CEffectScore(obj->GetX(), obj->GetY() - 15.0f, obj->GetY() - 45.0f, NORMAL_SCORE);
 	CPlayScene* current_scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
-	current_scene->AddObjectToScene(ClassifyScore(obj, eff_scr));
+	current_scene->AddObjectToScene(ClassifyScore(obj, eff_scr)); 
 }
 
 CEffectScore* CMario::ClassifyScore(LPGAMEOBJECT obj, CEffectScore* eff_scr)
@@ -1050,15 +1130,7 @@ CEffectScore* CMario::ClassifyScore(LPGAMEOBJECT obj, CEffectScore* eff_scr)
 }
 
 void CMario::SpawnEffect(LPCOLLISIONEVENT e, LPGAMEOBJECT obj, int eff_type)
-{
-	//if (dynamic_cast<CShootingFlower*>(e->obj))
-	//{
-
-	//}
-	//else 
-	//{
-	//Trường hợp tổng quát
-	
+{	
 	float x = -1;
 	float y = -1;
 	if (eff_type != EFF_COL_TYPE_SMOKE_EVOLVE)

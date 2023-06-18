@@ -173,12 +173,12 @@ void CKoopa::UpdateKoopaState()
 			{
 				if (this->vx < 0)
 				{
-					ghost_head->SetPosition(x - KOOPA_BBOX_WIDTH / 2 - 10.0f, this->y);
+					ghost_head->SetPosition(x - KOOPA_BBOX_WIDTH / 2 - 5.0f, this->y);
 					ghost_head->SetSpeed(-KOOPA_WALKING_SPEED, 0);
 				}
 				else
 				{
-					ghost_head->SetPosition(x + KOOPA_BBOX_WIDTH / 2 + 3.0f, this->y);
+					ghost_head->SetPosition(x + KOOPA_BBOX_WIDTH / 2 + 5.0f, this->y);
 					ghost_head->SetSpeed(KOOPA_WALKING_SPEED, 0);
 				}
 			}

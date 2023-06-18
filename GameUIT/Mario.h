@@ -184,11 +184,14 @@
 #define MARIO_BIG_SITTING_BBOX_WIDTH  14
 #define MARIO_BIG_SITTING_BBOX_HEIGHT 16 //Big & Racoon share the same Height when SIT
 
+#define MARIO_EVOLVE_BBOX_WIDTH 14
+#define MARIO_EVOLVE_BBOX_HEIGHT 20
+
 #define MARIO_RACOON_BBOX_WIDTH  24 //USED TO BE 21
 
 #define MARIO_SIT_HEIGHT_ADJUST ((MARIO_BIG_BBOX_HEIGHT - MARIO_BIG_SITTING_BBOX_HEIGHT) / 2)
 
-#define MARIO_SMALL_BBOX_WIDTH  12 //USED TO BE 13
+#define MARIO_SMALL_BBOX_WIDTH  13 //USED TO BE 13
 #define MARIO_SMALL_BBOX_HEIGHT 12 //CALCULATE RA 16 17 ??
 
 #define MARIO_UNTOUCHABLE_TIME 2500
@@ -213,6 +216,9 @@ class CMario : public CGameObject
 	BOOLEAN isAtMaxSpeed;
 	BOOLEAN isLanding;
 	BOOLEAN isEvolving;
+	BOOLEAN isEvolveForward;
+	BOOLEAN isEvolveBackward;
+	BOOLEAN isAteItem; //Biến đặc biệt dùng để nhận biết xem được tăng level nhờ item hay nhấn phím, mục đích xem ở hàm SetLevel
 	float maxVx;
 	float maxRunningSpeed;
 	float ax;				// acceleration on x 
@@ -264,6 +270,9 @@ public:
 		isAtMaxSpeed = false;
 		isLanding = false;
 		isEvolving = false;
+		isEvolveForward = false;
+		isEvolveBackward = false;
+		isAteItem = false;
 		CountJumpOnEnemies = 0;
 		tail = NULL;
 
@@ -314,4 +323,6 @@ public:
 	void SpawnScore(LPGAMEOBJECT obj);
 	void SpawnEffect(LPCOLLISIONEVENT e, LPGAMEOBJECT obj, int eff_type);
 	void UpdateTailPosition(CTail* tail);
+	//HandleMarioTransformToRacoon:
+
 };
