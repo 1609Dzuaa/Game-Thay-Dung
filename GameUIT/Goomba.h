@@ -57,7 +57,7 @@ protected:
 	ULONGLONG fly_start;
 	BOOLEAN isDead;
 	BOOLEAN isSpreadWings;
-	int type, level, count_step, count_step_to_jump, LastFrame;
+	int type, level, count_step, count_step_to_jump;
 	int isFallOff;
 	//count_step: Dùng để đếm bước để bắt đầu nhảy thấp
 	//count_step_to_jump: Dùng để đếm bước để bắt đầu nhảy cao

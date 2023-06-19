@@ -17,7 +17,7 @@ void CSampleKeyHandler::OnKeyDown(int KeyCode)
 		mario->SetState(MARIO_STATE_SIT);
 		break;
 	case DIK_Z: //Tạm cài nút Z vì nút A có lỗi ch fix đc
-		if (mario->GetState() == MARIO_RACOON_STATE_ATTACK) break;
+		if (mario->GetIsAttacking()) break;
 		if (mario->GetLevel() == MARIO_LEVEL_RACOON)
 			mario->SetState(MARIO_RACOON_STATE_ATTACK);
 
@@ -33,6 +33,8 @@ void CSampleKeyHandler::OnKeyDown(int KeyCode)
 		}
 		else if (mario->GetisAtMaxSpeed())
 			mario->SetState(MARIO_STATE_JUMP_AT_MAX_SPEED);
+		else if (mario->GetIsAttacking())
+			mario->SetState(MARIO_RACOON_STATE_ATTACK);
 		else
 			mario->SetState(MARIO_STATE_JUMP);
 		break;
@@ -67,6 +69,8 @@ void CSampleKeyHandler::OnKeyUp(int KeyCode)
 
 	case DIK_A:
 		mario->SetisAtMaxSpeed(false);
+		if (mario->GetIsHolding())
+			mario->SetHoldKoopa(false);
 		break;
 
 	case DIK_DOWN:
@@ -83,7 +87,10 @@ void CSampleKeyHandler::KeyState(BYTE* states)
 	if (game->IsKeyDown(DIK_RIGHT))
 	{
 		if (game->IsKeyDown(DIK_A))
+		{
 			mario->SetState(MARIO_STATE_RUNNING_RIGHT);
+			mario->SetHoldKoopa(true); //giữ A thì cho phép hold Koopa
+		}
 		else
 			mario->SetState(MARIO_STATE_WALKING_RIGHT);
 	}

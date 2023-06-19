@@ -18,7 +18,6 @@ CKoopa::CKoopa(float x, float y, int type) :CGameObject(x, y)
 	sleep_start = -1;
 	reborn_start = -1;
 	knock_off_start = -1;
-	LastFrame = 0;
 	isOnPlatform = false;
 	isFallOffColorPlatform = false; //ban đầu thì Red koopa chưa rơi khỏi color plat
 	enableInteractWColorPlat = true;
@@ -195,8 +194,6 @@ void CKoopa::Render()
 {
 	int aniId = 0;
 	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
-	if (mario->GetStopWatch())
-		aniId = LastFrame;
 
 	if (type == GREEN_KOOPA)
 		aniId = GetAniIdGreenKoopa();
@@ -204,7 +201,6 @@ void CKoopa::Render()
 		aniId = GetAniIdFlyingKoopa();
 	else
 		aniId = GetAniIdRedKoopa();
-	LastFrame = aniId;
 
 	CAnimations::GetInstance()->Get(aniId)->Render(x, y, true);
 	//RenderBoundingBox();
@@ -408,12 +404,10 @@ void CKoopa::HandleCollisionWithColorPlatform(LPCOLLISIONEVENT e, CColorPlatform
 		this->SetState(KOOPA_STATE_SLEEP_REVERSE_SPECIAL);
 	}
 
-	if (state != KOOPA_STATE_SLIP && state != KOOPA_STATE_SLIP_REVERSE) //nếu nó khác 2 ĐK trên thì cho phép tương tác
+	if (state == KOOPA_STATE_WALKING) //đi bộ thì mới cho đổi dấu
 		enableInteractWColorPlat = true; //cho phép tương tác với ColorPlat(đổi dấu vx)
 	else
-	{
 		enableInteractWColorPlat = false; //cho phép nó trượt trên color plat nhưng 0 đổi dấu đc
-	}
 
 	if (state == KOOPA_STATE_SLEEP || state == KOOPA_STATE_SLIP || state == KOOPA_STATE_REBORN
 		|| state == KOOPA_STATE_SLEEP_REVERSE || state == KOOPA_STATE_REBORN_REVERSE

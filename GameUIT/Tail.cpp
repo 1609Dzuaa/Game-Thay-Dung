@@ -1,6 +1,10 @@
 #include "Tail.h"
 #include "Goomba.h"
+#include "Koopa.h"
+#include "ShootingFlower.h"
 #include "Mario.h"
+#include "PlayScene.h"
+#include "EffectCollision.h"
 
 void CTail::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
@@ -19,17 +23,46 @@ void CTail::OnNoCollision(DWORD dt)
 
 void CTail::OnCollisionWith(LPCOLLISIONEVENT e)
 {
-	if (dynamic_cast<CGoomba*>(e->obj))//&&isattacking)
+	if (dynamic_cast<CGoomba*>(e->obj))
 		OnCollisionWithGoomba(e);
+	if (dynamic_cast<CKoopa*>(e->obj))
+		OnCollisionWithKoopa(e);
+	if (dynamic_cast<CShootingFlower*>(e->obj))
+		OnCollisionWithShootingFlower(e);
 }
 
 void CTail::OnCollisionWithGoomba(LPCOLLISIONEVENT e)
 {
-	if (state == TAIL_STATE_ATTACK)
+	CGoomba* goomba = dynamic_cast<CGoomba*>(e->obj);
+	goomba->SetState(GOOMBA_STATE_DIE_REVERSE);
+	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
+	mario->SpawnEffect(e, this, EFF_COL_TYPE_NORMAL);
+}
+
+void CTail::OnCollisionWithKoopa(LPCOLLISIONEVENT e)
+{
+	CKoopa* koopa = dynamic_cast<CKoopa*>(e->obj);
+	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
+	if (koopa->GetType() == GREEN_FLYING_KOOPA)
 	{
-		CGoomba* goomba = dynamic_cast<CGoomba*>(e->obj);
-		goomba->SetState(GOOMBA_STATE_DIE_REVERSE);
+		koopa->SetType(GREEN_KOOPA);
+		koopa->SetState(KOOPA_STATE_SLEEP_REVERSE);
+		mario->SpawnEffect(e, this, EFF_COL_TYPE_NORMAL);
 	}
+	else
+	{
+		koopa->SetState(KOOPA_STATE_SLEEP_REVERSE);
+		mario->SpawnEffect(e, this, EFF_COL_TYPE_NORMAL);
+	}
+}
+
+void CTail::OnCollisionWithShootingFlower(LPCOLLISIONEVENT e)
+{
+	CShootingFlower* flower = dynamic_cast<CShootingFlower*>(e->obj);
+	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
+	flower->SetState(SHOOTING_FLOWER_STATE_DIE);
+	mario->SpawnScore(e->obj);
+	mario->SpawnEffect(e, this, EFF_COL_TYPE_NORMAL);
 }
 
 void CTail::GetBoundingBox(float& l, float& t, float& r, float& b)

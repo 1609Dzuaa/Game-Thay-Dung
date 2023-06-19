@@ -45,8 +45,6 @@ void CShootingFlower::Render()
 	CAnimations* animations = CAnimations::GetInstance();
 	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
 	int animation_ID = GetAniID();
-	if (mario->GetStopWatch()) 
-		animation_ID = LastFrame; //có vô đây
 
 	if (animation_ID != -1)
 		animations->Get(animation_ID)->Render(x, y, true);
@@ -91,7 +89,6 @@ int CShootingFlower::GetAniID()
 			aniID = ID_ANI_FLOWER_DIVE_RIGHT_FACE_UP;
 	}
 
-	LastFrame = aniID;
 	return aniID;
 }
 

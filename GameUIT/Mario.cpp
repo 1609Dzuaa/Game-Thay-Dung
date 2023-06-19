@@ -37,21 +37,15 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	}
 
 	UpdateMarioState();
-	//UpdateTail here
-	if (tail != NULL)
-		UpdateTailPosition(tail);
-
 	isOnPlatform = false;
 	CCollision::GetInstance()->Process(this, dt, coObjects);
-	DebugOutTitle(L"Pos Y: %f", y);
 }
 
 void CMario::UpdateMarioState()
 {
-	//May be affect collision with Fire Bullet
 	// reset untouchable timer if untouchable time has passed
 	//when untouchable, there are 2 states of drawing: Draw & NOT draw
-	HandleUntouchableDrawState();
+	HandleHoldingKoopa();
 
 	if (GetTickCount64() - untouchable_start > MARIO_UNTOUCHABLE_TIME)
 	{
@@ -119,6 +113,7 @@ void CMario::UpdateMarioState()
 
 	if (isAttacking && GetTickCount64() - attack_start >= MARIO_RACOON_ATTACK_TIME)
 	{
+		tail->Delete();
 		isAttacking = false;
 		attack_start = 0;
 	}
@@ -126,13 +121,14 @@ void CMario::UpdateMarioState()
 
 void CMario::HandleUntouchableDrawState()
 {
+	//0 vẽ
 	if (untouchable && GetTickCount64() - untouch_draw_0 >= UNTOUCH_DRAW_TIME && untouch_0)
 	{
 		untouch_0 = 0;
 		untouch_1 = 1;
 		untouch_draw_0 = 0;
 		untouch_draw_1 = GetTickCount64();
-	}
+	} //vẽ
 	else if (untouchable && GetTickCount64() - untouch_draw_1 >= UNTOUCH_DRAW_TIME && untouch_1)
 	{
 		untouch_0 = 1;
@@ -298,9 +294,6 @@ void CMario::HandleCollisionOtherDirectionWithGoomba(LPCOLLISIONEVENT e, CGoomba
 			{
 				goomba->SetState(GOOMBA_STATE_DIE_REVERSE);
 				SpawnScore(goomba);
-				SpawnEffect(e, this, EFF_COL_TYPE_NORMAL);
-				//tail->SetState(TAIL_STATE_ATTACK);
-				//tail->OnCollisionWithGoomba(e);
 			}
 			else
 			{
@@ -407,26 +400,22 @@ void CMario::HandleCollisionOtherDirectionWithKoopa(LPCOLLISIONEVENT e, CKoopa* 
 	{
 		if (koopa->GetState() != KOOPA_STATE_DIE)
 		{
-			if (this->isAttacking)
+			if (isAllowToHoldKoopa)
 			{
-				if (koopa->GetType() == GREEN_FLYING_KOOPA)
-				{
-					koopa->SetType(GREEN_KOOPA);
-					koopa->SetState(KOOPA_STATE_SLEEP_REVERSE);
-					SpawnEffect(e, this, EFF_COL_TYPE_NORMAL);
-				}
-				else
-				{
-					koopa->SetState(KOOPA_STATE_SLEEP_REVERSE);
-					SpawnEffect(e, this, EFF_COL_TYPE_NORMAL);
-				}
+				this->ghost_koopa = koopa;
+				this->SetState(MARIO_STATE_HOLDING);
+				this->isHolding = true;
+				if (e->nx > 0)
+					koopa->SetPosition(this->x + MARIO_BIG_BBOX_WIDTH / 2, this->y);
+				else 
+					koopa->SetPosition(this->x - MARIO_BIG_BBOX_WIDTH / 2, this->y);
 			}
-			else
+			else 
 			{
 				//4 state của Koopa mà gây dmg lên Mario
-				if (koopa->GetState() == KOOPA_STATE_WALKING || 
+				if (koopa->GetState() == KOOPA_STATE_WALKING ||
 					koopa->GetState() == KOOPA_STATE_SLIP ||
-					koopa->GetState() == KOOPA_STATE_SLIP_REVERSE || 
+					koopa->GetState() == KOOPA_STATE_SLIP_REVERSE ||
 					koopa->GetState() == KOOPA_STATE_JUMPING)
 				{
 					if (level > MARIO_LEVEL_BIG) //Racoon thì spawn khói sau khi giảm level
@@ -439,6 +428,7 @@ void CMario::HandleCollisionOtherDirectionWithKoopa(LPCOLLISIONEVENT e, CKoopa* 
 					else if (level > MARIO_LEVEL_SMALL)
 					{
 						this->isEvolveBackward = true;
+						isHolding = false;
 						this->SetState(MARIO_STATE_EVOLVING);
 						StartUntouchable();
 					}
@@ -476,6 +466,24 @@ void CMario::HandleCollisionOtherDirectionWithKoopa(LPCOLLISIONEVENT e, CKoopa* 
 					}
 				}
 			}
+
+			/*if (this->isAttacking)
+			{
+				if (koopa->GetType() == GREEN_FLYING_KOOPA)
+				{
+					koopa->SetType(GREEN_KOOPA);
+					koopa->SetState(KOOPA_STATE_SLEEP_REVERSE);
+					SpawnEffect(e, this, EFF_COL_TYPE_NORMAL);
+				}
+				else
+				{
+					koopa->SetState(KOOPA_STATE_SLEEP_REVERSE);
+					SpawnEffect(e, this, EFF_COL_TYPE_NORMAL);
+				}
+			}*/
+			//else
+			//{
+			//}
 		}
 	}
 }
@@ -525,33 +533,31 @@ void CMario::OnCollisionWithLeaf(LPCOLLISIONEVENT e)
 
 void CMario::OnCollisionWithFlower(LPCOLLISIONEVENT e)
 {
-	if (isAttacking)
+	/*if (isAttacking)
 	{
 		e->obj->SetState(SHOOTING_FLOWER_STATE_DIE);
 		SpawnScore(e->obj);
 		SpawnEffect(e, this, EFF_COL_TYPE_NORMAL);
-	}
-	else 
+	}*/
+	//else 
+	if (!untouchable)
 	{
-		if (!untouchable)
+		if (level > MARIO_LEVEL_BIG) //Racoon thì spawn khói sau khi giảm level
 		{
-			if (level > MARIO_LEVEL_BIG) //Racoon thì spawn khói sau khi giảm level
-			{
-				this->isEvolveBackward = true;
-				this->SetState(MARIO_STATE_EVOLVING);
-				SpawnEffect(e, this, EFF_COL_TYPE_SMOKE_EVOLVE);
-				StartUntouchable();
-			}
-			else if (level > MARIO_LEVEL_SMALL)
-			{
-				this->isEvolveBackward = true;
-				this->SetState(MARIO_STATE_EVOLVING);
-				StartUntouchable();
-			}
-			else
-			{
-				SetState(MARIO_STATE_DIE);
-			}
+			this->isEvolveBackward = true;
+			this->SetState(MARIO_STATE_EVOLVING);
+			SpawnEffect(e, this, EFF_COL_TYPE_SMOKE_EVOLVE);
+			StartUntouchable();
+		}
+		else if (level > MARIO_LEVEL_SMALL)
+		{
+			this->isEvolveBackward = true;
+			this->SetState(MARIO_STATE_EVOLVING);
+			StartUntouchable();
+		}
+		else
+		{
+			SetState(MARIO_STATE_DIE);
 		}
 	}
 }
@@ -726,6 +732,13 @@ int CMario::GetAniIdBig()
 			else
 				aniId = ID_ANI_MARIO_SMALL_EVOLVE_TO_BIG_LEFT;
 		}
+		else if (isHolding)
+		{
+			if (nx > 0)
+				aniId = ID_ANI_MARIO_BIG_HOLDING_RIGHT;
+			else
+				aniId = ID_ANI_MARIO_BIG_HOLDING_LEFT;
+		}
 		else
 		{
 			if (vx == 0)
@@ -778,6 +791,14 @@ int CMario::GetAniIdRacoon()
 		else if (vy > 0 && nx > 0 && isLanding)
 		{
 			aniId = ID_ANI_MARIO_RACOON_LANDING_RIGHT;
+		}
+		else if (isAttacking && nx > 0)
+		{
+			aniId = ID_ANI_MARIO_RACOON_ATTACKING_RIGHT;
+		}
+		else if (isAttacking && nx < 0)
+		{
+			aniId = ID_ANI_MARIO_RACOON_ATTACKING_LEFT;
 		}
 		else if (vy > 0 && nx < 0)
 		{
@@ -867,6 +888,7 @@ int CMario::GetAniIdRacoon()
 
 void CMario::Render()
 {
+	HandleUntouchableDrawState(); //đặt đây thì hợp lý hơn
 	if (isEvolving && level == MARIO_LEVEL_BIG && isEvolveForward) return; //Big biến thành gấu mèo thì 0 vẽ trong 1 khoảng thgian
 	if (isEvolving && level == MARIO_LEVEL_RACOON && isEvolveBackward) return; //Gấu mèo biến về Big thì cũng 0 vẽ
 	if (untouchable && untouch_0) return;
@@ -1016,13 +1038,18 @@ void CMario::SetState(int state)
 		}
 		break;
 
-	case MARIO_RACOON_STATE_ATTACK:
+	case MARIO_RACOON_STATE_ATTACK: //tạo đuôi ở đây
+	{
 		if (isSitting) break;
 		attack_start = GetTickCount64();
 		isAttacking = true;
+		CPlayScene* current_scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
+		tail = new CTail(x, y, MARIO_BIG_BBOX_WIDTH, this->nx); //set state cho nó luôn
+		current_scene->AddObjectToScene(tail);
 		isKicking = false;
 		isSitting = false;
-		break;
+	}
+	break;
 
 	case MARIO_STATE_IDLE:
 		ax = 0.0f;
@@ -1032,6 +1059,10 @@ void CMario::SetState(int state)
 	case MARIO_STATE_EVOLVING:
 		evolve_start = GetTickCount64();
 		isEvolving = true;
+		break;
+
+	case MARIO_STATE_HOLDING:
+		//nothing special
 		break;
 
 	case MARIO_STATE_DIE:
@@ -1171,4 +1202,17 @@ void CMario::UpdateTailPosition(CTail* tail)
 		tail->SetPosition(this->x - MARIO_BIG_BBOX_WIDTH / 2, y + MARIO_BIG_BBOX_HEIGHT / 6 + 1.5f);
 	else
 		tail->SetPosition(this->x + MARIO_BIG_BBOX_WIDTH / 2, y + MARIO_BIG_BBOX_HEIGHT / 6 + 1.5f);
+}
+
+void CMario::HandleHoldingKoopa()
+{
+	if (ghost_koopa != NULL)
+	{
+		if (!isAllowToHoldKoopa) //Nên thay bằng isHolding thì hợp lý hơn
+		{
+			if (ghost_koopa->GetState() == KOOPA_STATE_SLEEP)
+				ghost_koopa->SetState(KOOPA_STATE_SLIP);
+			this->state == MARIO_STATE_IDLE;
+		}
+	}
 }

@@ -15,7 +15,6 @@ CGoomba::CGoomba(float x, float y, int type) :CGameObject(x, y)
 	fly_start = 0;
 	count_step = 0;
 	count_step_to_jump = 0;
-	LastFrame = 0;
 	isDead = false;
 	isSpreadWings = false;
 	this->SetState(GOOMBA_STATE_WALKING);
@@ -183,7 +182,6 @@ void CGoomba::Render()
 			aniId = ID_ANI_PARA_GOOMBA_FLYING;
 	}
     
-	//xác định aniID mà nó dừng, sau đó xác định SpriteID mà nó dừng
 	CAnimations::GetInstance()->Get(aniId)->Render(x, y, true);
 }
 

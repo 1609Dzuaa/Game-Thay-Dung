@@ -53,6 +53,8 @@
 
 #define MARIO_STATE_JUMP_AT_MAX_SPEED 730
 
+#define MARIO_STATE_HOLDING 735
+
 #pragma region ANIMATION_ID
 
 #define ID_ANI_MARIO_IDLE_RIGHT 400
@@ -196,7 +198,7 @@
 
 #define MARIO_UNTOUCHABLE_TIME 2500
 #define MARIO_KICK_TIME 150
-#define MARIO_RACOON_ATTACK_TIME 450
+#define MARIO_RACOON_ATTACK_TIME 350
 #define MARIO_EVOLVE_TIME 750
 #define UNTOUCH_DRAW_TIME 100
 
@@ -221,6 +223,14 @@ class CMario : public CGameObject
 	BOOLEAN isEvolveBackward;
 	BOOLEAN isAteItem; //Biến đặc biệt dùng để nhận biết xem được tăng level nhờ item hay nhấn phím, mục đích xem ở hàm SetLevel
 	BOOLEAN StopWatch; //ngưng mọi hoạt động khi Mario đang tiến hoá hoặc chết
+	BOOLEAN isAllowToHoldKoopa;
+	BOOLEAN isHolding; //A way to handle holding: 
+	//khi đến gần giữ A thì lập tức undraw con Koopa kia thay vào đó
+	//draw hoạt ảnh Mario hold Koopa và cập nhật vị trí cho con Koopa "ma" kia
+	//attach nó với Mario -> khi hết đk isBeingHeld và đang state reborn thì vẽ nó
+	//How about creating ghost Koopa and set it state to sleep
+	//Purpose? -> To Overide Drawing, Make koopa feeling likes it being held by Mario
+	CKoopa* ghost_koopa;
 	float maxVx;
 	float maxRunningSpeed;
 	float ax;				// acceleration on x 
@@ -264,6 +274,7 @@ class CMario : public CGameObject
 	void HandleCollisionOtherDirectionWithKoopa(LPCOLLISIONEVENT e, CKoopa* koopa);
 	void HandleCollisionWithColorPlatform(LPCOLLISIONEVENT e, CColorPlatform* color_platf);
 	void HandleUntouchableDrawState(); //hiệu ứng chớp chớp 
+	void HandleHoldingKoopa();
 
 
 	int GetAniIdBig();
@@ -285,12 +296,15 @@ public:
 		isEvolveBackward = false;
 		isAteItem = false;
 		StopWatch = false;
+		isAllowToHoldKoopa = false;
+		isHolding = false;
 		CountJumpOnEnemies = 0;
 		untouchdraw = -1;
 		untouch_draw_0 = 0;
 		untouch_draw_1 = 0;
 		untouch_0 = 0;
 		untouch_1 = 0;
+		ghost_koopa = NULL;
 		tail = NULL;
 
 		maxVx = 0;
@@ -341,4 +355,7 @@ public:
 	void SpawnEffect(LPCOLLISIONEVENT e, LPGAMEOBJECT obj, int eff_type);
 	void UpdateTailPosition(CTail* tail);
 	BOOLEAN GetStopWatch() { return evolve_start != 0 || this->state == MARIO_STATE_DIE; }
+	BOOLEAN GetIsAttacking() { return this->isAttacking; }
+	BOOLEAN GetIsHolding() { return this->isHolding; }
+	void SetHoldKoopa(BOOLEAN para) { this->isAllowToHoldKoopa = para; }
 };
