@@ -86,6 +86,7 @@ protected:
 	BOOLEAN isFallOffColorPlatform; //use for Red Koopa only
 	BOOLEAN enableInteractWColorPlat; //Slip thì 0 cho đổi dấu vx trên ColorPlat, đi bộ thì đc
 	CHead* ghost_head; //use for Red Koopa
+	BOOLEAN isBeingHeld;
 	//only when Red koopa is on color platform that it has ghost_head
 	//How 'bout Goop 
 
@@ -120,4 +121,5 @@ public:
 	void SetType(int para) { this->type = para; };
 	BOOLEAN GetFallOffColorPlatform() { return isFallOffColorPlatform; }
 	CHead* GetHead() { return this->ghost_head; }
+	void SetBeingHeld(BOOLEAN para) { this->isBeingHeld = para; }
 };

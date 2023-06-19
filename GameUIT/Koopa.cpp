@@ -20,7 +20,8 @@ CKoopa::CKoopa(float x, float y, int type) :CGameObject(x, y)
 	knock_off_start = -1;
 	isOnPlatform = false;
 	isFallOffColorPlatform = false; //ban đầu thì Red koopa chưa rơi khỏi color plat
-	enableInteractWColorPlat = true;
+	enableInteractWColorPlat = true; //mấy thuộc tính của Red Koopa nên cân nhắc khởi tạo hợp lý
+	isBeingHeld = false;
 }
 
 void CKoopa::GetBoundingBox(float& left, float& top, float& right, float& bottom)
@@ -113,13 +114,22 @@ void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
 	if (mario->GetStopWatch()) return;
 
+	if (isBeingHeld)
+	{
+		if (mario->GetMarioNormalX() > 0)
+			this->SetPosition(mario->GetX() + 11.5f, mario->GetY() + 1.5f);
+		else
+			this->SetPosition(mario->GetX() - 11.5f, mario->GetY() + 1.5f);
+	}
 	isOnPlatform = false;
 
 	vx += ax * dt;
 	vy += ay * dt;
 
 	UpdateKoopaState();
-	CCollision::GetInstance()->Process(this, dt, coObjects);
+	if (!isBeingHeld)
+		CCollision::GetInstance()->Process(this, dt, coObjects);
+	//DebugOutTitle(L"STATE: %d", state);
 }
 
 void CKoopa::UpdateKoopaState()
@@ -192,8 +202,8 @@ void CKoopa::UpdateKoopaState()
 
 void CKoopa::Render()
 {
+	//if (this->isBeingHeld) return;
 	int aniId = 0;
-	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
 
 	if (type == GREEN_KOOPA)
 		aniId = GetAniIdGreenKoopa();
@@ -280,10 +290,14 @@ void CKoopa::SetState(int state)
 		break;
 
 	case KOOPA_STATE_WALKING:
-		if (this->x > mario->GetX())
-			vx = -KOOPA_WALKING_SPEED;
-		else 
-			vx = KOOPA_WALKING_SPEED;
+		if (mario == NULL) vx = -KOOPA_WALKING_SPEED;
+		else
+		{
+			if (this->x > mario->GetX())
+				vx = -KOOPA_WALKING_SPEED;
+			else
+				vx = KOOPA_WALKING_SPEED;
+		}
 
 		y -= (KOOPA_BBOX_HEIGHT - KOOPA_IN_SHELL_BBOX_HEIGHT) / 2; 
 		//Cập nhật vị trí y mới sau khi từ trạng thái NGỦ đến lúc hồi sinh

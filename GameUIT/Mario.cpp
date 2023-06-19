@@ -24,6 +24,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	//Phải dừng vận tốc ở đây chứ 0 phải ở hàm OnNoCollision
 	//Vì ở đây gọi trc r mới đến OnNoCollision
+	//Cập nhật vị trí Koopa khi đc ôm bởi Mario
 
 	if (!isEvolving)
 	{
@@ -39,13 +40,13 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	UpdateMarioState();
 	isOnPlatform = false;
 	CCollision::GetInstance()->Process(this, dt, coObjects);
+	DebugOutTitle(L"ISALLOW: %d", isAllowToHoldKoopa);
 }
 
 void CMario::UpdateMarioState()
 {
 	// reset untouchable timer if untouchable time has passed
 	//when untouchable, there are 2 states of drawing: Draw & NOT draw
-	HandleHoldingKoopa();
 
 	if (GetTickCount64() - untouchable_start > MARIO_UNTOUCHABLE_TIME)
 	{
@@ -400,15 +401,20 @@ void CMario::HandleCollisionOtherDirectionWithKoopa(LPCOLLISIONEVENT e, CKoopa* 
 	{
 		if (koopa->GetState() != KOOPA_STATE_DIE)
 		{
-			if (isAllowToHoldKoopa)
+			//Chỉ 1 trong 2 trạng thái này của Koopa mà Mario mới ôm đc
+			if (isAllowToHoldKoopa && koopa->GetState() == KOOPA_STATE_SLEEP
+				|| isAllowToHoldKoopa && koopa->GetState() == KOOPA_STATE_SLEEP_REVERSE
+				|| isAllowToHoldKoopa && koopa->GetState() == KOOPA_STATE_REBORN
+				|| isAllowToHoldKoopa && koopa->GetState() == KOOPA_STATE_REBORN_REVERSE)
 			{
-				this->ghost_koopa = koopa;
 				this->SetState(MARIO_STATE_HOLDING);
 				this->isHolding = true;
-				if (e->nx > 0)
-					koopa->SetPosition(this->x + MARIO_BIG_BBOX_WIDTH / 2, this->y);
-				else 
-					koopa->SetPosition(this->x - MARIO_BIG_BBOX_WIDTH / 2, this->y);
+				koopa->SetBeingHeld(true);
+				ghost_koopa = koopa;
+				if (nx > 0)
+					koopa->SetPosition(this->x + 11.5f, this->y + 1.5f);
+				else
+					koopa->SetPosition(this->x - 11.5f, this->y + 1.5f);
 			}
 			else 
 			{
@@ -1204,15 +1210,9 @@ void CMario::UpdateTailPosition(CTail* tail)
 		tail->SetPosition(this->x + MARIO_BIG_BBOX_WIDTH / 2, y + MARIO_BIG_BBOX_HEIGHT / 6 + 1.5f);
 }
 
-void CMario::HandleHoldingKoopa()
+void CMario::HandleReleaseKoopa()
 {
-	if (ghost_koopa != NULL)
-	{
-		if (!isAllowToHoldKoopa) //Nên thay bằng isHolding thì hợp lý hơn
-		{
-			if (ghost_koopa->GetState() == KOOPA_STATE_SLEEP)
-				ghost_koopa->SetState(KOOPA_STATE_SLIP);
-			this->state == MARIO_STATE_IDLE;
-		}
-	}
+	isHolding = false;
+	ghost_koopa->SetState(KOOPA_STATE_SLIP);
+	ghost_koopa->SetBeingHeld(false);
 }

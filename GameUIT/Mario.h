@@ -223,10 +223,8 @@ class CMario : public CGameObject
 	BOOLEAN isEvolveBackward;
 	BOOLEAN isAteItem; //Biến đặc biệt dùng để nhận biết xem được tăng level nhờ item hay nhấn phím, mục đích xem ở hàm SetLevel
 	BOOLEAN StopWatch; //ngưng mọi hoạt động khi Mario đang tiến hoá hoặc chết
-	BOOLEAN isAllowToHoldKoopa;
+	BOOLEAN isAllowToHoldKoopa; //Allow to hold rồi mới holding
 	BOOLEAN isHolding; //A way to handle holding: 
-	//khi đến gần giữ A thì lập tức undraw con Koopa kia thay vào đó
-	//draw hoạt ảnh Mario hold Koopa và cập nhật vị trí cho con Koopa "ma" kia
 	//attach nó với Mario -> khi hết đk isBeingHeld và đang state reborn thì vẽ nó
 	//How about creating ghost Koopa and set it state to sleep
 	//Purpose? -> To Overide Drawing, Make koopa feeling likes it being held by Mario
@@ -268,14 +266,13 @@ class CMario : public CGameObject
 	void OnCollisionWith(LPCOLLISIONEVENT e);
 
 	//Handle Func
+	//Tách nhỏ handleOtherDirecKoopa thành lúc ngủ và lúc không ngủ
 	void HandleCollisionUpperDirectionWithGoomba(CGoomba* goomba);
 	void HandleCollisionOtherDirectionWithGoomba(LPCOLLISIONEVENT e, CGoomba* goomba);
 	void HandleCollisionUpperDirectionWithKoopa(CKoopa* koopa);
 	void HandleCollisionOtherDirectionWithKoopa(LPCOLLISIONEVENT e, CKoopa* koopa);
 	void HandleCollisionWithColorPlatform(LPCOLLISIONEVENT e, CColorPlatform* color_platf);
 	void HandleUntouchableDrawState(); //hiệu ứng chớp chớp 
-	void HandleHoldingKoopa();
-
 
 	int GetAniIdBig();
 	int GetAniIdSmall();
@@ -358,4 +355,5 @@ public:
 	BOOLEAN GetIsAttacking() { return this->isAttacking; }
 	BOOLEAN GetIsHolding() { return this->isHolding; }
 	void SetHoldKoopa(BOOLEAN para) { this->isAllowToHoldKoopa = para; }
+	void HandleReleaseKoopa();
 };

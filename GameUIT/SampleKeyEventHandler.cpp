@@ -69,8 +69,9 @@ void CSampleKeyHandler::OnKeyUp(int KeyCode)
 
 	case DIK_A:
 		mario->SetisAtMaxSpeed(false);
+		mario->SetHoldKoopa(false);
 		if (mario->GetIsHolding())
-			mario->SetHoldKoopa(false);
+			mario->HandleReleaseKoopa();//gọi hàm release koopa từ mario
 		break;
 
 	case DIK_DOWN:
@@ -97,7 +98,10 @@ void CSampleKeyHandler::KeyState(BYTE* states)
 	else if (game->IsKeyDown(DIK_LEFT))
 	{
 		if (game->IsKeyDown(DIK_A))
+		{
 			mario->SetState(MARIO_STATE_RUNNING_LEFT);
+			mario->SetHoldKoopa(true); //giữ A thì cho phép hold Koopa
+		}
 		else
 			mario->SetState(MARIO_STATE_WALKING_LEFT);
 	}
