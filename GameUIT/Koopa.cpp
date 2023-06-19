@@ -18,6 +18,7 @@ CKoopa::CKoopa(float x, float y, int type) :CGameObject(x, y)
 	sleep_start = -1;
 	reborn_start = -1;
 	knock_off_start = -1;
+	LastFrame = 0;
 	isOnPlatform = false;
 	isFallOffColorPlatform = false; //ban đầu thì Red koopa chưa rơi khỏi color plat
 	enableInteractWColorPlat = true;
@@ -110,6 +111,9 @@ void CKoopa::HandleCollisionWithBlockingObjects(LPCOLLISIONEVENT e)
 
 void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
+	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
+	if (mario->GetStopWatch()) return;
+
 	isOnPlatform = false;
 
 	vx += ax * dt;
@@ -190,15 +194,19 @@ void CKoopa::UpdateKoopaState()
 void CKoopa::Render()
 {
 	int aniId = 0;
-	
+	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
+	if (mario->GetStopWatch())
+		aniId = LastFrame;
+
 	if (type == GREEN_KOOPA)
 		aniId = GetAniIdGreenKoopa();
 	else if (type == GREEN_FLYING_KOOPA)
 		aniId = GetAniIdFlyingKoopa();
 	else
 		aniId = GetAniIdRedKoopa();
+	LastFrame = aniId;
 
-	CAnimations::GetInstance()->Get(aniId)->Render(x, y);
+	CAnimations::GetInstance()->Get(aniId)->Render(x, y, true);
 	//RenderBoundingBox();
 }
 

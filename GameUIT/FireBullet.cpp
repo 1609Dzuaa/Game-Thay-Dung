@@ -4,6 +4,9 @@
 
 void CFireBullet::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
+	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
+	if (mario->GetStopWatch()) return;
+
 	CCollision::GetInstance()->Process(this, dt, coObjects);
 }
 
@@ -29,5 +32,5 @@ void CFireBullet::GetBoundingBox(float& left, float& top, float& right, float& b
 void CFireBullet::Render()
 {
 	CAnimations* animations = CAnimations::GetInstance();
-	animations->Get(ID_ANI_FIRE_BULLET)->Render(x, y);
+	animations->Get(ID_ANI_FIRE_BULLET)->Render(x, y, true);
 }

@@ -220,6 +220,7 @@ class CMario : public CGameObject
 	BOOLEAN isEvolveForward;
 	BOOLEAN isEvolveBackward;
 	BOOLEAN isAteItem; //Biến đặc biệt dùng để nhận biết xem được tăng level nhờ item hay nhấn phím, mục đích xem ở hàm SetLevel
+	BOOLEAN StopWatch; //ngưng mọi hoạt động khi Mario đang tiến hoá hoặc chết
 	float maxVx;
 	float maxRunningSpeed;
 	float ax;				// acceleration on x 
@@ -240,6 +241,7 @@ class CMario : public CGameObject
 	int CountJumpOnEnemies; //Đếm số bước nhảy 0 CHẠM ĐẤT để có số điểm tương ứng
 	int coin;
 
+	//Collision Func
 	void OnCollisionWithColorPlatform(LPCOLLISIONEVENT e);
 	void OnCollisionWithGoomba(LPCOLLISIONEVENT e);
 	void OnCollisionWithKoopa(LPCOLLISIONEVENT e);
@@ -250,15 +252,19 @@ class CMario : public CGameObject
 	void OnCollisionWithFlower(LPCOLLISIONEVENT e);
 	void OnCollisionWithFireBullet(LPCOLLISIONEVENT e);
 	void OnCollisionWithPortal(LPCOLLISIONEVENT e);
-
 	void OnCollisionWithBlockingObjects(LPCOLLISIONEVENT e);
+	void OnCollisionWithNonBlockingObjects(LPCOLLISIONEVENT e);
+	void OnNoCollision(DWORD dt);
+	void OnCollisionWith(LPCOLLISIONEVENT e);
+
+	//Handle Func
 	void HandleCollisionUpperDirectionWithGoomba(CGoomba* goomba);
 	void HandleCollisionOtherDirectionWithGoomba(LPCOLLISIONEVENT e, CGoomba* goomba);
 	void HandleCollisionUpperDirectionWithKoopa(CKoopa* koopa);
 	void HandleCollisionOtherDirectionWithKoopa(LPCOLLISIONEVENT e, CKoopa* koopa);
 	void HandleCollisionWithColorPlatform(LPCOLLISIONEVENT e, CColorPlatform* color_platf);
+	void HandleUntouchableDrawState(); //hiệu ứng chớp chớp 
 
-	void OnCollisionWithNonBlockingObjects(LPCOLLISIONEVENT e);
 
 	int GetAniIdBig();
 	int GetAniIdSmall();
@@ -278,6 +284,7 @@ public:
 		isEvolveForward = false;
 		isEvolveBackward = false;
 		isAteItem = false;
+		StopWatch = false;
 		CountJumpOnEnemies = 0;
 		untouchdraw = -1;
 		untouch_draw_0 = 0;
@@ -314,12 +321,12 @@ public:
 	//Để ý ở đây Mario có thuộc tính blocking => đôi lúc nó sẽ khiến các quái vật khác đổi hướng khi va chạm với nó
 	//Khi nó ở trạng thái vô địch(untouchable) và CHƯA CHẾT
 
-	void OnNoCollision(DWORD dt);
-	void OnCollisionWith(LPCOLLISIONEVENT e);
+	
 
 	void SetLevel(int l);
 	int GetLevel() { return level; };
-	void StartUntouchable() { untouchable = 1; untouchable_start = GetTickCount64(); untouch_0 = 1; untouch_draw_0 = GetTickCount64(); }
+	void StartUntouchable() 
+	{ untouchable = 1; untouchable_start = GetTickCount64(); untouch_0 = 1; untouch_draw_0 = GetTickCount64(); }
 
 	void GetBoundingBox(float& left, float& top, float& right, float& bottom);
 	int GetMarioNormalX() { return nx; }
@@ -333,6 +340,5 @@ public:
 	void SpawnScore(LPGAMEOBJECT obj);
 	void SpawnEffect(LPCOLLISIONEVENT e, LPGAMEOBJECT obj, int eff_type);
 	void UpdateTailPosition(CTail* tail);
-	void HandleUntouchableDrawState();
-
+	BOOLEAN GetStopWatch() { return evolve_start != 0 || this->state == MARIO_STATE_DIE; }
 };

@@ -34,6 +34,7 @@ class CQuestionBrick :public CBrick
 	int HasItem; //Có quà hay không
 	int type;
 	CMushroom* mr = NULL;
+	BOOLEAN blockMushroom; //dùng để block kh cho nấm sinh ra khi hit gạch ở level 2 -> 1
 public:
 
 	CQuestionBrick(float x, float y, int Has_Item) : CBrick(x, y)
@@ -53,6 +54,7 @@ public:
 			//Careful: How 'bout mario level > small & this mr had never been used ?!
 		}
 		isEmpty = false;
+		blockMushroom = false;
 	}
 
 	void Render();

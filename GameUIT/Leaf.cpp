@@ -45,9 +45,9 @@ void CLeaf::Render()
 {
 	CAnimations* animations = CAnimations::GetInstance();
 	if (vx > 0)
-		animations->Get(ID_ANI_LEAF_RIGHT)->Render(x, y);
+		animations->Get(ID_ANI_LEAF_RIGHT)->Render(x, y, true);
 	else
-		animations->Get(ID_ANI_LEAF_LEFT)->Render(x, y);
+		animations->Get(ID_ANI_LEAF_LEFT)->Render(x, y, true);
 }
 
 void CLeaf::OnNoCollision(DWORD dt)

@@ -43,6 +43,7 @@ class CShootingFlower :public CGameObject
 	ULONGLONG aim_start, rest_start, die_start;
 	BOOLEAN enableToShoot;
 	CEffectCollision* eff_die;
+	int LastFrame;
 public:
 	CShootingFlower() 
 	{ 
@@ -53,6 +54,7 @@ public:
 		die_start = 0;
 		enableToShoot = true;
 		eff_die = NULL;
+		LastFrame = 0;
 	};
 	CShootingFlower(float x, float y) :CGameObject(x, y)
 	{
@@ -67,6 +69,7 @@ public:
 		die_start = 0;
 		enableToShoot = true;
 		eff_die = NULL;
+		LastFrame = 0;
 	}
 	void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
 	void Render();

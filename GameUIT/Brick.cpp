@@ -3,7 +3,7 @@
 void CBrick::Render()
 {
 	CAnimations* animations = CAnimations::GetInstance();
-	animations->Get(ID_ANI_BRICK)->Render(x, y);
+	animations->Get(ID_ANI_BRICK)->Render(x, y, false);
 	//RenderBoundingBox();
 }
 

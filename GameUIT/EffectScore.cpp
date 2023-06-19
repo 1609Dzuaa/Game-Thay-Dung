@@ -11,5 +11,5 @@ void CEffectScore::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 void CEffectScore::Render()
 {
 	CAnimations* animations = CAnimations::GetInstance();
-	animations->Get(this->aniId)->Render(x, y);
+	animations->Get(this->aniId)->Render(x, y, false);
 }

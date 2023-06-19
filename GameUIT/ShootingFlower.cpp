@@ -8,6 +8,8 @@ void CShootingFlower::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	/*if (state == SHOOTING_FLOWER_STATE_SHOOT)
 		AimAndShoot();*/
+	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
+	if (mario->GetStopWatch()) return;
 
 	if (state == SHOOTING_FLOWER_STATE_REST && GetTickCount64() - rest_start > SHOOTING_FLOWER_REST_TIME)
 	{
@@ -41,9 +43,13 @@ void CShootingFlower::OnNoCollision(DWORD dt)
 void CShootingFlower::Render()
 {
 	CAnimations* animations = CAnimations::GetInstance();
+	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
 	int animation_ID = GetAniID();
+	if (mario->GetStopWatch()) 
+		animation_ID = LastFrame; //có vô đây
+
 	if (animation_ID != -1)
-		animations->Get(animation_ID)->Render(x, y);
+		animations->Get(animation_ID)->Render(x, y, true);
 }
 
 int CShootingFlower::GetAniID()
@@ -85,6 +91,7 @@ int CShootingFlower::GetAniID()
 			aniID = ID_ANI_FLOWER_DIVE_RIGHT_FACE_UP;
 	}
 
+	LastFrame = aniID;
 	return aniID;
 }
 

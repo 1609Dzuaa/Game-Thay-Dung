@@ -1,4 +1,5 @@
 ﻿#include "Animation.h"
+#include "PlayScene.h"
 #include "debug.h"
 
 void CAnimation::Add(int spriteId, DWORD time)
@@ -17,25 +18,51 @@ void CAnimation::Add(int spriteId, DWORD time)
 	frames.push_back(frame);
 }
 
-void CAnimation::Render(float x, float y)
+void CAnimation::Render(float x, float y, BOOLEAN affectBySW)
 {
-	ULONGLONG now = GetTickCount64(); //Hàm này trả về thời gian kể từ khi ứng dụng chạy cho đến hiện tại
-
-	if (currentFrame == -1) //Nếu nó là frame mặc định (-1) //careful NULL here
+	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
+	if (affectBySW)
 	{
-		currentFrame = 0;
-		lastFrameTime = now;
+		ULONGLONG now = GetTickCount64(); //Hàm này trả về thời gian kể từ khi ứng dụng chạy cho đến hiện tại
+
+		if (currentFrame == -1) //Nếu nó là frame mặc định (-1) //careful NULL here
+		{
+			currentFrame = 0;
+			lastFrameTime = now;
+		}
+		else
+		{
+			DWORD t = frames[currentFrame]->GetTime(); //Lấy thời gian chuyển động của frame hiện tại và gán cho t
+			if (now - lastFrameTime > t)
+			{
+				if (mario->GetStopWatch()); // nếu đang bật đồng hồ ngưng đọng thì giữ nguyên cái frame đó
+				else
+					currentFrame++;
+				lastFrameTime = now;
+				if (currentFrame == frames.size()) currentFrame = 0;
+			}
+		}
 	}
 	else
 	{
-		DWORD t = frames[currentFrame]->GetTime(); //Lấy thời gian chuyển động của frame hiện tại và gán cho t
-		if (now - lastFrameTime > t)
+		ULONGLONG now = GetTickCount64(); //Hàm này trả về thời gian kể từ khi ứng dụng chạy cho đến hiện tại
+
+		if (currentFrame == -1) //Nếu nó là frame mặc định (-1) //careful NULL here
 		{
-			currentFrame++;
+			currentFrame = 0;
 			lastFrameTime = now;
-			if (currentFrame == frames.size()) currentFrame = 0;
+		}
+		else
+		{
+			DWORD t = frames[currentFrame]->GetTime(); //Lấy thời gian chuyển động của frame hiện tại và gán cho t
+			if (now - lastFrameTime > t)
+			{
+				currentFrame++;
+				lastFrameTime = now;
+				if (currentFrame == frames.size()) currentFrame = 0;
+			}
 		}
 	}
-
+	
 	frames[currentFrame]->GetSprite()->Draw(x, y);
 }

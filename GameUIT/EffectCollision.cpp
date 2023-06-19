@@ -18,7 +18,7 @@ void CEffectCollision::Render()
 {
 	int aniID = GetAniEffect();
 	CAnimations* animations = CAnimations::GetInstance();
-	animations->Get(aniID)->Render(x, y);
+	animations->Get(aniID)->Render(x, y, false);
 }
 
 int CEffectCollision::GetAniEffect()

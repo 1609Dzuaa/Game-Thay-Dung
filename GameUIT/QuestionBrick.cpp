@@ -10,9 +10,9 @@ void CQuestionBrick::Render()
 {
 	CAnimations* animations = CAnimations::GetInstance();
 	if (state != QBRICK_STATE_HITTED)
-		animations->Get(ID_ANI_QUESTION_BRICK)->Render(x, y);
+		animations->Get(ID_ANI_QUESTION_BRICK)->Render(x, y, false);
 	else 
-		animations->Get(ID_ANI_QUESTION_BRICK_HITTED)->Render(x, y);
+		animations->Get(ID_ANI_QUESTION_BRICK_HITTED)->Render(x, y, false);
 }
 
 void CQuestionBrick::OnNoCollision(DWORD dt)
@@ -62,11 +62,13 @@ void CQuestionBrick::SpawnCoin(float xBrick, float yBrick, float veloY)
 
 void CQuestionBrick::SpawnMushroom(float xBrick, float yBrick)
 {
-	mr->SetState(MUSHROOM_STATE_RISE_UP);
+	if (!blockMushroom)
+		mr->SetState(MUSHROOM_STATE_RISE_UP);
 }
 
 void CQuestionBrick::SpawnLeaf(float xBrick, float yBrick)
 {
+	blockMushroom = true;
 	CPlayScene* current_scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
 	CLeaf* leaf = new CLeaf(xBrick, yBrick - QBRICK_BBOX_HEIGHT / 2);
 	leaf->SetMinY(yBrick - QBRICK_BBOX_HEIGHT / 2 - 70.0f);

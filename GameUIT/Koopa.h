@@ -74,6 +74,7 @@ class CKoopa : public CGameObject
 {
 protected:
 	int type;
+	int LastFrame;
 
 	float ax;
 	float ay;
