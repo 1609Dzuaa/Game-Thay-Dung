@@ -40,7 +40,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	UpdateMarioState();
 	isOnPlatform = false;
 	CCollision::GetInstance()->Process(this, dt, coObjects);
-	DebugOutTitle(L"ISALLOW: %d", isAllowToHoldKoopa);
+	//DebugOutTitle(L"ISALLOW: %d", isAllowToHoldKoopa);
 }
 
 void CMario::UpdateMarioState()
@@ -68,7 +68,7 @@ void CMario::UpdateMarioState()
 		{
 			if (this->level == MARIO_LEVEL_RACOON)
 				this->SetLevel(MARIO_LEVEL_BIG);
-			else if(this->level == MARIO_LEVEL_BIG)
+			else if (this->level == MARIO_LEVEL_BIG)
 				this->SetLevel(MARIO_LEVEL_SMALL);
 		}
 		isEvolving = false;
@@ -402,21 +402,21 @@ void CMario::HandleCollisionOtherDirectionWithKoopa(LPCOLLISIONEVENT e, CKoopa* 
 		if (koopa->GetState() != KOOPA_STATE_DIE)
 		{
 			//Chỉ 1 trong 2 trạng thái này của Koopa mà Mario mới ôm đc
-			if (isAllowToHoldKoopa && koopa->GetState() == KOOPA_STATE_SLEEP
-				|| isAllowToHoldKoopa && koopa->GetState() == KOOPA_STATE_SLEEP_REVERSE
-				|| isAllowToHoldKoopa && koopa->GetState() == KOOPA_STATE_REBORN
-				|| isAllowToHoldKoopa && koopa->GetState() == KOOPA_STATE_REBORN_REVERSE)
+			if (isAllowToHoldKoopa && KoopaStateThatAllowToHold(koopa))
 			{
 				this->SetState(MARIO_STATE_HOLDING);
 				this->isHolding = true;
-				koopa->SetBeingHeld(true);
-				ghost_koopa = koopa;
+				if (koopa->GetState() == KOOPA_STATE_SLEEP || koopa->GetState() == KOOPA_STATE_REBORN)
+					koopa->SetState(KOOPA_STATE_BEING_HELD);
+				else if (koopa->GetState() == KOOPA_STATE_SLEEP_REVERSE || koopa->GetState() == KOOPA_STATE_REBORN_REVERSE
+					|| koopa->GetState() == KOOPA_STATE_SLEEP_REVERSE_SPECIAL)
+					koopa->SetState(KOOPA_STATE_BEING_HELD_REVERSE);
 				if (nx > 0)
 					koopa->SetPosition(this->x + 11.5f, this->y + 1.5f);
 				else
 					koopa->SetPosition(this->x - 11.5f, this->y + 1.5f);
 			}
-			else 
+			else
 			{
 				//4 state của Koopa mà gây dmg lên Mario
 				if (koopa->GetState() == KOOPA_STATE_WALKING ||
@@ -700,6 +700,13 @@ int CMario::GetAniIdBig()
 			else
 				aniId = ID_ANI_MARIO_SMALL_EVOLVE_TO_BIG_LEFT;
 		}
+		else if(isHolding)
+		{
+			if (nx > 0)
+				aniId = ID_ANI_MARIO_BIG_HOLDING_JUMPING_RIGHT;
+			else
+				aniId = ID_ANI_MARIO_BIG_HOLDING_JUMPING_LEFT;
+		}
 		else if (isAtMaxSpeed)
 		{
 			if (nx > 0)  //prob here
@@ -740,7 +747,11 @@ int CMario::GetAniIdBig()
 		}
 		else if (isHolding)
 		{
-			if (nx > 0)
+		    if (nx > 0 && vx > 0)
+				aniId = ID_ANI_MARIO_BIG_HOLDING_WAKING_RIGHT;
+			else if (nx < 0 && vx < 0)
+				aniId = ID_ANI_MARIO_BIG_HOLDING_WAKING_LEFT;
+			else if (nx > 0)
 				aniId = ID_ANI_MARIO_BIG_HOLDING_RIGHT;
 			else
 				aniId = ID_ANI_MARIO_BIG_HOLDING_LEFT;
@@ -1123,7 +1134,7 @@ void CMario::SetLevel(int l)
 		current_scene->AddObjectToScene(tail);
 		DebugOut(L"Tail was created and add to object list\n");
 	}
-	else 
+	else
 	{
 		/*if (tail != NULL)
 		{
@@ -1136,11 +1147,11 @@ void CMario::SetLevel(int l)
 		}
 	}*/
 
-	if(!isAteItem) //Nếu đc SetLevel bằng cách nhấn phím thì giảm y để Mario kh bị rơi xuống nền
-	if (this->level == MARIO_LEVEL_SMALL)
-	{
-		y -= (MARIO_BIG_BBOX_HEIGHT - MARIO_SMALL_BBOX_HEIGHT) / 2; //Key problem here
-	}
+	if (!isAteItem) //Nếu đc SetLevel bằng cách nhấn phím thì giảm y để Mario kh bị rơi xuống nền
+		if (this->level == MARIO_LEVEL_SMALL)
+		{
+			y -= (MARIO_BIG_BBOX_HEIGHT - MARIO_SMALL_BBOX_HEIGHT) / 2; //Key problem here
+		}
 
 	level = l;
 }
@@ -1149,7 +1160,7 @@ void CMario::SpawnScore(LPGAMEOBJECT obj)
 {
 	CEffectScore* eff_scr = new CEffectScore(obj->GetX(), obj->GetY() - 15.0f, obj->GetY() - 45.0f, NORMAL_SCORE);
 	CPlayScene* current_scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
-	current_scene->AddObjectToScene(ClassifyScore(obj, eff_scr)); 
+	current_scene->AddObjectToScene(ClassifyScore(obj, eff_scr));
 }
 
 CEffectScore* CMario::ClassifyScore(LPGAMEOBJECT obj, CEffectScore* eff_scr)
@@ -1180,7 +1191,7 @@ CEffectScore* CMario::ClassifyScore(LPGAMEOBJECT obj, CEffectScore* eff_scr)
 }
 
 void CMario::SpawnEffect(LPCOLLISIONEVENT e, LPGAMEOBJECT obj, int eff_type)
-{	
+{
 	float x = -1;
 	float y = -1;
 	if (eff_type != EFF_COL_TYPE_SMOKE_EVOLVE)
@@ -1210,9 +1221,9 @@ void CMario::UpdateTailPosition(CTail* tail)
 		tail->SetPosition(this->x + MARIO_BIG_BBOX_WIDTH / 2, y + MARIO_BIG_BBOX_HEIGHT / 6 + 1.5f);
 }
 
-void CMario::HandleReleaseKoopa()
+int CMario::KoopaStateThatAllowToHold(CKoopa* koopa)
 {
-	isHolding = false;
-	ghost_koopa->SetState(KOOPA_STATE_SLIP);
-	ghost_koopa->SetBeingHeld(false);
+	return (koopa->GetState() == KOOPA_STATE_SLEEP || koopa->GetState() == KOOPA_STATE_SLEEP_REVERSE
+		|| koopa->GetState() == KOOPA_STATE_SLEEP_REVERSE_SPECIAL || koopa->GetState() == KOOPA_STATE_REBORN
+		|| koopa->GetState() == KOOPA_STATE_REBORN_REVERSE);
 }

@@ -87,8 +87,14 @@
 #define ID_ANI_MARIO_BIG_RUNNING_MAX_SPEED_LEFT	1030	
 #define ID_ANI_MARIO_BIG_RUNNING_MAX_SPEED_RIGHT	1031
 
+#define ID_ANI_MARIO_BIG_HOLDING_WAKING_LEFT	1040	
+#define ID_ANI_MARIO_BIG_HOLDING_WAKING_RIGHT	1041
+
 #define ID_ANI_MARIO_BIG_JUMP_AT_MAX_SPEED_LEFT	1050	
 #define ID_ANI_MARIO_BIG_JUMP_AT_MAX_SPEED_RIGHT	1051
+
+#define ID_ANI_MARIO_BIG_HOLDING_JUMPING_LEFT	1060	
+#define ID_ANI_MARIO_BIG_HOLDING_JUMPING_RIGHT	1061
 
 #define ID_ANI_MARIO_DIE 999
 
@@ -228,7 +234,6 @@ class CMario : public CGameObject
 	//attach nó với Mario -> khi hết đk isBeingHeld và đang state reborn thì vẽ nó
 	//How about creating ghost Koopa and set it state to sleep
 	//Purpose? -> To Overide Drawing, Make koopa feeling likes it being held by Mario
-	CKoopa* ghost_koopa;
 	float maxVx;
 	float maxRunningSpeed;
 	float ax;				// acceleration on x 
@@ -277,6 +282,7 @@ class CMario : public CGameObject
 	int GetAniIdBig();
 	int GetAniIdSmall();
 	int GetAniIdRacoon();
+	int KoopaStateThatAllowToHold(CKoopa* koopa);
 public:
 	CMario(float x, float y) : CGameObject(x, y)
 	{
@@ -301,7 +307,6 @@ public:
 		untouch_draw_1 = 0;
 		untouch_0 = 0;
 		untouch_1 = 0;
-		ghost_koopa = NULL;
 		tail = NULL;
 
 		maxVx = 0;
@@ -355,5 +360,5 @@ public:
 	BOOLEAN GetIsAttacking() { return this->isAttacking; }
 	BOOLEAN GetIsHolding() { return this->isHolding; }
 	void SetHoldKoopa(BOOLEAN para) { this->isAllowToHoldKoopa = para; }
-	void HandleReleaseKoopa();
+	void SetIsHoldingKoopa(BOOLEAN para) { this->isHolding = para; }
 };

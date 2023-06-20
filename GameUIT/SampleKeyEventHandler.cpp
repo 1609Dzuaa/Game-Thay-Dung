@@ -4,6 +4,7 @@
 #include "Game.h"
 
 #include "Mario.h"
+#include "Koopa.h"
 #include "PlayScene.h"
 
 void CSampleKeyHandler::OnKeyDown(int KeyCode)
@@ -60,6 +61,7 @@ void CSampleKeyHandler::OnKeyDown(int KeyCode)
 void CSampleKeyHandler::OnKeyUp(int KeyCode)
 {
 	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
+
 	DebugOut(L"[INFO] KeyUp: %d\n", KeyCode);
 	switch (KeyCode)
 	{
@@ -71,7 +73,7 @@ void CSampleKeyHandler::OnKeyUp(int KeyCode)
 		mario->SetisAtMaxSpeed(false);
 		mario->SetHoldKoopa(false);
 		if (mario->GetIsHolding())
-			mario->HandleReleaseKoopa();//gọi hàm release koopa từ mario
+			mario->SetIsHoldingKoopa(false);//gọi hàm release koopa từ mario
 		break;
 
 	case DIK_DOWN:

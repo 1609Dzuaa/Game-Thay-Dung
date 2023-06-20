@@ -76,6 +76,7 @@ public:
 
 	void OnNoCollision(DWORD dt);
 	int IsBlocking() { return 0; };
+	//int IsCollidable() { return state != SHOOTING_FLOWER_STATE_IN_TUBE; }
 	void SetFlowerMinY(float min_Y) { this->minY = min_Y; }
 
 	int GetAniID();

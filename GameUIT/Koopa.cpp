@@ -5,19 +5,21 @@
 #include "PlayScene.h"
 #include "EffectScore.h"
 #include "EffectCollision.h"
+#include "ShootingFlower.h"
 #include "debug.h"
 
 CKoopa::CKoopa(float x, float y, int type) :CGameObject(x, y)
 {
-	this->ax = 0; 
+	this->ax = 0;
 	this->ay = KOOPA_GRAVITY;
 	this->type = type;
 	SetState(KOOPA_STATE_WALKING);
-	
+
 	die_start = -1;
 	sleep_start = -1;
 	reborn_start = -1;
 	knock_off_start = -1;
+	KillCount = 0;
 	isOnPlatform = false;
 	isFallOffColorPlatform = false; //ban đầu thì Red koopa chưa rơi khỏi color plat
 	enableInteractWColorPlat = true; //mấy thuộc tính của Red Koopa nên cân nhắc khởi tạo hợp lý
@@ -55,11 +57,11 @@ void CKoopa::OnNoCollision(DWORD dt)
 };
 
 void CKoopa::OnCollisionWith(LPCOLLISIONEVENT e)
-{   
+{
 	//Koopa chết:
 	//1.Rơi vào chế độ ngủ đông và bị Mario quăng đập vào enemy khác
 	//2.Va chạm với Koopa mà bị Mario quăng
-	
+
 	KindOfCollisionWith(e);
 	if (!e->obj->IsBlocking()) return;
 
@@ -68,20 +70,23 @@ void CKoopa::OnCollisionWith(LPCOLLISIONEVENT e)
 
 void CKoopa::KindOfCollisionWith(LPCOLLISIONEVENT e)
 {
-	if(dynamic_cast<CColorPlatform*>(e->obj))
+	if (dynamic_cast<CColorPlatform*>(e->obj))
 	{
 		CColorPlatform* cl_pf = dynamic_cast<CColorPlatform*>(e->obj);
 		HandleCollisionWithColorPlatform(e, cl_pf);
 	}
-	if (dynamic_cast<CGoomba*>(e->obj) && this->state == KOOPA_STATE_SLIP
-		|| dynamic_cast<CGoomba*>(e->obj) && this->state == KOOPA_STATE_SLIP_REVERSE)
-		this->OnCollisionWithGoomba(e);
-	if (dynamic_cast<CKoopa*>(e->obj) && this->state == KOOPA_STATE_SLIP
-		|| dynamic_cast<CKoopa*>(e->obj) && this->state == KOOPA_STATE_SLIP_REVERSE)
-		this->OnCollisionWithKoopa(e);
-	if (dynamic_cast<CQuestionBrick*>(e->obj) && this->state == KOOPA_STATE_SLIP && e->obj->GetState() != QBRICK_STATE_HITTED
-		|| dynamic_cast<CQuestionBrick*>(e->obj) && this->state == KOOPA_STATE_SLIP_REVERSE && e->obj->GetState() != QBRICK_STATE_HITTED)
+	if (dynamic_cast<CQuestionBrick*>(e->obj) && e->obj->GetState() != QBRICK_STATE_HITTED
+		|| dynamic_cast<CQuestionBrick*>(e->obj) && e->obj->GetState() != QBRICK_STATE_HITTED)
 		this->OnCollisionWithQuesBrick(e);
+
+	if (!ConditionsThatEnableToKillAllies()) return; //3 thằng còn lại là Enemies rồi nên đặt đây là hợp lý
+
+	if (dynamic_cast<CGoomba*>(e->obj))
+		this->OnCollisionWithGoomba(e);
+	if (dynamic_cast<CKoopa*>(e->obj))
+		this->OnCollisionWithKoopa(e);
+	if (dynamic_cast<CShootingFlower*>(e->obj))
+		this->OnCollisionWithFlower(e);
 }
 
 void CKoopa::HandleCollisionWithBlockingObjects(LPCOLLISIONEVENT e)
@@ -114,6 +119,9 @@ void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
 	if (mario->GetStopWatch()) return;
 
+	if (!mario->GetIsHolding() && StateThatEnableToRelease() && isBeingHeld)
+		HandleReleaseKoopa(); //thả Koopa khi ngưng giữ nút A
+
 	if (isBeingHeld)
 	{
 		if (mario->GetMarioNormalX() > 0)
@@ -127,9 +135,9 @@ void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	vy += ay * dt;
 
 	UpdateKoopaState();
-	if (!isBeingHeld)
-		CCollision::GetInstance()->Process(this, dt, coObjects);
-	//DebugOutTitle(L"STATE: %d", state);
+	//if (isBeingHeld)
+	CCollision::GetInstance()->Process(this, dt, coObjects);
+	DebugOutTitle(L"isBeingHeld: %d", isBeingHeld);
 }
 
 void CKoopa::UpdateKoopaState()
@@ -139,7 +147,7 @@ void CKoopa::UpdateKoopaState()
 	{
 		if (enableInteractWColorPlat) //chỉ khi đc cho phép tương tác thay đổi vx trên ColorPlat
 		{
-			if (ghost_head != NULL) 
+			if (ghost_head != NULL)
 			{
 				if (ghost_head->GetY() - this->y > FALL_ZONE && !isFallOffColorPlatform && state != KOOPA_STATE_SLEEP_REVERSE) //đầu ma rơi xuống platform 
 				{
@@ -162,14 +170,16 @@ void CKoopa::UpdateKoopaState()
 			delete ghost_head; //consider remove it out of vector objects ?
 		return;
 	}
-	else if ((state == KOOPA_STATE_SLEEP) && (GetTickCount64() - sleep_start >= KOOPA_SLEEP_TIMEOUT))
+	else if (state == KOOPA_STATE_SLEEP && GetTickCount64() - sleep_start >= KOOPA_SLEEP_TIMEOUT
+		|| state == KOOPA_STATE_BEING_HELD && GetTickCount64() - sleep_start >= KOOPA_SLEEP_TIMEOUT)
 	{
 		sleep_start = 0;
 		SetState(KOOPA_STATE_REBORN);
 		//Hết thời gian ngủ
 	}
 	else if ((state == KOOPA_STATE_SLEEP_REVERSE) && (GetTickCount64() - sleep_start >= KOOPA_SLEEP_TIMEOUT)
-		|| (state == KOOPA_STATE_SLEEP_REVERSE_SPECIAL) && (GetTickCount64() - sleep_start >= KOOPA_SLEEP_TIMEOUT))
+		|| (state == KOOPA_STATE_SLEEP_REVERSE_SPECIAL) && (GetTickCount64() - sleep_start >= KOOPA_SLEEP_TIMEOUT)
+		|| state == KOOPA_STATE_BEING_HELD_REVERSE && GetTickCount64() - sleep_start >= KOOPA_SLEEP_TIMEOUT)
 	{
 		sleep_start = 0;
 		SetState(KOOPA_STATE_REBORN_REVERSE);
@@ -184,15 +194,18 @@ void CKoopa::UpdateKoopaState()
 
 			if (type == RED_KOOPA)
 			{
-				if (this->vx < 0)
+				if (ghost_head != NULL)
 				{
-					ghost_head->SetPosition(x - KOOPA_BBOX_WIDTH / 2 - 5.0f, this->y);
-					ghost_head->SetSpeed(-KOOPA_WALKING_SPEED, 0);
-				}
-				else
-				{
-					ghost_head->SetPosition(x + KOOPA_BBOX_WIDTH / 2 + 5.0f, this->y);
-					ghost_head->SetSpeed(KOOPA_WALKING_SPEED, 0);
+					if (this->vx < 0)
+					{
+						ghost_head->SetPosition(x - KOOPA_BBOX_WIDTH / 2 - 5.0f, this->y);
+						ghost_head->SetSpeed(-KOOPA_WALKING_SPEED, 0);
+					}
+					else
+					{
+						ghost_head->SetPosition(x + KOOPA_BBOX_WIDTH / 2 + 5.0f, this->y);
+						ghost_head->SetSpeed(KOOPA_WALKING_SPEED, 0);
+					}
 				}
 			}
 			//Hết thời gian reborn => Walking như bình thường
@@ -213,7 +226,7 @@ void CKoopa::Render()
 		aniId = GetAniIdRedKoopa();
 
 	CAnimations::GetInstance()->Get(aniId)->Render(x, y, true);
-	//RenderBoundingBox();
+	RenderBoundingBox();
 }
 
 void CKoopa::SetState(int state)
@@ -228,15 +241,16 @@ void CKoopa::SetState(int state)
 		y -= (KOOPA_BBOX_HEIGHT - KOOPA_IN_SHELL_BBOX_HEIGHT) / 2;
 		break;
 
-	case KOOPA_STATE_SLEEP_REVERSE: 
+	case KOOPA_STATE_SLEEP_REVERSE:
 		if (this->x > mario->GetX()) //Dựa vào vị trí để đẩy con Koopa đi xa khỏi Mario
 			vx = KOOPA_KNOCK_OFF_VELO_X * KOOPA_KNOCK_OFF_FACTOR_X;
 		else
 			vx = -KOOPA_KNOCK_OFF_VELO_X * KOOPA_KNOCK_OFF_FACTOR_X;
-		
+
 		if (type == RED_KOOPA)
-			ghost_head->SetState(HEAD_STATE_IDLE);
-		vy = -KOOPA_KNOCK_OFF_FACTOR_Y;	
+			if (ghost_head != NULL)
+				ghost_head->SetState(HEAD_STATE_IDLE);
+		vy = -KOOPA_KNOCK_OFF_FACTOR_Y;
 		isOnPlatform = true;
 		sleep_start = GetTickCount64();
 		//y -= (KOOPA_BBOX_HEIGHT - KOOPA_IN_SHELL_BBOX_HEIGHT) / 2;
@@ -247,14 +261,15 @@ void CKoopa::SetState(int state)
 		isOnPlatform = true;
 		sleep_start = GetTickCount64();
 		if (type == RED_KOOPA)
-			ghost_head->SetPosition(x - KOOPA_BBOX_WIDTH / 2 - 5.0f, y); //cập nhật vị trí cho cái đầu để tránh nó đi quá xa
+			if (ghost_head != NULL)
+				ghost_head->SetPosition(x - KOOPA_BBOX_WIDTH / 2 - 5.0f, y); //cập nhật vị trí cho cái đầu để tránh nó đi quá xa
 		//y -= (KOOPA_BBOX_HEIGHT - KOOPA_IN_SHELL_BBOX_HEIGHT) / 2;
 		break;
 
 	case KOOPA_STATE_REBORN:
 		reborn_start = GetTickCount64();
 		break;
-		
+
 	case KOOPA_STATE_REBORN_REVERSE:
 		vx = 0;
 		reborn_start = GetTickCount64();
@@ -264,23 +279,28 @@ void CKoopa::SetState(int state)
 
 	case KOOPA_STATE_DIE:
 		die_start = GetTickCount64();
-		if (this->nx > 0)
-			vx = -vx * KOOPA_KNOCK_OFF_FACTOR_X;
-		else
-			vx = vx * KOOPA_KNOCK_OFF_FACTOR_X;
+		if (!isBeingHeld)
+		{
+			if (this->nx > 0)
+				vx = -vx * KOOPA_KNOCK_OFF_FACTOR_X;
+			else
+				vx = vx * KOOPA_KNOCK_OFF_FACTOR_X;
+		}
 		vy = -KOOPA_KNOCK_OFF_FACTOR_Y;
 		break;
 
 	case KOOPA_STATE_SLIP:
+		ay = KOOPA_GRAVITY; //trả lại trọng lực cho nó
 		if (mario->GetMarioNormalX() > 0)
 			vx = KOOPA_SLIPPING_SPEED;
-		else 
+		else
 			vx = -KOOPA_SLIPPING_SPEED;
 		vy = 0;
 		y -= (KOOPA_BBOX_HEIGHT - KOOPA_IN_SHELL_BBOX_HEIGHT) / 2;
 		break;
 
 	case KOOPA_STATE_SLIP_REVERSE:
+		ay = KOOPA_GRAVITY;
 		if (mario->GetMarioNormalX() > 0)
 			vx = KOOPA_SLIPPING_SPEED;
 		else
@@ -299,13 +319,25 @@ void CKoopa::SetState(int state)
 				vx = KOOPA_WALKING_SPEED;
 		}
 
-		y -= (KOOPA_BBOX_HEIGHT - KOOPA_IN_SHELL_BBOX_HEIGHT) / 2; 
+		y -= (KOOPA_BBOX_HEIGHT - KOOPA_IN_SHELL_BBOX_HEIGHT) / 2;
 		//Cập nhật vị trí y mới sau khi từ trạng thái NGỦ đến lúc hồi sinh
 		//để tránh việc bị rơi xuống nền
 		break;
 
 	case KOOPA_STATE_JUMPING:
 		vy = -KOOPA_JUMP_SPEED;
+		break;
+
+	case KOOPA_STATE_BEING_HELD:
+		ay = 0;
+		//vy = 0;
+		isBeingHeld = true;
+
+	case KOOPA_STATE_BEING_HELD_REVERSE:
+		ay = 0;
+		//vy = 0;
+		isBeingHeld = true;
+
 		break;
 	}
 
@@ -316,12 +348,20 @@ void CKoopa::OnCollisionWithGoomba(LPCOLLISIONEVENT e)
 {
 	CGoomba* goomba = dynamic_cast<CGoomba*>(e->obj);
 	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
-
+	KillCount++;
 	if (goomba->GetState() != GOOMBA_STATE_DIE_REVERSE)
 	{
-		goomba->SetState(GOOMBA_STATE_DIE_REVERSE);
-		mario->SpawnScore(goomba);
-		mario->SpawnEffect(e, this, EFF_COL_TYPE_NORMAL);
+		if (isBeingHeld) //Nếu đang bị giữ thì giết luôn 2 thằng
+		{
+			this->SetState(KOOPA_STATE_DIE);
+			goomba->SetState(GOOMBA_STATE_DIE_REVERSE);
+			mario->SpawnScore(goomba);
+		}
+		else
+		{
+			goomba->SetState(GOOMBA_STATE_DIE_REVERSE);
+			mario->SpawnScore(goomba);
+		}
 	}
 }
 
@@ -329,10 +369,20 @@ void CKoopa::OnCollisionWithKoopa(LPCOLLISIONEVENT e)
 {
 	CKoopa* koopa = dynamic_cast<CKoopa*>(e->obj);
 	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
+	KillCount++;
 	if (koopa->GetState() != KOOPA_STATE_DIE)
-	{ 
-		koopa->SetState(KOOPA_STATE_DIE);
-		mario->SpawnScore(koopa);
+	{
+		if (isBeingHeld)
+		{
+			this->SetState(KOOPA_STATE_DIE);
+			koopa->SetState(KOOPA_STATE_DIE);
+			mario->SpawnScore(koopa);
+		}
+		else 
+		{
+			koopa->SetState(KOOPA_STATE_DIE);
+			mario->SpawnScore(koopa);
+		}
 	}
 }
 
@@ -341,6 +391,20 @@ void CKoopa::OnCollisionWithQuesBrick(LPCOLLISIONEVENT e)
 	CQuestionBrick* qb = dynamic_cast<CQuestionBrick*>(e->obj);
 	if (qb->GetState() != QBRICK_STATE_HITTED)
 		qb->SetState(QBRICK_STATE_HITTED);
+}
+
+void CKoopa::OnCollisionWithFlower(LPCOLLISIONEVENT e)
+{
+	if (e->obj->GetState() != SHOOTING_FLOWER_STATE_DIE)
+	{
+		if (!isBeingHeld)
+			e->obj->SetState(SHOOTING_FLOWER_STATE_DIE);
+		else
+		{
+			e->obj->SetState(SHOOTING_FLOWER_STATE_DIE);
+			this->SetState(KOOPA_STATE_DIE);
+		}
+	}
 }
 
 int CKoopa::GetAniIdGreenKoopa()
@@ -360,6 +424,8 @@ int CKoopa::GetAniIdGreenKoopa()
 		id = ID_ANI_KOOPA_REBORN;
 	else if (state == KOOPA_STATE_REBORN_REVERSE)
 		id = ID_ANI_KOOPA_REBORN_REVERSE;
+	else if (state == KOOPA_STATE_BEING_HELD)
+		id = ID_ANI_KOOPA_SLEEPING;
 	else
 		id = ID_ANI_KOOPA_DIE;
 
@@ -393,7 +459,9 @@ int CKoopa::GetAniIdRedKoopa()
 		id = ID_ANI_RED_KOOPA_REBORN;
 	else if (state == KOOPA_STATE_REBORN_REVERSE)
 		id = ID_ANI_RED_KOOPA_REBORN_REVERSE;
-	else
+	else if (state == KOOPA_STATE_BEING_HELD)
+		id = ID_ANI_RED_KOOPA_SLEEPING;
+	else 
 		id = ID_ANI_RED_KOOPA_DIE; //watch here later
 
 	return id;
@@ -433,7 +501,7 @@ void CKoopa::HandleCollisionWithColorPlatform(LPCOLLISIONEVENT e, CColorPlatform
 			vy = 0;
 		}
 	}
-	else 
+	else
 	{
 		if (this->y + static_cast<float>(KOOPA_BBOX_HEIGHT / 2) + static_cast<float>(color_platf->GetCellHeight() / 2) + 1.5f > color_platf->GetY())
 		{
@@ -441,4 +509,25 @@ void CKoopa::HandleCollisionWithColorPlatform(LPCOLLISIONEVENT e, CColorPlatform
 			vy = 0;
 		}
 	}
+}
+
+void CKoopa::HandleReleaseKoopa()
+{
+	isBeingHeld = false;
+	if (state == KOOPA_STATE_BEING_HELD || state == KOOPA_STATE_REBORN)
+		this->SetState(KOOPA_STATE_SLIP);
+	else if (state == KOOPA_STATE_SLEEP_REVERSE || state == KOOPA_STATE_REBORN_REVERSE)
+		this->SetState(KOOPA_STATE_SLIP_REVERSE);
+}
+
+int CKoopa::StateThatEnableToRelease()
+{
+	return (state == KOOPA_STATE_BEING_HELD || state == KOOPA_STATE_BEING_HELD_REVERSE || state == KOOPA_STATE_REBORN || state == KOOPA_STATE_REBORN_REVERSE);
+	//Hàm này trả về các trạng thái của Koopa mà cho phép được Mario thả
+}
+
+int CKoopa::ConditionsThatEnableToKillAllies()
+{
+	return (isBeingHeld || state == KOOPA_STATE_SLIP || state == KOOPA_STATE_SLIP_REVERSE);
+	//Trả về các điều kiện cho phép Koopa giết các đồng minh của nó
 }

@@ -48,6 +48,7 @@ void CShootingFlower::Render()
 
 	if (animation_ID != -1)
 		animations->Get(animation_ID)->Render(x, y, true);
+	RenderBoundingBox();
 }
 
 int CShootingFlower::GetAniID()

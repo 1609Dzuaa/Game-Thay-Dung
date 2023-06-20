@@ -359,6 +359,7 @@ void CPlayScene::Update(DWORD dt)
 void CPlayScene::Render()
 {
 	//Trước khi vẽ, hãy thử sắp xếp lại thứ tự vector object
+	//std::sort(objects.begin(), objects.end(), );
 	if (map != NULL)
 		map->Render(); //vẽ map trước, vẽ object sau
 	else

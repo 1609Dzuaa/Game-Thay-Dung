@@ -42,6 +42,8 @@
 #define KOOPA_STATE_REBORN 2250
 #define KOOPA_STATE_REBORN_REVERSE 2300 //Dùng cho lúc Koopa bị Gấu Mèo quật
 #define KOOPA_STATE_JUMPING 2350
+#define KOOPA_STATE_BEING_HELD 2400
+#define KOOPA_STATE_BEING_HELD_REVERSE 2450
 
 #define ID_ANI_KOOPA_WALKING_LEFT 50000
 #define ID_ANI_KOOPA_WALKING_RIGHT 50500
@@ -100,6 +102,7 @@ protected:
 	};
 
 	int IsBlocking() { return 0; };
+	int KillCount; //Đếm số địch đã giết để hiện điểm tương ứng
 
 	void OnNoCollision(DWORD dt);
 	void OnCollisionWith(LPCOLLISIONEVENT e);
@@ -107,6 +110,7 @@ protected:
 	void OnCollisionWithGoomba(LPCOLLISIONEVENT e);
 	void OnCollisionWithKoopa(LPCOLLISIONEVENT e);
 	void OnCollisionWithQuesBrick(LPCOLLISIONEVENT e);
+	void OnCollisionWithFlower(LPCOLLISIONEVENT e);
 	void UpdateKoopaState();
 	void HandleCollisionWithBlockingObjects(LPCOLLISIONEVENT e);
 	void HandleCollisionWithColorPlatform(LPCOLLISIONEVENT e, CColorPlatform* color_platf);
@@ -122,4 +126,7 @@ public:
 	BOOLEAN GetFallOffColorPlatform() { return isFallOffColorPlatform; }
 	CHead* GetHead() { return this->ghost_head; }
 	void SetBeingHeld(BOOLEAN para) { this->isBeingHeld = para; }
+	void HandleReleaseKoopa();
+	int StateThatEnableToRelease();
+	int ConditionsThatEnableToKillAllies();
 };
