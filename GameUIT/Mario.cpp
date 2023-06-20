@@ -296,6 +296,15 @@ void CMario::HandleCollisionOtherDirectionWithGoomba(LPCOLLISIONEVENT e, CGoomba
 				goomba->SetState(GOOMBA_STATE_DIE_REVERSE);
 				SpawnScore(goomba);
 			}
+			else if (isHolding && e->nx != this->nx) //hướng va chạm phải khác hướng ôm rùa thì mới cho colli
+			{
+				goomba->SetState(GOOMBA_STATE_DIE_REVERSE);
+				SpawnScore(goomba);
+				ghost_koopa->SetState(KOOPA_STATE_DIE);
+				ghost_koopa->Delete();
+				this->SetState(MARIO_STATE_IDLE);
+				isHolding = false;
+			}
 			else
 			{
 				if (level > MARIO_LEVEL_BIG) //Racoon thì spawn khói sau khi giảm level
@@ -406,15 +415,35 @@ void CMario::HandleCollisionOtherDirectionWithKoopa(LPCOLLISIONEVENT e, CKoopa* 
 			{
 				this->SetState(MARIO_STATE_HOLDING);
 				this->isHolding = true;
+				ghost_koopa = koopa; //turn on shield
 				if (koopa->GetState() == KOOPA_STATE_SLEEP || koopa->GetState() == KOOPA_STATE_REBORN)
 					koopa->SetState(KOOPA_STATE_BEING_HELD);
 				else if (koopa->GetState() == KOOPA_STATE_SLEEP_REVERSE || koopa->GetState() == KOOPA_STATE_REBORN_REVERSE
 					|| koopa->GetState() == KOOPA_STATE_SLEEP_REVERSE_SPECIAL)
 					koopa->SetState(KOOPA_STATE_BEING_HELD_REVERSE);
 				if (nx > 0)
-					koopa->SetPosition(this->x + 11.5f, this->y + 1.5f);
+				{
+					if(level > MARIO_LEVEL_SMALL)
+						koopa->SetPosition(this->x + 11.5f, this->y + 1.5f);
+					else 
+						koopa->SetPosition(this->x + 11.5f, this->y - 1.5f);
+				}
 				else
-					koopa->SetPosition(this->x - 11.5f, this->y + 1.5f);
+				{
+					if (level > MARIO_LEVEL_SMALL)
+						koopa->SetPosition(this->x - 11.5f, this->y + 1.5f);
+					else
+						koopa->SetPosition(this->x - 11.5f, this->y - 1.5f);
+				}
+			}
+			else if (isHolding && e->nx != this->nx)
+			{
+				koopa->SetState(KOOPA_STATE_DIE);
+				SpawnScore(koopa);
+				ghost_koopa->SetState(KOOPA_STATE_DIE);
+				ghost_koopa->Delete();
+				this->SetState(MARIO_STATE_IDLE);
+				isHolding = false;
 			}
 			else
 			{
@@ -548,7 +577,16 @@ void CMario::OnCollisionWithFlower(LPCOLLISIONEVENT e)
 	//else 
 	if (!untouchable)
 	{
-		if (level > MARIO_LEVEL_BIG) //Racoon thì spawn khói sau khi giảm level
+		if (isHolding && e->nx != this->nx) //sometimes work ? Will check it later
+		{
+			e->obj->SetState(SHOOTING_FLOWER_STATE_DIE);
+			SpawnScore(e->obj);
+			ghost_koopa->SetState(KOOPA_STATE_DIE);
+			ghost_koopa->Delete();
+			this->SetState(MARIO_STATE_IDLE);
+			isHolding = false;
+		}
+		else if (level > MARIO_LEVEL_BIG) //Racoon thì spawn khói sau khi giảm level
 		{
 			this->isEvolveBackward = true;
 			this->SetState(MARIO_STATE_EVOLVING);
@@ -609,6 +647,13 @@ int CMario::GetAniIdSmall()
 			else
 				aniId = ID_ANI_MARIO_SMALL_EVOLVE_TO_BIG_LEFT;
 		}
+		else if (isHolding)
+		{
+			if (nx > 0)
+				aniId = ID_ANI_MARIO_SMALL_HOLD_JUMP_RIGHT;
+			else
+				aniId = ID_ANI_MARIO_SMALL_HOLD_JUMP_LEFT;
+		}
 		else if (isAtMaxSpeed)
 		{
 			if (nx > 0)  //prob here
@@ -639,6 +684,17 @@ int CMario::GetAniIdSmall()
 				aniId = ID_ANI_MARIO_SMALL_EVOLVE_TO_BIG_RIGHT;
 			else
 				aniId = ID_ANI_MARIO_SMALL_EVOLVE_TO_BIG_LEFT;
+		}
+		else if (isHolding)
+		{
+			if (nx > 0 && vx > 0)
+				aniId = ID_ANI_MARIO_SMALL_HOLD_WALK_RIGHT;
+			else if (nx < 0 && vx < 0)
+				aniId = ID_ANI_MARIO_SMALL_HOLD_WALK_LEFT;
+			else if (nx > 0)
+				aniId = ID_ANI_MARIO_SMALL_HOLD_RIGHT;
+			else
+				aniId = ID_ANI_MARIO_SMALL_HOLD_LEFT;
 		}
 		else
 		{
@@ -817,6 +873,13 @@ int CMario::GetAniIdRacoon()
 		{
 			aniId = ID_ANI_MARIO_RACOON_ATTACKING_LEFT;
 		}
+		else if (isHolding)
+		{
+			if (nx > 0)
+				aniId = ID_ANI_MARIO_RACOON_HOLD_JUMP_RIGHT;
+			else
+				aniId = ID_ANI_MARIO_RACOON_HOLD_JUMP_LEFT;
+		}
 		else if (vy > 0 && nx < 0)
 		{
 			aniId = ID_ANI_MARIO_RACOON_FALLING_LEFT;
@@ -865,6 +928,17 @@ int CMario::GetAniIdRacoon()
 				aniId = ID_ANI_MARIO_RACOON_ATTACKING_RIGHT;
 			else
 				aniId = ID_ANI_MARIO_RACOON_ATTACKING_LEFT;
+		}
+		else if (isHolding)
+		{
+			if (nx > 0 && vx > 0)
+				aniId = ID_ANI_MARIO_RACOON_HOLD_WALK_RIGHT;
+			else if (nx < 0 && vx < 0)
+				aniId = ID_ANI_MARIO_RACOON_HOLD_WALK_LEFT;
+			else if (nx > 0)
+				aniId = ID_ANI_MARIO_RACOON_HOLD_RIGHT;
+			else
+				aniId = ID_ANI_MARIO_RACOON_HOLD_LEFT;
 		}
 		else
 		{

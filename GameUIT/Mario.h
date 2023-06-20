@@ -132,6 +132,15 @@
 #define ID_ANI_MARIO_SMALL_EVOLVE_TO_BIG_LEFT 1770
 #define ID_ANI_MARIO_SMALL_EVOLVE_TO_BIG_RIGHT 1771
 
+#define ID_ANI_MARIO_SMALL_HOLD_LEFT 1775
+#define ID_ANI_MARIO_SMALL_HOLD_RIGHT 1776
+
+#define ID_ANI_MARIO_SMALL_HOLD_WALK_LEFT 1780
+#define ID_ANI_MARIO_SMALL_HOLD_WALK_RIGHT 1781
+
+#define ID_ANI_MARIO_SMALL_HOLD_JUMP_LEFT 1785
+#define ID_ANI_MARIO_SMALL_HOLD_JUMP_RIGHT 1786
+
 //
 //RACOON MARIO
 //
@@ -174,6 +183,15 @@
 
 #define ID_ANI_MARIO_RACOON_LANDING_LEFT	2830	
 #define ID_ANI_MARIO_RACOON_LANDING_RIGHT	2831
+
+#define ID_ANI_MARIO_RACOON_HOLD_LEFT 2835
+#define ID_ANI_MARIO_RACOON_HOLD_RIGHT 2836
+
+#define ID_ANI_MARIO_RACOON_HOLD_WALK_LEFT 2840
+#define ID_ANI_MARIO_RACOON_HOLD_WALK_RIGHT 2841
+
+#define ID_ANI_MARIO_RACOON_HOLD_JUMP_LEFT 2845
+#define ID_ANI_MARIO_RACOON_HOLD_JUMP_RIGHT 2846
 
 //#define ID_ANI_MARIO_RACOON_FLYING_LEFT	2820	
 //#define ID_ANI_MARIO_RACOON_FLYING_RIGHT	2821
@@ -231,9 +249,7 @@ class CMario : public CGameObject
 	BOOLEAN StopWatch; //ngưng mọi hoạt động khi Mario đang tiến hoá hoặc chết
 	BOOLEAN isAllowToHoldKoopa; //Allow to hold rồi mới holding
 	BOOLEAN isHolding; //A way to handle holding: 
-	//attach nó với Mario -> khi hết đk isBeingHeld và đang state reborn thì vẽ nó
-	//How about creating ghost Koopa and set it state to sleep
-	//Purpose? -> To Overide Drawing, Make koopa feeling likes it being held by Mario
+	CKoopa* ghost_koopa;
 	float maxVx;
 	float maxRunningSpeed;
 	float ax;				// acceleration on x 
@@ -308,6 +324,8 @@ public:
 		untouch_0 = 0;
 		untouch_1 = 0;
 		tail = NULL;
+		ghost_koopa = NULL; //Khi đang Hold Koopa thì coi nó như thuộc tính của Mario
+		//Giống như bật khiên
 
 		maxVx = 0;
 		maxRunningSpeed = MARIO_RUNNING_SPEED;

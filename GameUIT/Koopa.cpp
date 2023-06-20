@@ -125,9 +125,19 @@ void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	if (isBeingHeld)
 	{
 		if (mario->GetMarioNormalX() > 0)
-			this->SetPosition(mario->GetX() + 11.5f, mario->GetY() + 1.5f);
+		{
+			if(mario->GetLevel() > MARIO_LEVEL_SMALL)
+				this->SetPosition(mario->GetX() + 11.5f, mario->GetY() + 1.5f);
+			else 
+				this->SetPosition(mario->GetX() + 11.5f, mario->GetY() - 1.5f);
+		}
 		else
-			this->SetPosition(mario->GetX() - 11.5f, mario->GetY() + 1.5f);
+		{
+			if (mario->GetLevel() > MARIO_LEVEL_SMALL)
+				this->SetPosition(mario->GetX() - 11.5f, mario->GetY() + 1.5f);
+			else
+				this->SetPosition(mario->GetX() - 11.5f, mario->GetY() - 1.5f);
+		}
 	}
 	isOnPlatform = false;
 
@@ -135,9 +145,7 @@ void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	vy += ay * dt;
 
 	UpdateKoopaState();
-	//if (isBeingHeld)
 	CCollision::GetInstance()->Process(this, dt, coObjects);
-	DebugOutTitle(L"isBeingHeld: %d", isBeingHeld);
 }
 
 void CKoopa::UpdateKoopaState()
@@ -226,7 +234,7 @@ void CKoopa::Render()
 		aniId = GetAniIdRedKoopa();
 
 	CAnimations::GetInstance()->Get(aniId)->Render(x, y, true);
-	RenderBoundingBox();
+	//RenderBoundingBox();
 }
 
 void CKoopa::SetState(int state)
@@ -351,17 +359,8 @@ void CKoopa::OnCollisionWithGoomba(LPCOLLISIONEVENT e)
 	KillCount++;
 	if (goomba->GetState() != GOOMBA_STATE_DIE_REVERSE)
 	{
-		if (isBeingHeld) //Nếu đang bị giữ thì giết luôn 2 thằng
-		{
-			this->SetState(KOOPA_STATE_DIE);
-			goomba->SetState(GOOMBA_STATE_DIE_REVERSE);
-			mario->SpawnScore(goomba);
-		}
-		else
-		{
-			goomba->SetState(GOOMBA_STATE_DIE_REVERSE);
-			mario->SpawnScore(goomba);
-		}
+		goomba->SetState(GOOMBA_STATE_DIE_REVERSE);
+		mario->SpawnScore(goomba);
 	}
 }
 
@@ -372,39 +371,30 @@ void CKoopa::OnCollisionWithKoopa(LPCOLLISIONEVENT e)
 	KillCount++;
 	if (koopa->GetState() != KOOPA_STATE_DIE)
 	{
-		if (isBeingHeld)
-		{
-			this->SetState(KOOPA_STATE_DIE);
-			koopa->SetState(KOOPA_STATE_DIE);
-			mario->SpawnScore(koopa);
-		}
-		else 
-		{
-			koopa->SetState(KOOPA_STATE_DIE);
-			mario->SpawnScore(koopa);
-		}
+		koopa->SetState(KOOPA_STATE_DIE);
+		mario->SpawnScore(koopa);
 	}
 }
 
 void CKoopa::OnCollisionWithQuesBrick(LPCOLLISIONEVENT e)
 {
+	if (state != KOOPA_STATE_SLIP && state != KOOPA_STATE_SLIP_REVERSE) return;
+
 	CQuestionBrick* qb = dynamic_cast<CQuestionBrick*>(e->obj);
-	if (qb->GetState() != QBRICK_STATE_HITTED)
-		qb->SetState(QBRICK_STATE_HITTED);
+	//if (!isBeingHeld)
+	//{
+		if (qb->GetState() != QBRICK_STATE_HITTED)
+			qb->SetState(QBRICK_STATE_HITTED);
+	//}
+	//else
+		//this->SetState(GOOMBA_STATE_DIE_REVERSE);
+    //Will check this part later!
 }
 
 void CKoopa::OnCollisionWithFlower(LPCOLLISIONEVENT e)
 {
 	if (e->obj->GetState() != SHOOTING_FLOWER_STATE_DIE)
-	{
-		if (!isBeingHeld)
-			e->obj->SetState(SHOOTING_FLOWER_STATE_DIE);
-		else
-		{
-			e->obj->SetState(SHOOTING_FLOWER_STATE_DIE);
-			this->SetState(KOOPA_STATE_DIE);
-		}
-	}
+		e->obj->SetState(SHOOTING_FLOWER_STATE_DIE);
 }
 
 int CKoopa::GetAniIdGreenKoopa()
@@ -528,6 +518,6 @@ int CKoopa::StateThatEnableToRelease()
 
 int CKoopa::ConditionsThatEnableToKillAllies()
 {
-	return (isBeingHeld || state == KOOPA_STATE_SLIP || state == KOOPA_STATE_SLIP_REVERSE);
+	return (state == KOOPA_STATE_SLIP || state == KOOPA_STATE_SLIP_REVERSE);
 	//Trả về các điều kiện cho phép Koopa giết các đồng minh của nó
 }
