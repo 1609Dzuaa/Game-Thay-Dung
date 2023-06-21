@@ -40,7 +40,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	UpdateMarioState();
 	isOnPlatform = false;
 	CCollision::GetInstance()->Process(this, dt, coObjects);
-	//DebugOutTitle(L"ISALLOW: %d", isAllowToHoldKoopa);
+	//DebugOutTitle(L"x, y: %f, %f", x, y);
 }
 
 void CMario::UpdateMarioState()

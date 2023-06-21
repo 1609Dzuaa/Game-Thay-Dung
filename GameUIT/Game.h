@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <Windows.h>
 #include <d3d10.h>
 #include <d3dx10.h>
@@ -51,8 +51,8 @@ class CGame
 
 	LPKEYEVENTHANDLER keyHandler;
 
-	float cam_x = 0.0f;
-	float cam_y = 0.0f;
+	float cam_x = 0.0f; //vị trí camX
+	float cam_y = 0.0f; //vị trí camY
 
 	HINSTANCE hInstance;
 
@@ -69,8 +69,8 @@ class CGame
 	int ScreenHeight = -1;
 
 public:
-	float GetCamX() { return cam_x; }
-	float GetCamY() { return cam_y; }
+	float GetCamX() { return cam_x; } //tự thêm
+	float GetCamY() { return cam_y; } //tự thêm
 	// Init DirectX, Sprite Handler
 	void Init(HWND hWnd, HINSTANCE hInstance);
 
@@ -114,8 +114,8 @@ public:
 
 	void SetPointSamplerState();
 
-	void SetCamPos(float x, float y) { cam_x = x; cam_y = y; }
-	void GetCamPos(float& x, float& y) { x = cam_x; y = cam_y; }
+	void SetCamPos(float x, float y) { cam_x = x; cam_y = y; } //set vị trí cho cam
+	void GetCamPos(float& x, float& y) { x = cam_x; y = cam_y; } //lấy vị trí của cam
 
 	LPSCENE GetCurrentScene() { return scenes[current_scene]; }
 	void Load(LPCWSTR gameFile);

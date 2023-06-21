@@ -124,7 +124,7 @@ void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 	if (isBeingHeld)
 	{
-		if (mario->GetMarioNormalX() > 0)
+		/*if (mario->GetMarioNormalX() > 0)
 		{
 			if(mario->GetLevel() > MARIO_LEVEL_SMALL)
 				this->SetPosition(mario->GetX() + 11.5f, mario->GetY() + 1.5f);
@@ -137,7 +137,10 @@ void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				this->SetPosition(mario->GetX() - 11.5f, mario->GetY() + 1.5f);
 			else
 				this->SetPosition(mario->GetX() - 11.5f, mario->GetY() - 1.5f);
-		}
+		}*/
+		float koopa_vx, koopa_vy;
+		mario->GetSpeed(koopa_vx, koopa_vy);
+		this->SetSpeed(koopa_vx, koopa_vy);
 	}
 	isOnPlatform = false;
 

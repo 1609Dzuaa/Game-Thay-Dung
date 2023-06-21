@@ -323,7 +323,8 @@ public:
 		untouch_draw_1 = 0;
 		untouch_0 = 0;
 		untouch_1 = 0;
-		tail = NULL;
+		//Thêm đuôi trước tương tự như mushroom
+		tail = NULL; //Vì cái đuôi đc thêm vào sau nên khả năng cao là nó va đập kém hiệu quả
 		ghost_koopa = NULL; //Khi đang Hold Koopa thì coi nó như thuộc tính của Mario
 		//Giống như bật khiên
 

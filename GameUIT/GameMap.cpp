@@ -64,8 +64,8 @@ void CMap::Render()
 			//Chỉ số ID của Sprites trong Tileset sẽ tương ứng với chỉ số trong vector SpritesSplited
 			if (index < NumberofSprites)
 			{
-				float Draw_X = float(CurrentColumn * TILE_WIDTH) + float(startX * TILE_WIDTH);
-				float Draw_Y = float(CurrentRow * TILE_HEIGHT) - float(startY * TILE_HEIGHT);
+				float Draw_X = float(CurrentColumn * TILE_WIDTH);
+				float Draw_Y = float(CurrentRow * TILE_HEIGHT);
 				SpritesSplitted.at(index)->Draw(Draw_X, Draw_Y);
 				//Chỉ render những thứ trong Camera để tránh lãng phí tài nguyên
 			}

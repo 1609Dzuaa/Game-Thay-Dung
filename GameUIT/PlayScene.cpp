@@ -16,6 +16,7 @@
 
 #include "SampleKeyEventHandler.h"
 #include "GameMap.h"
+#include "Camera.h"
 
 using namespace std;
 
@@ -341,18 +342,35 @@ void CPlayScene::Update(DWORD dt)
 	// skip the rest if scene was already unloaded (Mario::Update might trigger PlayScene::Unload)
 	if (player == NULL) return;
 
-	// Update camera to follow mario
+	// Update camera to follow mario - CAM START HERE !
 	float cx, cy;
-	player->GetPosition(cx, cy);
+	player->GetPosition(cx, cy); //tạo 2 biến và gắn giá trị cho chúng = với toạ độ ng chơi
 
+	//This is just simple camera
 	CGame* game = CGame::GetInstance();
+
+	//về player ở trong cam thì mình chỉ lấy vị trí của nó và block nó khỏi 
+	//việc đi quá max hoặc min
+	if (player->GetX() <= 0)
+		player->SetPosition(0, player->GetY());
+
+	//a.k.a: camX new = Player.X - GameWidth / 2;
 	cx -= game->GetBackBufferWidth() / 2;
 	cy -= game->GetBackBufferHeight() / 2;
 
-	if (cx < 0) cx = 0;
+	if (cx < 0) cx = 0; //giới hạn trái của cam
+	if (cy < 0) cy = 0; //giới hạn trên
 
-	CGame::GetInstance()->SetCamPos(cx, 0.0f /*cy*/);
+	if (cx > 1536 - 265) cx = 1536 - 265; //giới hạn phải
+	if (cy > 272 - 230) cy = 72; //giới hạn dưới
 
+	//if (cy > 272 - 200) cy = 72;
+	//if (cx > MAP1_1_WIDTH / 2 - ) cx = MAP1_1_WIDTH / 2;
+	//if (cx > MAP1_1_WIDTH / 3) cx = MAP1_1_WIDTH / 3;
+	CGame::GetInstance()->SetCamPos(cx, cy); //when players.x > half screen => It's the time we move the cam
+
+	//CAM END HERE !
+	DebugOutTitle(L"X, Y, x, y: %f, %f, %f, %f", cx, cy, player->GetX(), player->GetY());
 	PurgeDeletedObjects();
 }
 
