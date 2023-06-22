@@ -141,6 +141,7 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 	switch (object_type)
 	{
 	case OBJECT_TYPE_MARIO:
+	{
 		if (player != NULL)
 		{
 			DebugOut(L"[ERROR] MARIO object was created before!\n");
@@ -151,6 +152,7 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 
 		DebugOut(L"[INFO] Player object has been created!\n");
 		break;
+	}
 
 	case OBJECT_TYPE_GOOMBAS: 
 	{
@@ -343,34 +345,17 @@ void CPlayScene::Update(DWORD dt)
 	if (player == NULL) return;
 
 	// Update camera to follow mario - CAM START HERE !
-	float cx, cy;
-	player->GetPosition(cx, cy); //tạo 2 biến và gắn giá trị cho chúng = với toạ độ ng chơi
+	CCamera* Cam = CCamera::GetInstance();
+	Cam->SetTargetToFollow(player);
+	Cam->Update();
 
-	//This is just simple camera
-	CGame* game = CGame::GetInstance();
-
-	//về player ở trong cam thì mình chỉ lấy vị trí của nó và block nó khỏi 
-	//việc đi quá max hoặc min
+	//block player if go over Min, Max of the Map
 	if (player->GetX() <= 0)
-		player->SetPosition(0, player->GetY());
+		player->SetPosition(0, player->GetY()); 
+	//else if(player->GetY() >= MAP1_1_WIDTH)
+		//player->SetPosition(MAP1_1_WIDTH, player->GetY());
 
-	//a.k.a: camX new = Player.X - GameWidth / 2;
-	cx -= game->GetBackBufferWidth() / 2;
-	cy -= game->GetBackBufferHeight() / 2;
-
-	if (cx < 0) cx = 0; //giới hạn trái của cam
-	if (cy < 0) cy = 0; //giới hạn trên
-
-	if (cx > 1536 - 265) cx = 1536 - 265; //giới hạn phải
-	if (cy > 272 - 230) cy = 72; //giới hạn dưới
-
-	//if (cy > 272 - 200) cy = 72;
-	//if (cx > MAP1_1_WIDTH / 2 - ) cx = MAP1_1_WIDTH / 2;
-	//if (cx > MAP1_1_WIDTH / 3) cx = MAP1_1_WIDTH / 3;
-	CGame::GetInstance()->SetCamPos(cx, cy); //when players.x > half screen => It's the time we move the cam
-
-	//CAM END HERE !
-	DebugOutTitle(L"X, Y, x, y: %f, %f, %f, %f", cx, cy, player->GetX(), player->GetY());
+	DebugOutTitle(L"X, Y, x, y: %f, %f, %f, %f", Cam->GetCamPos().x, Cam->GetCamPos().y, player->GetX(), player->GetY());
 	PurgeDeletedObjects();
 }
 

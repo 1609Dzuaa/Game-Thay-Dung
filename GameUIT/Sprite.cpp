@@ -1,4 +1,5 @@
 ﻿#include "Sprite.h"
+#include "Camera.h"
 
 CSprite::CSprite(int id, int left, int top, int right, int bottom, LPTEXTURE tex)
 {
@@ -33,21 +34,18 @@ CSprite::CSprite(int id, int left, int top, int right, int bottom, LPTEXTURE tex
 void CSprite::Draw(float x, float y)
 {
 	CGame* g = CGame::GetInstance();
-	float cx, cy;
-	g->GetCamPos(cx, cy);
-
-	cx = (FLOAT)floor(cx);
-	cy = (FLOAT)floor(cy);
-
+	D3DXVECTOR2 cam = CCamera::GetInstance()->GetCamPos(); //Lấy vị trí cam để vẽ
 	D3DXMATRIX matTranslation;
 
 	x = (FLOAT)floor(x);
 	y = (FLOAT)floor(y);
 
-	D3DXMatrixTranslation(&matTranslation, x - cx, g->GetBackBufferHeight() - y + cy, 0.1f);
+	//Trừ đi 1 lượng cx để vẽ nó ở vị trí mới
+	//Nếu không, map sẽ không di chuyển
+	//Đoạn: (FLOAT)floor(cam.x) rất quan trọng, nếu 0 có nó thì khi di chuyển map sẽ trông như bị GLITCH
+	D3DXMatrixTranslation(&matTranslation, x - (FLOAT)floor(cam.x), g->GetBackBufferHeight() - y + (FLOAT)floor(cam.y), 0.1f);
 
 	this->sprite.matWorld = (this->matScaling * matTranslation);
 
 	g->GetSpriteHandler()->DrawSpritesImmediate(&sprite, 1, 0, 0);
 }
-

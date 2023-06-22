@@ -2,6 +2,7 @@
 #include "Mario.h"
 #include "PlayScene.h"
 #include "ColorPlatform.h"
+#include "Camera.h"
 #include "debug.h"
 
 CGoomba::CGoomba(float x, float y, int type) :CGameObject(x, y)
@@ -109,6 +110,8 @@ void CGoomba::HandleCollisionWithBlockingObjects(LPCOLLISIONEVENT e)
 
 void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
+	if (!CCamera::GetInstance()->isViewable(this)) return;
+
 	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
 	if (mario->GetStopWatch()) return;
 
@@ -158,6 +161,8 @@ void CGoomba::UpdateGoombaState()
 void CGoomba::Render()
 {
 	//should check if the object is in the camera => then RENDER it! 
+	if (!CCamera::GetInstance()->isViewable(this)) return;
+
 	int aniId;
 	if (type == GOOMBA)
 	{

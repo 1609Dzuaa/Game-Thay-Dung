@@ -12,7 +12,7 @@ CMap::CMap(int Tileset_Id, int Map_Rows, int Map_Collums, int Tileset_Rows, int 
 	this->NumberofSprites = num_sprites;
 	this->startX = startX;
 	this->startY = startY;
-	CamX = CamY = 0;
+	this->Cam = CCamera::GetInstance();
 	Map_Matrix = NULL;
 }
 
@@ -21,15 +21,13 @@ CMap::~CMap()
 	//release
 }
 
-bool CMap::isInCamera(float x, float y)
+void CMap::isViewable(int& Start_col, int& End_col, int& Start_row, int& End_row)
 {
-	float w = 32.0f;
-	float h = 32.0f;
-	if (x + w <= (CGame::GetInstance()->GetCamX()) || (CGame::GetInstance()->GetCamX()) + SCREEN_WIDTH <= x)
-		return false;
-	if (y + h <= (CGame::GetInstance()->GetCamY()) || (CGame::GetInstance()->GetCamY()) + SCREEN_HEIGHT + h <= y)
-		return false;
-	return true;
+	Start_col = static_cast<int>(Cam->GetCamPos().x / TILE_WIDTH);
+	End_col = static_cast<int>((Cam->GetCamPos().x + SCREEN_WIDTH) / TILE_WIDTH);
+	Start_row = static_cast<int>(Cam->GetCamPos().y / TILE_HEIGHT);
+	End_row = static_cast<int>((Cam->GetCamPos().y + SCREEN_HEIGHT) / TILE_HEIGHT);
+	//Hàm này để xác định các cột, các hàng Viewable
 }
 
 void CMap::ClipSpritesFromTileset()
@@ -41,7 +39,7 @@ void CMap::ClipSpritesFromTileset()
 		int top = TileNum / TilesetCollums * TILE_HEIGHT;
 		int right = left + TILE_WIDTH - 1;
 		int bottom = top + TILE_HEIGHT - 1;
-		//Công thức từ sách thầy
+		//dunno why minus 1, if not map'll looks terrible asf!
 
 		LPSPRITE sprite = new CSprite(TileNum, left, top, right, bottom, Texture_TileSet);
 		this->SpritesSplitted.push_back(sprite);
@@ -53,24 +51,22 @@ void CMap::ClipSpritesFromTileset()
 
 void CMap::Render()
 {
-	int FirstColumn = int(floor(CamX / TILE_WIDTH));
-	int LastColumn = int(ceil((CamX * TILE_WIDTH + CGame::GetInstance()->GetScreenWidth()) / TILE_WIDTH));
-	if (LastColumn >= MapCollums)
-		LastColumn = MapCollums - 1;
-	for (int CurrentRow = 0; CurrentRow < MapRows; CurrentRow++)
-		for (int CurrentColumn = FirstColumn; CurrentColumn <= LastColumn; CurrentColumn++)
-		{
-			int index = Map_Matrix[CurrentRow][CurrentColumn];
-			//Chỉ số ID của Sprites trong Tileset sẽ tương ứng với chỉ số trong vector SpritesSplited
-			if (index < NumberofSprites)
-			{
-				float Draw_X = float(CurrentColumn * TILE_WIDTH);
-				float Draw_Y = float(CurrentRow * TILE_HEIGHT);
-				SpritesSplitted.at(index)->Draw(Draw_X, Draw_Y);
-				//Chỉ render những thứ trong Camera để tránh lãng phí tài nguyên
-			}
-		}
+	int Viewable_Col_start = 0;
+	int Viewable_Col_end = 0;
+	int startRow = 0;
+	int endRow = 0;
 
+	isViewable(Viewable_Col_start, Viewable_Col_end, startRow, endRow);
+
+	for (int CurrentRow = startRow; CurrentRow < endRow; CurrentRow++)
+		for (int CurrentColumn = Viewable_Col_start; CurrentColumn < Viewable_Col_end; CurrentColumn++)
+		{
+			int Sprite_ID = Map_Matrix[CurrentRow][CurrentColumn];
+			//Chỉ số ID của Sprites trong Tileset sẽ tương ứng với chỉ số trong vector SpritesSplited
+			float Draw_X = float(CurrentColumn * TILE_WIDTH);
+			float Draw_Y = float(CurrentRow * TILE_HEIGHT);
+			SpritesSplitted.at(Sprite_ID)->Draw(Draw_X, Draw_Y); //Vẽ Sprites được tách tại vị trí x, y
+		}
 }
 
 void CMap::SetMapMatrix(int** map_mat)

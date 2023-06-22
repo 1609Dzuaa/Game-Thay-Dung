@@ -4,6 +4,8 @@
 #include "Sprites.h"
 #include "Utils.h"
 #include "AssetIDs.h"
+#include "Camera.h"
+
 #define TILE_WIDTH 16
 #define TILE_HEIGHT 16
 class CMap
@@ -17,7 +19,7 @@ class CMap
 	LPTEXTURE Texture_TileSet; //nguồn ảnh Tileset
 	vector<LPSPRITE> SpritesSplitted; //vector chứa từng Sprite được cắt ra từ nguồn ảnh Tileset
 	int** Map_Matrix;  //Ma trận map là con trỏ cấp 2
-	float CamX, CamY;
+	CCamera* Cam;
 public:
 	//Only render & update things in Camera
 	CMap(int TileSetID, int TotalRowsOfMap, int TotalColumnsOfMap, int TotalRowsOfTileSet, int  TotalColumnsOfTileSet, int TotalTiles, int startX, int startY);
@@ -27,5 +29,5 @@ public:
 	void SetMapMatrix(int** map_matrix);
 	int GetMapWidth();
 	int GetMapHeight();
-	bool isInCamera(float x, float y);
+	void isViewable(int& Start_col, int& End_col, int& Start_row, int& End_row);
 };

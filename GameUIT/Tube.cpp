@@ -1,6 +1,7 @@
 ﻿#include "Tube.h"
 #include "PlayScene.h"
 #include "ShootingFlower.h"
+#include "Camera.h"
 
 void CTube::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
@@ -19,6 +20,8 @@ void CTube::SpawnShootingFlower()
 
 void CTube::Render()
 {
+	if (!CCamera::GetInstance()->isViewable(this)) return;
+
 	CAnimations* animations = CAnimations::GetInstance();
 	animations->Get(ID_ANI_TUBE)->Render(x, y, false);
 	//RenderBoundingBox();
