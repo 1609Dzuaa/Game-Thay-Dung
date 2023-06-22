@@ -352,8 +352,8 @@ void CPlayScene::Update(DWORD dt)
 	//block player if go over Min, Max of the Map
 	if (player->GetX() <= 0)
 		player->SetPosition(0, player->GetY()); 
-	//else if(player->GetY() >= MAP1_1_WIDTH)
-		//player->SetPosition(MAP1_1_WIDTH, player->GetY());
+	else if(player->GetX() >= MAP1_1_WIDTH - 10.0f)
+		player->SetPosition(MAP1_1_WIDTH - 10.0f, player->GetY());
 
 	DebugOutTitle(L"X, Y, x, y: %f, %f, %f, %f", Cam->GetCamPos().x, Cam->GetCamPos().y, player->GetX(), player->GetY());
 	PurgeDeletedObjects();

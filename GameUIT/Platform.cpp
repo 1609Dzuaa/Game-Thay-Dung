@@ -5,6 +5,7 @@
 #include "Sprites.h"
 #include "Mario.h"
 #include "PlayScene.h"
+#include "Camera.h"
 
 void CPlatform::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
@@ -14,6 +15,8 @@ void CPlatform::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 void CPlatform::Render()
 {
+	if (!CCamera::GetInstance()->isViewable(this)) return;
+
 	if (this->length <= 0) return;
 	float xx = x;
 	CSprites* s = CSprites::GetInstance();

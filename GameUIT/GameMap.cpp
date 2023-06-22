@@ -58,7 +58,7 @@ void CMap::Render()
 
 	isViewable(Viewable_Col_start, Viewable_Col_end, startRow, endRow);
 
-	for (int CurrentRow = startRow; CurrentRow < endRow; CurrentRow++)
+	for (int CurrentRow = 0; CurrentRow < MapRows; CurrentRow++)
 		for (int CurrentColumn = Viewable_Col_start; CurrentColumn < Viewable_Col_end; CurrentColumn++)
 		{
 			int Sprite_ID = Map_Matrix[CurrentRow][CurrentColumn];

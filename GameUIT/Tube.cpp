@@ -6,6 +6,8 @@
 void CTube::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	//Nếu Mario ở trong tầm tấn công thì trồi lên
+	if (!CCamera::GetInstance()->isViewable(this)) return;
+
 	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();	
 	if (mario->GetX() >= this->x - ATTACK_ZONE && mario->GetX() < this->x - SAFE_ZONE && !shoot_flower->IsDeleted()
 		|| mario->GetX() > SAFE_ZONE + this->x && mario->GetX() <= this->x + ATTACK_ZONE && !shoot_flower->IsDeleted())

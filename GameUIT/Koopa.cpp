@@ -116,6 +116,8 @@ void CKoopa::HandleCollisionWithBlockingObjects(LPCOLLISIONEVENT e)
 
 void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
+	if (!CCamera::GetInstance()->isViewable(this)) return;
+
 	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
 	if (mario->GetStopWatch()) return;
 
@@ -226,7 +228,8 @@ void CKoopa::UpdateKoopaState()
 
 void CKoopa::Render()
 {
-	//if (this->isBeingHeld) return;
+	if (!CCamera::GetInstance()->isViewable(this)) return;
+
 	int aniId = 0;
 
 	if (type == GREEN_KOOPA)
@@ -470,6 +473,10 @@ void CKoopa::HandleCollisionWithColorPlatform(LPCOLLISIONEVENT e, CColorPlatform
 		ghost_head = new CHead(x - KOOPA_BBOX_WIDTH / 2 - 5.0f, y, this->vx, this->ay);
 		current_scene->AddObjectToScene(ghost_head);
 		DebugOut(L"Head was created\n");
+	}
+	else if (type == GREEN_FLYING_KOOPA)
+	{
+		SetState(KOOPA_STATE_JUMPING); //coi lại ở đây sao nó 0 nhảy
 	}
 
 	isFallOffColorPlatform = false; //turn out the problem here @@ fack myself
