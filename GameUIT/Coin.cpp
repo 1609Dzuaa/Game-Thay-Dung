@@ -1,9 +1,12 @@
 #include "Coin.h"
 #include "PlayScene.h"
 #include "debug.h"
+#include "Camera.h"
 
 void CCoin::Render()
 {
+	if (!CCamera::GetInstance()->isViewable(this)) return;
+
 	CAnimations* animations = CAnimations::GetInstance();
 	animations->Get(ID_ANI_COIN)->Render(x, y, false);
 

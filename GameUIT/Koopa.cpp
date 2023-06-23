@@ -93,7 +93,7 @@ void CKoopa::HandleCollisionWithBlockingObjects(LPCOLLISIONEVENT e)
 {
 	if (e->ny != 0) //Nếu object có thuộc tính block
 	{
-		if (type == RED_KOOPA)
+		if (type == RED_KOOPA) //Red koopa on ques brick vẫn bị block
 		{
 			enableInteractWColorPlat = false; //không cho tương tác với color plat một khi va chạm với blocking obj
 			isFallOffColorPlatform = true; //đánh dấu đã bị rơi xuống nền
@@ -151,6 +151,7 @@ void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 	UpdateKoopaState();
 	CCollision::GetInstance()->Process(this, dt, coObjects);
+	DebugOutTitle(L"STATE: %d, %f", state, vy);
 }
 
 void CKoopa::UpdateKoopaState()

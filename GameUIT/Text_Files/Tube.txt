@@ -1,8 +1,13 @@
 # id	left	top	right	bottom	texture_id
 [SPRITES]
+#shooting flower
 5401	2	26	33	75	50
+
+#carnivore flower
+5402	2	26	33	55	50	
 
 # ani_id	sprite1_id	time1	sprite2_id	time2	...
 [ANIMATIONS]
-#ANI NORMAL BRICK
+#ANI TUBE
 5500	5401	100
+5501	5402	100

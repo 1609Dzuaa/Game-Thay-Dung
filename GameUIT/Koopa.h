@@ -13,7 +13,7 @@
 
 #pragma endregion 
 
-#define KOOPA_GRAVITY 0.002f
+#define KOOPA_GRAVITY 0.001f
 #define KOOPA_STEP_ON_GRAVITY 0.001f
 #define KOOPA_WALKING_SPEED 0.03f
 #define KOOPA_SLIPPING_SPEED 0.15f

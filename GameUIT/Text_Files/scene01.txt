@@ -20,15 +20,15 @@ Text_Files\EffectCollision.txt
 
 [OBJECTS]
 # type	x	y	extra_settings per object type
-# type: 0 = Mario , 1 = Brick, 2 = Goomba, 3 = Koopas,	5 = Platform
+# type: 0 = Mario , 1 = Brick, 2 = Goomba, 3 = Koopas, 4 = Coin, 5 = Platform
 # See OBJECT_TYPE constants in AssetIDs.h 
 
 #How about adding object that "more collidable" sooner than other object ?
 #MARIO
-0	25	175
+0	1890	275
 
 #Red Koopa ON Green Platform
-#3	555	184	3
+3	555	264	3
 
 #QUESTION BRICK |  0: HAS NO ITEM - ONLY COIN |  1: HAS ITEM(MUSHROOM, LEAF, ...) | 
 7	169	276	0
@@ -76,12 +76,19 @@ Text_Files\EffectCollision.txt
 6	496	224	16	15	4	0	0	0
 
 #Normal ground - 2 #here
-5	1120	336	16	15	24	400001	400002	400003
+5	1120	336	16	15	23	400001	400002	400003
 
 #Goomba if(inCamera) => Spawn
 2	836	290	1
 2	888	290	1
 2	952	290	2
+
+#Coin Ladder
+4	1058	240
+4	1090	208
+4	1122	176
+4	1154	144
+4	1186	112
 
 #Green platform - 3
 6	1232	304	16	15	8	0	0	0
@@ -110,6 +117,9 @@ Text_Files\EffectCollision.txt
 1	1584	304
 1	1584	288
 
+#Normal Ground 3
+5	1648	336	16	15	36	400001	400002	400003
+
 #Stripe Brick On Normal ground 3
 1	1648	320
 1	1664	320
@@ -118,17 +128,17 @@ Text_Files\EffectCollision.txt
 1	1664	304
 1	1648	288
 
-#Tube But it has Cannibal Flower (TYPE 2)
-9	1784	304	1
+#Tube But it has Cannibal Flower (TYPE 3)
+9	1782	313	3
+
+#TUBE Green shootin flower
+9	1848	304	1
 
 #Pink Plat
 6	2132	288	16	15	3	0	0	0
 
 #Green Plat
 6	2162	198	16	15	3	0	0	0
-
-#Normal Ground 3
-5	1648	336	16	15	36	400001	400002	400003
 
 #Normal Ground 4 - END vừa + 1 để có gì chạy đến vô cực khi end game
 5	2240	336	16	15	37	400001	400002	400003
@@ -138,5 +148,5 @@ Text_Files\EffectCollision.txt
 
 #Para Koopa
 3	1340	210	2
-3	1372	210	2
-3	1396	210	2
+#3	1372	210	2
+#3	1396	210	2

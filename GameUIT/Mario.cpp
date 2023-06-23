@@ -185,7 +185,7 @@ void CMario::OnCollisionWithNonBlockingObjects(LPCOLLISIONEVENT e)
 	if (dynamic_cast<CLeaf*>(e->obj))
 		OnCollisionWithLeaf(e);
 	if (dynamic_cast<CShootingFlower*>(e->obj))
-		OnCollisionWithFlower(e);
+		OnCollisionWithFlower(e); //Prob here with Canivour flower
 	if (dynamic_cast<CFireBullet*>(e->obj))
 		OnCollisionWithFireBullet(e);
 	if (dynamic_cast<CCoin*>(e->obj))

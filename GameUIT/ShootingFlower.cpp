@@ -11,18 +11,28 @@ void CShootingFlower::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
 	if (mario->GetStopWatch()) return;
 
+	if (type == FLOWER_TYPE_SHOOTING_RED)
+		UpdateRedShootinFlower();
+	else if (type == FLOWER_TYPE_CARNIVOURING_GREEN)
+		UpdateGreenCarniFlower();
+
+	CCollision::GetInstance()->Process(this, dt, coObjects);
+}
+
+void CShootingFlower::UpdateRedShootinFlower()
+{
 	if (state == SHOOTING_FLOWER_STATE_REST && GetTickCount64() - rest_start > SHOOTING_FLOWER_REST_TIME)
 	{
 		enableToShoot = true;
 		rest_start = 0;
 	}
 
-	if (state == SHOOTING_FLOWER_STATE_SHOOT)// && enableToShoot)
+	if (state == FLOWER_STATE_ATTACK)// && enableToShoot)
 		AimAndShoot();
 
 	if (y <= minY && state == SHOOTING_FLOWER_STATE_RISE_UP)
 	{
-		this->SetState(SHOOTING_FLOWER_STATE_SHOOT); //chui lên cao nhất thì tấn công 
+		this->SetState(FLOWER_STATE_ATTACK); //chui lên cao nhất thì tấn công 
 		this->y = minY;
 	}
 
@@ -31,8 +41,24 @@ void CShootingFlower::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		this->SetState(SHOOTING_FLOWER_STATE_IN_TUBE); //chui xuống thấp nhất thì ngưng vẽ, cập nhật
 		this->y = maxY;
 	}
+}
 
-	CCollision::GetInstance()->Process(this, dt, coObjects);
+void CShootingFlower::UpdateGreenCarniFlower()
+{
+	if (state == FLOWER_STATE_ATTACK)// && enableToShoot)
+		AimAndShoot();
+
+	if (y <= minY && state == SHOOTING_FLOWER_STATE_RISE_UP)
+	{
+		this->SetState(FLOWER_STATE_ATTACK); 
+		this->y = minY;
+	}
+
+	if (y >= maxY)
+	{
+		this->SetState(SHOOTING_FLOWER_STATE_IN_TUBE); //chui xuống thấp nhất thì ngưng vẽ, cập nhật
+		this->y = maxY;
+	}
 }
 
 void CShootingFlower::OnNoCollision(DWORD dt)
@@ -44,14 +70,18 @@ void CShootingFlower::Render()
 {
 	CAnimations* animations = CAnimations::GetInstance();
 	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
-	int animation_ID = GetAniID();
+	int animation_ID = -1;
+	if (type == FLOWER_TYPE_SHOOTING_RED)
+		animation_ID = GetAniID_Red();
+	else if (type == FLOWER_TYPE_CARNIVOURING_GREEN)
+		animation_ID = GetAniID_Carni();
 
 	if (animation_ID != -1)
 		animations->Get(animation_ID)->Render(x, y, true);
-	//RenderBoundingBox();
+	RenderBoundingBox();
 }
 
-int CShootingFlower::GetAniID()
+int CShootingFlower::GetAniID_Red()
 {
 	int aniID = -1;
 	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
@@ -67,7 +97,7 @@ int CShootingFlower::GetAniID()
 		else if (mario->GetX() > this->x && mario->GetY() <= this->y)
 			aniID = ID_ANI_FLOWER_RISE_UP_RIGHT_FACE_UP;
 	}
-	else if (state == SHOOTING_FLOWER_STATE_SHOOT)
+	else if (state == FLOWER_STATE_ATTACK)
 	{
 		if (mario->GetX() > this->x && mario->GetY() > this->y)
 			aniID = ID_ANI_FLOWER_SHOOT_RIGHT;
@@ -93,6 +123,11 @@ int CShootingFlower::GetAniID()
 	return aniID;
 }
 
+int CShootingFlower::GetAniID_Carni()
+{
+	return ID_ANI_FLOWER_CARNIVOUR_RISE;
+}
+
 void CShootingFlower::SetState(int state)
 {
 	if (this->state == SHOOTING_FLOWER_STATE_DIE) return;
@@ -111,7 +146,7 @@ void CShootingFlower::SetState(int state)
 
 		break;
 
-	case SHOOTING_FLOWER_STATE_SHOOT:
+	case FLOWER_STATE_ATTACK:
 		vy = 0;
 		aim_start = GetTickCount64();
 
@@ -145,13 +180,15 @@ void CShootingFlower::AimAndShoot()
 {
 	if (GetTickCount64() - aim_start >= SHOOTING_FLOWER_AIM_TIME)
 	{
-		CPlayScene* current_scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
-		CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
-		CFireBullet* fire_bullet = new CFireBullet(this->x, this->y);
-		fire_bullet->SetPosition(this->x, this->y - 2.0f);
-		SetSpeedFireBullet(fire_bullet, mario);
-		current_scene->AddObjectToScene(fire_bullet);
-
+		if (type != FLOWER_TYPE_CARNIVOURING_GREEN)
+		{
+			CPlayScene* current_scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
+			CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
+			CFireBullet* fire_bullet = new CFireBullet(this->x, this->y);
+			fire_bullet->SetPosition(this->x, this->y - 2.0f);
+			SetSpeedFireBullet(fire_bullet, mario);
+			current_scene->AddObjectToScene(fire_bullet);
+		}
 		SetState(SHOOTING_FLOWER_STATE_DIVE);
 	}
 }

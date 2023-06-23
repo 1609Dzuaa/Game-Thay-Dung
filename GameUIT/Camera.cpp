@@ -66,8 +66,8 @@ bool CCamera::isViewable(LPGAMEOBJECT obj)
     float obj_Height = b - t;
  
     //Vì nó là 2D nên phải Thoả 4ĐK:
-    if (obj->GetX() + obj_Width / 2 >= this->posX && obj->GetX() - obj_Width / 2 <= this->posX + this->Width &&
-        obj->GetY() + obj_Height / 2 >= this->posY && obj->GetY() - obj_Height / 2 <= this->posY + this->Height)
+    if (obj->GetX() + obj_Width / 2 > this->posX && obj->GetX() - obj_Width / 2 < this->posX + this->Width &&
+        obj->GetY() + obj_Height / 2 > this->posY && obj->GetY() - obj_Height / 2 < this->posY + this->Height)
     {
         return true;
     }

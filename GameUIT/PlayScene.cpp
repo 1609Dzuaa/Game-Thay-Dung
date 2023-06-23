@@ -355,7 +355,7 @@ void CPlayScene::Update(DWORD dt)
 	else if(player->GetX() >= MAP1_1_WIDTH - 10.0f)
 		player->SetPosition(MAP1_1_WIDTH - 10.0f, player->GetY());
 
-	DebugOutTitle(L"X, Y, x, y: %f, %f, %f, %f", Cam->GetCamPos().x, Cam->GetCamPos().y, player->GetX(), player->GetY());
+	//DebugOutTitle(L"X, Y, x, y: %f, %f, %f, %f", Cam->GetCamPos().x, Cam->GetCamPos().y, player->GetX(), player->GetY());
 	PurgeDeletedObjects();
 }
 
