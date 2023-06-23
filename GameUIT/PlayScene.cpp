@@ -226,7 +226,7 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 		break;
 	}
 
-	case OBJECT_TYPE_SHOOTING_FLOWER:
+	case OBJECT_TYPE_Flower:
 
 		break;
 

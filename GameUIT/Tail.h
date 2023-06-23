@@ -30,6 +30,6 @@ public:
 	void OnCollisionWith(LPCOLLISIONEVENT e);
 	void OnCollisionWithGoomba(LPCOLLISIONEVENT e);
 	void OnCollisionWithKoopa(LPCOLLISIONEVENT e);
-	void OnCollisionWithShootingFlower(LPCOLLISIONEVENT e);
+	void OnCollisionWithFlower(LPCOLLISIONEVENT e);
 	void SetState(int state); //cái đuôi cũng có trạng thái
 };

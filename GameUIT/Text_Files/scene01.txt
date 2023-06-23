@@ -25,7 +25,7 @@ Text_Files\EffectCollision.txt
 
 #How about adding object that "more collidable" sooner than other object ?
 #MARIO
-0	1890	275
+0	15	285
 
 #Red Koopa ON Green Platform
 3	555	264	3
@@ -132,7 +132,7 @@ Text_Files\EffectCollision.txt
 9	1782	313	3
 
 #TUBE Green shootin flower
-9	1848	304	1
+9	1848	304	2
 
 #Pink Plat
 6	2132	288	16	15	3	0	0	0
@@ -142,6 +142,16 @@ Text_Files\EffectCollision.txt
 
 #Normal Ground 4 - END vừa + 1 để có gì chạy đến vô cực khi end game
 5	2240	336	16	15	37	400001	400002	400003
+
+#Tube with 2 stripe birck
+9	2248	313	4
+
+#2 stripe brick on Tube
+1	2240	289
+1	2256	289
+
+#Short tube NO FLOWER
+9	2304	313	0
 
 #Portal 
 #50	300	62	316	140	2

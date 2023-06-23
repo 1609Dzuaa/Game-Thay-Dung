@@ -12,7 +12,7 @@
 #include "Mushroom.h"
 #include "Leaf.h"
 #include "ColorPlatform.h"
-#include "ShootingFlower.h"
+#include "Flower.h"
 #include "FireBullet.h"
 #include "EffectScore.h"
 #include "EffectCollision.h"
@@ -184,7 +184,7 @@ void CMario::OnCollisionWithNonBlockingObjects(LPCOLLISIONEVENT e)
 		OnCollisionWithMushroom(e);
 	if (dynamic_cast<CLeaf*>(e->obj))
 		OnCollisionWithLeaf(e);
-	if (dynamic_cast<CShootingFlower*>(e->obj))
+	if (dynamic_cast<CFlower*>(e->obj))
 		OnCollisionWithFlower(e); //Prob here with Canivour flower
 	if (dynamic_cast<CFireBullet*>(e->obj))
 		OnCollisionWithFireBullet(e);
@@ -570,7 +570,7 @@ void CMario::OnCollisionWithFlower(LPCOLLISIONEVENT e)
 {
 	/*if (isAttacking)
 	{
-		e->obj->SetState(SHOOTING_FLOWER_STATE_DIE);
+		e->obj->SetState(FLOWER_STATE_DIE);
 		SpawnScore(e->obj);
 		SpawnEffect(e, this, EFF_COL_TYPE_NORMAL);
 	}*/
@@ -579,7 +579,7 @@ void CMario::OnCollisionWithFlower(LPCOLLISIONEVENT e)
 	{
 		if (isHolding && e->nx != this->nx) //sometimes work ? Will check it later
 		{
-			e->obj->SetState(SHOOTING_FLOWER_STATE_DIE);
+			e->obj->SetState(FLOWER_STATE_DIE);
 			SpawnScore(e->obj);
 			ghost_koopa->SetState(KOOPA_STATE_DIE);
 			ghost_koopa->Delete();

@@ -1,7 +1,7 @@
 #include "Tail.h"
 #include "Goomba.h"
 #include "Koopa.h"
-#include "ShootingFlower.h"
+#include "Flower.h"
 #include "Mario.h"
 #include "PlayScene.h"
 #include "EffectCollision.h"
@@ -27,8 +27,8 @@ void CTail::OnCollisionWith(LPCOLLISIONEVENT e)
 		OnCollisionWithGoomba(e);
 	if (dynamic_cast<CKoopa*>(e->obj))
 		OnCollisionWithKoopa(e);
-	if (dynamic_cast<CShootingFlower*>(e->obj))
-		OnCollisionWithShootingFlower(e);
+	if (dynamic_cast<CFlower*>(e->obj))
+		OnCollisionWithFlower(e);
 }
 
 void CTail::OnCollisionWithGoomba(LPCOLLISIONEVENT e)
@@ -56,11 +56,11 @@ void CTail::OnCollisionWithKoopa(LPCOLLISIONEVENT e)
 	}
 }
 
-void CTail::OnCollisionWithShootingFlower(LPCOLLISIONEVENT e)
+void CTail::OnCollisionWithFlower(LPCOLLISIONEVENT e)
 {
-	CShootingFlower* flower = dynamic_cast<CShootingFlower*>(e->obj);
+	CFlower* flower = dynamic_cast<CFlower*>(e->obj);
 	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
-	flower->SetState(SHOOTING_FLOWER_STATE_DIE);
+	flower->SetState(FLOWER_STATE_DIE);
 	mario->SpawnScore(e->obj);
 	mario->SpawnEffect(e, this, EFF_COL_TYPE_NORMAL);
 }

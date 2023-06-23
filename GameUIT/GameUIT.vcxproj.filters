@@ -108,7 +108,7 @@
     <ClInclude Include="ColorPlatform.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ShootingFlower.h">
+    <ClInclude Include="Flower.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Tube.h">
@@ -218,7 +218,7 @@
     <ClCompile Include="ColorPlatform.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ShootingFlower.cpp">
+    <ClCompile Include="Flower.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Tube.cpp">

@@ -5,7 +5,7 @@
 #include "PlayScene.h"
 #include "EffectScore.h"
 #include "EffectCollision.h"
-#include "ShootingFlower.h"
+#include "Flower.h"
 #include "debug.h"
 
 CKoopa::CKoopa(float x, float y, int type) :CGameObject(x, y)
@@ -85,7 +85,7 @@ void CKoopa::KindOfCollisionWith(LPCOLLISIONEVENT e)
 		this->OnCollisionWithGoomba(e);
 	if (dynamic_cast<CKoopa*>(e->obj))
 		this->OnCollisionWithKoopa(e);
-	if (dynamic_cast<CShootingFlower*>(e->obj))
+	if (dynamic_cast<CFlower*>(e->obj))
 		this->OnCollisionWithFlower(e);
 }
 
@@ -400,8 +400,8 @@ void CKoopa::OnCollisionWithQuesBrick(LPCOLLISIONEVENT e)
 
 void CKoopa::OnCollisionWithFlower(LPCOLLISIONEVENT e)
 {
-	if (e->obj->GetState() != SHOOTING_FLOWER_STATE_DIE)
-		e->obj->SetState(SHOOTING_FLOWER_STATE_DIE);
+	if (e->obj->GetState() != FLOWER_STATE_DIE)
+		e->obj->SetState(FLOWER_STATE_DIE);
 }
 
 int CKoopa::GetAniIdGreenKoopa()
