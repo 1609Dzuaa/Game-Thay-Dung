@@ -163,10 +163,12 @@ void CMario::OnCollisionWithBlockingObjects(LPCOLLISIONEVENT e)
 			if (e->ny != 0)
 			{
 				vy = 0;
-				if (e->ny > 0)
+				if (e->ny > 0 && br->IsCollidable())
 				{
 					br->SetSpeed(0, -GOLD_BRICK_BOUNCING_SPEED);
 					br->SetHitted(true);
+					if (br->GetHasSwitch())
+						br->SetState(GOLD_BRICK_STATE_IS_HITTED);
 				}
 				else if (e->ny < 0)
 				{

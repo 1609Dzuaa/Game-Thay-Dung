@@ -10,6 +10,9 @@
 #define EFFECT_COLLISION_NORMAL_TIME_OUT 180
 #define EFFECT_COLLISION_SMOKE_TIME_OUT 750 //mò cả sáng hoá ra vấn đề ở đây :)
 
+#define EFFECT_COLLISION_STATE_RELEASE	0
+#define EFFECT_COLLISION_STATE_NEED_TRIGGER	1
+
 //Vụt cây sinh ra cả hiệu ứng vụt lẫn hiệu ứng khói:
 //Muốn kết hợp nó thì spawn khói khi cây CHẾT và spawn vụt khi gấu mèo quẫy đuôi
 
@@ -20,8 +23,9 @@ class CEffectCollision : public CEffect
 public:
 	CEffectCollision(float x, float y, ULONGLONG eff_col_start, int type) :CEffect(x, y) 
 	{ 
-		this->effect_start = eff_col_start; 
+		this->effect_start = -1; 
 		this->type = type;
+		this->effect_start = eff_col_start;
 	};
 
 	void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);

@@ -373,7 +373,7 @@ public:
 	CEffectScore* ClassifyScore(LPGAMEOBJECT obj, CEffectScore* eff_scr);
 	void SetIsLanding(bool para) { this->isLanding = para; }
 	void SpawnScore(LPGAMEOBJECT obj);
-	void SpawnEffect(LPCOLLISIONEVENT e, LPGAMEOBJECT obj, int eff_type);
+	void SpawnEffect(LPCOLLISIONEVENT e, LPGAMEOBJECT obj, int eff_type); //nên cho vào class EffectCol
 	void UpdateTailPosition(CTail* tail);
 	BOOLEAN GetStopWatch() { return evolve_start != 0 || this->state == MARIO_STATE_DIE; }
 	BOOLEAN GetIsAttacking() { return this->isAttacking; }

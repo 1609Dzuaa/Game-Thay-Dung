@@ -7,7 +7,7 @@ void CEffectCollision::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		if (GetTickCount64() - effect_start >= EFFECT_COLLISION_NORMAL_TIME_OUT)
 			this->Delete();
 	}
-	else 
+	else
 	{
 		if (GetTickCount64() - effect_start >= EFFECT_COLLISION_SMOKE_TIME_OUT)
 			this->Delete();

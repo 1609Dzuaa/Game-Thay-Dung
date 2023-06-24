@@ -14,7 +14,6 @@ CKoopa::CKoopa(float x, float y, int type) :CGameObject(x, y)
 	this->ay = KOOPA_GRAVITY;
 	this->type = type;
 	SetState(KOOPA_STATE_WALKING);
-
 	die_start = -1;
 	sleep_start = -1;
 	reborn_start = -1;

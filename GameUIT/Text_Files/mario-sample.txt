@@ -18,7 +18,7 @@ height	240
 15	textures\enemies_transparent_3.png
 20	textures\misc_transparent.png
 25	textures\misc.png
-30	textures\misc_2.png
+30	textures\misc_2 (1).png
 40	Game_Maps\Tileset-Map1_1.png
 50	Game_Maps\Tileset_2.png
 60	textures\Effect_Collision.png
