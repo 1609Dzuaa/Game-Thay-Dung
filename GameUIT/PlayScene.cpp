@@ -162,7 +162,13 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 		break;
 	}
 
-	case OBJECT_TYPE_BRICK: obj = new CBrick(x, y); break;
+	case OBJECT_TYPE_BRICK: 
+	{
+		int Brick_type = atoi(tokens[3].c_str());  //prob here
+		obj = new CBrick(x, y, Brick_type);
+
+		break;
+	}
 
 	case OBJECT_TYPE_QUESTION_BRICK:
 	{

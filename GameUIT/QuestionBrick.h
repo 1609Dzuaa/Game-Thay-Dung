@@ -27,7 +27,7 @@
 #define BOUNCING_DISTANCE 5.0f
 #define BOUNCING_SPEED 0.1f
 
-class CQuestionBrick :public CBrick 
+class CQuestionBrick :public CGameObject 
 {
 	float minY, currentY;
 	bool isEmpty; //check đã bóc hàng hay chưa
@@ -37,7 +37,7 @@ class CQuestionBrick :public CBrick
 	BOOLEAN blockMushroom; //dùng để block kh cho nấm sinh ra khi hit gạch ở level 2 -> 1
 public:
 
-	CQuestionBrick(float x, float y, int Has_Item) : CBrick(x, y)
+	CQuestionBrick(float x, float y, int Has_Item) : CGameObject(x, y)
 	{
 		CPlayScene* current_scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
 		this->currentY = y;

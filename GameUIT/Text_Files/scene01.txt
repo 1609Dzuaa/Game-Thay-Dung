@@ -25,7 +25,7 @@ Text_Files\EffectCollision.txt
 
 #How about adding object that "more collidable" sooner than other object ?
 #MARIO
-0	15	285
+0	1890	285
 
 #Red Koopa ON Green Platform
 3	555	264	3
@@ -103,36 +103,39 @@ Text_Files\EffectCollision.txt
 6	1280	32	16	15	4	0	0	0
 
 #Stripe Brick
-1	1504	246
-1	1488	246	
+1	1504	246	2
+1	1488	246	2	
 
 #Normal Ground 2.5
 5	1520	336	16	15	5	400001	400002	400003
 
 #Stripe Brick On Normal ground 2.5
-1	1552	320
-1	1568	320
-1	1584	320
-1	1568	304
-1	1584	304
-1	1584	288
+1	1552	320	2
+1	1568	320	2
+1	1584	320	2
+1	1568	304	2
+1	1584	304	2
+1	1584	288	2
 
 #Normal Ground 3
 5	1648	336	16	15	36	400001	400002	400003
 
 #Stripe Brick On Normal ground 3
-1	1648	320
-1	1664	320
-1	1680	320
-1	1648	304
-1	1664	304
-1	1648	288
+1	1648	320	2
+1	1664	320	2
+1	1680	320	2
+1	1648	304	2
+1	1664	304	2
+1	1648	288	2
 
 #Tube But it has Cannibal Flower (TYPE 3)
 9	1782	313	3
 
 #TUBE Green shootin flower
 9	1848	304	2
+
+#Gold brick
+1	1910	272	1
 
 #Pink Plat
 6	2132	288	16	15	3	0	0	0
@@ -147,8 +150,8 @@ Text_Files\EffectCollision.txt
 9	2248	313	4
 
 #2 stripe brick on Tube
-1	2240	289
-1	2256	289
+1	2240	289	2
+1	2256	289	2
 
 #Short tube NO FLOWER
 9	2304	313	0

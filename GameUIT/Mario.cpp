@@ -155,6 +155,31 @@ void CMario::OnCollisionWith(LPCOLLISIONEVENT e)
 
 void CMario::OnCollisionWithBlockingObjects(LPCOLLISIONEVENT e)
 {
+	if (dynamic_cast<CBrick*>(e->obj))
+	{
+		CBrick* br = dynamic_cast<CBrick*>(e->obj);
+		if (br->GetType() == GOLD_BRICK)
+		{
+			if (e->ny != 0)
+			{
+				vy = 0;
+				if (e->ny > 0)
+				{
+					br->SetSpeed(0, -GOLD_BRICK_BOUNCING_SPEED);
+					br->SetHitted(true);
+				}
+				else if (e->ny < 0)
+				{
+					isOnPlatform = true;
+					CountJumpOnEnemies = 0; //Chạm đất thì reset số lần nhảy
+				}
+			}
+			else if (e->nx != 0 && e->obj->IsBlocking())
+			{
+				vx = 0;
+			}
+		}
+	}
 	if (e->ny != 0 && e->obj->IsBlocking())
 	{
 		vy = 0;

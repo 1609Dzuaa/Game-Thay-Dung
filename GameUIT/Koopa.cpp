@@ -151,7 +151,7 @@ void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 	UpdateKoopaState();
 	CCollision::GetInstance()->Process(this, dt, coObjects);
-	DebugOutTitle(L"STATE: %d, %f", state, vy);
+	//DebugOutTitle(L"STATE: %d, %f", state, vy);
 }
 
 void CKoopa::UpdateKoopaState()
@@ -230,6 +230,7 @@ void CKoopa::UpdateKoopaState()
 void CKoopa::Render()
 {
 	if (!CCamera::GetInstance()->isViewable(this)) return;
+	if (isBeingHeld) return; //how 'bout a litte trick here ?
 
 	int aniId = 0;
 

@@ -23,4 +23,5 @@ height	240
 50	Game_Maps\Tileset_2.png
 60	textures\Effect_Collision.png
 70	textures\mario (1).png
+80	textures\holding.png
 #Why 70? -> Sitting animation in texture 0 has some problem so i use this instead
