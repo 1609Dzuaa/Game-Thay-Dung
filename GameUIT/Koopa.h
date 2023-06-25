@@ -9,7 +9,9 @@
 //In map 1-1 there are 3 types of Koopa so I'll define each type here:
 #define GREEN_KOOPA 1
 #define GREEN_FLYING_KOOPA 2
-#define RED_KOOPA 3 //Red Koopa state đi bộ sẽ 0 rơi xuống vực
+#define RED_KOOPA 3
+//Red Koopa khi đặt trên các vật thể: ống, quesbrick, gạch vàng, colorplat lẫn đi bộ thì đều đổi dấu
+//Đi bộ 0 rơi xuống vực
 
 #pragma endregion 
 
@@ -20,7 +22,7 @@
 #define KOOPA_JUMP_SPEED 0.35f
 #define KOOPA_KNOCK_OFF_VELO_X 0.1f
 #define KOOPA_KNOCK_OFF_FACTOR_X 1.15f
-#define KOOPA_KNOCK_OFF_FACTOR_Y 0.5f
+#define KOOPA_KNOCK_OFF_FACTOR_Y 0.3f
 
 #define KOOPA_BBOX_WIDTH 18
 #define KOOPA_BBOX_HEIGHT 23
@@ -71,7 +73,6 @@
 #define ID_ANI_RED_KOOPA_REBORN 52030
 #define ID_ANI_RED_KOOPA_REBORN_REVERSE 52035
 
-
 class CKoopa : public CGameObject
 {
 protected:
@@ -85,12 +86,10 @@ protected:
 	ULONGLONG reborn_start;
 	ULONGLONG knock_off_start;
 	BOOLEAN isOnPlatform;
-	BOOLEAN isFallOffColorPlatform; //use for Red Koopa only
-	BOOLEAN enableInteractWColorPlat; //Slip thì 0 cho đổi dấu vx trên ColorPlat, đi bộ thì đc
+	BOOLEAN enableToChangeVx; //use for Red Koopa only
 	CHead* ghost_head; //use for Red Koopa
 	BOOLEAN isBeingHeld;
-	//only when Red koopa is on color platform that it has ghost_head
-	//How 'bout Goop 
+	//Red Koopa always has ghost_head
 
 	void GetBoundingBox(float& left, float& top, float& right, float& bottom);
 	void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
@@ -114,6 +113,7 @@ protected:
 	void UpdateKoopaState();
 	void HandleCollisionWithBlockingObjects(LPCOLLISIONEVENT e);
 	void HandleCollisionWithColorPlatform(LPCOLLISIONEVENT e, CColorPlatform* color_platf);
+	void AdjustPositionOnColorPlatform(CColorPlatform* color_platf);
 
 	int GetAniIdGreenKoopa();
 	int GetAniIdFlyingKoopa();
@@ -123,7 +123,6 @@ public:
 	virtual void SetState(int state);
 	int GetType() { return type; };
 	void SetType(int para) { this->type = para; };
-	BOOLEAN GetFallOffColorPlatform() { return isFallOffColorPlatform; }
 	CHead* GetHead() { return this->ghost_head; }
 	void SetBeingHeld(BOOLEAN para) { this->isBeingHeld = para; }
 	void HandleReleaseKoopa();

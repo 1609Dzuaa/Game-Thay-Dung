@@ -18,8 +18,8 @@ void CBrick::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 	CCollision::GetInstance()->Process(this, dt, coObjects);
 	//Gold brick lúc vỡ ra cũng bị ảnh hưởng bởi StopWatch
-	//if (type == GOLD_BRICK)
-		//DebugOutTitle(L"isBlock, state: %d, %d", IsBlocking(), state);
+	//DebugOutTitle(L"isBlock, state: %d, %d", IsBlocking(), state);
+	//Gạch gold bị phá thì spawn mảnh nhỏ 4 hướng
 }
 
 void CBrick::UpdatePosition(DWORD dt)

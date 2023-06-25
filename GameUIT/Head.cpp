@@ -40,12 +40,11 @@ void CHead::HandleCollisionWithBlockingObjects(LPCOLLISIONEVENT e)
 			if (br->GetType() == GOLD_BRICK)
 				vy = 0;
 			else
-			{
 				vy = 0;
-				isFallOff = true;
-			}
 		}
 	}
+	else if (e->nx != 0)
+		vx = 0; //chờ đc set lại vtoc
 }
 
 void CHead::HandleCollisionWithColorPlatform(LPCOLLISIONEVENT e, CColorPlatform* color_platf)

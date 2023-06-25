@@ -13,15 +13,31 @@ CKoopa::CKoopa(float x, float y, int type) :CGameObject(x, y)
 	this->ax = 0;
 	this->ay = KOOPA_GRAVITY;
 	this->type = type;
-	SetState(KOOPA_STATE_WALKING);
+	if (type == RED_KOOPA)
+	{
+		SetState(KOOPA_STATE_WALKING);
+		CPlayScene* current_scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
+		ghost_head = new CHead(x - KOOPA_BBOX_WIDTH / 2 - 2.5f, y, this->vx, this->ay);
+		current_scene->AddObjectToScene(ghost_head);
+		enableToChangeVx = true; //mấy thuộc tính của Red Koopa nên cân nhắc khởi tạo hợp lý
+		DebugOut(L"Red Koopa's Ghost Head was created\n");
+	}
+	else if (type == GREEN_FLYING_KOOPA)
+	{
+		SetState(KOOPA_STATE_JUMPING); //coi lại ở đây sao nó 0 nhảy
+		enableToChangeVx = false;
+	}
+	else //loại thường
+	{
+		SetState(KOOPA_STATE_WALKING);
+		enableToChangeVx = false;
+	}
 	die_start = -1;
 	sleep_start = -1;
 	reborn_start = -1;
 	knock_off_start = -1;
 	KillCount = 0;
 	isOnPlatform = false;
-	isFallOffColorPlatform = false; //ban đầu thì Red koopa chưa rơi khỏi color plat
-	enableInteractWColorPlat = true; //mấy thuộc tính của Red Koopa nên cân nhắc khởi tạo hợp lý
 	isBeingHeld = false;
 }
 
@@ -92,46 +108,48 @@ void CKoopa::HandleCollisionWithBlockingObjects(LPCOLLISIONEVENT e)
 {
 	if (e->ny == -1) //Giải quyết đc tình trạng Flyin Koopa đập đầu vào thì không nhảy nữa
 	{
+		if (state == KOOPA_STATE_SLEEP_REVERSE)
+			state = KOOPA_STATE_SLEEP_REVERSE_SPECIAL;
+		if (type != GREEN_FLYING_KOOPA)
+			vy = 0;
+		else if (type == GREEN_FLYING_KOOPA)
+			this->SetState(KOOPA_STATE_JUMPING);
+
+		if (state == KOOPA_STATE_SLEEP || state == KOOPA_STATE_SLEEP_REVERSE_SPECIAL)
+			vx = 0;
+	}
+	else if (e->ny == 1)
+	{
+		if (type == GREEN_FLYING_KOOPA)
+			SetState(KOOPA_STATE_JUMPING); //Loại 2 chạm sàn thì bắt đầu nhảy
+	}
+	else if (e->nx != 0)
+	{
+		vx = -vx;
+		//Nếu đang trượt mà đụng phải GOLD_BRICK -> xoá nó
 		if (dynamic_cast<CBrick*>(e->obj))
 		{
 			CBrick* br = dynamic_cast<CBrick*>(e->obj);
 			if (br->GetType() == GOLD_BRICK)
 			{
-				if (this->type == RED_KOOPA && ghost_head == NULL)
-				{
-					enableInteractWColorPlat = true; 
-					isFallOffColorPlatform = false;
-					CPlayScene* current_scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
-					if (this->vx < 0)
-						ghost_head = new CHead(x - KOOPA_BBOX_WIDTH / 2 - 1.5f, y, this->vx, this->ay);
-					else //prob here
-						ghost_head = new CHead(x + KOOPA_BBOX_WIDTH / 2 + 1.5f, y, this->vx, this->ay);
-					current_scene->AddObjectToScene(ghost_head);
-					DebugOut(L"Head was created ON GOLD BRICK\n");
-				}
-			}
-			else //Nếu kh phải là GOLD Brick
-			{
-				if (type == RED_KOOPA) //Red koopa on ques brick vẫn bị block
-				{
-					enableInteractWColorPlat = false; //không cho tương tác với color plat một khi va chạm với blocking obj
-					isFallOffColorPlatform = true; //đánh dấu đã bị rơi xuống nền
-					if (state == KOOPA_STATE_SLEEP_REVERSE_SPECIAL)
-						state = KOOPA_STATE_SLEEP_REVERSE;
-				}
-				if (type != GREEN_FLYING_KOOPA)
-					vy = 0;
-				else
-					SetState(KOOPA_STATE_JUMPING); //Loại 2 chạm sàn thì bắt đầu nhảy
-
-				if (state == KOOPA_STATE_SLEEP || state == KOOPA_STATE_SLEEP_REVERSE)
-					vx = 0; 
+				if (this->state == KOOPA_STATE_SLIP || state == KOOPA_STATE_SLIP_REVERSE)
+					br->Delete();
 			}
 		}
-	}
-	else if (e->nx != 0)
-	{
-		vx = -vx;
+
+		if (type == RED_KOOPA)
+		{
+			if (vx > 0)
+			{
+				ghost_head->SetSpeed(this->vx, 0);
+				ghost_head->SetPosition(x + KOOPA_BBOX_WIDTH / 2 + 2.5f, y);
+			}
+			else
+			{
+				ghost_head->SetSpeed(this->vx, 0);
+				ghost_head->SetPosition(x - KOOPA_BBOX_WIDTH / 2 - 2.5f, y);
+			}
+		}
 	}
 }
 
@@ -172,30 +190,33 @@ void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 	UpdateKoopaState();
 	CCollision::GetInstance()->Process(this, dt, coObjects);
-	//DebugOutTitle(L"x, y, X, Y: %f, %f, %f, %f", x, y, mario->GetX(), mario->GetY());
+	DebugOutTitle(L"vx, vy, st: %f, %f, %d", vx, vy, state);
 }
 
 void CKoopa::UpdateKoopaState()
 {
-	//Quay đầu 
+	//Quay đầu của Red Koopa
 	if (type == RED_KOOPA)
 	{
-		if (enableInteractWColorPlat) //chỉ khi đc cho phép tương tác thay đổi vx trên ColorPlat
+		//chỉ khi đc cho phép tương tác thay đổi vx trên vật đặc biệt
+		//Tránh việc đang slip mà vẫn thay đổi vx
+		if (state != KOOPA_STATE_SLIP && state != KOOPA_STATE_SLIP_REVERSE)
+			enableToChangeVx = true;
+		else
+			enableToChangeVx = false;
+
+		if (enableToChangeVx)
 		{
-			if (ghost_head != NULL)
+			if (ghost_head->GetY() - this->y > FALL_ZONE && state != KOOPA_STATE_SLEEP_REVERSE)
 			{
-				if (ghost_head->GetY() - this->y > FALL_ZONE && !isFallOffColorPlatform && state != KOOPA_STATE_SLEEP_REVERSE) 
-				{
-					this->vx = -vx;
-					ghost_head->SetSpeed(vx, 0);
-					ghost_head->SetIsFallOff(false);
-					if (this->vx < 0)
-						ghost_head->SetPosition(x - KOOPA_BBOX_WIDTH / 2 - 1.5f, this->y);
-					else
-						ghost_head->SetPosition(x + KOOPA_BBOX_WIDTH / 2 + 1.5f, this->y);
-				}
-				//Update lại vị trí cái đầu nếu đi quá FALL_ZONE
+				this->vx = -vx;
+				ghost_head->SetSpeed(vx, 0);
+				if (this->vx < 0)
+					ghost_head->SetPosition(x - KOOPA_BBOX_WIDTH / 2 - 1.5f, this->y);
+				else
+					ghost_head->SetPosition(x + KOOPA_BBOX_WIDTH / 2 + 1.5f, this->y);
 			}
+			//Update lại vị trí cái đầu nếu đi quá FALL_ZONE
 		}
 	}
 
@@ -227,23 +248,6 @@ void CKoopa::UpdateKoopaState()
 		{
 			reborn_start = 0;
 			SetState(KOOPA_STATE_WALKING);
-
-			if (type == RED_KOOPA)
-			{
-				if (ghost_head != NULL)
-				{
-					if (this->vx < 0)
-					{
-						ghost_head->SetPosition(x - KOOPA_BBOX_WIDTH / 2 - 1.5f, this->y);
-						ghost_head->SetSpeed(-KOOPA_WALKING_SPEED, 0);
-					}
-					else
-					{
-						ghost_head->SetPosition(x + KOOPA_BBOX_WIDTH / 2 + 1.5f, this->y);
-						ghost_head->SetSpeed(KOOPA_WALKING_SPEED, 0);
-					}
-				}
-			}
 			//Hết thời gian reborn => Walking như bình thường
 			//Set lại vị trí cũng như vận tốc cho cái đầu nếu là Red koopa
 		}
@@ -302,9 +306,9 @@ void CKoopa::SetState(int state)
 			if (ghost_head != NULL)
 			{
 				if (vx < 0)
-					ghost_head->SetPosition(x - KOOPA_BBOX_WIDTH / 2 - 1.5f, y); //cập nhật vị trí cho cái đầu để tránh nó đi quá xa
+					ghost_head->SetPosition(x - KOOPA_BBOX_WIDTH / 2 - 2.5f, y); //cập nhật vị trí cho cái đầu để tránh nó đi quá xa
 				else 
-					ghost_head->SetPosition(x + KOOPA_BBOX_WIDTH / 2 + 1.5f, y); //cập nhật vị trí cho cái đầu để tránh nó đi quá xa
+					ghost_head->SetPosition(x + KOOPA_BBOX_WIDTH / 2 + 2.5f, y); //cập nhật vị trí cho cái đầu để tránh nó đi quá xa
 			}
 		//y -= (KOOPA_BBOX_HEIGHT - KOOPA_IN_SHELL_BBOX_HEIGHT) / 2;
 		break;
@@ -353,14 +357,29 @@ void CKoopa::SetState(int state)
 		break;
 
 	case KOOPA_STATE_WALKING:
-		if (mario == NULL) vx = -KOOPA_WALKING_SPEED;
+		if (mario == NULL) vx = -KOOPA_WALKING_SPEED; //nếu ban đầu chưa có mario thì set v âm cho nó
 		else
 		{
 			if (this->x > mario->GetX())
+			{
 				vx = -KOOPA_WALKING_SPEED;
+				if (type == RED_KOOPA && ghost_head != NULL)
+				{
+					ghost_head->SetPosition(x - KOOPA_BBOX_WIDTH / 2 - 2.5f, y);
+					ghost_head->SetSpeed(this->vx, 0);
+				}
+			}
 			else
+			{
 				vx = KOOPA_WALKING_SPEED;
+				if (type == RED_KOOPA && ghost_head != NULL)
+				{
+					ghost_head->SetSpeed(this->vx, 0);
+					ghost_head->SetPosition(x + KOOPA_BBOX_WIDTH / 2 + 2.5f, y);
+				}
+			}
 		}
+		//Cập nhật lại vị trí ghost_head nếu là Red Koopa
 
 		y -= (KOOPA_BBOX_HEIGHT - KOOPA_IN_SHELL_BBOX_HEIGHT) / 2;
 		//Cập nhật vị trí y mới sau khi từ trạng thái NGỦ đến lúc hồi sinh
@@ -369,12 +388,14 @@ void CKoopa::SetState(int state)
 
 	case KOOPA_STATE_JUMPING:
 		vy = -KOOPA_JUMP_SPEED;
+		vx = -KOOPA_WALKING_SPEED;
 		break;
 
 	case KOOPA_STATE_BEING_HELD:
 		ay = 0;
 		//vy = 0;
 		isBeingHeld = true;
+		break;
 
 	case KOOPA_STATE_BEING_HELD_REVERSE:
 		ay = 0;
@@ -496,29 +517,19 @@ void CKoopa::HandleCollisionWithColorPlatform(LPCOLLISIONEVENT e, CColorPlatform
 {
 	if (e->ny != -1) return; //quên mất phần này, chỉ cho phép va chạm hướng trên =]]]
 
-	if (type == RED_KOOPA && ghost_head == NULL)
-	{
-		CPlayScene* current_scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
-		ghost_head = new CHead(x - KOOPA_BBOX_WIDTH / 2 - 1.5f, y, this->vx, this->ay);
-		current_scene->AddObjectToScene(ghost_head);
-		DebugOut(L"Head was created ON COLOR PLATFORM\n");
-	}
-	else if (type == GREEN_FLYING_KOOPA)
-	{
-		SetState(KOOPA_STATE_JUMPING); //coi lại ở đây sao nó 0 nhảy
-	}
-
-	isFallOffColorPlatform = false; //turn out the problem here @@ fack myself
-
 	if (state == KOOPA_STATE_SLEEP_REVERSE && this->type == RED_KOOPA)
-	{
 		this->SetState(KOOPA_STATE_SLEEP_REVERSE_SPECIAL);
-	}
 
-	if (state == KOOPA_STATE_WALKING) //đi bộ thì mới cho đổi dấu
-		enableInteractWColorPlat = true; //cho phép tương tác với ColorPlat(đổi dấu vx)
-	else
-		enableInteractWColorPlat = false; //cho phép nó trượt trên color plat nhưng 0 đổi dấu đc
+	if (this->type == GREEN_FLYING_KOOPA)
+		SetState(KOOPA_STATE_JUMPING);
+
+	AdjustPositionOnColorPlatform(color_platf);
+}
+
+void CKoopa::AdjustPositionOnColorPlatform(CColorPlatform* color_platf)
+{
+	//Điều chỉnh vị trí để tránh bị rơi khỏi ColorPlat
+	if (this->state == KOOPA_STATE_JUMPING) return;
 
 	if (state == KOOPA_STATE_SLEEP || state == KOOPA_STATE_SLIP || state == KOOPA_STATE_REBORN
 		|| state == KOOPA_STATE_SLEEP_REVERSE || state == KOOPA_STATE_REBORN_REVERSE
