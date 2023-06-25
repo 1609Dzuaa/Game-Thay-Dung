@@ -14,6 +14,7 @@
 #include "ColorPlatform.h"
 #include "Flower.h"
 #include "FireBullet.h"
+#include "Switch.h"
 #include "EffectScore.h"
 #include "EffectCollision.h"
 #include "PlayScene.h"
@@ -217,6 +218,8 @@ void CMario::OnCollisionWithNonBlockingObjects(LPCOLLISIONEVENT e)
 		OnCollisionWithFireBullet(e);
 	if (dynamic_cast<CCoin*>(e->obj))
 		OnCollisionWithCoin(e);
+	if (dynamic_cast<CSwitch*>(e->obj))
+		OnCollisionWithSwitch(e);
 }
 
 void CMario::OnCollisionWithColorPlatform(LPCOLLISIONEVENT e)
@@ -654,6 +657,15 @@ void CMario::OnCollisionWithFireBullet(LPCOLLISIONEVENT e)
 		{
 			SetState(MARIO_STATE_DIE);
 		}
+	}
+}
+
+void CMario::OnCollisionWithSwitch(LPCOLLISIONEVENT e)
+{
+	if (e->obj->GetState() == SWITCH_STATE_NORMAL)
+	{
+		e->obj->SetState(SWITCH_STATE_HITTED);
+		this->isHitSwitch = true;
 	}
 }
 

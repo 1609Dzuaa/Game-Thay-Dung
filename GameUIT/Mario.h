@@ -249,6 +249,7 @@ class CMario : public CGameObject
 	BOOLEAN StopWatch; //ngưng mọi hoạt động khi Mario đang tiến hoá hoặc chết
 	BOOLEAN isAllowToHoldKoopa; //Allow to hold rồi mới holding
 	BOOLEAN isHolding; //A way to handle holding: 
+	BOOLEAN isHitSwitch;
 	CKoopa* ghost_koopa;
 	float maxVx;
 	float maxRunningSpeed;
@@ -280,6 +281,7 @@ class CMario : public CGameObject
 	void OnCollisionWithLeaf(LPCOLLISIONEVENT e);
 	void OnCollisionWithFlower(LPCOLLISIONEVENT e);
 	void OnCollisionWithFireBullet(LPCOLLISIONEVENT e);
+	void OnCollisionWithSwitch(LPCOLLISIONEVENT e);
 	void OnCollisionWithPortal(LPCOLLISIONEVENT e);
 	void OnCollisionWithBlockingObjects(LPCOLLISIONEVENT e);
 	void OnCollisionWithNonBlockingObjects(LPCOLLISIONEVENT e);
@@ -317,6 +319,7 @@ public:
 		StopWatch = false;
 		isAllowToHoldKoopa = false;
 		isHolding = false;
+		isHitSwitch = false;
 		CountJumpOnEnemies = 0;
 		untouchdraw = -1;
 		untouch_draw_0 = 0;
@@ -378,6 +381,8 @@ public:
 	BOOLEAN GetStopWatch() { return evolve_start != 0 || this->state == MARIO_STATE_DIE; }
 	BOOLEAN GetIsAttacking() { return this->isAttacking; }
 	BOOLEAN GetIsHolding() { return this->isHolding; }
+	BOOLEAN GetIsHitSwitch() { return this->isHitSwitch; }
 	void SetHoldKoopa(BOOLEAN para) { this->isAllowToHoldKoopa = para; }
 	void SetIsHoldingKoopa(BOOLEAN para) { this->isHolding = para; }
+	void SetIsHitSwitch(BOOLEAN para) { this->isHitSwitch = true; }
 };

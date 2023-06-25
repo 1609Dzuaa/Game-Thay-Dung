@@ -45,6 +45,7 @@ public:
 	void Render();
 	void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
 	void UpdatePosition(DWORD dt);
+	void UpdateSpawnCoin();
 	void GetBoundingBox(float& l, float& t, float& r, float& b);
 	void OnNoCollision(DWORD dt);
 	int IsCollidable() { return type != STRIPE_BRICK && state != GOLD_BRICK_STATE_IS_HITTED; }
@@ -53,4 +54,5 @@ public:
 	void SetHitted(bool para) { this->isBeingHitted = para; }
 	void SetState(int state);
 	void SpawnSwitch();
+	void SpawnCoin();
 };

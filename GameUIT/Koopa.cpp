@@ -90,22 +90,44 @@ void CKoopa::KindOfCollisionWith(LPCOLLISIONEVENT e)
 
 void CKoopa::HandleCollisionWithBlockingObjects(LPCOLLISIONEVENT e)
 {
-	if (e->ny != 0) //Nếu object có thuộc tính block
+	if (e->ny == -1) //Giải quyết đc tình trạng Flyin Koopa đập đầu vào thì không nhảy nữa
 	{
-		if (type == RED_KOOPA) //Red koopa on ques brick vẫn bị block
+		if (dynamic_cast<CBrick*>(e->obj))
 		{
-			enableInteractWColorPlat = false; //không cho tương tác với color plat một khi va chạm với blocking obj
-			isFallOffColorPlatform = true; //đánh dấu đã bị rơi xuống nền
-			if (state == KOOPA_STATE_SLEEP_REVERSE_SPECIAL)
-				state = KOOPA_STATE_SLEEP_REVERSE;
-		}
-		if (type != GREEN_FLYING_KOOPA)
-			vy = 0;
-		else
-			SetState(KOOPA_STATE_JUMPING); //Loại 2 chạm sàn thì bắt đầu nhảy
+			CBrick* br = dynamic_cast<CBrick*>(e->obj);
+			if (br->GetType() == GOLD_BRICK)
+			{
+				if (this->type == RED_KOOPA && ghost_head == NULL)
+				{
+					enableInteractWColorPlat = true; 
+					isFallOffColorPlatform = false;
+					CPlayScene* current_scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
+					if (this->vx < 0)
+						ghost_head = new CHead(x - KOOPA_BBOX_WIDTH / 2 - 1.5f, y, this->vx, this->ay);
+					else //prob here
+						ghost_head = new CHead(x + KOOPA_BBOX_WIDTH / 2 + 1.5f, y, this->vx, this->ay);
+					current_scene->AddObjectToScene(ghost_head);
+					DebugOut(L"Head was created ON GOLD BRICK\n");
+				}
+			}
+			else //Nếu kh phải là GOLD Brick
+			{
+				if (type == RED_KOOPA) //Red koopa on ques brick vẫn bị block
+				{
+					enableInteractWColorPlat = false; //không cho tương tác với color plat một khi va chạm với blocking obj
+					isFallOffColorPlatform = true; //đánh dấu đã bị rơi xuống nền
+					if (state == KOOPA_STATE_SLEEP_REVERSE_SPECIAL)
+						state = KOOPA_STATE_SLEEP_REVERSE;
+				}
+				if (type != GREEN_FLYING_KOOPA)
+					vy = 0;
+				else
+					SetState(KOOPA_STATE_JUMPING); //Loại 2 chạm sàn thì bắt đầu nhảy
 
-		if (state == KOOPA_STATE_SLEEP || state == KOOPA_STATE_SLEEP_REVERSE)
-			vx = 0;
+				if (state == KOOPA_STATE_SLEEP || state == KOOPA_STATE_SLEEP_REVERSE)
+					vx = 0; 
+			}
+		}
 	}
 	else if (e->nx != 0)
 	{
@@ -162,16 +184,17 @@ void CKoopa::UpdateKoopaState()
 		{
 			if (ghost_head != NULL)
 			{
-				if (ghost_head->GetY() - this->y > FALL_ZONE && !isFallOffColorPlatform && state != KOOPA_STATE_SLEEP_REVERSE) //đầu ma rơi xuống platform 
+				if (ghost_head->GetY() - this->y > FALL_ZONE && !isFallOffColorPlatform && state != KOOPA_STATE_SLEEP_REVERSE) 
 				{
 					this->vx = -vx;
 					ghost_head->SetSpeed(vx, 0);
 					ghost_head->SetIsFallOff(false);
 					if (this->vx < 0)
-						ghost_head->SetPosition(x - KOOPA_BBOX_WIDTH / 2 - 10.0f, this->y);
+						ghost_head->SetPosition(x - KOOPA_BBOX_WIDTH / 2 - 1.5f, this->y);
 					else
-						ghost_head->SetPosition(x + KOOPA_BBOX_WIDTH / 2 + 3.0f, this->y);
+						ghost_head->SetPosition(x + KOOPA_BBOX_WIDTH / 2 + 1.5f, this->y);
 				}
+				//Update lại vị trí cái đầu nếu đi quá FALL_ZONE
 			}
 		}
 	}
@@ -211,12 +234,12 @@ void CKoopa::UpdateKoopaState()
 				{
 					if (this->vx < 0)
 					{
-						ghost_head->SetPosition(x - KOOPA_BBOX_WIDTH / 2 - 5.0f, this->y);
+						ghost_head->SetPosition(x - KOOPA_BBOX_WIDTH / 2 - 1.5f, this->y);
 						ghost_head->SetSpeed(-KOOPA_WALKING_SPEED, 0);
 					}
 					else
 					{
-						ghost_head->SetPosition(x + KOOPA_BBOX_WIDTH / 2 + 5.0f, this->y);
+						ghost_head->SetPosition(x + KOOPA_BBOX_WIDTH / 2 + 1.5f, this->y);
 						ghost_head->SetSpeed(KOOPA_WALKING_SPEED, 0);
 					}
 				}
@@ -277,7 +300,12 @@ void CKoopa::SetState(int state)
 		sleep_start = GetTickCount64();
 		if (type == RED_KOOPA)
 			if (ghost_head != NULL)
-				ghost_head->SetPosition(x - KOOPA_BBOX_WIDTH / 2 - 5.0f, y); //cập nhật vị trí cho cái đầu để tránh nó đi quá xa
+			{
+				if (vx < 0)
+					ghost_head->SetPosition(x - KOOPA_BBOX_WIDTH / 2 - 1.5f, y); //cập nhật vị trí cho cái đầu để tránh nó đi quá xa
+				else 
+					ghost_head->SetPosition(x + KOOPA_BBOX_WIDTH / 2 + 1.5f, y); //cập nhật vị trí cho cái đầu để tránh nó đi quá xa
+			}
 		//y -= (KOOPA_BBOX_HEIGHT - KOOPA_IN_SHELL_BBOX_HEIGHT) / 2;
 		break;
 
@@ -471,9 +499,9 @@ void CKoopa::HandleCollisionWithColorPlatform(LPCOLLISIONEVENT e, CColorPlatform
 	if (type == RED_KOOPA && ghost_head == NULL)
 	{
 		CPlayScene* current_scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
-		ghost_head = new CHead(x - KOOPA_BBOX_WIDTH / 2 - 5.0f, y, this->vx, this->ay);
+		ghost_head = new CHead(x - KOOPA_BBOX_WIDTH / 2 - 1.5f, y, this->vx, this->ay);
 		current_scene->AddObjectToScene(ghost_head);
-		DebugOut(L"Head was created\n");
+		DebugOut(L"Head was created ON COLOR PLATFORM\n");
 	}
 	else if (type == GREEN_FLYING_KOOPA)
 	{

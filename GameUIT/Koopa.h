@@ -9,13 +9,13 @@
 //In map 1-1 there are 3 types of Koopa so I'll define each type here:
 #define GREEN_KOOPA 1
 #define GREEN_FLYING_KOOPA 2
-#define RED_KOOPA 3
+#define RED_KOOPA 3 //Red Koopa state đi bộ sẽ 0 rơi xuống vực
 
 #pragma endregion 
 
 #define KOOPA_GRAVITY 0.001f
 #define KOOPA_STEP_ON_GRAVITY 0.001f
-#define KOOPA_WALKING_SPEED 0.03f
+#define KOOPA_WALKING_SPEED 0.018f
 #define KOOPA_SLIPPING_SPEED 0.15f
 #define KOOPA_JUMP_SPEED 0.35f
 #define KOOPA_KNOCK_OFF_VELO_X 0.1f

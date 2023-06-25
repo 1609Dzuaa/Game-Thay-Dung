@@ -1,4 +1,5 @@
 ﻿#include "Head.h"
+#include "Brick.h"
 #include "debug.h"
 
 void CHead::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
@@ -9,7 +10,7 @@ void CHead::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 void CHead::Render()
 {
-	//RenderBoundingBox();
+	RenderBoundingBox();
 }
 
 void CHead::OnNoCollision(DWORD dt)
@@ -33,8 +34,17 @@ void CHead::HandleCollisionWithBlockingObjects(LPCOLLISIONEVENT e)
 {
 	if (e->ny < 0)
 	{
-		vy = 0;
-		isFallOff = true;
+		if (dynamic_cast<CBrick*>(e->obj))
+		{
+			CBrick* br = dynamic_cast<CBrick*>(e->obj);
+			if (br->GetType() == GOLD_BRICK)
+				vy = 0;
+			else
+			{
+				vy = 0;
+				isFallOff = true;
+			}
+		}
 	}
 }
 

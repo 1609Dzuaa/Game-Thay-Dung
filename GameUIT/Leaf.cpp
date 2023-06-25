@@ -1,4 +1,6 @@
 ﻿#include "Leaf.h"
+#include "Mario.h"
+#include "PlayScene.h"
 #include "debug.h"
 
 CLeaf::CLeaf(float x, float y) : CGameObject(x, y)
@@ -62,6 +64,27 @@ void CLeaf::OnNoCollision(DWORD dt)
 		x += vx * dt;
 		y += vy * dt;
 	}
+}
+
+void CLeaf::OnCollisionWithMario(LPCOLLISIONEVENT e)
+{
+	/*if (dynamic_cast<CMario*>(e->obj))
+	{
+		this->Delete();
+		CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
+		if (mario->GetLevel() == MARIO_LEVEL_SMALL)
+		{
+			this->isEvolveForward = true;
+			this->SetState(MARIO_STATE_EVOLVING);
+		}
+		else if (mario->GetLevel() == MARIO_LEVEL_BIG)
+		{
+			this->isEvolveForward = true;
+			this->SetState(MARIO_STATE_EVOLVING);
+			SpawnEffect(e, leaf, EFF_COL_TYPE_SMOKE_EVOLVE);
+		}
+		SpawnScore(leaf);
+	}*/
 }
 
 void CLeaf::GetBoundingBox(float& l, float& t, float& r, float& b)

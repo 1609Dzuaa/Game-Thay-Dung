@@ -1,7 +1,8 @@
 # id	left	top	right	bottom	texture_id
 [SPRITES]
 #MUSHROOM_OUT_BRICK
-45316	156	121	171	136	30
+#Kh hiểu sao xài misc 30 nấm lại trong suốt ???
+45316	156	121	171	136	31
 
 [ANIMATIONS]
 9001	45316	100

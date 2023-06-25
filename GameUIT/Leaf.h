@@ -36,6 +36,7 @@ public:
 	void Render();
 	void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
 	void OnNoCollision(DWORD dt);
+	void OnCollisionWithMario(LPCOLLISIONEVENT e);
 	void GetBoundingBox(float& l, float& t, float& r, float& b);
 	void SetMinY(float para) { this->minY = para; }
 	void setMinX(float para) { this->minX = para; }
