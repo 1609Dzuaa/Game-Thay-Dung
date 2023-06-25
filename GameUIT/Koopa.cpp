@@ -172,7 +172,7 @@ void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 	UpdateKoopaState();
 	CCollision::GetInstance()->Process(this, dt, coObjects);
-	//DebugOutTitle(L"STATE: %d, %f", state, vy);
+	//DebugOutTitle(L"x, y, X, Y: %f, %f, %f, %f", x, y, mario->GetX(), mario->GetY());
 }
 
 void CKoopa::UpdateKoopaState()
@@ -264,7 +264,7 @@ void CKoopa::Render()
 		aniId = GetAniIdRedKoopa();
 
 	CAnimations::GetInstance()->Get(aniId)->Render(x, y, true);
-	//RenderBoundingBox();
+	RenderBoundingBox();
 }
 
 void CKoopa::SetState(int state)

@@ -35,6 +35,7 @@ class CQuestionBrick :public CGameObject
 	int type;
 	CMushroom* mr = NULL;
 	BOOLEAN blockMushroom; //dùng để block kh cho nấm sinh ra khi hit gạch ở level 2 -> 1
+	//thêm 1 biến block lá ?
 public:
 
 	CQuestionBrick(float x, float y, int Has_Item) : CGameObject(x, y)

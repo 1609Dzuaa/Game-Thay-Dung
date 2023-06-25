@@ -161,29 +161,45 @@ void CMario::OnCollisionWithBlockingObjects(LPCOLLISIONEVENT e)
 		CBrick* br = dynamic_cast<CBrick*>(e->obj);
 		if (br->GetType() == GOLD_BRICK)
 		{
-			if (e->ny != 0)
+			if (br->GetState() != GOLD_BRICK_STATE_TURN_TO_COIN)
 			{
-				vy = 0;
-				if (e->ny > 0 && br->IsCollidable())
+				if (e->ny != 0)
 				{
-					br->SetSpeed(0, -GOLD_BRICK_BOUNCING_SPEED);
-					br->SetHitted(true);
-					if (br->GetHasSwitch())
-						br->SetState(GOLD_BRICK_STATE_IS_HITTED);
+					vy = 0;
+					if (e->ny > 0) //maybe probhere ?
+					{
+						//Nếu là viên chứa công tắc và state chưa bị hit
+						if (br->GetHasSwitch() && br->GetState() != GOLD_BRICK_STATE_IS_HITTED)
+						{
+							br->SetSpeed(0, -GOLD_BRICK_BOUNCING_SPEED);
+							br->SetHitted(true);
+							br->SetState(GOLD_BRICK_STATE_IS_HITTED);
+						}
+						else if(!br->GetHasSwitch()) //nếu 0 có công tắc
+						{
+							br->SetSpeed(0, -GOLD_BRICK_BOUNCING_SPEED);
+							br->SetHitted(true);
+						}
+					}
+					else if (e->ny < 0)
+					{
+						isOnPlatform = true;
+						CountJumpOnEnemies = 0; //Chạm đất thì reset số lần nhảy
+					}
 				}
-				else if (e->ny < 0)
+				else if (e->nx != 0 && e->obj->IsBlocking())
 				{
-					isOnPlatform = true;
-					CountJumpOnEnemies = 0; //Chạm đất thì reset số lần nhảy
+					vx = 0;
 				}
 			}
-			else if (e->nx != 0 && e->obj->IsBlocking())
+			else 
 			{
-				vx = 0;
+				br->Delete();
+				//Tăng điểm cho Mario
 			}
 		}
 	}
-	if (e->ny != 0 && e->obj->IsBlocking())
+	else if (e->ny != 0 && e->obj->IsBlocking())
 	{
 		vy = 0;
 		if (e->ny < 0)

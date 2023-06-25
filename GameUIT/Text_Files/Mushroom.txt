@@ -2,7 +2,7 @@
 [SPRITES]
 #MUSHROOM_OUT_BRICK
 #Kh hiểu sao xài misc 30 nấm lại trong suốt ???
-45316	156	121	171	136	31
+45316	156	121	171	136	35
 
 [ANIMATIONS]
 9001	45316	100
