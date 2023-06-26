@@ -18,8 +18,52 @@
 #include "EffectScore.h"
 #include "EffectCollision.h"
 #include "PlayScene.h"
-
 #include "Collision.h"
+
+CMario::CMario(float x, float y) : CGameObject(x, y)
+{
+	isSitting = false;
+	isKicking = false;
+	isAttacking = false;
+	isJumping = false;
+	isFlying = false;
+	canFly = false;
+	isAtMaxSpeed = false;
+	isLanding = false;
+	isEvolving = false;
+	isEvolveForward = false;
+	isEvolveBackward = false;
+	isAteItem = false;
+	StopWatch = false;
+	isAllowToHoldKoopa = false;
+	isHolding = false;
+	isHitSwitch = false;
+	isAllowToUseTail = false;
+	CountJumpOnEnemies = 0;
+	untouchdraw = -1;
+	untouch_draw_0 = 0;
+	untouch_draw_1 = 0;
+	untouch_0 = 0;
+	untouch_1 = 0;
+	tail = NULL;
+	//Thêm đuôi trước tương tự như mushroom
+	ghost_koopa = NULL; //Khi đang Hold Koopa thì coi nó như thuộc tính của Mario
+	//Giống như bật khiên
+
+	maxVx = 0;
+	maxRunningSpeed = MARIO_RUNNING_SPEED;
+	ax = 0.0f;
+	ay = MARIO_GRAVITY;
+
+	level = MARIO_LEVEL_SMALL;
+	untouchable = 0;
+	untouchable_start = -1;
+	kick_start = 0;
+	attack_start = 0;
+	evolve_start = 0;
+	isOnPlatform = false;
+	coin = 0;
+}
 
 void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
@@ -41,7 +85,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	UpdateMarioState();
 	isOnPlatform = false;
 	CCollision::GetInstance()->Process(this, dt, coObjects);
-	//DebugOutTitle(L"x, y: %f, %f", x, y);
+	//DebugOutTitle(L"st: %d", state);
 }
 
 void CMario::UpdateMarioState()
@@ -115,8 +159,9 @@ void CMario::UpdateMarioState()
 
 	if (isAttacking && GetTickCount64() - attack_start >= MARIO_RACOON_ATTACK_TIME)
 	{
-		tail->Delete();
 		isAttacking = false;
+		tail->Delete();
+		DebugOut(L"Delete Tail Success\n");
 		attack_start = 0;
 	}
 }
@@ -355,12 +400,7 @@ void CMario::HandleCollisionOtherDirectionWithGoomba(LPCOLLISIONEVENT e, CGoomba
 		//Nếu con Goomba chưa chết thì xét, không thì bỏ qua nó
 		if (goomba->GetState() != GOOMBA_STATE_DIE && goomba->GetState() != GOOMBA_STATE_DIE_REVERSE)
 		{
-			if (this->isAttacking)
-			{
-				goomba->SetState(GOOMBA_STATE_DIE_REVERSE);
-				SpawnScore(goomba);
-			}
-			else if (isHolding && e->nx != this->nx) //hướng va chạm phải khác hướng ôm rùa thì mới cho colli
+			if (isHolding && e->nx != this->nx) //hướng va chạm phải khác hướng ôm rùa thì mới cho colli
 			{
 				goomba->SetState(GOOMBA_STATE_DIE_REVERSE);
 				SpawnScore(goomba);
@@ -385,9 +425,7 @@ void CMario::HandleCollisionOtherDirectionWithGoomba(LPCOLLISIONEVENT e, CGoomba
 					StartUntouchable();
 				}
 				else
-				{
 					SetState(MARIO_STATE_DIE);
-				}
 			}
 		}
 	}
@@ -632,13 +670,14 @@ void CMario::OnCollisionWithLeaf(LPCOLLISIONEVENT e)
 
 void CMario::OnCollisionWithFlower(LPCOLLISIONEVENT e)
 {
-	/*if (isAttacking)
+	//tấn công hoa có vấn đề
+	if (isAttacking)
 	{
 		e->obj->SetState(FLOWER_STATE_DIE);
 		SpawnScore(e->obj);
 		SpawnEffect(e, this, EFF_COL_TYPE_NORMAL);
-	}*/
-	//else 
+	}
+	else 
 	if (!untouchable)
 	{
 		if (isHolding && e->nx != this->nx) //sometimes work ? Will check it later
@@ -1070,7 +1109,7 @@ void CMario::Render()
 		aniId = GetAniIdRacoon();
 
 	animations->Get(aniId)->Render(x, y, false);
-	//RenderBoundingBox();
+	RenderBoundingBox();
 }
 
 void CMario::SetState(int state)
@@ -1207,11 +1246,12 @@ void CMario::SetState(int state)
 		if (isSitting) break;
 		attack_start = GetTickCount64();
 		isAttacking = true;
-		CPlayScene* current_scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
-		tail = new CTail(x, y, MARIO_BIG_BBOX_WIDTH, this->nx); //set state cho nó luôn
-		current_scene->AddObjectToScene(tail);
 		isKicking = false;
 		isSitting = false;
+		tail = new CTail(x, y, MARIO_BIG_BBOX_WIDTH, nx);
+		CPlayScene* current_scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
+		current_scene->AddObjectToScene(tail);
+		DebugOut(L"Tail was created successfully!\n");
 	}
 	break;
 
@@ -1272,28 +1312,11 @@ void CMario::GetBoundingBox(float& left, float& top, float& right, float& bottom
 void CMario::SetLevel(int l)
 {
 	// Adjust position to avoid falling off platform
-	/*if (l == MARIO_LEVEL_RACOON) //nếu là level Racoon thì check và tạo đuôi
-	{
-		if (tail != NULL) return; //đã có đuôi thì không tạo nữa
-
-		tail = new CTail(x, y, MARIO_BIG_BBOX_WIDTH, this->nx);
-		CPlayScene* current_scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
-		current_scene->AddObjectToScene(tail);
-		DebugOut(L"Tail was created and add to object list\n");
-	}
+	if (l == MARIO_LEVEL_RACOON)
+		isAllowToUseTail = true;
 	else
-	{
-		/*if (tail != NULL)
-		{
-			CTail* temp_tail = tail;
-			tail = NULL;
-			delete temp_tail;
-			CPlayScene* current_scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
-			current_scene->GetObjectsVector().erase(std::remove(current_scene->GetObjectsVector().begin(), current_scene->GetObjectsVector().end(), tail), current_scene->GetObjectsVector().end());
-			DebugOut(L"Delete Tail success!\n");
-		}
-	}*/
-
+		isAllowToUseTail = false;
+	
 	if (!isAteItem) //Nếu đc SetLevel bằng cách nhấn phím thì giảm y để Mario kh bị rơi xuống nền
 		if (this->level == MARIO_LEVEL_SMALL)
 		{

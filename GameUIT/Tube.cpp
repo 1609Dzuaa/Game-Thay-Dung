@@ -43,7 +43,7 @@ void CTube::Render()
 		animations->Get(ID_ANI_TUBE_WITH_STRIPE_BRICK)->Render(x, y, false);
 	else 
 		animations->Get(ID_ANI_TUBE)->Render(x, y, false);
-	//RenderBoundingBox();
+	RenderBoundingBox();
 }
 
 void CTube::GetBoundingBox(float& left, float& top, float& right, float& bottom)

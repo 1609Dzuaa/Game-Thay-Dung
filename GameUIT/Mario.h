@@ -250,12 +250,15 @@ class CMario : public CGameObject
 	BOOLEAN isAllowToHoldKoopa; //Allow to hold rồi mới holding
 	BOOLEAN isHolding; //A way to handle holding: 
 	BOOLEAN isHitSwitch;
-	CKoopa* ghost_koopa;
+	BOOLEAN isAllowToUseTail;
+	CKoopa* ghost_koopa; //khi đang giữ Koopa, coi nó như item của mình, đang bật khiên, đụng là chết
+	//về cơ bản cũng khá giống cái đuôi, cũng cần đc vẽ bbox
 	float maxVx;
 	float maxRunningSpeed;
 	float ax;				// acceleration on x 
 	float ay;				// acceleration on y 
-	CTail* tail;
+	CTail* tail;	//Nên tạo sẵn cái đuôi và add nó to scene lúc khởi tạo Mario luôn
+	//khi nào đang dạng racoon mà bấm Z || A thì mới allow to use that weapon
 
 	int level;
 	int untouchable, untouchdraw;
@@ -302,49 +305,7 @@ class CMario : public CGameObject
 	int GetAniIdRacoon();
 	int KoopaStateThatAllowToHold(CKoopa* koopa);
 public:
-	CMario(float x, float y) : CGameObject(x, y)
-	{
-		isSitting = false;
-		isKicking = false;
-		isAttacking = false;
-		isJumping = false;
-		isFlying = false;
-		canFly = false;
-		isAtMaxSpeed = false;
-		isLanding = false;
-		isEvolving = false;
-		isEvolveForward = false;
-		isEvolveBackward = false;
-		isAteItem = false;
-		StopWatch = false;
-		isAllowToHoldKoopa = false;
-		isHolding = false;
-		isHitSwitch = false;
-		CountJumpOnEnemies = 0;
-		untouchdraw = -1;
-		untouch_draw_0 = 0;
-		untouch_draw_1 = 0;
-		untouch_0 = 0;
-		untouch_1 = 0;
-		//Thêm đuôi trước tương tự như mushroom
-		tail = NULL; //Vì cái đuôi đc thêm vào sau nên khả năng cao là nó va đập kém hiệu quả
-		ghost_koopa = NULL; //Khi đang Hold Koopa thì coi nó như thuộc tính của Mario
-		//Giống như bật khiên
-
-		maxVx = 0;
-		maxRunningSpeed = MARIO_RUNNING_SPEED;
-		ax = 0.0f;
-		ay = MARIO_GRAVITY;
-
-		level = MARIO_LEVEL_SMALL;
-		untouchable = 0;
-		untouchable_start = -1;
-		kick_start = 0;
-		attack_start = 0;
-		evolve_start = 0;
-		isOnPlatform = false;
-		coin = 0;
-	}
+	CMario(float x, float y);
 	void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
 	void UpdateMarioState();
 	void Render();
@@ -382,6 +343,7 @@ public:
 	BOOLEAN GetIsAttacking() { return this->isAttacking; }
 	BOOLEAN GetIsHolding() { return this->isHolding; }
 	BOOLEAN GetIsHitSwitch() { return this->isHitSwitch; }
+	BOOLEAN GetIsAllowUseTail() { return this->isAllowToUseTail; }
 	void SetHoldKoopa(BOOLEAN para) { this->isAllowToHoldKoopa = para; }
 	void SetIsHoldingKoopa(BOOLEAN para) { this->isHolding = para; }
 	void SetIsHitSwitch(BOOLEAN para) { this->isHitSwitch = true; }

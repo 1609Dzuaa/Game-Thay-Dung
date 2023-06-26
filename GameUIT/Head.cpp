@@ -1,9 +1,16 @@
 ﻿#include "Head.h"
 #include "Brick.h"
+#include "PlayScene.h"
+#include "Camera.h"
 #include "debug.h"
 
 void CHead::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
+	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
+	if (mario->GetStopWatch()) return;
+
+	if (!CCamera::GetInstance()->isViewable(this)) return;
+
 	vy += ay * dt;
 	CCollision::GetInstance()->Process(this, dt, coObjects);
 }

@@ -244,7 +244,6 @@ void CCollision::Process(LPGAMEOBJECT objSrc, DWORD dt, vector<LPGAMEOBJECT>* co
 	if (coEvents.size() == 0)
 	{
 		objSrc->OnNoCollision(dt);
-		//Brick is NO Collidable -> It will come here
 	}
 	else //There is collision
 	{

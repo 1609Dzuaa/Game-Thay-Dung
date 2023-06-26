@@ -18,8 +18,8 @@ class CGameObject
 {
 protected:
 
-	float x;
-	float y;
+	float x;//, x_initial;
+	float y;// , y_initial;
 
 	float vx;
 	float vy;

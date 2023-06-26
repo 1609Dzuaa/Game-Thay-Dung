@@ -76,7 +76,7 @@
 class CKoopa : public CGameObject
 {
 protected:
-	int type;
+	int type, type_initial;
 
 	float ax;
 	float ay;
@@ -89,6 +89,7 @@ protected:
 	BOOLEAN enableToChangeVx; //use for Red Koopa only
 	CHead* ghost_head; //use for Red Koopa
 	BOOLEAN isBeingHeld;
+	BOOLEAN isInitialized;
 	//Red Koopa always has ghost_head
 
 	void GetBoundingBox(float& left, float& top, float& right, float& bottom);
@@ -114,6 +115,7 @@ protected:
 	void HandleCollisionWithBlockingObjects(LPCOLLISIONEVENT e);
 	void HandleCollisionWithColorPlatform(LPCOLLISIONEVENT e, CColorPlatform* color_platf);
 	void AdjustPositionOnColorPlatform(CColorPlatform* color_platf);
+	//void Respawn();
 
 	int GetAniIdGreenKoopa();
 	int GetAniIdFlyingKoopa();

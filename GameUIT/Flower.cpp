@@ -6,6 +6,8 @@
 
 void CFlower::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
+	vy += ay * dt;
+
 	/*if (state == FLOWER_STATE_SHOOT)
 		AimAndShoot();*/
 	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
@@ -19,6 +21,7 @@ void CFlower::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		UpdateShootinFlower();
 
 	CCollision::GetInstance()->Process(this, dt, coObjects);
+	DebugOutTitle(L"y, vy: %f, %f", y, vy);
 }
 
 void CFlower::UpdateShootinFlower()
@@ -66,6 +69,15 @@ void CFlower::UpdateGreenCarniFlower()
 void CFlower::OnNoCollision(DWORD dt)
 {
 	y += vy * dt;
+}
+
+void CFlower::OnCollisionWith(LPCOLLISIONEVENT e)
+{
+	if (!e->obj->IsBlocking()) return;
+	//if (e->ny != 0)
+	//{
+		//vy = 0;
+	//}
 }
 
 void CFlower::Render()
@@ -189,6 +201,7 @@ void CFlower::SetState(int state)
 
 	case FLOWER_STATE_RISE_UP:
 		vy = -FLOWER_RISE_SPEED;
+		//ay = FLOWER_GRAVITY;
 
 		break;
 

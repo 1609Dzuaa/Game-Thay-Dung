@@ -7,6 +7,7 @@
 #include "Game.h"
 #include "GameObject.h"
 #include "Sprites.h"
+#include "Camera.h"
 
 CGameObject::CGameObject()
 {
@@ -33,7 +34,10 @@ void CGameObject::RenderBoundingBox()
 	rect.bottom = (int)b - (int)t;
 
 	float cx, cy;
-	CGame::GetInstance()->GetCamPos(cx, cy);
+	CGame::GetInstance()->GetCamPos(cx, cy); //turn out the problem of BBox was here @@
+
+	cx = CCamera::GetInstance()->GetCamPos().x;
+	cy = CCamera::GetInstance()->GetCamPos().y;
 
 	CGame::GetInstance()->Draw(x - cx, y - cy, bbox, rect.left, rect.top, rect.right, rect.bottom, 0.25f);
 }

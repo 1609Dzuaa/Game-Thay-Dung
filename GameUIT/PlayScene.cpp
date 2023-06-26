@@ -432,6 +432,7 @@ void CPlayScene::PurgeDeletedObjects()
 
 void CPlayScene::AddObjectToScene(LPGAMEOBJECT game_object)
 {
-	this->objects.push_back(game_object);
+	//this->objects.push_back(game_object);
 	//Thêm vật thể vào scene hiện tại
+	objects.insert(objects.begin() + 1, game_object);
 }

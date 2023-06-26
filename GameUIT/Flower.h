@@ -17,6 +17,7 @@
 
 #define ATTACK_RANGE 90.0f
 #define FLOWER_RISE_SPEED 0.03f
+#define FLOWER_GRAVITY	0.00001f
 
 #define FLOWER_REST_TIME 1500
 #define FLOWER_AIM_TIME 500
@@ -63,7 +64,7 @@
 
 class CFlower :public CGameObject 
 {
-	float minY, maxY;
+	float minY, maxY, ay;
 	ULONGLONG aim_start, rest_start, die_start;
 	BOOLEAN enableToShoot;
 	CEffectCollision* eff_die;
@@ -79,12 +80,14 @@ public:
 		enableToShoot = true;
 		eff_die = NULL;
 		type = -1;
+		ay = FLOWER_GRAVITY;
 	};
 	CFlower(float x, float y, int type) :CGameObject(x, y)
 	{
 		this->x = x;
 		this->y = y;
 		this->vy = 0;
+		this->ay = 0;
 		this->state = FLOWER_STATE_IN_TUBE;
 		this->type = type;
 		if (type == FLOWER_TYPE_SHOOTING_RED)
@@ -109,8 +112,9 @@ public:
 	void UpdateGreenCarniFlower();
 
 	void OnNoCollision(DWORD dt);
-	int IsBlocking() { return 0; };
-	//int IsCollidable() { return state != FLOWER_STATE_IN_TUBE; }
+	void OnCollisionWith(LPCOLLISIONEVENT e);
+	//int IsCollidable() { return 1; };
+	int IsBlocking() { return 0; }
 	void SetFlowerMinY(float min_Y) { this->minY = min_Y; }
 
 	int GetAniID_Red();

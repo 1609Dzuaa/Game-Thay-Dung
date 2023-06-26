@@ -10,6 +10,11 @@
 
 CKoopa::CKoopa(float x, float y, int type) :CGameObject(x, y)
 {
+	//this->x_initial = x;
+	//this->y_initial = y;
+	type_initial = type;
+	isInitialized = true;
+
 	this->ax = 0;
 	this->ay = KOOPA_GRAVITY;
 	this->type = type;
@@ -155,7 +160,16 @@ void CKoopa::HandleCollisionWithBlockingObjects(LPCOLLISIONEVENT e)
 
 void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
-	if (!CCamera::GetInstance()->isViewable(this)) return;
+	//How about respawn it if go too far but comeback later ?!
+	if (!CCamera::GetInstance()->isViewable(this))
+	{
+		//this->Delete();
+		//isInitialized = false;
+		return;
+	}
+
+	//if (!isInitialized)
+		//this->Respawn();
 
 	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
 	if (mario->GetStopWatch()) return;
@@ -165,7 +179,7 @@ void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 	if (isBeingHeld)
 	{
-		/*if (mario->GetMarioNormalX() > 0)
+		if (mario->GetMarioNormalX() > 0)
 		{
 			if(mario->GetLevel() > MARIO_LEVEL_SMALL)
 				this->SetPosition(mario->GetX() + 11.5f, mario->GetY() + 1.5f);
@@ -178,10 +192,10 @@ void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				this->SetPosition(mario->GetX() - 11.5f, mario->GetY() + 1.5f);
 			else
 				this->SetPosition(mario->GetX() - 11.5f, mario->GetY() - 1.5f);
-		}*/
-		float koopa_vx, koopa_vy;
-		mario->GetSpeed(koopa_vx, koopa_vy);
-		this->SetSpeed(koopa_vx, koopa_vy);
+		}
+		//float koopa_vx, koopa_vy;
+		//mario->GetSpeed(koopa_vx, koopa_vy);
+		//this->SetSpeed(koopa_vx, koopa_vy);
 	}
 	isOnPlatform = false;
 
@@ -190,7 +204,7 @@ void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 	UpdateKoopaState();
 	CCollision::GetInstance()->Process(this, dt, coObjects);
-	DebugOutTitle(L"vx, vy, st: %f, %f, %d", vx, vy, state);
+	//DebugOutTitle(L"vx, vy, st: %f, %f, %d", vx, vy, state);
 }
 
 void CKoopa::UpdateKoopaState()
@@ -224,7 +238,7 @@ void CKoopa::UpdateKoopaState()
 	{
 		isDeleted = true;
 		if (type == RED_KOOPA)
-			delete ghost_head; //consider remove it out of vector objects ?
+			ghost_head->Delete(); //consider remove it out of vector objects ?
 		return;
 	}
 	else if (state == KOOPA_STATE_SLEEP && GetTickCount64() - sleep_start >= KOOPA_SLEEP_TIMEOUT
@@ -256,6 +270,9 @@ void CKoopa::UpdateKoopaState()
 void CKoopa::Render()
 {
 	if (!CCamera::GetInstance()->isViewable(this)) return;
+	
+	RenderBoundingBox();
+	//Nếu đang bị hold và chưa tới thời gian reborn
 	if (isBeingHeld) return; //how 'bout a litte trick here ?
 
 	int aniId = 0;
@@ -268,7 +285,6 @@ void CKoopa::Render()
 		aniId = GetAniIdRedKoopa();
 
 	CAnimations::GetInstance()->Get(aniId)->Render(x, y, true);
-	RenderBoundingBox();
 }
 
 void CKoopa::SetState(int state)
@@ -571,3 +587,11 @@ int CKoopa::ConditionsThatEnableToKillAllies()
 	return (state == KOOPA_STATE_SLIP || state == KOOPA_STATE_SLIP_REVERSE);
 	//Trả về các điều kiện cho phép Koopa giết các đồng minh của nó
 }
+
+/*void CKoopa::Respawn()
+{
+	CKoopa* koopa = new CKoopa(x_initial, y_initial, type_initial);
+	CPlayScene* current_scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
+	current_scene->AddObjectToScene(koopa);
+	isInitialized = true;
+}*/
