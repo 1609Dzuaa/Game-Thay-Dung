@@ -5,8 +5,7 @@
 #define TAIL_BBOX_WIDTH	10
 #define TAIL_BBOX_HEIGHT 6
 
-#define TAIL_STATE_IDLE 0
-#define TAIL_STATE_ATTACK 1
+#define TAIL_SPEED_X 0.075f 
 
 class CTail : public CGhostObject 
 {
@@ -14,11 +13,18 @@ class CTail : public CGhostObject
 public:
 	CTail(float Mario_posX, float Mario_posY, int MARIO_BBOX_WIDTH, int nx) :CGhostObject(x, y) 
 	{
-		if (nx < 0)
+		if (nx > 0)
+		{
 			this->x = Mario_posX - MARIO_BBOX_WIDTH / 2 - 8.0f;
+			this->vx = TAIL_SPEED_X;
+		}
 		else
+		{
 			this->x = Mario_posX + MARIO_BBOX_WIDTH / 2 + 8.0f;
+			this->vx = -TAIL_SPEED_X;
+		}
 		this->y = Mario_posY + 5.0f;
+		
 	};
 	void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
 	void Render();

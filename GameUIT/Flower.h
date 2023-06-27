@@ -112,7 +112,7 @@ public:
 	void UpdateGreenCarniFlower();
 
 	void OnNoCollision(DWORD dt);
-	void OnCollisionWith(LPCOLLISIONEVENT e);
+	//void OnCollisionWith(LPCOLLISIONEVENT e);
 	//int IsCollidable() { return 1; };
 	int IsBlocking() { return 0; }
 	void SetFlowerMinY(float min_Y) { this->minY = min_Y; }

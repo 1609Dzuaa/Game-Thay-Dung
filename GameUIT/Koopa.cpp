@@ -12,8 +12,8 @@ CKoopa::CKoopa(float x, float y, int type) :CGameObject(x, y)
 {
 	//this->x_initial = x;
 	//this->y_initial = y;
-	type_initial = type;
-	isInitialized = true;
+	//type_initial = type;
+	//isInitialized = true;
 
 	this->ax = 0;
 	this->ay = KOOPA_GRAVITY;
@@ -271,7 +271,7 @@ void CKoopa::Render()
 {
 	if (!CCamera::GetInstance()->isViewable(this)) return;
 	
-	RenderBoundingBox();
+	//RenderBoundingBox();
 	//Nếu đang bị hold và chưa tới thời gian reborn
 	if (isBeingHeld) return; //how 'bout a litte trick here ?
 

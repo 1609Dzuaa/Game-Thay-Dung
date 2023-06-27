@@ -2,6 +2,7 @@
 #include "Mario.h"
 #include "PlayScene.h"
 #include "FireBullet.h"
+#include "Tail.h"
 #include "debug.h"
 
 void CFlower::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
@@ -71,14 +72,10 @@ void CFlower::OnNoCollision(DWORD dt)
 	y += vy * dt;
 }
 
-void CFlower::OnCollisionWith(LPCOLLISIONEVENT e)
+/*void CFlower::OnCollisionWith(LPCOLLISIONEVENT e)
 {
-	if (!e->obj->IsBlocking()) return;
-	//if (e->ny != 0)
-	//{
-		//vy = 0;
-	//}
-}
+	if (e->obj->IsBlocking()) return;
+}*/
 
 void CFlower::Render()
 {
@@ -94,7 +91,7 @@ void CFlower::Render()
 
 	if (animation_ID != -1)
 		animations->Get(animation_ID)->Render(x, y, true);
-	RenderBoundingBox();
+	//RenderBoundingBox();
 }
 
 int CFlower::GetAniID_Red()

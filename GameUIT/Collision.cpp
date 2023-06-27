@@ -1,5 +1,6 @@
 ﻿#include "Collision.h"
 #include "GameObject.h"
+#include "Tail.h"
 
 #include "debug.h"
 
@@ -210,7 +211,6 @@ void CCollision::Filter(LPGAMEOBJECT objSrc,
 			min_tx = c->t; min_ix = i;
 		}
 
-		//Rùa va chạm TRÊN cục mây
 		if (c->t < min_ty && c->ny != 0 && filterY == 1) 
 		{
 			min_ty = c->t; min_iy = i;

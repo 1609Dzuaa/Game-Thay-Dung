@@ -9,7 +9,7 @@ void CBrick::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	UpdatePosition(dt);
 	UpdateGoldCoin();
 
-	if (state == GOLD_BRICK_STATE_IS_HITTED && !IsDeleted() && _switch == NULL)
+	if (state == GOLD_BRICK_HAS_SW_STATE_IS_HITTED && !IsDeleted() && _switch == NULL)
 	{
 		eff = new CEffectCollision(x, min_pos - 5.0f, hit_start, EFF_COL_TYPE_SMOKE_EVOLVE);
 		CPlayScene* current_scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
@@ -31,7 +31,7 @@ void CBrick::UpdatePosition(DWORD dt)
 	if (y > old_pos)
 	{
 		//if it has switch, got hitted && at max pos => spawn switch
-		if (state == GOLD_BRICK_STATE_IS_HITTED && _switch == NULL)
+		if (state == GOLD_BRICK_HAS_SW_STATE_IS_HITTED && _switch == NULL)
 			SpawnSwitch();
 		y = old_pos;
 		vy = 0;
@@ -67,7 +67,7 @@ void CBrick::Render()
 	CAnimations* animations = CAnimations::GetInstance();
 	if (type == STRIPE_BRICK)
 		animations->Get(ID_ANI_STRIPE_BRICK)->Render(x, y, false);
-	else if(state == GOLD_BRICK_STATE_IS_HITTED)
+	else if(state == GOLD_BRICK_HAS_SW_STATE_IS_HITTED)
 		animations->Get(ID_ANI_QUESTION_BRICK_HITTED)->Render(x, y, false);
 	else if(state == GOLD_BRICK_STATE_TURN_TO_COIN)
 		animations->Get(ID_ANI_GOLD_COIN)->Render(x, y, false);
@@ -88,7 +88,7 @@ void CBrick::SetState(int state)
 {
 	switch (state)
 	{
-	case GOLD_BRICK_STATE_IS_HITTED:
+	case GOLD_BRICK_HAS_SW_STATE_IS_HITTED:
 		hit_start = GetTickCount64();
 
 		break;

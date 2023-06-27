@@ -10,9 +10,6 @@
 
 void CTail::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
-
-	//Trường hợp với cây khá tương đồng với Koopa
-	//làm sao khi trạng thái đứng yên mà nó vẫn va chạm (tức là cây vẫn còn vận tốc)
 	CCollision::GetInstance()->Process(this, dt, coObjects);
 	//DebugOut(L"vx: %f\n", vx);
 }
@@ -25,14 +22,7 @@ void CTail::Render()
 void CTail::OnNoCollision(DWORD dt)
 {
 	x += vx * dt;
-
 	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
-	nx = mario->GetMarioNormalX();
-
-	//if (nx < 0)
-		//this->x = mario->GetX() - MARIO_BIG_BBOX_WIDTH / 2 - 6.0f;
-	//else
-		//this->x = mario->GetX() + MARIO_BIG_BBOX_WIDTH / 2 + 6.0f;
 	this->y = mario->GetY() + 5.0f;
 }
 
@@ -40,8 +30,8 @@ void CTail::OnCollisionWith(LPCOLLISIONEVENT e)
 {
 	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
 
-	//kh đc xài đuôi thì bỏ qua hàm này || kh tấn công cũng bỏ qua
-	//if (!mario->GetIsAllowUseTail() || !mario->GetIsAttacking()) return;
+	//kh tấn công thì bỏ qua hàm này
+	if (!mario->GetIsAttacking()) return;
 	
 	if (dynamic_cast<CGoomba*>(e->obj))
 		OnCollisionWithGoomba(e);
@@ -85,17 +75,22 @@ void CTail::OnCollisionWithFlower(LPCOLLISIONEVENT e)
 	flower->SetState(FLOWER_STATE_DIE);
 	mario->SpawnScore(e->obj);
 	mario->SpawnEffect(e, this, EFF_COL_TYPE_NORMAL);
+	DebugOut(L"Tail Collided\n");
 }
 
 void CTail::OnCollisionWithGoldBrick(LPCOLLISIONEVENT e)
 {
 	CBrick* br = dynamic_cast<CBrick*>(e->obj);
-	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
-	if (br->GetType() == GOLD_BRICK)
+	/*if (br->GetType() == GOLD_BRICK)
 	{
-		br->SetState(GOLD_BRICK_STATE_IS_HITTED);
-		mario->SetIsHitSwitch(true);
-	}
+		if (br->GetHasSwitch())
+		{
+			br->SetState(GOLD_BRICK_HAS_SW_STATE_IS_HITTED);
+		}
+		else*/ //Hiện đang có lỗi phá gạch chứa Switch
+			br->Delete();
+		//Thêm hiệu ứng phá gạch
+	//}
 }
 
 void CTail::GetBoundingBox(float& l, float& t, float& r, float& b)

@@ -250,7 +250,6 @@ class CMario : public CGameObject
 	BOOLEAN isAllowToHoldKoopa; //Allow to hold rồi mới holding
 	BOOLEAN isHolding; //A way to handle holding: 
 	BOOLEAN isHitSwitch;
-	BOOLEAN isAllowToUseTail;
 	CKoopa* ghost_koopa; //khi đang giữ Koopa, coi nó như item của mình, đang bật khiên, đụng là chết
 	//về cơ bản cũng khá giống cái đuôi, cũng cần đc vẽ bbox
 	float maxVx;
@@ -343,7 +342,6 @@ public:
 	BOOLEAN GetIsAttacking() { return this->isAttacking; }
 	BOOLEAN GetIsHolding() { return this->isHolding; }
 	BOOLEAN GetIsHitSwitch() { return this->isHitSwitch; }
-	BOOLEAN GetIsAllowUseTail() { return this->isAllowToUseTail; }
 	void SetHoldKoopa(BOOLEAN para) { this->isAllowToHoldKoopa = para; }
 	void SetIsHoldingKoopa(BOOLEAN para) { this->isHolding = para; }
 	void SetIsHitSwitch(BOOLEAN para) { this->isHitSwitch = true; }

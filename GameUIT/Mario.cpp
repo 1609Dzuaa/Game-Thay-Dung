@@ -38,7 +38,6 @@ CMario::CMario(float x, float y) : CGameObject(x, y)
 	isAllowToHoldKoopa = false;
 	isHolding = false;
 	isHitSwitch = false;
-	isAllowToUseTail = false;
 	CountJumpOnEnemies = 0;
 	untouchdraw = -1;
 	untouch_draw_0 = 0;
@@ -214,11 +213,11 @@ void CMario::OnCollisionWithBlockingObjects(LPCOLLISIONEVENT e)
 					if (e->ny > 0)
 					{
 						//Nếu là viên chứa công tắc và state chưa bị hit
-						if (br->GetHasSwitch() && br->GetState() != GOLD_BRICK_STATE_IS_HITTED)
+						if (br->GetHasSwitch() && br->GetState() != GOLD_BRICK_HAS_SW_STATE_IS_HITTED)
 						{
 							br->SetSpeed(0, -GOLD_BRICK_BOUNCING_SPEED);
 							br->SetHitted(true);
-							br->SetState(GOLD_BRICK_STATE_IS_HITTED);
+							br->SetState(GOLD_BRICK_HAS_SW_STATE_IS_HITTED);
 						}
 						else if(!br->GetHasSwitch()) //nếu 0 có công tắc
 						{
@@ -671,13 +670,13 @@ void CMario::OnCollisionWithLeaf(LPCOLLISIONEVENT e)
 void CMario::OnCollisionWithFlower(LPCOLLISIONEVENT e)
 {
 	//tấn công hoa có vấn đề
-	if (isAttacking)
+	/*if (isAttacking)
 	{
 		e->obj->SetState(FLOWER_STATE_DIE);
 		SpawnScore(e->obj);
 		SpawnEffect(e, this, EFF_COL_TYPE_NORMAL);
 	}
-	else 
+	else*/ 
 	if (!untouchable)
 	{
 		if (isHolding && e->nx != this->nx) //sometimes work ? Will check it later
@@ -1109,7 +1108,7 @@ void CMario::Render()
 		aniId = GetAniIdRacoon();
 
 	animations->Get(aniId)->Render(x, y, false);
-	RenderBoundingBox();
+	//RenderBoundingBox();
 }
 
 void CMario::SetState(int state)
@@ -1312,11 +1311,6 @@ void CMario::GetBoundingBox(float& left, float& top, float& right, float& bottom
 void CMario::SetLevel(int l)
 {
 	// Adjust position to avoid falling off platform
-	if (l == MARIO_LEVEL_RACOON)
-		isAllowToUseTail = true;
-	else
-		isAllowToUseTail = false;
-	
 	if (!isAteItem) //Nếu đc SetLevel bằng cách nhấn phím thì giảm y để Mario kh bị rơi xuống nền
 		if (this->level == MARIO_LEVEL_SMALL)
 		{

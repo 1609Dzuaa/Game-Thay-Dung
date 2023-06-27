@@ -19,7 +19,7 @@
 #define GOLD_BRICK_BOUNCING_SPEED 0.05f
 #define GOLD_BRICK_GRAVITY	0.05f
 
-#define GOLD_BRICK_STATE_IS_HITTED	1	//Only use for Gold Brick that has Switch: bị hit thì spawn khói
+#define GOLD_BRICK_HAS_SW_STATE_IS_HITTED	1	//Only use for Gold Brick that has Switch: bị hit thì spawn khói
 #define GOLD_BRICK_STATE_NORMAL	2
 #define GOLD_BRICK_STATE_TURN_TO_COIN	3
 

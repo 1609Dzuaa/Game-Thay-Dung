@@ -25,18 +25,21 @@ Text_Files\EffectCollision.txt
 
 #How about adding object that "more collidable" sooner than other object ?
 #MARIO
-0	25	285
+0	315	285
 
 #Red Koopa ON Green Platform
 3	555	264	3
 
 #Red Koopa ON GOLD BRICK
-#3	2080	278	3
+3	2080	278	3
 
 #Para Koopa
-#3	1340	210	2
-#3	1372	210	2
+3	1340	210	2
+3	1372	210	2
 3	1396	210	2
+
+#Koopa below Para
+3	1420	295	1
 
 #QUESTION BRICK |  0: HAS NO ITEM - ONLY COIN |  1: HAS ITEM(MUSHROOM, LEAF, ...) | 
 7	169	276	0
