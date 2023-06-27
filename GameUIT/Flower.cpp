@@ -22,7 +22,7 @@ void CFlower::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		UpdateShootinFlower();
 
 	CCollision::GetInstance()->Process(this, dt, coObjects);
-	DebugOutTitle(L"y, vy: %f, %f", y, vy);
+	//DebugOutTitle(L"y, vy: %f, %f", y, vy);
 }
 
 void CFlower::UpdateShootinFlower()

@@ -23,6 +23,8 @@
 CMario::CMario(float x, float y) : CGameObject(x, y)
 {
 	isSitting = false;
+	isWalking = false;
+	isRunning = false;
 	isKicking = false;
 	isAttacking = false;
 	isJumping = false;
@@ -38,6 +40,7 @@ CMario::CMario(float x, float y) : CGameObject(x, y)
 	isAllowToHoldKoopa = false;
 	isHolding = false;
 	isHitSwitch = false;
+	isInitialized = false;
 	CountJumpOnEnemies = 0;
 	untouchdraw = -1;
 	untouch_draw_0 = 0;
@@ -84,7 +87,17 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	UpdateMarioState();
 	isOnPlatform = false;
 	CCollision::GetInstance()->Process(this, dt, coObjects);
-	//DebugOutTitle(L"st: %d", state);
+	if (isAttacking && !isInitialized)
+	{
+		tail = new CTail(x, y, MARIO_BIG_BBOX_WIDTH, nx, vx);
+		CPlayScene* current_scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
+		current_scene->AddObjectToScene(tail);
+		isInitialized = true;
+		DebugOut(L"Tail was created successfully!\n");
+	}
+	//if (tail != NULL)
+		//UpdateTailPosition(tail);
+	DebugOutTitle(L"st, isWK, isStg: %d, %d, %d", state, isWalking, isSitting);
 }
 
 void CMario::UpdateMarioState()
@@ -158,10 +171,11 @@ void CMario::UpdateMarioState()
 
 	if (isAttacking && GetTickCount64() - attack_start >= MARIO_RACOON_ATTACK_TIME)
 	{
+		attack_start = 0;
 		isAttacking = false;
+		isInitialized = false;
 		tail->Delete();
 		DebugOut(L"Delete Tail Success\n");
-		attack_start = 0;
 	}
 }
 
@@ -233,6 +247,7 @@ void CMario::OnCollisionWithBlockingObjects(LPCOLLISIONEVENT e)
 					else if (e->ny < 0)
 					{
 						isOnPlatform = true;
+						isLanding = false;
 						CountJumpOnEnemies = 0; //Chạm đất thì reset số lần nhảy
 					}
 				}
@@ -307,6 +322,7 @@ void CMario::OnCollisionWithColorPlatform(LPCOLLISIONEVENT e)
 		CColorPlatform* cl_pf = dynamic_cast<CColorPlatform*>(e->obj);
 		HandleCollisionWithColorPlatform(e, cl_pf);
 		CountJumpOnEnemies = 0;
+		isOnPlatform = true;
 	}
 }
 
@@ -331,7 +347,6 @@ void CMario::HandleCollisionWithColorPlatform(LPCOLLISIONEVENT e, CColorPlatform
 				//SNAP: Player.Y = ColorPlat.Y - ColorPlat.Height / 2 - Player.Height / 2
 				this->y = color_platf->GetY() - color_platf->GetCellHeight() / 2 - MARIO_BIG_BBOX_HEIGHT / 2;
 				vy = 0;
-				isOnPlatform = true;
 			}
 		}
 		else
@@ -340,7 +355,6 @@ void CMario::HandleCollisionWithColorPlatform(LPCOLLISIONEVENT e, CColorPlatform
 			{
 				this->y = color_platf->GetY() - MARIO_BIG_BBOX_HEIGHT / 2 - 3.5f; //trừ một lượng vừa đủ
 				vy = 0;
-				isOnPlatform = true;
 			}
 		}
 	}
@@ -350,7 +364,6 @@ void CMario::HandleCollisionWithColorPlatform(LPCOLLISIONEVENT e, CColorPlatform
 		{
 			this->y = color_platf->GetY() - color_platf->GetCellHeight() / 2 - MARIO_SMALL_BBOX_HEIGHT / 2;
 			vy = 0;
-			isOnPlatform = true;
 		}
 	}
 }
@@ -602,24 +615,6 @@ void CMario::HandleCollisionOtherDirectionWithKoopa(LPCOLLISIONEVENT e, CKoopa* 
 					}
 				}
 			}
-
-			/*if (this->isAttacking)
-			{
-				if (koopa->GetType() == GREEN_FLYING_KOOPA)
-				{
-					koopa->SetType(GREEN_KOOPA);
-					koopa->SetState(KOOPA_STATE_SLEEP_REVERSE);
-					SpawnEffect(e, this, EFF_COL_TYPE_NORMAL);
-				}
-				else
-				{
-					koopa->SetState(KOOPA_STATE_SLEEP_REVERSE);
-					SpawnEffect(e, this, EFF_COL_TYPE_NORMAL);
-				}
-			}*/
-			//else
-			//{
-			//}
 		}
 	}
 }
@@ -968,13 +963,13 @@ int CMario::GetAniIdRacoon()
 	int aniId = -1;
 	if (!isOnPlatform) //included fly, jump, landing, fall
 	{
-		if (vy > 0 && nx < 0 && isLanding)
+		if (vy < 0 && nx < 0 && isLanding)
 		{
 			aniId = ID_ANI_MARIO_RACOON_LANDING_LEFT;
 		}
-		else if (vy > 0 && nx > 0 && isLanding)
+		else if (vy < 0 && nx > 0 && isLanding)
 		{
-			aniId = ID_ANI_MARIO_RACOON_LANDING_RIGHT;
+			aniId = ID_ANI_MARIO_RACOON_LANDING_RIGHT; 
 		}
 		else if (isAttacking && nx > 0)
 		{
@@ -1119,42 +1114,51 @@ void CMario::SetState(int state)
 	switch (state)
 	{
 	case MARIO_STATE_RUNNING_RIGHT:
-		if (isSitting) break;
+		isRunning = true;
 		maxVx = MARIO_RUNNING_SPEED;
 		ax = MARIO_ACCEL_RUN_X;
 		nx = 1;
 		break;
 
 	case MARIO_STATE_RUNNING_AT_MAX_VX_RIGHT:
-		if (isSitting) break;
 		isAtMaxSpeed = true;
 		if (this->level == MARIO_LEVEL_RACOON)
 			canFly = true;
 		break;
 
 	case MARIO_STATE_RUNNING_LEFT:
-		if (isSitting) break;
+		isRunning = true;
 		maxVx = -MARIO_RUNNING_SPEED;
 		ax = -MARIO_ACCEL_RUN_X;
 		nx = -1;
 		break;
 
 	case MARIO_STATE_RUNNING_AT_MAX_VX_LEFT:
-		if (isSitting) break;
 		isAtMaxSpeed = true;
 		if (this->level == MARIO_LEVEL_RACOON)
 			canFly = true;
 		break;
 
 	case MARIO_STATE_WALKING_RIGHT:
-		if (isSitting) break;
+		isWalking = true;
+		if (isSitting)
+		{
+			isSitting = false;
+			y -= MARIO_SIT_HEIGHT_ADJUST;
+		}
 		maxVx = MARIO_WALKING_SPEED;
 		ax = MARIO_ACCEL_WALK_X;
 		nx = 1;
 		break;
 
 	case MARIO_STATE_WALKING_LEFT:
-		if (isSitting) break;
+		isWalking = true;
+		if (isSitting)
+		{
+			isSitting = false;
+			y -= MARIO_SIT_HEIGHT_ADJUST;
+		}
+		state = MARIO_STATE_SIT_RELEASE;
 		maxVx = -MARIO_WALKING_SPEED;
 		ax = -MARIO_ACCEL_WALK_X;
 		nx = -1;
@@ -1163,7 +1167,7 @@ void CMario::SetState(int state)
 	case MARIO_STATE_KICKING_RIGHT:
 		if (isSitting) break;
 		isKicking = true;
-		kick_start = GetTickCount64(); //Tính từ khi chạy ctrinh tới bây giờ
+		kick_start = GetTickCount64(); 
 		break;
 
 	case MARIO_STATE_KICKING_LEFT:
@@ -1205,8 +1209,8 @@ void CMario::SetState(int state)
 
 	case MARIO_RACOON_STATE_LANDING:
 	{
-		//isLanding = true;
-		vy = 0.0005f;
+		isLanding = true;
+		vy = MARIO_LANDING_SPEED;
 		break;
 	}
 
@@ -1216,15 +1220,19 @@ void CMario::SetState(int state)
 		break;
 	}
 
-	case MARIO_STATE_RELEASE_JUMP:
-		if (vy < 0) vy += MARIO_JUMP_SPEED_Y / 2;
-		isJumping = false;
+	case MARIO_STATE_RELEASE_JUMP: //prob here
+		//if (vy < 0) vy += MARIO_JUMP_SPEED_Y / 2;
+		//isJumping = false; 
 		break;
 
-	case MARIO_STATE_SIT:
+	case MARIO_STATE_SIT:	//set state ngồi ở Keyboard
+		if (isAtMaxSpeed) return;	//0 cho ngồi
+		if (isRunning) return;
+		if (isWalking)
+			return;
+
 		if (isOnPlatform && level != MARIO_LEVEL_SMALL)
 		{
-			state = MARIO_STATE_IDLE;
 			isSitting = true;
 			vx = 0; vy = 0.0f;
 			y += MARIO_SIT_HEIGHT_ADJUST;
@@ -1235,28 +1243,33 @@ void CMario::SetState(int state)
 		if (isSitting)
 		{
 			isSitting = false;
-			state = MARIO_STATE_IDLE;
 			y -= MARIO_SIT_HEIGHT_ADJUST;
 		}
 		break;
 
-	case MARIO_RACOON_STATE_ATTACK: //tạo đuôi ở đây
+	case MARIO_RACOON_STATE_ATTACK:
 	{
-		if (isSitting) break;
+		if (isAttacking) break;
 		attack_start = GetTickCount64();
 		isAttacking = true;
 		isKicking = false;
 		isSitting = false;
-		tail = new CTail(x, y, MARIO_BIG_BBOX_WIDTH, nx);
-		CPlayScene* current_scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
-		current_scene->AddObjectToScene(tail);
-		DebugOut(L"Tail was created successfully!\n");
 	}
 	break;
 
 	case MARIO_STATE_IDLE:
 		ax = 0.0f;
 		vx = 0.0f;
+		isWalking = false;
+		isRunning = false;
+		//isSitting = false;
+		isFlying = false;
+		isLanding = false;
+		isKicking = false;
+		isAttacking = false;
+		isJumping = false;
+		isAtMaxSpeed = false;
+
 		break;
 
 	case MARIO_STATE_EVOLVING:
@@ -1305,7 +1318,6 @@ void CMario::GetBoundingBox(float& left, float& top, float& right, float& bottom
 		right = left + MARIO_SMALL_BBOX_WIDTH;
 		bottom = top + MARIO_SMALL_BBOX_HEIGHT;
 	}
-	//DebugOutTitle(L"y, l, t, r, b: %f, %f, %f, %f, %f, %f", y, left, top, right, bottom);
 }
 
 void CMario::SetLevel(int l)
@@ -1375,14 +1387,6 @@ void CMario::SpawnEffect(LPCOLLISIONEVENT e, LPGAMEOBJECT obj, int eff_type)
 	CEffectCollision* eff_col = new CEffectCollision(x, y, GetTickCount64(), eff_type);
 	CPlayScene* current_scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
 	current_scene->AddObjectToScene(eff_col);
-}
-
-void CMario::UpdateTailPosition(CTail* tail)
-{
-	if (this->nx > 0)
-		tail->SetPosition(this->x - MARIO_BIG_BBOX_WIDTH / 2, y + MARIO_BIG_BBOX_HEIGHT / 6 + 1.5f);
-	else
-		tail->SetPosition(this->x + MARIO_BIG_BBOX_WIDTH / 2, y + MARIO_BIG_BBOX_HEIGHT / 6 + 1.5f);
 }
 
 int CMario::KoopaStateThatAllowToHold(CKoopa* koopa)

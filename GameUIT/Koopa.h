@@ -77,7 +77,7 @@
 class CKoopa : public CGameObject
 {
 protected:
-	int type, type_initial;
+	int type;
 
 	float ax;
 	float ay;

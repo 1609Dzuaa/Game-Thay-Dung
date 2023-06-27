@@ -125,6 +125,8 @@ void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 void CGoomba::UpdateGoombaState()
 {
+	//chú ý reset bấm giờ khi đang ngưng đọng
+	//check if(stopwatch) lúc chết
 	if ((state == GOOMBA_STATE_DIE) && (GetTickCount64() - die_start > GOOMBA_DIE_TIMEOUT))
 	{
 		isDeleted = true;

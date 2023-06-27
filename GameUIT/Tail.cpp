@@ -8,11 +8,52 @@
 #include "Brick.h"
 #include "Mario.h"
 
+CTail::CTail(float Mario_posX, float Mario_posY, int MARIO_BBOX_WIDTH, int nx, float mario_vx) :CGhostObject(x, y)
+{
+	if (nx > 0)
+	{
+		if (mario_vx > 0) //đang di chuyển
+		{
+			this->x = Mario_posX + MARIO_BBOX_WIDTH / 2 - 3.0f;
+			this->vx = TAIL_SPEED_X_MARIO_MOVE;
+			DebugOut(L"Nx>0, vx, Vx: %f, %f\n", vx, mario_vx);
+		}
+		else
+		{
+			this->x = Mario_posX - MARIO_BBOX_WIDTH / 2 - 8.0f;
+			this->vx = TAIL_SPEED_X_MARIO_IDLE;
+			DebugOut(L"Nx>0, vx, Vx: %f, %f\n", vx, mario_vx);
+		}
+	}
+	else
+	{
+		if (mario_vx < 0)
+		{
+			this->x = Mario_posX + MARIO_BBOX_WIDTH / 2 + 3.0f;
+			this->vx = -TAIL_SPEED_X_MARIO_MOVE;
+			DebugOut(L"Nx<0, vx, Vx: %f, %f\n", vx, mario_vx);
+		}
+		else
+		{
+			this->x = Mario_posX + MARIO_BBOX_WIDTH / 2 + 8.0f;
+			this->vx = -TAIL_SPEED_X_MARIO_IDLE;
+			DebugOut(L"Nx<0, vx, Vx: %f, %f\n", vx, mario_vx);
+		}
+	}
+	this->y = Mario_posY + 5.0f;
+
+};
+
 void CTail::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	CCollision::GetInstance()->Process(this, dt, coObjects);
-	//DebugOut(L"vx: %f\n", vx);
 }
+
+/*void CTail::UpdateTailPos()
+{
+	this->x = obj_mario->GetX() + 14 / 2 + 8.0f;
+	this->y = obj_mario->GetY() + 5.0f;
+}*/
 
 void CTail::Render()
 {
@@ -75,7 +116,7 @@ void CTail::OnCollisionWithFlower(LPCOLLISIONEVENT e)
 	flower->SetState(FLOWER_STATE_DIE);
 	mario->SpawnScore(e->obj);
 	mario->SpawnEffect(e, this, EFF_COL_TYPE_NORMAL);
-	DebugOut(L"Tail Collided\n");
+	//DebugOut(L"Tail Collided\n");
 }
 
 void CTail::OnCollisionWithGoldBrick(LPCOLLISIONEVENT e)

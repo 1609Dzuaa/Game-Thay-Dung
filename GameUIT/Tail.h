@@ -5,28 +5,17 @@
 #define TAIL_BBOX_WIDTH	10
 #define TAIL_BBOX_HEIGHT 6
 
-#define TAIL_SPEED_X 0.075f 
+#define TAIL_SPEED_X_MARIO_IDLE 0.076f 
+#define TAIL_SPEED_X_MARIO_MOVE	0.09f
+//đang move thì cho vận tốc khác để bắt kịp vị trí ?
+//currently use this way
 
 class CTail : public CGhostObject 
 {
-	//Tạm để đây làm ôm trc
 public:
-	CTail(float Mario_posX, float Mario_posY, int MARIO_BBOX_WIDTH, int nx) :CGhostObject(x, y) 
-	{
-		if (nx > 0)
-		{
-			this->x = Mario_posX - MARIO_BBOX_WIDTH / 2 - 8.0f;
-			this->vx = TAIL_SPEED_X;
-		}
-		else
-		{
-			this->x = Mario_posX + MARIO_BBOX_WIDTH / 2 + 8.0f;
-			this->vx = -TAIL_SPEED_X;
-		}
-		this->y = Mario_posY + 5.0f;
-		
-	};
+	CTail(float Mario_posX, float Mario_posY, int MARIO_BBOX_WIDTH, int nx, float mario_vx);
 	void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
+	//void UpdateTailPos();
 	void Render();
 	void GetBoundingBox(float& left, float& top, float& right, float& bottom);
 	void OnNoCollision(DWORD dt);

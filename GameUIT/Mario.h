@@ -13,13 +13,14 @@
 #define MARIO_WALKING_SPEED		0.12f
 #define MARIO_RUNNING_SPEED		0.24f
 
-#define MARIO_ACCEL_WALK_X	0.00016f
-#define MARIO_ACCEL_RUN_X	0.00018f
+#define MARIO_ACCEL_WALK_X	0.0001f
+#define MARIO_ACCEL_RUN_X	0.00012f
 
 #define MARIO_JUMP_SPEED_Y		0.5f
 #define MARIO_JUMP_RUN_SPEED_Y	0.6f
 
 #define MARIO_GRAVITY			0.0018f
+#define MARIO_LANDING_SPEED	-0.11f
 
 #define MARIO_JUMP_DEFLECT_SPEED  0.4f
 
@@ -222,7 +223,7 @@
 
 #define MARIO_UNTOUCHABLE_TIME 2500
 #define MARIO_KICK_TIME 150
-#define MARIO_RACOON_ATTACK_TIME 350
+#define MARIO_RACOON_ATTACK_TIME 370
 #define MARIO_EVOLVE_TIME 750
 #define UNTOUCH_DRAW_TIME 100
 
@@ -235,6 +236,8 @@
 class CMario : public CGameObject
 {
 	BOOLEAN isSitting;
+	BOOLEAN isWalking;
+	BOOLEAN isRunning;
 	BOOLEAN isKicking;
 	BOOLEAN isAttacking;
 	BOOLEAN isJumping;
@@ -250,6 +253,7 @@ class CMario : public CGameObject
 	BOOLEAN isAllowToHoldKoopa; //Allow to hold rồi mới holding
 	BOOLEAN isHolding; //A way to handle holding: 
 	BOOLEAN isHitSwitch;
+	BOOLEAN isInitialized;
 	CKoopa* ghost_koopa; //khi đang giữ Koopa, coi nó như item của mình, đang bật khiên, đụng là chết
 	//về cơ bản cũng khá giống cái đuôi, cũng cần đc vẽ bbox
 	float maxVx;
@@ -337,12 +341,14 @@ public:
 	void SetIsLanding(bool para) { this->isLanding = para; }
 	void SpawnScore(LPGAMEOBJECT obj);
 	void SpawnEffect(LPCOLLISIONEVENT e, LPGAMEOBJECT obj, int eff_type); //nên cho vào class EffectCol
-	void UpdateTailPosition(CTail* tail);
 	BOOLEAN GetStopWatch() { return evolve_start != 0 || this->state == MARIO_STATE_DIE; }
 	BOOLEAN GetIsAttacking() { return this->isAttacking; }
 	BOOLEAN GetIsHolding() { return this->isHolding; }
 	BOOLEAN GetIsHitSwitch() { return this->isHitSwitch; }
+	BOOLEAN GetIsSitting() { return this->isSitting; }
+	BOOLEAN GetIsOnPlatform() { return this->isOnPlatform; }
 	void SetHoldKoopa(BOOLEAN para) { this->isAllowToHoldKoopa = para; }
 	void SetIsHoldingKoopa(BOOLEAN para) { this->isHolding = para; }
-	void SetIsHitSwitch(BOOLEAN para) { this->isHitSwitch = true; }
+	void SetIsHitSwitch(BOOLEAN para) { this->isHitSwitch = para; }
+	void SetIsRunning(BOOLEAN para) { this->isRunning = para; }
 };

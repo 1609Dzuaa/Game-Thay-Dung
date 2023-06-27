@@ -147,12 +147,12 @@ void CKoopa::HandleCollisionWithBlockingObjects(LPCOLLISIONEVENT e)
 			if (vx > 0)
 			{
 				ghost_head->SetSpeed(this->vx, 0);
-				ghost_head->SetPosition(x + KOOPA_BBOX_WIDTH / 2 + 2.5f, y);
+				ghost_head->SetPosition(x + KOOPA_BBOX_WIDTH / 2 + 5.0f, y);
 			}
 			else
 			{
 				ghost_head->SetSpeed(this->vx, 0);
-				ghost_head->SetPosition(x - KOOPA_BBOX_WIDTH / 2 - 2.5f, y);
+				ghost_head->SetPosition(x - KOOPA_BBOX_WIDTH / 2 - 5.0f, y);
 			}
 		}
 	}
@@ -226,9 +226,9 @@ void CKoopa::UpdateKoopaState()
 				this->vx = -vx;
 				ghost_head->SetSpeed(vx, 0);
 				if (this->vx < 0)
-					ghost_head->SetPosition(x - KOOPA_BBOX_WIDTH / 2 - 1.5f, this->y);
+					ghost_head->SetPosition(x - KOOPA_BBOX_WIDTH / 2 - 5.0f, this->y);
 				else
-					ghost_head->SetPosition(x + KOOPA_BBOX_WIDTH / 2 + 1.5f, this->y);
+					ghost_head->SetPosition(x + KOOPA_BBOX_WIDTH / 2 + 5.0f, this->y);
 			}
 			//Update lại vị trí cái đầu nếu đi quá FALL_ZONE
 		}
@@ -322,9 +322,9 @@ void CKoopa::SetState(int state)
 			if (ghost_head != NULL)
 			{
 				if (vx < 0)
-					ghost_head->SetPosition(x - KOOPA_BBOX_WIDTH / 2 - 2.5f, y); //cập nhật vị trí cho cái đầu để tránh nó đi quá xa
+					ghost_head->SetPosition(x - KOOPA_BBOX_WIDTH / 2 - 5.0f, y); //cập nhật vị trí cho cái đầu để tránh nó đi quá xa
 				else 
-					ghost_head->SetPosition(x + KOOPA_BBOX_WIDTH / 2 + 2.5f, y); //cập nhật vị trí cho cái đầu để tránh nó đi quá xa
+					ghost_head->SetPosition(x + KOOPA_BBOX_WIDTH / 2 + 5.0f, y); //cập nhật vị trí cho cái đầu để tránh nó đi quá xa
 			}
 		//y -= (KOOPA_BBOX_HEIGHT - KOOPA_IN_SHELL_BBOX_HEIGHT) / 2;
 		break;
@@ -381,7 +381,7 @@ void CKoopa::SetState(int state)
 				vx = -KOOPA_WALKING_SPEED;
 				if (type == RED_KOOPA && ghost_head != NULL)
 				{
-					ghost_head->SetPosition(x - KOOPA_BBOX_WIDTH / 2 - 2.5f, y);
+					ghost_head->SetPosition(x - KOOPA_BBOX_WIDTH / 2 - 5.0f, y);
 					ghost_head->SetSpeed(this->vx, 0);
 				}
 			}
@@ -391,7 +391,7 @@ void CKoopa::SetState(int state)
 				if (type == RED_KOOPA && ghost_head != NULL)
 				{
 					ghost_head->SetSpeed(this->vx, 0);
-					ghost_head->SetPosition(x + KOOPA_BBOX_WIDTH / 2 + 2.5f, y);
+					ghost_head->SetPosition(x + KOOPA_BBOX_WIDTH / 2 + 5.0f, y);
 				}
 			}
 		}
