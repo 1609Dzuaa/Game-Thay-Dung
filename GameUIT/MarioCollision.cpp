@@ -41,6 +41,7 @@ void CMario::OnCollisionWithBlockingObjects(LPCOLLISIONEVENT e)
 				if (e->ny != 0)
 				{
 					vy = 0;
+					y += 2.0f;
 					if (e->ny > 0)
 					{
 						//Nếu là viên chứa công tắc và state chưa bị hit
@@ -82,6 +83,7 @@ void CMario::OnCollisionWithBlockingObjects(LPCOLLISIONEVENT e)
 		else if (e->ny != 0 && e->obj->IsBlocking())
 		{
 			vy = 0;
+			y += 2.0f;
 			if (e->ny < 0)
 			{
 				isOnPlatform = true;
@@ -95,9 +97,10 @@ void CMario::OnCollisionWithBlockingObjects(LPCOLLISIONEVENT e)
 	} //Nếu 0 phải Brick (Tube, quesbrick, ...)
 	else if (e->ny != 0 && e->obj->IsBlocking())
 	{
-		vy = 0;
 		if (e->ny < 0)
 		{
+			y += 1.5f;
+			vy = 0;
 			isOnPlatform = true;
 			CountJumpOnEnemies = 0; //Chạm đất thì reset số lần nhảy
 		}

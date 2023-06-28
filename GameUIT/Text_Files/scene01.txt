@@ -106,7 +106,44 @@ Text_Files\EffectCollision.txt
 6	1296	240	16	15	8	0	0	0
 
 #Pink platform - 4 (SKY)
-6	1280	32	16	15	4	0	0	0
+6	1280	96	16	15	4	0	0	0
+
+#3 Coin Above Pink Plat
+4	1300	47
+4	1315	47
+4	1330	47
+
+#GBrick contains Green Mushroom
+1	1425	65	1	0
+
+#Smile Cloud (SKY)
+6	1391	127	16	15	4	0	0	0
+
+#2 Higher Coin
+4	1455	55
+4	1470	55
+
+#4 Lower Coin
+4	1515	65
+4	1530	65
+4	1545	65
+4	1560	65
+
+#4 Higher Coin
+4	1590	55
+4	1605	55
+4	1620	55
+4	1635	55
+
+#5 Zig Zag Coin
+4	1665	75
+4	1700	55
+4	1725	65
+4	1755	40
+4	1775	65
+
+#Long Smile Cloud (SKY)
+6	1472	111	16	15	12	0	0	0
 
 #Stripe Brick
 1	1504	246	2	0
@@ -171,10 +208,10 @@ Text_Files\EffectCollision.txt
 1	2080	304	1	0
 
 #Pink Plat
-6	2132	288	16	15	3	0	0	0
+6	2128	288	16	15	3	0	0	0
 
 #Green Plat
-6	2162	198	16	15	3	0	0	0
+6	2158	190	16	15	3	0	0	0
 
 #Normal Ground 4 - END vừa + 1 để có gì chạy đến vô cực khi end game
 5	2240	336	16	15	37	400001	400002	400003

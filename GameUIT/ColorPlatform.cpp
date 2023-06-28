@@ -1,5 +1,6 @@
 #include "ColorPlatform.h"
 #include "Textures.h"
+#include "Camera.h"
 #include "debug.h"
 
 void CColorPlatform::Render()
@@ -22,7 +23,7 @@ void CColorPlatform::Render()
 			s->Get(this->spriteIdEnd)->Draw(xx, y);
 		}
 	}
-	//RenderBoundingBox();
+	RenderBoundingBox();
 	
 }
 
@@ -51,7 +52,8 @@ void CColorPlatform::RenderBoundingBox()
 	rect.bottom = (int)b - (int)t;
 
 	float cx, cy;
-	CGame::GetInstance()->GetCamPos(cx, cy);
+	cx = CCamera::GetInstance()->GetCamPos().x;
+	cy = CCamera::GetInstance()->GetCamPos().y;
 
 	float xx = x - this->cellWidth / 2 + rect.right / 2;
 
