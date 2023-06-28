@@ -13,6 +13,7 @@
 //Red Koopa khi đặt trên các vật thể: ống, quesbrick, gạch vàng, colorplat lẫn đi bộ thì đều đổi dấu
 //Đi bộ 0 rơi xuống vực
 //Red Koopa lâu lâu bị rớt xuống color plat, vụt Green Koopa vẫn còn vx trên color plat
+//Vẫn còn bug red koopa
 
 #pragma endregion 
 

@@ -36,7 +36,7 @@ void CMario::OnCollisionWithBlockingObjects(LPCOLLISIONEVENT e)
 		CBrick* br = dynamic_cast<CBrick*>(e->obj);
 		if (br->GetType() == GOLD_BRICK)
 		{
-			if (br->GetState() != GOLD_BRICK_STATE_TURN_TO_COIN)
+			if (br->GetState() != GBRICK_STATE_TURN_TO_COIN)
 			{
 				if (e->ny != 0)
 				{
@@ -45,13 +45,13 @@ void CMario::OnCollisionWithBlockingObjects(LPCOLLISIONEVENT e)
 					if (e->ny > 0)
 					{
 						//Nếu là viên chứa công tắc và state chưa bị hit
-						if (br->GetHasSwitch() && br->GetState() != GOLD_BRICK_HAS_SW_STATE_IS_HITTED)
+						if (br->GetItemType() != NO_ITEM && br->GetState() != GBRICK_HAS_ITEM_STATE_IS_HITTED)
 						{
 							br->SetSpeed(0, -GOLD_BRICK_BOUNCING_SPEED);
 							br->SetHitted(true);
-							br->SetState(GOLD_BRICK_HAS_SW_STATE_IS_HITTED);
+							br->SetState(GBRICK_HAS_ITEM_STATE_IS_HITTED);
 						}
-						else if (!br->GetHasSwitch()) //nếu 0 có công tắc
+						else if (br->GetItemType() == NO_ITEM) //nếu 0 có công tắc
 						{
 							if (level > MARIO_LEVEL_SMALL) //Nếu level > small thì phá viên gạch luôn
 								br->Delete();
@@ -436,14 +436,25 @@ void CMario::OnCollisionWithQuesBrick(LPCOLLISIONEVENT e)
 void CMario::OnCollisionWithMushroom(LPCOLLISIONEVENT e)
 {
 	CMushroom* mr = dynamic_cast<CMushroom*>(e->obj);
-	if (mr->GetState() != MUSHROOM_STATE_IN_THE_BRICK)
+	if (mr->GetType() == RED_MUSHROOM)
 	{
-		SpawnScore(mr);
-		mr->Delete();
-		y -= (MARIO_BIG_BBOX_HEIGHT - MARIO_SMALL_BBOX_HEIGHT) / 2; //Giảm y để tránh tình trạng "Sink" dưới nền
-		this->isEvolveForward = true;
-		this->SetState(MARIO_STATE_EVOLVING);
-		isAteItem = true;
+		if (mr->GetState() != MUSHROOM_STATE_IN_THE_BRICK)
+		{
+			SpawnScore(mr);
+			mr->Delete();
+			y -= (MARIO_BIG_BBOX_HEIGHT - MARIO_SMALL_BBOX_HEIGHT) / 2; //Giảm y để tránh tình trạng "Sink" dưới nền
+			this->isEvolveForward = true;
+			this->SetState(MARIO_STATE_EVOLVING);
+			isAteItem = true;
+		}
+	}
+	else
+	{
+		if (mr->GetState() != MUSHROOM_STATE_IN_THE_BRICK)
+		{
+			SpawnScore(mr); //Spawn Level Up
+			mr->Delete();
+		}
 	}
 	//Da Fuq Mario blocking Mushroom ??
 }
@@ -525,6 +536,7 @@ void CMario::OnCollisionWithFireBullet(LPCOLLISIONEVENT e)
 
 void CMario::OnCollisionWithSwitch(LPCOLLISIONEVENT e)
 {
+	if(e->ny < 0)
 	if (e->obj->GetState() == SWITCH_STATE_NORMAL)
 	{
 		e->obj->SetState(SWITCH_STATE_HITTED);

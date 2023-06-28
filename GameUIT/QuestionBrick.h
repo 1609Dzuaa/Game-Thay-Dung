@@ -49,7 +49,7 @@ public:
 			this->type = HAS_COIN;
 		else 
 		{
-			mr = new CMushroom(x, y, y - MUSHROOM_BBOX_HEIGHT + 0.2f);
+			mr = new CMushroom(x, y, y - MUSHROOM_BBOX_HEIGHT + 0.2f, RED_MUSHROOM);
 			current_scene->AddObjectToScene(mr);
 			//Tạo sẵn nấm và thêm nó vào scene, mục đích để vẽ "đè" khi nấm đang chui lên
 			//Careful: How 'bout mario level > small & this mr had never been used ?!

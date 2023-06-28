@@ -15,19 +15,24 @@
 
 #define MUSHROOM_RISEN_UP_TIME 300
 
-#define ID_ANI_MUSHROOM_IN_BRICK 9000
-#define ID_ANI_MUSHROOM_OUT_BRICK 9001
+#define ID_ANI_GREEN_MUSHROOM 9000
+#define ID_ANI_RED_MUSHROOM 9001
+
+#define RED_MUSHROOM	1
+#define GREEN_MUSHROOM	2
 
 class CMushroom : public CGameObject 
 {
 	//2 loại Nấm: Đỏ và Xanh
 	float ax, ay, brickminY;
+	int type;
 public:
-	CMushroom(float x, float y, float brickmin_Y) : CGameObject(x, y)
+	CMushroom(float x, float y, float brickmin_Y, int type) : CGameObject(x, y)
 	{
 		this->vx = 0;
 		this->ax = 0;
 		this->ay = MUSHROOM_GRAVITY;
+		this->type = type;
 		this->vy = 0;
 		brickminY = brickmin_Y;
 		state = MUSHROOM_STATE_IN_THE_BRICK; //Ban đầu sẽ ở trong cục gạch -> không vẽ
@@ -49,6 +54,8 @@ public:
 	void HandleCollisionWithColorPlatform(LPCOLLISIONEVENT e, CColorPlatform* color_platf);
 
 	void GetBoundingBox(float& l, float& t, float& r, float& b);
+
+	int GetType() { return this->type; }
 
 	void SetBrickMinY(float para) { this->brickminY = para; }
 

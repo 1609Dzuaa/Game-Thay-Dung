@@ -1,7 +1,8 @@
 ﻿#include <iostream>
 #include <fstream>
-#include "AssetIDs.h"
+#include <cctype>
 
+#include "AssetIDs.h"
 #include "PlayScene.h"
 #include "Utils.h"
 #include "Textures.h"
@@ -165,8 +166,8 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 	case OBJECT_TYPE_BRICK: 
 	{
 		int Brick_type = atoi(tokens[3].c_str());
-		int has_Switch = atoi(tokens[4].c_str());
-		obj = new CBrick(x, y, Brick_type, has_Switch);
+		int Item_type = atoi(tokens[4].c_str());
+		obj = new CBrick(x, y, Brick_type, Item_type);
 
 		break;
 	}

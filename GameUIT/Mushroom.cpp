@@ -8,7 +8,12 @@ void CMushroom::Render()
 {
 	CAnimations* animations = CAnimations::GetInstance();
 	if (state != MUSHROOM_STATE_IN_THE_BRICK)
-		animations->Get(ID_ANI_MUSHROOM_OUT_BRICK)->Render(x, y, true);
+	{
+		if(type == RED_MUSHROOM)
+			animations->Get(ID_ANI_RED_MUSHROOM)->Render(x, y, true);
+		else 
+			animations->Get(ID_ANI_GREEN_MUSHROOM)->Render(x, y, true);
+	}
 	//Out of brick & rise up share the same animation
 }
 

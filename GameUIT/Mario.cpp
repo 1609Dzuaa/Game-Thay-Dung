@@ -227,8 +227,18 @@ CEffectScore* CMario::ClassifyScore(LPGAMEOBJECT obj, CEffectScore* eff_scr)
 		}
 	}
 	else
-		eff_scr = new CEffectScore(obj->GetX(), obj->GetY() - 15.0f, obj->GetY() - 45.0f, ITEM_SCORE);
-
+	{
+		if (dynamic_cast<CMushroom*>(obj))
+		{
+			CMushroom* mr = dynamic_cast<CMushroom*>(obj);
+			if(mr->GetType() == RED_MUSHROOM)
+				eff_scr = new CEffectScore(obj->GetX(), obj->GetY() - 15.0f, obj->GetY() - 45.0f, ITEM_SCORE);
+			else
+				eff_scr = new CEffectScore(obj->GetX(), obj->GetY() - 15.0f, obj->GetY() - 45.0f, ITEM_SCORE_LV_UP);
+		}
+		else
+			eff_scr = new CEffectScore(obj->GetX(), obj->GetY() - 15.0f, obj->GetY() - 45.0f, ITEM_SCORE);
+	}
 	return eff_scr;
 	//Hàm sàng lọc điểm
 }

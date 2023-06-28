@@ -4,12 +4,37 @@
 #include "Switch.h"
 #include "debug.h"
 
+CBrick::CBrick(float x, float y, int type, int item_type) : CGameObject(x, y)
+{
+	this->type = type;
+	this->item_type = item_type;
+	if (this->item_type == MUSHROOM)
+	{
+		_mushroom = new CMushroom(x, y, y - BRICK_BBOX_HEIGHT, GREEN_MUSHROOM);
+		CPlayScene* current_scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
+		current_scene->AddObjectToScene(_mushroom);
+	}
+	else
+		_mushroom = NULL;
+	this->_switch = NULL;
+	ay = GOLD_BRICK_GRAVITY;
+	old_pos = this->y;
+	min_pos = this->y - 10.0f;
+	isBeingHitted = false;
+	isTurnToCoin = false;
+	hit_start = -1;
+	gold_coin_start = -1;
+	eff = NULL;
+	_switch = NULL;
+}
+
 void CBrick::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	UpdatePosition(dt);
 	UpdateGoldCoin();
 
-	if (state == GOLD_BRICK_HAS_SW_STATE_IS_HITTED && !IsDeleted() && _switch == NULL)
+	//Chỉ GBrick chứa Switch thì mới cho khói
+	if (state == GBRICK_HAS_ITEM_STATE_IS_HITTED && !IsDeleted() && _switch == NULL && item_type == SWITCH)
 	{
 		eff = new CEffectCollision(x, min_pos - 5.0f, hit_start, EFF_COL_TYPE_SMOKE_EVOLVE);
 		CPlayScene* current_scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
@@ -31,8 +56,10 @@ void CBrick::UpdatePosition(DWORD dt)
 	if (y > old_pos)
 	{
 		//if it has switch, got hitted && at max pos => spawn switch
-		if (state == GOLD_BRICK_HAS_SW_STATE_IS_HITTED && _switch == NULL)
+		if (state == GBRICK_HAS_ITEM_STATE_IS_HITTED && _switch != NULL)
 			SpawnSwitch();
+		else if (state == GBRICK_HAS_ITEM_STATE_IS_HITTED && item_type == MUSHROOM)
+			SpawnMushroom();
 		y = old_pos;
 		vy = 0;
 	}
@@ -43,16 +70,16 @@ void CBrick::UpdateGoldCoin()
 	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
 
 	//ĐK trông khá là cồng kềnh, giải thích kẻo lại quên:
-	//nếu Mario đã bấm công tắc và viên gạch vàng đó 0 có công tắc 
+	//nếu Mario đã bấm công tắc và viên gạch vàng đó 0 có Item 
 	//cũng như chưa bị biến thành vàng và trạng thái khác trạng thái bthg
 	//thì mới biến nó thành vàng
 	//Tại sao có đk cuối ? -> để tránh khi state là normal (hiển nhiên isTurnToCoin = false) dẫn đến
 	//nó thoả đk và tiếp tục giữ state là turn to coin mãi
-	if (mario->GetIsHitSwitch() && !this->hasSwitch && type == GOLD_BRICK && !isTurnToCoin && state != GOLD_BRICK_STATE_NORMAL)
-		SetState(GOLD_BRICK_STATE_TURN_TO_COIN);	
+	if (mario->GetIsHitSwitch() && item_type == NO_ITEM && type == GOLD_BRICK && !isTurnToCoin && state != GBRICK_STATE_NORMAL)
+		SetState(GBRICK_STATE_TURN_TO_COIN);	
 
 	if (GetTickCount64() - gold_coin_start >= GOLD_COIN_TIME_OUT && isTurnToCoin)
-		SetState(GOLD_BRICK_STATE_NORMAL);
+		SetState(GBRICK_STATE_NORMAL);
 }
 
 void CBrick::OnNoCollision(DWORD dt)
@@ -67,9 +94,9 @@ void CBrick::Render()
 	CAnimations* animations = CAnimations::GetInstance();
 	if (type == STRIPE_BRICK)
 		animations->Get(ID_ANI_STRIPE_BRICK)->Render(x, y, false);
-	else if(state == GOLD_BRICK_HAS_SW_STATE_IS_HITTED)
+	else if(state == GBRICK_HAS_ITEM_STATE_IS_HITTED)
 		animations->Get(ID_ANI_QUESTION_BRICK_HITTED)->Render(x, y, false);
-	else if(state == GOLD_BRICK_STATE_TURN_TO_COIN)
+	else if(state == GBRICK_STATE_TURN_TO_COIN)
 		animations->Get(ID_ANI_GOLD_COIN)->Render(x, y, false);
 	else 
 		animations->Get(ID_ANI_GOLD_BRICK)->Render(x, y, false);
@@ -88,17 +115,17 @@ void CBrick::SetState(int state)
 {
 	switch (state)
 	{
-	case GOLD_BRICK_HAS_SW_STATE_IS_HITTED:
+	case GBRICK_HAS_ITEM_STATE_IS_HITTED:
 		hit_start = GetTickCount64();
 
 		break;
-	case GOLD_BRICK_STATE_TURN_TO_COIN:
+	case GBRICK_STATE_TURN_TO_COIN:
 		gold_coin_start = GetTickCount64();
 		isTurnToCoin = true;
 
 		break;
 
-	case GOLD_BRICK_STATE_NORMAL:
+	case GBRICK_STATE_NORMAL:
 		gold_coin_start = 0;
 		isTurnToCoin = false;
 
@@ -113,4 +140,9 @@ void CBrick::SpawnSwitch()
 	CPlayScene* current_scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
 	current_scene->AddObjectToScene(_switch);
 	hit_start = 0;
+}
+
+void CBrick::SpawnMushroom()
+{
+	this->_mushroom->SetState(MUSHROOM_STATE_RISE_UP);
 }

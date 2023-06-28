@@ -224,12 +224,6 @@
 #define MARIO_EVOLVE_TIME 750
 #define UNTOUCH_DRAW_TIME 100
 
-#define NORMAL_SCORE 10
-#define DOUBLE_SCORE 20
-#define QUADRA_SCORE 40
-#define DOUBLE_QUADRA_SCORE 80
-#define ITEM_SCORE 100 //Mushroom, Leaf
-
 class CMario : public CGameObject
 {
 	BOOLEAN isIdleing;

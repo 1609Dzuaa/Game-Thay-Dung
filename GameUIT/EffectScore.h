@@ -3,13 +3,12 @@
 
 #define EFFECT_SCORE_VELO_Y 0.03f
 
-#define ID_ANI_SCORE_EFFECT_100 10
-#define ID_ANI_SCORE_EFFECT_200 20
-#define ID_ANI_SCORE_EFFECT_400 40
-#define ID_ANI_SCORE_EFFECT_800 80
-#define ID_ANI_SCORE_EFFECT_1000 100
-
-
+#define NORMAL_SCORE 10
+#define DOUBLE_SCORE 20
+#define QUADRA_SCORE 40
+#define DOUBLE_QUADRA_SCORE 80
+#define ITEM_SCORE 100 //Mushroom, Leaf
+#define ITEM_SCORE_LV_UP	110
 
 class CEffectScore :public CEffect 
 {

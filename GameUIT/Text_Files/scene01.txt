@@ -25,7 +25,7 @@ Text_Files\EffectCollision.txt
 
 #How about adding object that "more collidable" sooner than other object ?
 #MARIO
-0	25	285
+0	2325	285
 
 #Red Koopa ON GOLD BRICK
 3	2080	278	3
@@ -114,7 +114,7 @@ Text_Files\EffectCollision.txt
 4	1330	47
 
 #GBrick contains Green Mushroom
-1	1425	65	1	0
+1	1425	65	1	10
 
 #Smile Cloud (SKY)
 6	1391	127	16	15	4	0	0	0
@@ -182,7 +182,7 @@ Text_Files\EffectCollision.txt
 1	1968	288	1	0
 1	1984	288	1	0
 1	2000	288	1	0
-1	2016	288	1	1
+1	2016	288	1	5
 
 #5 Viên hàng giữa
 1	1952	304	1	0
@@ -225,6 +225,10 @@ Text_Files\EffectCollision.txt
 
 #Short tube NO FLOWER
 9	2304	313	0
+
+#Long Tube 
+5	2240	69	11	15	3	400016	400017	400018
+5	2241	81	10	15	3	400019	400020	400021		
 
 #Portal 
 #50	300	62	316	140	2
