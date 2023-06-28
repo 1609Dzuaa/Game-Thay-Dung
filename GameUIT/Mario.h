@@ -10,51 +10,48 @@
 
 #include "debug.h"
 
-#define MARIO_WALKING_SPEED		0.12f
+#define MARIO_WALKING_SPEED		0.18f
 #define MARIO_RUNNING_SPEED		0.24f
 
 #define MARIO_ACCEL_WALK_X	0.0001f
 #define MARIO_ACCEL_RUN_X	0.00012f
 
-#define MARIO_JUMP_SPEED_Y		0.5f
-#define MARIO_JUMP_RUN_SPEED_Y	0.6f
+#define MARIO_JUMP_SPEED_Y		0.7f
+#define MARIO_JUMP_RUN_SPEED_Y	0.8f
 
 #define MARIO_GRAVITY			0.0018f
-#define MARIO_LANDING_SPEED	-0.11f
+#define MARIO_LANDING_SPEED	-0.1f
 
 #define MARIO_JUMP_DEFLECT_SPEED  0.4f
 
 #define MARIO_STATE_DIE				-10
 #define MARIO_STATE_IDLE			0
-#define MARIO_STATE_WALKING_RIGHT	100
-#define MARIO_STATE_WALKING_LEFT	200
+//Nên chỉ có 1 state: trái hay phải sẽ dựa vào hướng vector nx:
+//#define MARIO_STATE_WALKING	100 START HERE
+#define MARIO_STATE_WALKING	100
 
-#define MARIO_STATE_KICKING_RIGHT	110
-#define MARIO_STATE_KICKING_LEFT	210
+#define MARIO_STATE_KICKING	200
 
-#define MARIO_STATE_JUMP			300
-#define MARIO_STATE_RELEASE_JUMP    301
+#define MARIO_STATE_JUMPING	300
+#define MARIO_STATE_RELEASE_JUMP	301
+#define MARIO_STATE_JUMPING_AT_MAX_SPEED 302
 
-#define MARIO_STATE_RUNNING_RIGHT	400
-#define MARIO_STATE_RUNNING_LEFT	500
+#define MARIO_STATE_RUNNING	400
 
-#define MARIO_STATE_RUNNING_AT_MAX_VX_RIGHT 401
-#define MARIO_STATE_RUNNING_AT_MAX_VX_LEFT 402
+#define MARIO_STATE_RUNNING_AT_MAX_VX 401
 
-#define MARIO_STATE_SIT				600
-#define MARIO_STATE_SIT_RELEASE		601
+#define MARIO_STATE_SIT	500
+#define MARIO_STATE_SIT_RELEASE	501
 
-#define MARIO_RACOON_STATE_ATTACK 700
-#define MARIO_RACOON_STATE_FALLING 710
+#define MARIO_RACOON_STATE_ATTACK 600
+#define MARIO_RACOON_STATE_FALLING 700
 
-#define MARIO_RACOON_STATE_LANDING 715
+#define MARIO_RACOON_STATE_LANDING 710
 #define MARIO_RACOON_STATE_FLYING 720
 
-#define MARIO_STATE_EVOLVING 725
+#define MARIO_STATE_EVOLVING 730
 
-#define MARIO_STATE_JUMP_AT_MAX_SPEED 730
-
-#define MARIO_STATE_HOLDING 735
+#define MARIO_STATE_HOLDING 740
 
 #pragma region ANIMATION_ID
 
@@ -235,6 +232,8 @@
 
 class CMario : public CGameObject
 {
+	BOOLEAN isIdleing;
+	BOOLEAN isFalling;
 	BOOLEAN isSitting;
 	BOOLEAN isWalking;
 	BOOLEAN isRunning;
@@ -351,4 +350,5 @@ public:
 	void SetIsHoldingKoopa(BOOLEAN para) { this->isHolding = para; }
 	void SetIsHitSwitch(BOOLEAN para) { this->isHitSwitch = para; }
 	void SetIsRunning(BOOLEAN para) { this->isRunning = para; }
+	void SetNx(int para) { this->nx = para; }
 };

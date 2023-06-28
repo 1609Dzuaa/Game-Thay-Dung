@@ -14,29 +14,38 @@ void CSampleKeyHandler::OnKeyDown(int KeyCode)
 	DebugOut(L"[INFO] KeyDown: %d\n", KeyCode);
 	switch (KeyCode)
 	{
+	case DIK_RIGHT:
+		mario->SetNx(1);
+		break;
+
+	case DIK_LEFT:
+		mario->SetNx(-1);
+		break;
+
 	case DIK_DOWN:
 		mario->SetState(MARIO_STATE_SIT);
 		break;
+
 	case DIK_Z: //Tạm cài nút Z vì nút A có lỗi ch fix đc
 		if (mario->GetIsAttacking()) break;
 		if (mario->GetLevel() == MARIO_LEVEL_RACOON)
 			mario->SetState(MARIO_RACOON_STATE_ATTACK);
-
 		break;
+
 	case DIK_S: //nếu là racoon mario thì bơm thêm vận tốc theo trục y để bay
 		if (mario->GetCanFly() && mario->GetLevel() == MARIO_LEVEL_RACOON)
-			mario->SetState(MARIO_STATE_JUMP_AT_MAX_SPEED); //Max speed + Racoon -> bay
+			mario->SetState(MARIO_STATE_JUMPING_AT_MAX_SPEED); //Max speed + Racoon -> bay
 		else if (!mario->GetIsOnPlatform() && mario->GetLevel() == MARIO_LEVEL_RACOON)
 		{
-			//need improve
+			//Nếu Racoon 0 ở trên nền mà còn bấm S thì bật state hạ cánh
 			mario->SetState(MARIO_RACOON_STATE_LANDING);
 		}
 		else if (mario->GetisAtMaxSpeed())
-			mario->SetState(MARIO_STATE_JUMP_AT_MAX_SPEED);
+			mario->SetState(MARIO_STATE_JUMPING_AT_MAX_SPEED);
 		else if (mario->GetIsAttacking())
 			mario->SetState(MARIO_RACOON_STATE_ATTACK);
 		else
-			mario->SetState(MARIO_STATE_JUMP);
+			mario->SetState(MARIO_STATE_JUMPING);
 		break;
 		//case DIK_Z:
 			//if (mario->GetState() == MARIO_RACOON_STATE_ATTACK) break;
@@ -47,9 +56,11 @@ void CSampleKeyHandler::OnKeyDown(int KeyCode)
 	case DIK_1:
 		mario->SetLevel(MARIO_LEVEL_SMALL);
 		break;
+
 	case DIK_2:
 		mario->SetLevel(MARIO_LEVEL_BIG);
 		break;
+
 	case DIK_3:
 		mario->SetLevel(MARIO_LEVEL_RACOON);
 		break;
@@ -93,22 +104,33 @@ void CSampleKeyHandler::KeyState(BYTE* states)
 		if (game->IsKeyDown(DIK_A))
 		{
 			if (mario->GetIsOnPlatform())
-				mario->SetState(MARIO_STATE_RUNNING_RIGHT);
+				mario->SetState(MARIO_STATE_RUNNING);
 			mario->SetHoldKoopa(true); //giữ A thì cho phép hold Koopa
 		}
 		else
-			mario->SetState(MARIO_STATE_WALKING_RIGHT);
+		{
+			mario->SetNx(1);
+			mario->SetState(MARIO_STATE_WALKING);
+		}
 	}
 	else if (game->IsKeyDown(DIK_LEFT))
 	{
 		if (game->IsKeyDown(DIK_A))
 		{
 			if (mario->GetIsOnPlatform())
-				mario->SetState(MARIO_STATE_RUNNING_LEFT);
+				mario->SetState(MARIO_STATE_RUNNING);
 			mario->SetHoldKoopa(true); //giữ A thì cho phép hold Koopa
 		}
 		else
-			mario->SetState(MARIO_STATE_WALKING_LEFT);
+		{
+			mario->SetNx(-1);
+			mario->SetState(MARIO_STATE_WALKING);
+		}
+	}
+	else if (game->IsKeyDown(DIK_S))
+	{
+		//giữ S thì bơm vận tốc cho nó tới mức nào đó
+
 	}
 	//else if (game->IsKeyDown(DIK_DOWN))
 		//mario->SetState(MARIO_STATE_SIT);

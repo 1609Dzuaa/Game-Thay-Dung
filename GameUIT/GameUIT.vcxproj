@@ -192,6 +192,9 @@
     <ClCompile Include="Leaf.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Mario.cpp" />
+    <ClCompile Include="MarioCollision.cpp" />
+    <ClCompile Include="MarioRender.cpp" />
+    <ClCompile Include="MarioState.cpp" />
     <ClCompile Include="Mushroom.cpp" />
     <ClCompile Include="Platform.cpp" />
     <ClCompile Include="PlayScene.cpp" />
