@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "Game.h"
 #include "Textures.h"
 #include "Scene.h"
@@ -8,19 +8,18 @@
 #include "Goomba.h"
 #include <string>
 #include "GameMap.h"
-//#include "Koopas.h"
-
 
 class CPlayScene : public CScene
 {
 protected:
 	// A play scene has to have player, right? 
 	LPGAMEOBJECT player;
-	CMap* map = NULL;
+	CMap* map = nullptr;
+	CMap* underworld_map = nullptr;
 
 	vector<LPGAMEOBJECT> objects;
 
-	void _ParseSection_MAP_MATRIX(string line);
+	void _ParseSection_MAP_MATRIX(string line, CMap* &map_para); //Tham chiếu tới con trỏ
 
 	void _ParseSection_SPRITES(string line);
 	void _ParseSection_ANIMATIONS(string line);
@@ -45,8 +44,6 @@ public:
 
 	static bool IsGameObjectDeleted(const LPGAMEOBJECT& o);
 	void AddObjectToScene(LPGAMEOBJECT game_object);
-	vector<LPGAMEOBJECT> GetObjectsVector() { return this->objects; }
 };
 
 typedef CPlayScene* LPPLAYSCENE;
-

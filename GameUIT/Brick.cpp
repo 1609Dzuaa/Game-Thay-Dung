@@ -34,12 +34,6 @@ void CBrick::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	UpdateGoldCoin();
 
 	//Chỉ GBrick chứa Switch thì mới cho khói
-	if (state == GBRICK_HAS_ITEM_STATE_IS_HITTED && !IsDeleted() && _switch == NULL && item_type == SWITCH)
-	{
-		eff = new CEffectCollision(x, min_pos - 5.0f, hit_start, EFF_COL_TYPE_SMOKE_EVOLVE);
-		CPlayScene* current_scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
-		current_scene->AddObjectToScene(eff);
-	}
 
 	CCollision::GetInstance()->Process(this, dt, coObjects);
 	//Gold brick lúc vỡ ra cũng bị ảnh hưởng bởi StopWatch
@@ -118,7 +112,6 @@ void CBrick::SetState(int state)
 	switch (state)
 	{
 	case GBRICK_HAS_ITEM_STATE_IS_HITTED:
-		hit_start = GetTickCount64(); //Dùng để đánh thgian spawn khói
 
 		break;
 	case GBRICK_STATE_TURN_TO_COIN:
@@ -126,22 +119,27 @@ void CBrick::SetState(int state)
 		isTurnToCoin = true;
 
 		break;
-
 	case GBRICK_STATE_NORMAL:
 		gold_coin_start = 0;
 		isTurnToCoin = false;
 
 		break;
 	}
+
 	CGameObject::SetState(state);
 }
 
 void CBrick::SpawnSwitch()
 {
-	this->_switch = new CSwitch(this->x, this->y - BRICK_BBOX_HEIGHT / 2 - 8.5f);
 	CPlayScene* current_scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
+
+	this->_switch = new CSwitch(this->x, this->y - BRICK_BBOX_HEIGHT / 2 - 8.5f);
 	current_scene->AddObjectToScene(_switch);
-	hit_start = 0;
+
+	hit_start = GetTickCount64(); //Dùng để đánh thgian spawn khói
+	eff = new CEffectCollision(x, this->y - BRICK_BBOX_HEIGHT / 2 - 8.5f, hit_start, EFF_COL_TYPE_SMOKE_EVOLVE);
+	current_scene->AddObjectToScene(eff);
+	//hit_start = 0;
 }
 
 void CBrick::SpawnMushroom()

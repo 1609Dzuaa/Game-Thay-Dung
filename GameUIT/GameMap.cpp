@@ -2,7 +2,7 @@
 #include "Utils.h"
 #include "Game.h"
 #include "debug.h"
-CMap::CMap(int Tileset_Id, int Map_Rows, int Map_Collums, int Tileset_Rows, int  Tileset_Collums, int num_sprites, int startX, int startY)
+CMap::CMap(int Tileset_Id, int Map_Rows, int Map_Collums, int Tileset_Rows, int  Tileset_Collums, int num_sprites)
 {
 	Texture_TileSet = CTextures::GetInstance()->Get(Tileset_Id);
 	this->MapRows = Map_Rows;
@@ -10,8 +10,6 @@ CMap::CMap(int Tileset_Id, int Map_Rows, int Map_Collums, int Tileset_Rows, int 
 	this->TilesetRows = Tileset_Rows;
 	this->TilesetCollums = Tileset_Collums;
 	this->NumberofSprites = num_sprites;
-	this->startX = startX;
-	this->startY = startY;
 	this->Cam = CCamera::GetInstance();
 	Map_Matrix = NULL;
 }

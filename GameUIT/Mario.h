@@ -350,12 +350,4 @@ public:
 	void SetIsHitSwitch(BOOLEAN para) { this->isHitSwitch = para; }
 	void SetIsRunning(BOOLEAN para) { this->isRunning = para; }
 	void SetNx(int para) { this->nx = para; }
-
-	BOOLEAN GetShakeUp() { return this->isShakeUp; }
-	ULONGLONG GetShakeUpTime() { return this->shakeUp_start; }
-	ULONGLONG GetShakeDownTime() { return this->shakeDown_start; }
-
-	void SetShakeUp(BOOLEAN para) { this->isShakeUp = para; }
-	void SetShakeUpTime(ULONGLONG para) { this->shakeUp_start = para; }
-	void SetShakeDownTime(ULONGLONG para) { this->shakeDown_start = para; }
 };

@@ -14,15 +14,13 @@ class CMap
 	//Số hàng, số cột của map cũng như số hàng và số cột của Tileset
 	int MapRows, MapCollums, TilesetRows, TilesetCollums;
 	int NumberofSprites; //Số lượng Sprites trong Tileset	
-	int startX;
-	int startY;
 	LPTEXTURE Texture_TileSet; //nguồn ảnh Tileset
 	vector<LPSPRITE> SpritesSplitted; //vector chứa từng Sprite được cắt ra từ nguồn ảnh Tileset
 	int** Map_Matrix;  //Ma trận map là con trỏ cấp 2
 	CCamera* Cam;
 public:
 	//Only render & update things in Camera
-	CMap(int TileSetID, int TotalRowsOfMap, int TotalColumnsOfMap, int TotalRowsOfTileSet, int  TotalColumnsOfTileSet, int TotalTiles, int startX, int startY);
+	CMap(int TileSetID, int TotalRowsOfMap, int TotalColumnsOfMap, int TotalRowsOfTileSet, int  TotalColumnsOfTileSet, int TotalTiles);
 	~CMap();
 	void ClipSpritesFromTileset(); //cắt từng Sprites từ Tileset
 	void Render();

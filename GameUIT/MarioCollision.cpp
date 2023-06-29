@@ -43,14 +43,14 @@ void CMario::OnCollisionWithBlockingObjects(LPCOLLISIONEVENT e)
 					vy = 0;
 					if (e->ny > 0)
 					{
-						//Nếu là viên chứa công tắc và state chưa bị hit
+						//Nếu là viên chứa Item và state chưa bị hit
 						if (br->GetItemType() != NO_ITEM && br->GetState() != GBRICK_HAS_ITEM_STATE_IS_HITTED)
 						{
 							br->SetSpeed(0, -GOLD_BRICK_BOUNCING_SPEED);
 							br->SetHitted(true);
 							br->SetState(GBRICK_HAS_ITEM_STATE_IS_HITTED);
 						}
-						else if (br->GetItemType() == NO_ITEM) //nếu 0 có công tắc
+						else if (br->GetItemType() == NO_ITEM) //nếu 0 có Item
 						{
 							if (level > MARIO_LEVEL_SMALL) //Nếu level > small thì phá viên gạch luôn
 								br->Delete();

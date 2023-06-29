@@ -1,6 +1,8 @@
 # list of object assets to load in this scene
 [MAP]
 Game_Maps\Map1_1_Full.txt
+#[UNDERWORLD]
+#Game_Maps\Underworld_Map1_1.txt
 [ASSETS]
 Text_Files\Mario.txt
 Text_Files\Brick.txt
@@ -25,7 +27,7 @@ Text_Files\EffectCollision.txt
 
 #How about adding object that "more collidable" sooner than other object ?
 #MARIO
-0	2200	285
+0	25	285
 
 #Red Koopa ON GOLD BRICK
 3	2080	278	3
@@ -189,7 +191,7 @@ Text_Files\EffectCollision.txt
 1	1968	304	1	0
 1	1984	304	1	0
 1	2000	304	1	0
-#1	2016	304	1	0
+1	2016	304	1	0
 
 #7 Viên hàng dưới
 1	1936	320	1	0
@@ -197,8 +199,8 @@ Text_Files\EffectCollision.txt
 1	1968	320	1	0
 1	1984	320	1	0
 1	2000	320	1	0
-#1	2016	320	1	0
-#1	2032	320	1	0
+1	2016	320	1	0
+1	2032	320	1	0
 
 #2 Viên gần Pink plat
 1	2080	320	1	0

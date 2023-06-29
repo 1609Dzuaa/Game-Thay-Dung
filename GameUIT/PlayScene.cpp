@@ -33,6 +33,7 @@ CPlayScene::CPlayScene(int id, LPCWSTR filePath) :
 #define SCENE_SECTION_ASSETS	1
 #define SCENE_SECTION_OBJECTS	2
 #define SCENE_SECTION_MAP	3
+#define SCENE_SECTION_UNDERWORLD 4
 
 #define ASSETS_SECTION_UNKNOWN -1
 #define ASSETS_SECTION_SPRITES 1
@@ -76,15 +77,15 @@ void CPlayScene::_ParseSection_ASSETS(string line)
 	LoadAssets(path.c_str());
 }
 
-void CPlayScene::_ParseSection_MAP_MATRIX(string line)
+void CPlayScene::_ParseSection_MAP_MATRIX(string line, CMap*& map_para)
 {
-	int ID, rowMap, columnMap, columnTile, rowTile, totalTiles, startX, startY;
+	int ID, rowMap, columnMap, columnTile, rowTile, totalTiles;
 	LPCWSTR path = ToLPCWSTR(line);
 	ifstream f;
 	DebugOut(L"[INFO] Start Parse Map From File: %s\n", path);
 
 	f.open(path);
-	f >> ID >> rowMap >> columnMap >> rowTile >> columnTile >> totalTiles >> startX >> startY;
+	f >> ID >> rowMap >> columnMap >> rowTile >> columnTile >> totalTiles;
 
 	int** TileMapData = new int* [rowMap];
 	for (int i = 0; i < rowMap; i++)
@@ -94,10 +95,10 @@ void CPlayScene::_ParseSection_MAP_MATRIX(string line)
 			f >> TileMapData[i][j]; //Đọc và tạo Ma trận map
 	}
 	f.close();
-
-	map = new CMap(ID, rowMap, columnMap, rowTile, columnTile, totalTiles, startX, startY);
-	map->ClipSpritesFromTileset(); //bóc từng sprite từ tileSet
-	map->SetMapMatrix(TileMapData);
+	
+	map_para = new CMap(ID, rowMap, columnMap, rowTile, columnTile, totalTiles);
+	map_para->ClipSpritesFromTileset(); //bóc từng sprite từ tileSet
+	map_para->SetMapMatrix(TileMapData);
 	DebugOut(L"[INFO] Parse Map Matrix Success: %s \n", path);
 }
 
@@ -314,6 +315,8 @@ void CPlayScene::Load()
 		if (line == "[ASSETS]") { section = SCENE_SECTION_ASSETS; continue; };
 		if (line == "[OBJECTS]") { section = SCENE_SECTION_OBJECTS; continue; };
 		if (line == "[MAP]") { section = SCENE_SECTION_MAP; continue; };
+		if (line == "[UNDERWORLD]") { section = SCENE_SECTION_UNDERWORLD; continue; }
+
 		if (line[0] == '[') { section = SCENE_SECTION_UNKNOWN; continue; }
 
 		//
@@ -323,7 +326,8 @@ void CPlayScene::Load()
 		{
 		case SCENE_SECTION_ASSETS: _ParseSection_ASSETS(line); break;
 		case SCENE_SECTION_OBJECTS: _ParseSection_OBJECTS(line); break;
-		case SCENE_SECTION_MAP:	_ParseSection_MAP_MATRIX(line); break;
+		case SCENE_SECTION_MAP:	_ParseSection_MAP_MATRIX(line, this->map); break;
+		case SCENE_SECTION_UNDERWORLD: _ParseSection_MAP_MATRIX(line, this->underworld_map); break;
 		}
 	}
 
@@ -372,9 +376,13 @@ void CPlayScene::Render()
 	//Trước khi vẽ, hãy thử sắp xếp lại thứ tự vector object
 	//std::sort(objects.begin(), objects.end(), );
 	if (map != NULL)
-		map->Render(); //vẽ map trước, vẽ object sau
-	else
+		map->Render();
+	else 
 		DebugOut(L"[INFO] Map was NULL\n");
+	if (underworld_map != NULL)
+		underworld_map->Render();
+	else
+		//DebugOut(L"[INFO] UnderworldMap was NULL\n");
 	for (int i = 0; i < objects.size(); i++)
 		objects[i]->Render();
 }
@@ -433,7 +441,7 @@ void CPlayScene::PurgeDeletedObjects()
 
 void CPlayScene::AddObjectToScene(LPGAMEOBJECT game_object)
 {
-	//this->objects.push_back(game_object);
+	this->objects.push_back(game_object);
 	//Thêm vật thể vào scene hiện tại
-	objects.insert(objects.begin() + 1, game_object);
+	//objects.insert(objects.begin() + 1, game_object);
 }

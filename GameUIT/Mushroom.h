@@ -2,11 +2,10 @@
 #include "GameObject.h"
 #include "ColorPlatform.h"
 
-
 #define MUSHROOM_BBOX_WIDTH 16
 #define MUSHROOM_BBOX_HEIGHT 16
 
-#define MUSHROOM_SPEED_X 0.065f
+#define MUSHROOM_SPEED_X 0.04f
 #define MUSHROOM_GRAVITY 0.002f
 #define MUSHROOM_RISE_UP_SPEED 0.016f
 #define MUSHROOM_STATE_IN_THE_BRICK 0
