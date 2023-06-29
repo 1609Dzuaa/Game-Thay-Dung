@@ -8,7 +8,7 @@ height	240
 #remember mario_trans, ...
 [SCENES]
 0	intro.txt
-1	Text_Files\scene01.txt
+1	Text_Files\Scene1-1.txt
 
 # id	file 
 [TEXTURES]

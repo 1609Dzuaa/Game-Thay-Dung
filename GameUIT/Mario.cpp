@@ -24,6 +24,7 @@ CMario::CMario(float x, float y) : CGameObject(x, y)
 	isEvolveBackward = false;
 	isAteItem = false;
 	StopWatch = false;
+	Shaking = false;
 	isAllowToHoldKoopa = false;
 	isHolding = false;
 	isHitSwitch = false;
@@ -34,6 +35,10 @@ CMario::CMario(float x, float y) : CGameObject(x, y)
 	untouch_draw_1 = 0;
 	untouch_0 = 0;
 	untouch_1 = 0;
+	shaking_start = 0;
+	shakeUp_start = 0;
+	shakeDown_start = 0;
+	isShakeUp = 0;
 	tail = NULL;
 	//Thêm đuôi trước tương tự như mushroom
 	ghost_koopa = NULL; //Khi đang Hold Koopa thì coi nó như thuộc tính của Mario
@@ -82,7 +87,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		isInitialized = true;
 		DebugOut(L"Tail was created successfully!\n");
 	}
-	DebugOutTitle(L"Vy: %f\n", vy);
+	//DebugOutTitle(L"Is Shaking: %d", Shaking);
 }
 
 void CMario::UpdateMarioState()
@@ -94,6 +99,12 @@ void CMario::UpdateMarioState()
 	{
 		untouchable_start = 0;
 		untouchable = 0;
+	}
+
+	if (GetTickCount64() - shaking_start > SHAKING_TIME)
+	{
+		shaking_start = 0;
+		Shaking = false;
 	}
 
 	if (GetTickCount64() - evolve_start >= MARIO_EVOLVE_TIME && isEvolving)

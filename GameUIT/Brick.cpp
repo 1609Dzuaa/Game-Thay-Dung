@@ -43,23 +43,25 @@ void CBrick::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 	CCollision::GetInstance()->Process(this, dt, coObjects);
 	//Gold brick lúc vỡ ra cũng bị ảnh hưởng bởi StopWatch
-	//DebugOutTitle(L"isBlock, state: %d, %d", IsBlocking(), state);
+	if (item_type == SWITCH)
+		DebugOutTitle(L"Vy: %f", vy);
 	//Gạch gold bị phá thì spawn mảnh nhỏ 4 hướng
 }
 
 void CBrick::UpdatePosition(DWORD dt)
 {
-	if (y < min_pos)
+	if (y < min_pos) //prob here with  GBrick has Sw
 	{
 		vy = GOLD_BRICK_BOUNCING_SPEED;
 	}
 	if (y > old_pos)
 	{
 		//if it has switch, got hitted && at max pos => spawn switch
-		if (state == GBRICK_HAS_ITEM_STATE_IS_HITTED && _switch != NULL)
-			SpawnSwitch();
-		else if (state == GBRICK_HAS_ITEM_STATE_IS_HITTED && item_type == MUSHROOM)
+		
+		if (state == GBRICK_HAS_ITEM_STATE_IS_HITTED && item_type == MUSHROOM)
 			SpawnMushroom();
+		else if (state == GBRICK_HAS_ITEM_STATE_IS_HITTED && item_type == SWITCH)
+			SpawnSwitch(); //prob when spawn sw
 		y = old_pos;
 		vy = 0;
 	}
@@ -116,7 +118,7 @@ void CBrick::SetState(int state)
 	switch (state)
 	{
 	case GBRICK_HAS_ITEM_STATE_IS_HITTED:
-		hit_start = GetTickCount64();
+		hit_start = GetTickCount64(); //Dùng để đánh thgian spawn khói
 
 		break;
 	case GBRICK_STATE_TURN_TO_COIN:

@@ -243,6 +243,7 @@ class CMario : public CGameObject
 	BOOLEAN isEvolveBackward;
 	BOOLEAN isAteItem; //Biến đặc biệt dùng để nhận biết xem được tăng level nhờ item hay nhấn phím, mục đích xem ở hàm SetLevel
 	BOOLEAN StopWatch; //ngưng mọi hoạt động khi Mario đang tiến hoá hoặc chết
+	BOOLEAN Shaking;
 	BOOLEAN isAllowToHoldKoopa; //Allow to hold rồi mới holding
 	BOOLEAN isHolding; //A way to handle holding: 
 	BOOLEAN isHitSwitch;
@@ -266,6 +267,9 @@ class CMario : public CGameObject
 	BOOLEAN untouch_1; // cờ vẽ
 	ULONGLONG untouch_draw_0; //thgian 0 vẽ
 	ULONGLONG untouch_draw_1; //thgian vẽ
+	ULONGLONG shaking_start;
+	ULONGLONG shakeUp_start, shakeDown_start;
+	BOOLEAN isShakeUp;
 	BOOLEAN isOnPlatform;
 	int CountJumpOnEnemies; //Đếm số bước nhảy 0 CHẠM ĐẤT để có số điểm tương ứng
 	int coin;
@@ -316,12 +320,12 @@ public:
 	//Để ý ở đây Mario có thuộc tính blocking => đôi lúc nó sẽ khiến các quái vật khác đổi hướng khi va chạm với nó
 	//Khi nó ở trạng thái vô địch(untouchable) và CHƯA CHẾT
 
-	
-
 	void SetLevel(int l);
 	int GetLevel() { return level; };
 	void StartUntouchable() 
 	{ untouchable = 1; untouchable_start = GetTickCount64(); untouch_0 = 1; untouch_draw_0 = GetTickCount64(); }
+	/*void StartShaking()
+    { Shaking = 1; shaking_start = GetTickCount64(); isShakeUp = 1; shakeUp_start = GetTickCount64(); }*/
 
 	void GetBoundingBox(float& left, float& top, float& right, float& bottom);
 	int GetMarioNormalX() { return nx; }
@@ -335,6 +339,7 @@ public:
 	void SpawnScore(LPGAMEOBJECT obj);
 	void SpawnEffect(LPCOLLISIONEVENT e, LPGAMEOBJECT obj, int eff_type); //nên cho vào class EffectCol
 	BOOLEAN GetStopWatch() { return evolve_start != 0 || this->state == MARIO_STATE_DIE; }
+	BOOLEAN GetShaking() { return this->Shaking; }
 	BOOLEAN GetIsAttacking() { return this->isAttacking; }
 	BOOLEAN GetIsHolding() { return this->isHolding; }
 	BOOLEAN GetIsHitSwitch() { return this->isHitSwitch; }
@@ -345,4 +350,12 @@ public:
 	void SetIsHitSwitch(BOOLEAN para) { this->isHitSwitch = para; }
 	void SetIsRunning(BOOLEAN para) { this->isRunning = para; }
 	void SetNx(int para) { this->nx = para; }
+
+	BOOLEAN GetShakeUp() { return this->isShakeUp; }
+	ULONGLONG GetShakeUpTime() { return this->shakeUp_start; }
+	ULONGLONG GetShakeDownTime() { return this->shakeDown_start; }
+
+	void SetShakeUp(BOOLEAN para) { this->isShakeUp = para; }
+	void SetShakeUpTime(ULONGLONG para) { this->shakeUp_start = para; }
+	void SetShakeDownTime(ULONGLONG para) { this->shakeDown_start = para; }
 };

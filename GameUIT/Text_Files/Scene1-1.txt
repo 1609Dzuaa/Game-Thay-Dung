@@ -25,7 +25,7 @@ Text_Files\EffectCollision.txt
 
 #How about adding object that "more collidable" sooner than other object ?
 #MARIO
-0	2325	285
+0	2200	285
 
 #Red Koopa ON GOLD BRICK
 3	2080	278	3
@@ -50,12 +50,12 @@ Text_Files\EffectCollision.txt
 
 #Platform: ID	X	Y	WIDTH	HEIGHT	SIZE	3SPRITES
 #Normal ground, Higher ground
-5	0	336	16	15	38	400001	400002	400003
+6	0	336	16	15	38	0	0	0
 #GOOMBA
 2	315	290	1
 2	525	290	1
 
-5	608	320	16	15	29	400001	400002	400003
+6	608	320	16	15	29	0	0	0
 
 #Pink platform 	
 6	224	288	16	15	3	0	0	0
@@ -82,7 +82,7 @@ Text_Files\EffectCollision.txt
 6	496	224	16	15	4	0	0	0
 
 #Normal ground - 2 #here
-5	1120	336	16	15	23	400001	400002	400003
+6	1120	336	16	15	23	0	0	0
 
 #Goomba if(inCamera) => Spawn
 2	836	290	1
@@ -109,9 +109,9 @@ Text_Files\EffectCollision.txt
 6	1280	96	16	15	4	0	0	0
 
 #3 Coin Above Pink Plat
-4	1300	47
-4	1315	47
-4	1330	47
+4	1300	40
+4	1315	40
+4	1330	40
 
 #GBrick contains Green Mushroom
 1	1425	65	1	10
@@ -150,7 +150,7 @@ Text_Files\EffectCollision.txt
 1	1488	246	2	0
 
 #Normal Ground 2.5
-5	1520	336	16	15	5	400001	400002	400003
+6	1520	336	16	15	5	0	0	0
 
 #Stripe Brick On Normal ground 2.5
 1	1552	320	2	0
@@ -161,7 +161,7 @@ Text_Files\EffectCollision.txt
 1	1584	288	2	0
 
 #Normal Ground 3
-5	1648	336	16	15	36	400001	400002	400003
+6	1648	336	16	15	36	0	0	0
 
 #Stripe Brick On Normal ground 3
 1	1648	320	2	0
@@ -214,21 +214,28 @@ Text_Files\EffectCollision.txt
 6	2158	190	16	15	3	0	0	0
 
 #Normal Ground 4 - END vừa + 1 để có gì chạy đến vô cực khi end game
-5	2240	336	16	15	37	400001	400002	400003
+6	2240	336	16	15	37	0	0	0
 
-#Tube with 2 stripe birck
+#Tube with 2 stripe brick
 9	2248	313	4
+
+#Long Tube 
+9	2248	95	5
+9	2248	135	4
+9	2248	166	4
+9	2248	197	4
+9	2248	228	4
+
+#2 Stripe brick at bottom Long Brick
+1	2240	238	2	0
+1	2256	238	2	0
 
 #2 stripe brick on Tube
 1	2240	289	2	0
 1	2256	289	2	0
 
 #Short tube NO FLOWER
-9	2304	313	0
-
-#Long Tube 
-5	2240	69	11	15	3	400016	400017	400018
-5	2241	81	10	15	3	400019	400020	400021		
+9	2304	313	0		
 
 #Portal 
 #50	300	62	316	140	2

@@ -41,7 +41,6 @@ void CMario::OnCollisionWithBlockingObjects(LPCOLLISIONEVENT e)
 				if (e->ny != 0)
 				{
 					vy = 0;
-					y += 2.0f;
 					if (e->ny > 0)
 					{
 						//Nếu là viên chứa công tắc và state chưa bị hit
@@ -541,5 +540,7 @@ void CMario::OnCollisionWithSwitch(LPCOLLISIONEVENT e)
 	{
 		e->obj->SetState(SWITCH_STATE_HITTED);
 		this->isHitSwitch = true;
+		Shaking = true;
+		shaking_start = GetTickCount64();
 	}
 }

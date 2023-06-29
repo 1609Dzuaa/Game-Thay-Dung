@@ -14,6 +14,7 @@
 //Đi bộ 0 rơi xuống vực
 //Red Koopa lâu lâu bị rớt xuống color plat, vụt Green Koopa vẫn còn vx trên color plat
 //Vẫn còn bug red koopa
+//Do vị trí đứng của Mario: ở bên trái Koopa thì bthg, ở bên phải thì lệch
 
 #pragma endregion 
 

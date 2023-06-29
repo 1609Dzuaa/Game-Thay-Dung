@@ -64,6 +64,5 @@ void CAnimation::Render(float x, float y, BOOLEAN affectBySW)
 		}
 	}
 	
-	//Shaking: vẽ trên trục y lên xuống như blink animation khi đang untouchable
 	frames[currentFrame]->GetSprite()->Draw(x, y);
 }

@@ -22,7 +22,10 @@ CKoopa::CKoopa(float x, float y, int type) :CGameObject(x, y)
 	{
 		SetState(KOOPA_STATE_WALKING);
 		CPlayScene* current_scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
-		ghost_head = new CHead(x - KOOPA_BBOX_WIDTH / 2 - 2.5f, y, this->vx, this->ay);
+		if (vx < 0)
+			ghost_head = new CHead(x - KOOPA_BBOX_WIDTH / 2 - 2.5f, y, this->vx, this->ay);
+		else if (vx > 0)
+			ghost_head = new CHead(x + KOOPA_BBOX_WIDTH / 2 + 2.5f, y, this->vx, this->ay);
 		current_scene->AddObjectToScene(ghost_head);
 		enableToChangeVx = true; //mấy thuộc tính của Red Koopa nên cân nhắc khởi tạo hợp lý
 		DebugOut(L"Red Koopa's Ghost Head was created\n");
