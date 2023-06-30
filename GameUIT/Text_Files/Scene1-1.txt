@@ -25,9 +25,10 @@ Text_Files\EffectCollision.txt
 # type: 0 = Mario , 1 = Brick, 2 = Goomba, 3 = Koopas, 4 = Coin, 5 = Platform
 # See OBJECT_TYPE constants in AssetIDs.h 
 
+#Khỏi phải vẽ nền, dùng sprite 0
 #How about adding object that "more collidable" sooner than other object ?
 #MARIO
-0	25	285
+0	2354	285
 
 #Red Koopa ON GOLD BRICK
 3	2080	278	3

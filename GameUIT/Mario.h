@@ -10,19 +10,33 @@
 
 #include "debug.h"
 
-#define MARIO_WALKING_SPEED		0.1f
+//Task:
+//Finish Flying & Landing
+//Finish Tail 
+//Initialize Use Tube Switch Scene
+//Render Underworld may has bug cuz of Render func in GameMap
+
+enum State
+{
+	STATE_IDLE,
+	STATE_WALKING,
+	STATE_RUNNING,
+};
+
+#define MARIO_WALKING_SPEED		0.2f
 #define MARIO_RUNNING_SPEED		0.24f
 
 #define MARIO_ACCEL_WALK_X	0.0001f
 #define MARIO_ACCEL_RUN_X	0.00012f
 
-#define MARIO_JUMP_SPEED_Y		0.23f
-#define MARIO_JUMP_RUN_SPEED_Y	0.6f
+#define MARIO_JUMP_SPEED_Y		0.4f
+#define MARIO_JUMP_RUN_SPEED_Y	0.031f
 
-#define MARIO_GRAVITY			0.00042f
-#define MARIO_LANDING_SPEED	-0.1f
+//#define MARIO_GRAVITY			0.0004f
+#define MARIO_GRAVITY	0.001f
+#define MARIO_LANDING_SPEED	-0.024f
 
-#define MARIO_JUMP_DEFLECT_SPEED  0.4f
+#define MARIO_JUMP_DEFLECT_SPEED  0.004f
 
 #define MARIO_STATE_DIE				-10
 #define MARIO_STATE_IDLE			0
@@ -191,13 +205,10 @@
 #define ID_ANI_MARIO_RACOON_HOLD_JUMP_LEFT 2845
 #define ID_ANI_MARIO_RACOON_HOLD_JUMP_RIGHT 2846
 
-//#define ID_ANI_MARIO_RACOON_FLYING_LEFT	2820	
-//#define ID_ANI_MARIO_RACOON_FLYING_RIGHT	2821
+#define ID_ANI_MARIO_RACOON_FLYING_LEFT	2850	
+#define ID_ANI_MARIO_RACOON_FLYING_RIGHT	2851
 
 #pragma endregion
-
-#define GROUND_Y 160.0f
-
 
 #define	MARIO_LEVEL_SMALL	1
 #define	MARIO_LEVEL_BIG		2
@@ -350,4 +361,5 @@ public:
 	void SetIsHitSwitch(BOOLEAN para) { this->isHitSwitch = para; }
 	void SetIsRunning(BOOLEAN para) { this->isRunning = para; }
 	void SetNx(int para) { this->nx = para; }
+	void SetVy(float vy_para) { this->vy = vy_para; }
 };

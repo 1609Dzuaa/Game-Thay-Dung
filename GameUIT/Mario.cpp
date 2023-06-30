@@ -87,7 +87,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		isInitialized = true;
 		DebugOut(L"Tail was created successfully!\n");
 	}
-	//DebugOutTitle(L"Is Shaking: %d", Shaking);
+	DebugOutTitle(L"Vy: %f", vy);
 }
 
 void CMario::UpdateMarioState()
@@ -131,12 +131,13 @@ void CMario::UpdateMarioState()
 		evolve_start = 0;
 	}
 
-	if (this->isJumping && this->level == MARIO_LEVEL_RACOON && vy > 0)
+	if (this->level == MARIO_LEVEL_RACOON && vy > 0 && !isOnPlatform)
 	{
+		//Nếu là Racoon và vector vy hướng xuống cũng như không ở trên nền
 		//ưu tiên Landing trước Falling
 	//	if (state == MARIO_RACOON_STATE_LANDING); //prob here
 		//else
-			this->SetState(MARIO_RACOON_STATE_FALLING);
+		//this->SetState(MARIO_RACOON_STATE_FALLING);
 		//Khi đang bay ở trạng thái Racoon và vy đổi dấu
 		//thì bật hoạt ảnh falling lên
 	}
@@ -145,7 +146,7 @@ void CMario::UpdateMarioState()
 	{
 		if (abs(vx) > abs(maxVx))
 		{
-			vx = maxVx;
+			vx = maxVx; //Giới hạn vận tốc cho nó
 			if (this->state == MARIO_STATE_RUNNING)
 				this->SetState(MARIO_STATE_RUNNING_AT_MAX_VX);
 		}

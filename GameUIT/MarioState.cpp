@@ -58,6 +58,8 @@ void CMario::SetState(int state)
 		if (isOnPlatform)
 		{
 			isJumping = true;
+			isLanding = false;
+			isFalling = false;
 			if (abs(this->vx) == MARIO_RUNNING_SPEED)
 				vy = -MARIO_JUMP_RUN_SPEED_Y;
 			else
@@ -70,6 +72,8 @@ void CMario::SetState(int state)
 		if (isOnPlatform)
 		{
 			isJumping = true;
+			isLanding = false;
+			isFalling = false;
 			if (abs(this->vx) == MARIO_RUNNING_SPEED)
 				vy = -MARIO_JUMP_RUN_SPEED_Y;
 			else
@@ -90,21 +94,28 @@ void CMario::SetState(int state)
 		isLanding = true;
 		isFalling = false;
 		isJumping = false;
+		isFlying = false;
 	    
-		vy = MARIO_LANDING_SPEED;
+		vy = 0.0f; //Set lại vy = 0 nếu đang Landing
 		DebugOut(L"Landing\n");
 		break;
 	}
 
 	case MARIO_RACOON_STATE_FLYING:
 	{
+		isFlying = true;
+		isLanding = false;
+		isFalling = false;
+		isJumping = false;
+		vy = -0.2f;
 
 		break;
 	}
 
 	case MARIO_STATE_RELEASE_JUMP: //prob here
-		//if (vy < 0) vy += MARIO_JUMP_SPEED_Y / 2;
-		//isJumping = false; 
+		if (vy < 0) 
+			vy += MARIO_JUMP_SPEED_Y / 2;
+		isJumping = false; 
 		break;
 
 	case MARIO_STATE_SIT:	//set state ngồi ở Keyboard

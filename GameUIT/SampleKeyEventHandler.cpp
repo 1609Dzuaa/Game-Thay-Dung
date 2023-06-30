@@ -15,6 +15,7 @@ void CSampleKeyHandler::OnKeyDown(int KeyCode)
 	switch (KeyCode)
 	{
 	case DIK_RIGHT:
+		mario->SetState(MARIO_STATE_WALKING);
 		mario->SetNx(1);
 		break;
 
@@ -34,7 +35,7 @@ void CSampleKeyHandler::OnKeyDown(int KeyCode)
 
 	case DIK_S: //nếu là racoon mario thì bơm thêm vận tốc theo trục y để bay
 		if (mario->GetCanFly() && mario->GetLevel() == MARIO_LEVEL_RACOON)
-			mario->SetState(MARIO_STATE_JUMPING_AT_MAX_SPEED); //Max speed + Racoon -> bay
+			mario->SetState(MARIO_RACOON_STATE_FLYING); //Max speed + Racoon -> bay
 		else if (!mario->GetIsOnPlatform() && mario->GetLevel() == MARIO_LEVEL_RACOON)
 		{
 			//Nếu Racoon 0 ở trên nền mà còn bấm S thì bật state hạ cánh
@@ -44,7 +45,7 @@ void CSampleKeyHandler::OnKeyDown(int KeyCode)
 			mario->SetState(MARIO_STATE_JUMPING_AT_MAX_SPEED);
 		else if (mario->GetIsAttacking())
 			mario->SetState(MARIO_RACOON_STATE_ATTACK);
-		else
+		else if (mario->GetIsOnPlatform()) //Phải ở trên nền thì mới cho nhảy 
 			mario->SetState(MARIO_STATE_JUMPING);
 		break;
 		//case DIK_Z:
@@ -126,11 +127,6 @@ void CSampleKeyHandler::KeyState(BYTE* states)
 			mario->SetNx(-1);
 			mario->SetState(MARIO_STATE_WALKING);
 		}
-	}
-	else if (game->IsKeyDown(DIK_S))
-	{
-		//giữ S thì bơm vận tốc cho nó tới mức nào đó
-
 	}
 	//else if (game->IsKeyDown(DIK_DOWN))
 		//mario->SetState(MARIO_STATE_SIT);
