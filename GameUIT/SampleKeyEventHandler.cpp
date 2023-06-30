@@ -15,12 +15,11 @@ void CSampleKeyHandler::OnKeyDown(int KeyCode)
 	switch (KeyCode)
 	{
 	case DIK_RIGHT:
-		mario->SetState(MARIO_STATE_WALKING);
-		mario->SetNx(1);
+		mario->SetState(MARIO_STATE_WALKING_RIGHT);
 		break;
 
 	case DIK_LEFT:
-		mario->SetNx(-1);
+		mario->SetState(MARIO_STATE_WALKING_LEFT);
 		break;
 
 	case DIK_DOWN:
@@ -34,15 +33,21 @@ void CSampleKeyHandler::OnKeyDown(int KeyCode)
 		break;
 
 	case DIK_S: //nếu là racoon mario thì bơm thêm vận tốc theo trục y để bay
-		if (mario->GetCanFly() && mario->GetLevel() == MARIO_LEVEL_RACOON)
+		 if (mario->GetCanFly() && mario->GetLevel() == MARIO_LEVEL_RACOON)
 			mario->SetState(MARIO_RACOON_STATE_FLYING); //Max speed + Racoon -> bay
-		else if (!mario->GetIsOnPlatform() && mario->GetLevel() == MARIO_LEVEL_RACOON)
-		{
-			//Nếu Racoon 0 ở trên nền mà còn bấm S thì bật state hạ cánh
-			mario->SetState(MARIO_RACOON_STATE_LANDING);
-		}
-		else if (mario->GetisAtMaxSpeed())
-			mario->SetState(MARIO_STATE_JUMPING_AT_MAX_SPEED);
+		 else  if (!mario->GetIsOnPlatform() && mario->GetLevel() == MARIO_LEVEL_RACOON && !mario->GetIsFlying())
+		 {
+			 //Nếu Racoon 0 ở trên nền mà còn bấm S
+			 //VÀ không phải trạng thái BAY thì bật state hạ cánh
+			 mario->SetState(MARIO_RACOON_STATE_LANDING);
+		 }
+		 else if (mario->GetisAtMaxSpeed() && !mario->GetIsFlying())
+		 {
+			 if (mario->GetMarioNormalX() > 0)
+				 mario->SetState(MARIO_STATE_RUNNING_AT_MAX_SPEED_RIGHT);
+			 else if (mario->GetMarioNormalX() < 0)
+				 mario->SetState(MARIO_STATE_RUNNING_AT_MAX_SPEED_LEFT);
+		 }
 		else if (mario->GetIsAttacking())
 			mario->SetState(MARIO_RACOON_STATE_ATTACK);
 		else if (mario->GetIsOnPlatform()) //Phải ở trên nền thì mới cho nhảy 
@@ -53,7 +58,6 @@ void CSampleKeyHandler::OnKeyDown(int KeyCode)
 			//if (mario->GetLevel() == MARIO_LEVEL_RACOON)
 			//	mario->SetState(MARIO_RACOON_STATE_ATTACK);
 
-		break;
 	case DIK_1:
 		mario->SetLevel(MARIO_LEVEL_SMALL);
 		break;
@@ -77,7 +81,7 @@ void CSampleKeyHandler::OnKeyUp(int KeyCode)
 	switch (KeyCode)
 	{
 	case DIK_S:
-		//mario->SetState(MARIO_STATE_RELEASE_JUMP);
+		mario->SetState(MARIO_STATE_RELEASE_JUMP);
 
 		break;
 
@@ -105,13 +109,12 @@ void CSampleKeyHandler::KeyState(BYTE* states)
 		if (game->IsKeyDown(DIK_A))
 		{
 			if (mario->GetIsOnPlatform())
-				mario->SetState(MARIO_STATE_RUNNING);
+				mario->SetState(MARIO_STATE_RUNNING_RIGHT);
 			mario->SetHoldKoopa(true); //giữ A thì cho phép hold Koopa
 		}
 		else
 		{
-			mario->SetNx(1);
-			mario->SetState(MARIO_STATE_WALKING);
+			mario->SetState(MARIO_STATE_WALKING_RIGHT);
 		}
 	}
 	else if (game->IsKeyDown(DIK_LEFT))
@@ -119,13 +122,12 @@ void CSampleKeyHandler::KeyState(BYTE* states)
 		if (game->IsKeyDown(DIK_A))
 		{
 			if (mario->GetIsOnPlatform())
-				mario->SetState(MARIO_STATE_RUNNING);
+				mario->SetState(MARIO_STATE_RUNNING_LEFT);
 			mario->SetHoldKoopa(true); //giữ A thì cho phép hold Koopa
 		}
 		else
 		{
-			mario->SetNx(-1);
-			mario->SetState(MARIO_STATE_WALKING);
+			mario->SetState(MARIO_STATE_WALKING_LEFT);
 		}
 	}
 	//else if (game->IsKeyDown(DIK_DOWN))

@@ -142,6 +142,7 @@ void CMario::OnCollisionWithColorPlatform(LPCOLLISIONEVENT e)
 		HandleCollisionWithColorPlatform(e, cl_pf);
 		CountJumpOnEnemies = 0;
 		isOnPlatform = true;
+		isLanding = false;
 	}
 }
 
@@ -409,12 +410,18 @@ void CMario::HandleCollisionOtherDirectionWithKoopa(LPCOLLISIONEVENT e, CKoopa* 
 					|| koopa->GetState() == KOOPA_STATE_REBORN_REVERSE
 					|| koopa->GetState() == KOOPA_STATE_SLEEP_REVERSE_SPECIAL)
 				{
-					this->SetState(MARIO_STATE_KICKING);
+					if (nx > 0)
+						this->SetState(MARIO_STATE_KICKING_RIGHT);
+					else 
+						this->SetState(MARIO_STATE_KICKING_LEFT);
 					koopa->SetState(KOOPA_STATE_SLIP_REVERSE);
 				}
 				else //Đang Ngủ Bình Thường
 				{
-					this->SetState(MARIO_STATE_KICKING);
+					if (nx > 0)
+						this->SetState(MARIO_STATE_KICKING_RIGHT);
+					else
+						this->SetState(MARIO_STATE_KICKING_LEFT);
 					koopa->SetState(KOOPA_STATE_SLIP);
 				}
 			}

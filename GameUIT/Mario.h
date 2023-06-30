@@ -11,61 +11,100 @@
 #include "debug.h"
 
 //Task:
-//Finish Flying & Landing
-//Finish Tail 
-//Initialize Use Tube Switch Scene
-//Render Underworld may has bug cuz of Render func in GameMap
+//Finish Flying & Landing: 95%
+//Finish Tail: not yet
+//Initialize Use Tube Switch Scene: nope
+//Render Underworld may has bug cuz of Render func in GameMap: will check it later
 
-enum State
-{
-	STATE_IDLE,
-	STATE_WALKING,
-	STATE_RUNNING,
-};
+#pragma region CONST & TIME
 
-#define MARIO_WALKING_SPEED		0.2f
-#define MARIO_RUNNING_SPEED		0.24f
+#define MARIO_WALKING_SPEED		0.15f
+#define MARIO_RUNNING_SPEED		0.2f
 
 #define MARIO_ACCEL_WALK_X	0.0001f
 #define MARIO_ACCEL_RUN_X	0.00012f
 
-#define MARIO_JUMP_SPEED_Y		0.4f
-#define MARIO_JUMP_RUN_SPEED_Y	0.031f
+#define MARIO_JUMP_SPEED_Y		0.35f
+#define MARIO_JUMP_RUN_SPEED_Y	0.4f
+#define MARIO_FLYING_SPEED	0.315f;
 
-//#define MARIO_GRAVITY			0.0004f
 #define MARIO_GRAVITY	0.001f
-#define MARIO_LANDING_SPEED	-0.024f
 
 #define MARIO_JUMP_DEFLECT_SPEED  0.004f
 
+#define	MARIO_LEVEL_SMALL	1
+#define	MARIO_LEVEL_BIG		2
+#define MARIO_LEVEL_RACOON	3
+
+#define MARIO_BIG_BBOX_WIDTH  14
+#define MARIO_BIG_BBOX_HEIGHT 24
+#define MARIO_BIG_SITTING_BBOX_WIDTH  14
+#define MARIO_BIG_SITTING_BBOX_HEIGHT 16 //Big & Racoon share the same Height when SIT
+
+#define MARIO_EVOLVE_BBOX_WIDTH 14
+#define MARIO_EVOLVE_BBOX_HEIGHT 20
+
+#define MARIO_RACOON_BBOX_WIDTH  24 
+
+#define MARIO_SIT_HEIGHT_ADJUST ((MARIO_BIG_BBOX_HEIGHT - MARIO_BIG_SITTING_BBOX_HEIGHT) / 2)
+
+#define MARIO_SMALL_BBOX_WIDTH  13 
+#define MARIO_SMALL_BBOX_HEIGHT 12 
+
+#define MARIO_UNTOUCHABLE_TIME 2500
+#define MARIO_KICK_TIME 150
+#define MARIO_RACOON_ATTACK_TIME 370
+#define MARIO_EVOLVE_TIME 750
+#define UNTOUCH_DRAW_TIME 100
+#define FLYING_TIME	4000
+
+#pragma endregion CONST & TIME
+
+//==================================================//
+#pragma region STATE
+
 #define MARIO_STATE_DIE				-10
+
 #define MARIO_STATE_IDLE			0
-//Nên chỉ có 1 state: trái hay phải sẽ dựa vào hướng vector nx:
-//#define MARIO_STATE_WALKING	100 START HERE
-#define MARIO_STATE_WALKING	100
 
-#define MARIO_STATE_KICKING	200
+#define MARIO_STATE_WALKING_RIGHT	100
 
-#define MARIO_STATE_JUMPING	300
-#define MARIO_STATE_RELEASE_JUMP	301
-#define MARIO_STATE_JUMPING_AT_MAX_SPEED 302
+#define MARIO_STATE_WALKING_LEFT	200
 
-#define MARIO_STATE_RUNNING	400
+#define MARIO_STATE_KICKING_RIGHT	110
 
-#define MARIO_STATE_RUNNING_AT_MAX_VX 401
+#define MARIO_STATE_KICKING_LEFT	210
 
-#define MARIO_STATE_SIT	500
-#define MARIO_STATE_SIT_RELEASE	501
+#define MARIO_STATE_JUMPING			300
 
-#define MARIO_RACOON_STATE_ATTACK 600
-#define MARIO_RACOON_STATE_FALLING 700
+#define MARIO_STATE_RELEASE_JUMP    301
 
-#define MARIO_RACOON_STATE_LANDING 710
+#define MARIO_STATE_RUNNING_RIGHT	400
+
+#define MARIO_STATE_RUNNING_LEFT	500
+
+#define MARIO_STATE_RUNNING_AT_MAX_SPEED_RIGHT 401
+
+#define MARIO_STATE_RUNNING_AT_MAX_SPEED_LEFT 402
+
+#define MARIO_STATE_SIT				600
+
+#define MARIO_STATE_SIT_RELEASE		601
+
+#define MARIO_RACOON_STATE_ATTACK 700
+
+#define MARIO_RACOON_STATE_LANDING 710 //gộp Falling chung với Landing (Falling khi Vy > 0, Landing khi Vy = 0)
+
 #define MARIO_RACOON_STATE_FLYING 720
 
-#define MARIO_STATE_EVOLVING 730
+#define MARIO_STATE_EVOLVING 725
 
-#define MARIO_STATE_HOLDING 740
+#define MARIO_STATE_JUMP_AT_MAX_SPEED 730
+
+#define MARIO_STATE_HOLDING 735
+
+#pragma endregion STATE
+//==================================================//
 
 #pragma region ANIMATION_ID
 
@@ -210,42 +249,15 @@ enum State
 
 #pragma endregion
 
-#define	MARIO_LEVEL_SMALL	1
-#define	MARIO_LEVEL_BIG		2
-#define MARIO_LEVEL_RACOON	3
-
-#define MARIO_BIG_BBOX_WIDTH  14
-#define MARIO_BIG_BBOX_HEIGHT 24
-#define MARIO_BIG_SITTING_BBOX_WIDTH  14
-#define MARIO_BIG_SITTING_BBOX_HEIGHT 16 //Big & Racoon share the same Height when SIT
-
-#define MARIO_EVOLVE_BBOX_WIDTH 14
-#define MARIO_EVOLVE_BBOX_HEIGHT 20
-
-#define MARIO_RACOON_BBOX_WIDTH  24 //USED TO BE 21
-
-#define MARIO_SIT_HEIGHT_ADJUST ((MARIO_BIG_BBOX_HEIGHT - MARIO_BIG_SITTING_BBOX_HEIGHT) / 2)
-
-#define MARIO_SMALL_BBOX_WIDTH  13 //USED TO BE 13
-#define MARIO_SMALL_BBOX_HEIGHT 12 //CALCULATE RA 16 17 ??
-
-#define MARIO_UNTOUCHABLE_TIME 2500
-#define MARIO_KICK_TIME 150
-#define MARIO_RACOON_ATTACK_TIME 370
-#define MARIO_EVOLVE_TIME 750
-#define UNTOUCH_DRAW_TIME 100
-
 class CMario : public CGameObject
 {
 	BOOLEAN isIdleing;
-	BOOLEAN isFalling;
 	BOOLEAN isSitting;
 	BOOLEAN isWalking;
 	BOOLEAN isRunning;
 	BOOLEAN isKicking;
 	BOOLEAN isAttacking;
 	BOOLEAN isJumping;
-	BOOLEAN isFlying;
 	BOOLEAN canFly;
 	BOOLEAN isAtMaxSpeed;
 	BOOLEAN isLanding;
@@ -255,6 +267,7 @@ class CMario : public CGameObject
 	BOOLEAN isAteItem; //Biến đặc biệt dùng để nhận biết xem được tăng level nhờ item hay nhấn phím, mục đích xem ở hàm SetLevel
 	BOOLEAN StopWatch; //ngưng mọi hoạt động khi Mario đang tiến hoá hoặc chết
 	BOOLEAN Shaking;
+	BOOLEAN isFlying;
 	BOOLEAN isAllowToHoldKoopa; //Allow to hold rồi mới holding
 	BOOLEAN isHolding; //A way to handle holding: 
 	BOOLEAN isHitSwitch;
@@ -274,6 +287,7 @@ class CMario : public CGameObject
 	ULONGLONG kick_start; //Tính thời gian sút để giải phóng Mario khỏi hành động sút
 	ULONGLONG attack_start;
 	ULONGLONG evolve_start;
+	ULONGLONG fly_start;
 	BOOLEAN untouch_0; // cờ 0 vẽ
 	BOOLEAN untouch_1; // cờ vẽ
 	ULONGLONG untouch_draw_0; //thgian 0 vẽ
@@ -351,6 +365,7 @@ public:
 	void SpawnEffect(LPCOLLISIONEVENT e, LPGAMEOBJECT obj, int eff_type); //nên cho vào class EffectCol
 	BOOLEAN GetStopWatch() { return evolve_start != 0 || this->state == MARIO_STATE_DIE; }
 	BOOLEAN GetShaking() { return this->Shaking; }
+	BOOLEAN GetIsFlying() { return this->isFlying; }
 	BOOLEAN GetIsAttacking() { return this->isAttacking; }
 	BOOLEAN GetIsHolding() { return this->isHolding; }
 	BOOLEAN GetIsHitSwitch() { return this->isHitSwitch; }
@@ -360,6 +375,4 @@ public:
 	void SetIsHoldingKoopa(BOOLEAN para) { this->isHolding = para; }
 	void SetIsHitSwitch(BOOLEAN para) { this->isHitSwitch = para; }
 	void SetIsRunning(BOOLEAN para) { this->isRunning = para; }
-	void SetNx(int para) { this->nx = para; }
-	void SetVy(float vy_para) { this->vy = vy_para; }
 };

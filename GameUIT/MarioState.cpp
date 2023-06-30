@@ -7,48 +7,62 @@ void CMario::SetState(int state)
 
 	switch (state)
 	{
-	case MARIO_STATE_RUNNING:
+	case MARIO_STATE_RUNNING_RIGHT:
+		if (isSitting) break;
+		maxVx = MARIO_RUNNING_SPEED;
+		ax = MARIO_ACCEL_RUN_X;
+		nx = 1;
 		isRunning = true;
-		if (nx > 0)
-		{
-			maxVx = MARIO_RUNNING_SPEED;
-			ax = MARIO_ACCEL_RUN_X;
-		}
-		else if (nx < 0)
-		{
-			maxVx = -MARIO_RUNNING_SPEED;
-			ax = -MARIO_ACCEL_RUN_X;
-		}
 		break;
 
-	case MARIO_STATE_RUNNING_AT_MAX_VX:
+	case MARIO_STATE_RUNNING_AT_MAX_SPEED_RIGHT:
+		if (isSitting) break;
 		isAtMaxSpeed = true;
 		if (this->level == MARIO_LEVEL_RACOON)
 			canFly = true;
+		isRunning = true;
 		break;
 
-	case MARIO_STATE_WALKING:
+	case MARIO_STATE_RUNNING_LEFT:
+		if (isSitting) break;
+		maxVx = -MARIO_RUNNING_SPEED;
+		ax = -MARIO_ACCEL_RUN_X;
+		nx = -1;
+		isRunning = true;
+		break;
+
+	case MARIO_STATE_RUNNING_AT_MAX_SPEED_LEFT:
+		if (isSitting) break;
+		isAtMaxSpeed = true;
+		if (this->level == MARIO_LEVEL_RACOON)
+			canFly = true;
+		isRunning = true;
+		break;
+
+	case MARIO_STATE_WALKING_RIGHT:
+		if (isSitting) break;
+		maxVx = MARIO_WALKING_SPEED;
+		ax = MARIO_ACCEL_WALK_X;
+		nx = 1;
 		isWalking = true;
-		isIdleing = false;
-		if (isSitting)
-		{
-			isSitting = false;
-			y -= MARIO_SIT_HEIGHT_ADJUST;
-		}
-		if (nx > 0)
-		{
-			maxVx = MARIO_WALKING_SPEED;
-			ax = MARIO_ACCEL_WALK_X;
-		}
-		else if (nx < 0)
-		{
-			maxVx = -MARIO_WALKING_SPEED;
-			ax = -MARIO_ACCEL_WALK_X;
-		}
 		break;
 
-	case MARIO_STATE_KICKING:
-		if (isSitting) break; //does it neccessary ?!
+	case MARIO_STATE_WALKING_LEFT:
+		if (isSitting) break;
+		maxVx = -MARIO_WALKING_SPEED;
+		ax = -MARIO_ACCEL_WALK_X;
+		nx = -1;
+		isWalking = true;
+		break;
+
+	case MARIO_STATE_KICKING_RIGHT:
+		if (isSitting) break;
+		isKicking = true;
+		kick_start = GetTickCount64(); //Tính từ khi chạy ctrinh tới bây giờ
+		break;
+
+	case MARIO_STATE_KICKING_LEFT:
+		if (isSitting) break;
 		isKicking = true;
 		kick_start = GetTickCount64();
 		break;
@@ -59,40 +73,16 @@ void CMario::SetState(int state)
 		{
 			isJumping = true;
 			isLanding = false;
-			isFalling = false;
 			if (abs(this->vx) == MARIO_RUNNING_SPEED)
 				vy = -MARIO_JUMP_RUN_SPEED_Y;
 			else
 				vy = -MARIO_JUMP_SPEED_Y;
 		}
 		break;
-
-	case MARIO_STATE_JUMPING_AT_MAX_SPEED:
-		if (isSitting) break;
-		if (isOnPlatform)
-		{
-			isJumping = true;
-			isLanding = false;
-			isFalling = false;
-			if (abs(this->vx) == MARIO_RUNNING_SPEED)
-				vy = -MARIO_JUMP_RUN_SPEED_Y;
-			else
-				vy = -MARIO_JUMP_SPEED_Y;
-			break;
-		}
-
-	case MARIO_RACOON_STATE_FALLING:
-	{
-		isFalling = true;
-		isJumping = false;
-		isLanding = false;
-		break;
-	}
 
 	case MARIO_RACOON_STATE_LANDING:
 	{
 		isLanding = true;
-		isFalling = false;
 		isJumping = false;
 		isFlying = false;
 	    
@@ -103,16 +93,20 @@ void CMario::SetState(int state)
 
 	case MARIO_RACOON_STATE_FLYING:
 	{
-		isFlying = true;
-		isLanding = false;
-		isFalling = false;
-		isJumping = false;
-		vy = -0.2f;
-
+		if (!isFlying)
+		{
+			isFlying = true;
+			isLanding = false;
+			isJumping = false;
+			fly_start = GetTickCount64();
+			vy = -MARIO_FLYING_SPEED;
+		}
+		else 
+			vy = -MARIO_FLYING_SPEED; //Nếu đang bay thì bơm thêm Vy cho Mario
 		break;
 	}
 
-	case MARIO_STATE_RELEASE_JUMP: //prob here
+	case MARIO_STATE_RELEASE_JUMP: 
 		if (vy < 0) 
 			vy += MARIO_JUMP_SPEED_Y / 2;
 		isJumping = false; 
@@ -157,15 +151,8 @@ void CMario::SetState(int state)
 	case MARIO_STATE_IDLE:
 		ax = 0.0f;
 		vx = 0.0f;
-		isIdleing = true;
 		isWalking = false;
 		isRunning = false;
-		isFlying = false;
-		isLanding = false;
-		isKicking = false;
-		isAttacking = false;
-		isJumping = false;
-		isAtMaxSpeed = false;
 
 		break;
 

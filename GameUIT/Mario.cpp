@@ -17,7 +17,6 @@ CMario::CMario(float x, float y) : CGameObject(x, y)
 	isFlying = false;
 	canFly = false;
 	isAtMaxSpeed = false;
-	isFalling = false;
 	isLanding = false;
 	isEvolving = false;
 	isEvolveForward = false;
@@ -36,6 +35,7 @@ CMario::CMario(float x, float y) : CGameObject(x, y)
 	untouch_0 = 0;
 	untouch_1 = 0;
 	shaking_start = 0;
+	fly_start = -1;
 	shakeUp_start = 0;
 	shakeDown_start = 0;
 	isShakeUp = 0;
@@ -87,7 +87,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		isInitialized = true;
 		DebugOut(L"Tail was created successfully!\n");
 	}
-	DebugOutTitle(L"Vy: %f", vy);
+	DebugOutTitle(L"St, Ld, Fl, CanFly: %d, %d, %d, %d", state, isLanding, isFlying, canFly);
 }
 
 void CMario::UpdateMarioState()
@@ -105,6 +105,14 @@ void CMario::UpdateMarioState()
 	{
 		shaking_start = 0;
 		Shaking = false;
+	}
+
+	if (GetTickCount64() - fly_start > FLYING_TIME && isFlying)
+	{
+		fly_start = 0;
+		vy = 0;
+		isFlying = false;
+		canFly = false;
 	}
 
 	if (GetTickCount64() - evolve_start >= MARIO_EVOLVE_TIME && isEvolving)
@@ -131,28 +139,26 @@ void CMario::UpdateMarioState()
 		evolve_start = 0;
 	}
 
-	if (this->level == MARIO_LEVEL_RACOON && vy > 0 && !isOnPlatform)
-	{
-		//Nếu là Racoon và vector vy hướng xuống cũng như không ở trên nền
-		//ưu tiên Landing trước Falling
-	//	if (state == MARIO_RACOON_STATE_LANDING); //prob here
-		//else
-		//this->SetState(MARIO_RACOON_STATE_FALLING);
-		//Khi đang bay ở trạng thái Racoon và vy đổi dấu
-		//thì bật hoạt ảnh falling lên
-	}
-
-	if (this->state == MARIO_STATE_RUNNING || this->state == MARIO_STATE_WALKING)
+	if (this->state == MARIO_STATE_RUNNING_RIGHT || this->state == MARIO_STATE_WALKING_RIGHT)
 	{
 		if (abs(vx) > abs(maxVx))
 		{
-			vx = maxVx; //Giới hạn vận tốc cho nó
-			if (this->state == MARIO_STATE_RUNNING)
-				this->SetState(MARIO_STATE_RUNNING_AT_MAX_VX);
+			vx = maxVx;
+			if (this->state == MARIO_STATE_RUNNING_RIGHT)
+				this->SetState(MARIO_STATE_RUNNING_AT_MAX_SPEED_RIGHT);
 		}
 	}
-	else if (this->isAtMaxSpeed && isJumping)
-		this->SetState(MARIO_STATE_JUMPING_AT_MAX_SPEED);
+	else if (this->state == MARIO_STATE_RUNNING_LEFT || this->state == MARIO_STATE_WALKING_LEFT)
+	{
+		if (abs(vx) > abs(maxVx))
+		{
+			vx = maxVx;
+			if (this->state == MARIO_STATE_RUNNING_LEFT)
+				this->SetState(MARIO_STATE_RUNNING_AT_MAX_SPEED_LEFT);
+		}
+	}
+	else if (this->isAtMaxSpeed && isJumping && isOnPlatform)
+		this->SetState(MARIO_STATE_JUMP_AT_MAX_SPEED);
 
 	if (isKicking && GetTickCount64() - kick_start >= MARIO_KICK_TIME)
 	{

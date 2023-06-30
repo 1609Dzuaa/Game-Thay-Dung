@@ -269,22 +269,21 @@ int CMario::GetAniIdRacoon()
 	int aniId = -1;
 	if (!isOnPlatform) //included fly, jump, landing, fall
 	{
-		/*if (nx > 0 && isFlying)
+		if (nx > 0 && isFlying)
 		{
-			aniId = ID_ANI_MARIO_RACOON_FLYING_RIGHT;
+			aniId = ID_ANI_MARIO_RACOON_FLYING_RIGHT; 
 		}
 		else if (nx < 0 && isFlying)
 		{
 			aniId = ID_ANI_MARIO_RACOON_FLYING_LEFT;
 		}
-		//vì vận tốc hướng lên kh đủ lớn nên nó sẽ đổi dấu dương nhanh chóng
-		else */if (nx < 0 && state == isLanding) //thêm điều kiện isLanding tránh trùng với lúc nhảy lên
+		else if (nx < 0 && isLanding) 
 		{
-			aniId = ID_ANI_MARIO_RACOON_LANDING_LEFT; //có vào đây
+			aniId = ID_ANI_MARIO_RACOON_LANDING_LEFT; 
 		}
 		else if (nx > 0 && isLanding)
 		{
-			aniId = ID_ANI_MARIO_RACOON_LANDING_RIGHT; //có vào đây
+			aniId = ID_ANI_MARIO_RACOON_LANDING_RIGHT;
 		}
 		else if (isAttacking && nx > 0)
 		{
@@ -301,19 +300,19 @@ int CMario::GetAniIdRacoon()
 			else
 				aniId = ID_ANI_MARIO_RACOON_HOLD_JUMP_LEFT;
 		}
-		else if (nx < 0 && isFalling)
+		else if (nx > 0 && vy > 0) //Falling
+		{
+			aniId = ID_ANI_MARIO_RACOON_FALLING_RIGHT; //có vào đây
+		}
+		else if (nx < 0 && vy > 0)
 		{
 			aniId = ID_ANI_MARIO_RACOON_FALLING_LEFT;
-		}
-		else if (nx > 0 && isFalling)
-		{
-			aniId = ID_ANI_MARIO_RACOON_FALLING_RIGHT;
 		}
 		else
 		{
 			if (isAtMaxSpeed)
 			{
-				if (nx > 0)  //prob here
+				if (nx > 0) 
 					aniId = ID_ANI_MARIO_RACOON_JUMP_AT_MAX_SPEED_RIGHT;
 				else if (nx < 0)
 					aniId = ID_ANI_MARIO_RACOON_JUMP_AT_MAX_SPEED_LEFT;
