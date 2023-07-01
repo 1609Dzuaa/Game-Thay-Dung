@@ -2,7 +2,7 @@
 #include "Utils.h"
 #include "Game.h"
 #include "debug.h"
-CMap::CMap(int Tileset_Id, int Map_Rows, int Map_Collums, int Tileset_Rows, int  Tileset_Collums, int num_sprites)
+CMap::CMap(int Tileset_Id, int Map_Rows, int Map_Collums, int Tileset_Rows, int  Tileset_Collums, int num_sprites, int dr_st_y)
 {
 	Texture_TileSet = CTextures::GetInstance()->Get(Tileset_Id);
 	this->MapRows = Map_Rows;
@@ -10,6 +10,7 @@ CMap::CMap(int Tileset_Id, int Map_Rows, int Map_Collums, int Tileset_Rows, int 
 	this->TilesetRows = Tileset_Rows;
 	this->TilesetCollums = Tileset_Collums;
 	this->NumberofSprites = num_sprites;
+	this->start_draw_at_index_y = dr_st_y;
 	this->Cam = CCamera::GetInstance();
 	Map_Matrix = NULL;
 }
@@ -59,10 +60,11 @@ void CMap::Render()
 	for (int CurrentRow = 0; CurrentRow < MapRows; CurrentRow++)
 		for (int CurrentColumn = Viewable_Col_start; CurrentColumn < Viewable_Col_end; CurrentColumn++)
 		{
-			int Sprite_ID = Map_Matrix[CurrentRow][CurrentColumn];
 			//Chỉ số ID của Sprites trong Tileset sẽ tương ứng với chỉ số trong vector SpritesSplited
-			float Draw_X = float(CurrentColumn * TILE_WIDTH);
-			float Draw_Y = float(CurrentRow * TILE_HEIGHT);
+			int Sprite_ID = Map_Matrix[CurrentRow][CurrentColumn];
+
+			float Draw_X = static_cast<float>(CurrentColumn * TILE_WIDTH);
+			float Draw_Y = static_cast<float>((CurrentRow + start_draw_at_index_y) * TILE_HEIGHT);
 			SpritesSplitted.at(Sprite_ID)->Draw(Draw_X, Draw_Y); //Vẽ Sprites được tách tại vị trí x, y
 		}
 }

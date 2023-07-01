@@ -18,6 +18,8 @@ using namespace std;
 #define SCREEN_HEIGHT 256
 #define MAP1_1_WIDTH 2816
 #define MAP1_1_HEIGHT 352
+#define UNDERWORLD_WIDTH	512
+#define UNDERWORLD_HEIGHT	192
 
 #define MAX_FRAME_RATE 100
 #define KEYBOARD_BUFFER_SIZE 1024

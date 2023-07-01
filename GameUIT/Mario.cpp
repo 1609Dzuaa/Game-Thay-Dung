@@ -25,9 +25,12 @@ CMario::CMario(float x, float y) : CGameObject(x, y)
 	StopWatch = false;
 	Shaking = false;
 	isAllowToHoldKoopa = false;
+	isAllowToUseTube = false;
+	isUsingTube = false;
 	isHolding = false;
 	isHitSwitch = false;
 	isInitialized = false;
+	isAtMainWorld = true;
 	CountJumpOnEnemies = 0;
 	untouchdraw = -1;
 	untouch_draw_0 = 0;
@@ -87,7 +90,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		isInitialized = true;
 		DebugOut(L"Tail was created successfully!\n");
 	}
-	DebugOut(L"isFl, isLd: %d, %d\n", isFlying, isLanding);
+	DebugOutTitle(L"x, y: %f, %f", x, y);
 }
 
 void CMario::UpdateMarioState()

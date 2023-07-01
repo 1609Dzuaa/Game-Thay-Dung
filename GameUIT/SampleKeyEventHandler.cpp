@@ -23,7 +23,10 @@ void CSampleKeyHandler::OnKeyDown(int KeyCode)
 		break;
 
 	case DIK_DOWN:
-		mario->SetState(MARIO_STATE_SIT);
+		if (!mario->GetIsAllowToUseTube())
+			mario->SetState(MARIO_STATE_SIT);
+		else 
+			mario->SetState(MARIO_STATE_USING_TUBE);
 		break;
 
 	case DIK_Z: //Tạm cài nút Z vì nút A có lỗi ch fix đc

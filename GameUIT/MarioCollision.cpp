@@ -14,6 +14,7 @@
 #include "EffectCollision.h"
 #include "PlayScene.h"
 #include "Collision.h"
+#include "Tube.h"
 
 void CMario::OnNoCollision(DWORD dt)
 {
@@ -40,7 +41,7 @@ void CMario::OnCollisionWithBlockingObjects(LPCOLLISIONEVENT e)
 			{
 				if (e->ny != 0)
 				{
-					vy = 0;
+					//vy = 0;
 					if (e->ny > 0)
 					{
 						//Nếu là viên chứa Item và state chưa bị hit
@@ -66,6 +67,7 @@ void CMario::OnCollisionWithBlockingObjects(LPCOLLISIONEVENT e)
 						isOnPlatform = true;
 						isLanding = false;
 						CountJumpOnEnemies = 0; //Chạm đất thì reset số lần nhảy
+						vy = 0;
 					}
 				}
 				else if (e->nx != 0 && e->obj->IsBlocking())
@@ -82,13 +84,14 @@ void CMario::OnCollisionWithBlockingObjects(LPCOLLISIONEVENT e)
 		else if (e->ny != 0 && e->obj->IsBlocking())
 		{
 			//this->y = br->GetY() - 100 / 2 - MARIO_BIG_BBOX_HEIGHT / 2;
-			vy = 0;
+			//vy = 0;
 			//Player.TopY + Player.Height > ColorPlat.TopY = > SNAP
 			//this->y = color_platf->GetY() - color_platf->GetCellHeight() / 2 - MARIO_BIG_BBOX_HEIGHT / 2;
 			if (e->ny < 0)
 			{
 				isOnPlatform = true;
 				CountJumpOnEnemies = 0; //Chạm đất thì reset số lần nhảy
+				vy = 0;
 			}
 		}
 		else if (e->nx != 0 && e->obj->IsBlocking())
@@ -98,6 +101,17 @@ void CMario::OnCollisionWithBlockingObjects(LPCOLLISIONEVENT e)
 	} //Nếu 0 phải Brick (Tube, quesbrick, ...)
 	else if (e->ny != 0 && e->obj->IsBlocking())
 	{
+		if (dynamic_cast<CTube*>(e->obj))
+		{
+			CTube* tube = dynamic_cast<CTube*>(e->obj);
+			if (tube->GetType() == LONG_TUBE)
+			{
+				if (this->x >= tube->GetX() - 1.5f || this->x <= tube->GetX() + 1.5f)
+					isAllowToUseTube = true;
+				else
+					isAllowToUseTube = false;
+			}
+		}
 		if (e->ny < 0)
 		{
 			y += 1.5f;

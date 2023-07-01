@@ -68,6 +68,7 @@ void CPlayScene::_ParseSection_SPRITES(string line)
 void CPlayScene::_ParseSection_ASSETS(string line)
 {
 	//1st of all, it will come here
+	//Thêm 1 biến đánh dấu đã chui xuống lòng đất để khỏi phải khởi tạo lại map
 	vector<string> tokens = split(line);
 
 	if (tokens.size() < 1) return;
@@ -79,13 +80,13 @@ void CPlayScene::_ParseSection_ASSETS(string line)
 
 void CPlayScene::_ParseSection_MAP_MATRIX(string line, CMap*& map_para)
 {
-	int ID, rowMap, columnMap, columnTile, rowTile, totalTiles;
+	int ID, rowMap, columnMap, columnTile, rowTile, totalTiles, dr_st_y;
 	LPCWSTR path = ToLPCWSTR(line);
 	ifstream f;
 	DebugOut(L"[INFO] Start Parse Map From File: %s\n", path);
 
 	f.open(path);
-	f >> ID >> rowMap >> columnMap >> rowTile >> columnTile >> totalTiles;
+	f >> ID >> rowMap >> columnMap >> rowTile >> columnTile >> totalTiles >> dr_st_y;
 
 	int** TileMapData = new int* [rowMap];
 	for (int i = 0; i < rowMap; i++)
@@ -96,7 +97,7 @@ void CPlayScene::_ParseSection_MAP_MATRIX(string line, CMap*& map_para)
 	}
 	f.close();
 	
-	map_para = new CMap(ID, rowMap, columnMap, rowTile, columnTile, totalTiles);
+	map_para = new CMap(ID, rowMap, columnMap, rowTile, columnTile, totalTiles, dr_st_y);
 	map_para->ClipSpritesFromTileset(); //bóc từng sprite từ tileSet
 	map_para->SetMapMatrix(TileMapData);
 	DebugOut(L"[INFO] Parse Map Matrix Success: %s \n", path);
@@ -235,10 +236,6 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 		break;
 	}
 
-	case OBJECT_TYPE_Flower:
-
-		break;
-
 	case OBJECT_TYPE_PORTAL:
 	{
 		float r = (float)atof(tokens[3].c_str());
@@ -326,7 +323,9 @@ void CPlayScene::Load()
 		{
 		case SCENE_SECTION_ASSETS: _ParseSection_ASSETS(line); break;
 		case SCENE_SECTION_OBJECTS: _ParseSection_OBJECTS(line); break;
-		case SCENE_SECTION_MAP:	_ParseSection_MAP_MATRIX(line, this->map); break;
+		case SCENE_SECTION_MAP:	
+			_ParseSection_MAP_MATRIX(line, this->map); 
+			break;
 		case SCENE_SECTION_UNDERWORLD: _ParseSection_MAP_MATRIX(line, this->underworld_map); break;
 		}
 	}
@@ -375,14 +374,18 @@ void CPlayScene::Render()
 {
 	//Trước khi vẽ, hãy thử sắp xếp lại thứ tự vector object
 	//std::sort(objects.begin(), objects.end(), );
-	if (map != NULL)
-		map->Render();
-	else 
-		DebugOut(L"[INFO] Map was NULL\n");
+	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
+	//if (mario->GetIsAtMainWorld())
+	{
+		if (map != NULL)
+			map->Render();
+		else
+			DebugOut(L"[INFO] Map was NULL\n");
+	}//else 
 	if (underworld_map != NULL)
 		underworld_map->Render();
 	else
-		//DebugOut(L"[INFO] UnderworldMap was NULL\n");
+		DebugOut(L"[INFO] UnderworldMap was NULL\n");
 	for (int i = 0; i < objects.size(); i++)
 		objects[i]->Render();
 }

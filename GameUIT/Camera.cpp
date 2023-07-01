@@ -53,9 +53,13 @@ void CCamera::Update()
     if (this->posX < 0) this->posX = 0; 
     if (this->posY < 0) this->posY = 0; 
 
+    //nếu đang ở Underworld thì đánh cờ điều chỉnh cam
     //Giới hạn Right, Bot cho Cam
-    if (this->posX + SCREEN_WIDTH >= MAP1_1_WIDTH) this->posX = MAP1_1_WIDTH - SCREEN_WIDTH + 7.5f;
+    //if (this->posX + SCREEN_WIDTH >= MAP1_1_WIDTH) this->posX = MAP1_1_WIDTH - SCREEN_WIDTH + 7.5f;
     if (this->posY + SCREEN_HEIGHT >= MAP1_1_HEIGHT) this->posY = MAP1_1_HEIGHT - SCREEN_HEIGHT;
+
+   //if (this->posX + SCREEN_WIDTH >= UNDERWORLD_WIDTH) this->posX = UNDERWORLD_WIDTH - SCREEN_WIDTH + 7.5f;
+   //if (this->posY + SCREEN_HEIGHT >= MAP1_1_HEIGHT) this->posY = MAP1_1_HEIGHT - SCREEN_HEIGHT;
 }
 
 bool CCamera::isViewable(LPGAMEOBJECT obj)

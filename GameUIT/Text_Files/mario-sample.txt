@@ -1,7 +1,7 @@
 [SETTINGS]
 start	1
-width	320
-height	240
+#width	320
+#height	240
 
 #id	type	file
 # type: 0: intro, 1: play scene 
@@ -9,6 +9,7 @@ height	240
 [SCENES]
 0	intro.txt
 1	Text_Files\Scene1-1.txt
+2	Text_Files\Scene1-1 - Underworld.txt
 
 # id	file 
 [TEXTURES]

@@ -165,6 +165,12 @@ void CMario::SetState(int state)
 		//nothing special
 		break;
 
+	case MARIO_STATE_USING_TUBE:
+		isUsingTube = true;
+		vy = 0.1f;
+
+		break;
+
 	case MARIO_STATE_DIE:
 		vy = -MARIO_JUMP_DEFLECT_SPEED * 1.5f;
 		vx = 0;

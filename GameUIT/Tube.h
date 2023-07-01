@@ -42,4 +42,5 @@ public:
 	void GetBoundingBox(float& left, float& top, float& right, float& bottom);
 	int IsCollidable() { return 1; }
 	void SpawnFlower();
+	int GetType() { return this->Type; }
 };

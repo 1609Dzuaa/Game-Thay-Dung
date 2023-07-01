@@ -1,8 +1,8 @@
 # list of object assets to load in this scene
 [MAP]
 Game_Maps\Map1_1_Full.txt
-#[UNDERWORLD]
-#Game_Maps\Underworld_Map1_1.txt
+[UNDERWORLD]
+Game_Maps\Underworld_Map1_1.txt
 [ASSETS]
 Text_Files\Mario.txt
 Text_Files\Brick.txt
@@ -28,7 +28,7 @@ Text_Files\EffectCollision.txt
 #Khỏi phải vẽ nền, dùng sprite 0
 #How about adding object that "more collidable" sooner than other object ?
 #MARIO
-0	2394	285
+0	25	285
 
 #Red Koopa ON GOLD BRICK
 3	2080	278	3
@@ -53,12 +53,12 @@ Text_Files\EffectCollision.txt
 
 #Platform: ID	X	Y	WIDTH	HEIGHT	SIZE	3SPRITES
 #Normal ground, Higher ground
-6	0	336	16	15	38	0	0	0
+5	0	335	16	15	38	0	0	0
 #GOOMBA
 2	315	290	1
 2	525	290	1
 
-6	608	320	16	15	29	0	0	0
+5	608	320	16	15	29	0	0	0
 
 #Pink platform 	
 6	224	288	16	15	3	0	0	0
@@ -240,5 +240,48 @@ Text_Files\EffectCollision.txt
 #Short tube NO FLOWER
 9	2304	313	0		
 
-#Portal 
-#50	300	62	316	140	2
+################################ UNDERWORLD #####################################
+#Coin
+4	3108	42
+4	3124	26
+4	3140	26
+4	256	42
+4	256	58
+4	224	74
+4	240	74
+4	256	90
+4	256	106
+4	208	106
+4	224	122
+4	240	122
+
+#Cột trái
+1	112	145	3	0
+1	112	130	3	0
+1	112	115	3	0
+1	112	100	3	0
+1	112	85	3	0
+1	112	70	3	0
+1	112	55	3	0
+1	112	40	3	0
+1	112	25	3	0
+1	112	10	3	0
+
+#Nền dưới
+5	2900	160	16	15	16	0	0	0
+
+#Bậc thang
+1	256	145	3	0
+1	272	129	3	0
+1	288	113	3	0
+1	304	97	3	0
+1	320	81	3	0
+1	336	65	3	0
+1	352	65	3	0
+1	368	65	3	0
+1	384	50	3	0
+1	384	33	3	0
+1	384	18	3	0
+
+#Nền trên
+5	165	1	16	15	12	0	0	0

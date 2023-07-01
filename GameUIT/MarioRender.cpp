@@ -328,7 +328,11 @@ int CMario::GetAniIdRacoon()
 	}
 	else
 	{
-		if (isSitting)
+		if (isUsingTube)
+		{
+			aniId = ID_ANI_MARIO_RACOON_USING_TUBE;
+		}
+		else if (isSitting)
 		{
 			if (nx > 0)
 				aniId = ID_ANI_MARIO_RACOON_SIT_RIGHT;

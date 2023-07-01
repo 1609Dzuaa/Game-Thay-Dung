@@ -27,7 +27,8 @@
 
 #define MARIO_JUMP_SPEED_Y		0.5f
 #define MARIO_JUMP_RUN_SPEED_Y	0.5f
-#define MARIO_FLYING_SPEED	0.315f;
+//#define MARIO_FLYING_SPEED	0.315f;
+#define MARIO_FLYING_SPEED	0.4f;
 
 //#define MARIO_GRAVITY	0.001f
 #define MARIO_GRAVITY	0.0018f
@@ -104,6 +105,8 @@
 #define MARIO_STATE_JUMP_AT_MAX_SPEED 730
 
 #define MARIO_STATE_HOLDING 735
+
+#define MARIO_STATE_USING_TUBE	740
 
 #pragma endregion STATE
 //==================================================//
@@ -249,6 +252,8 @@
 #define ID_ANI_MARIO_RACOON_FLYING_LEFT	2850	
 #define ID_ANI_MARIO_RACOON_FLYING_RIGHT	2851
 
+#define ID_ANI_MARIO_RACOON_USING_TUBE	2860
+
 #pragma endregion
 
 class CMario : public CGameObject
@@ -274,6 +279,9 @@ class CMario : public CGameObject
 	BOOLEAN isHolding; //A way to handle holding: 
 	BOOLEAN isHitSwitch;
 	BOOLEAN isInitialized;
+	BOOLEAN isAllowToUseTube;
+	BOOLEAN isUsingTube;
+	BOOLEAN isAtMainWorld;
 	CKoopa* ghost_koopa; //khi đang giữ Koopa, coi nó như item của mình, đang bật khiên, đụng là chết
 	//về cơ bản cũng khá giống cái đuôi, cũng cần đc vẽ bbox
 	float maxVx;
@@ -373,6 +381,8 @@ public:
 	BOOLEAN GetIsHitSwitch() { return this->isHitSwitch; }
 	BOOLEAN GetIsSitting() { return this->isSitting; }
 	BOOLEAN GetIsOnPlatform() { return this->isOnPlatform; }
+	BOOLEAN GetIsAllowToUseTube() { return this->isAllowToUseTube; }
+	BOOLEAN GetIsAtMainWorld() { return this->isAtMainWorld; }
 	void SetHoldKoopa(BOOLEAN para) { this->isAllowToHoldKoopa = para; }
 	void SetIsHoldingKoopa(BOOLEAN para) { this->isHolding = para; }
 	void SetIsHitSwitch(BOOLEAN para) { this->isHitSwitch = para; }

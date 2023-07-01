@@ -1,11 +1,12 @@
 ﻿#include "Switch.h"
+#include "debug.h"
 
 void CSwitch::Update(DWORD dt)
 {
 	//hiệu ứng rung lắc khi bật công tắc
 	//và biến mọi gạch vàng thành vàng trừ cái gạch chứa nó
 	
-
+	//DebugOutTitle(L"y: %f", y);
 }
 
 void CSwitch::Render()
@@ -29,7 +30,7 @@ void CSwitch::SetState(int state)
 	switch (state)
 	{
 	case SWITCH_STATE_HITTED:
-		y += 6.0f;
+		y += 6.0f; //CHECK AGAIN ?
 
 		break;
 	}

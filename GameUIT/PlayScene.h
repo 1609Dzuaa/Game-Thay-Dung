@@ -15,7 +15,7 @@ protected:
 	// A play scene has to have player, right? 
 	LPGAMEOBJECT player;
 	CMap* map = nullptr;
-	CMap* underworld_map = nullptr;
+	CMap* underworld_map = nullptr; //được giấu ở dưới theo trục y
 
 	vector<LPGAMEOBJECT> objects;
 

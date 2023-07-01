@@ -140,8 +140,21 @@ void CKoopa::HandleCollisionWithBlockingObjects(LPCOLLISIONEVENT e)
 			CBrick* br = dynamic_cast<CBrick*>(e->obj);
 			if (br->GetType() == GOLD_BRICK)
 			{
-				if (this->state == KOOPA_STATE_SLIP || state == KOOPA_STATE_SLIP_REVERSE)
-					br->SetState(GBRICK_STATE_IS_DESTROYED);
+				if (br->GetItemType() == NO_ITEM)
+				{
+					if (this->state == KOOPA_STATE_SLIP || state == KOOPA_STATE_SLIP_REVERSE)
+						br->SetState(GBRICK_STATE_IS_DESTROYED);
+				}
+				else
+				{
+					if (this->state == KOOPA_STATE_SLIP || state == KOOPA_STATE_SLIP_REVERSE)
+					{
+						br->SetSpeed(0, -GOLD_BRICK_BOUNCING_SPEED);
+						br->SetHitted(true);
+						br->SetState(GBRICK_HAS_ITEM_STATE_IS_HITTED);
+					}
+				}
+
 			}
 		}
 
