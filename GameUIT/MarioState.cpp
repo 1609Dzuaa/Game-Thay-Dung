@@ -108,7 +108,7 @@ void CMario::SetState(int state)
 
 	case MARIO_STATE_RELEASE_JUMP: 
 		if (vy < 0) 
-			vy += MARIO_JUMP_SPEED_Y / 2;
+			vy += MARIO_JUMP_SPEED_Y / 2; //Nhảy cao hơn
 		isJumping = false; 
 		break;
 

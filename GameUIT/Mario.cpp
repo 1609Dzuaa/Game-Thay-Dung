@@ -87,7 +87,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		isInitialized = true;
 		DebugOut(L"Tail was created successfully!\n");
 	}
-	DebugOutTitle(L"St, Ld, Fl, CanFly: %d, %d, %d, %d", state, isLanding, isFlying, canFly);
+	DebugOut(L"isFl, isLd: %d, %d\n", isFlying, isLanding);
 }
 
 void CMario::UpdateMarioState()

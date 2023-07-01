@@ -28,7 +28,7 @@ Text_Files\EffectCollision.txt
 #Khỏi phải vẽ nền, dùng sprite 0
 #How about adding object that "more collidable" sooner than other object ?
 #MARIO
-0	2354	285
+0	2394	285
 
 #Red Koopa ON GOLD BRICK
 3	2080	278	3
@@ -223,15 +223,15 @@ Text_Files\EffectCollision.txt
 9	2248	313	4
 
 #Long Tube 
-9	2248	95	5
-9	2248	135	4
-9	2248	166	4
-9	2248	197	4
-9	2248	228	4
+9	2248	90	5
+9	2248	130	4
+9	2248	161	4
+9	2248	192	4
+9	2248	223	4
 
 #2 Stripe brick at bottom Long Brick
-1	2240	238	2	0
-1	2256	238	2	0
+1	2240	233	2	0
+1	2256	233	2	0
 
 #2 stripe brick on Tube
 1	2240	289	2	0

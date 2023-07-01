@@ -12,23 +12,25 @@
 
 //Task:
 //Finish Flying & Landing: 95%
+//Adjust Constant
 //Finish Tail: not yet
 //Initialize Use Tube Switch Scene: nope
 //Render Underworld may has bug cuz of Render func in GameMap: will check it later
 
 #pragma region CONST & TIME
 
-#define MARIO_WALKING_SPEED		0.15f
-#define MARIO_RUNNING_SPEED		0.2f
+#define MARIO_WALKING_SPEED		0.11f
+#define MARIO_RUNNING_SPEED		0.15f
 
 #define MARIO_ACCEL_WALK_X	0.0001f
 #define MARIO_ACCEL_RUN_X	0.00012f
 
-#define MARIO_JUMP_SPEED_Y		0.35f
-#define MARIO_JUMP_RUN_SPEED_Y	0.4f
+#define MARIO_JUMP_SPEED_Y		0.5f
+#define MARIO_JUMP_RUN_SPEED_Y	0.5f
 #define MARIO_FLYING_SPEED	0.315f;
 
-#define MARIO_GRAVITY	0.001f
+//#define MARIO_GRAVITY	0.001f
+#define MARIO_GRAVITY	0.0018f
 
 #define MARIO_JUMP_DEFLECT_SPEED  0.004f
 

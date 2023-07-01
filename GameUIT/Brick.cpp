@@ -2,6 +2,7 @@
 #include "QuestionBrick.h"
 #include "PlayScene.h"
 #include "Switch.h"
+#include "BrickPiece.h"
 #include "debug.h"
 
 CBrick::CBrick(float x, float y, int type, int item_type) : CGameObject(x, y)
@@ -122,6 +123,11 @@ void CBrick::SetState(int state)
 		isTurnToCoin = false;
 
 		break;
+
+	case GBRICK_STATE_IS_DESTROYED:
+		SpawnBrickPiece();
+		this->Delete();
+		break;
 	}
 
 	CGameObject::SetState(state);
@@ -137,10 +143,24 @@ void CBrick::SpawnSwitch()
 	hit_start = GetTickCount64(); //Dùng để đánh thgian spawn khói
 	eff = new CEffectCollision(x, this->y - BRICK_BBOX_HEIGHT / 2 - 8.5f, hit_start, EFF_COL_TYPE_SMOKE_EVOLVE);
 	current_scene->AddObjectToScene(eff);
-	//hit_start = 0;
+	hit_start = 0;
 }
 
 void CBrick::SpawnMushroom()
 {
 	this->_mushroom->SetState(MUSHROOM_STATE_RISE_UP);
+}
+
+void CBrick::SpawnBrickPiece()
+{
+	CPlayScene* current_scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
+	//Spawn 4 mảnh vỡ: left top, left bot, right top, right bot
+	CBrickPiece* piece1 = new CBrickPiece(x - 3.0f, y - 5.0f, -0.025f, 0.35f);
+	CBrickPiece* piece2 = new CBrickPiece(x - 3.0f, y + 5.0f, -0.02f, 0.3f);
+	CBrickPiece* piece3 = new CBrickPiece(x + 3.0f, y - 5.0f, 0.03f, 0.35f);
+	CBrickPiece* piece4 = new CBrickPiece(x + 3.0f, y + 5.0f, 0.025f, 0.3f);
+	current_scene->AddObjectToScene(piece1);
+	current_scene->AddObjectToScene(piece2);
+	current_scene->AddObjectToScene(piece3);
+	current_scene->AddObjectToScene(piece4);
 }

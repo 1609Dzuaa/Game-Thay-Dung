@@ -141,6 +141,9 @@
     <ClInclude Include="Switch.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="BrickPiece.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -255,6 +258,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="MarioRender.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BrickPiece.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

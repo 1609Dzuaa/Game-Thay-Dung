@@ -141,7 +141,7 @@ void CKoopa::HandleCollisionWithBlockingObjects(LPCOLLISIONEVENT e)
 			if (br->GetType() == GOLD_BRICK)
 			{
 				if (this->state == KOOPA_STATE_SLIP || state == KOOPA_STATE_SLIP_REVERSE)
-					br->Delete();
+					br->SetState(GBRICK_STATE_IS_DESTROYED);
 			}
 		}
 

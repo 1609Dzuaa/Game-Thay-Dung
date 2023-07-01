@@ -81,8 +81,10 @@ void CMario::OnCollisionWithBlockingObjects(LPCOLLISIONEVENT e)
 		}
 		else if (e->ny != 0 && e->obj->IsBlocking())
 		{
+			//this->y = br->GetY() - 100 / 2 - MARIO_BIG_BBOX_HEIGHT / 2;
 			vy = 0;
-			y += 2.0f;
+			//Player.TopY + Player.Height > ColorPlat.TopY = > SNAP
+			//this->y = color_platf->GetY() - color_platf->GetCellHeight() / 2 - MARIO_BIG_BBOX_HEIGHT / 2;
 			if (e->ny < 0)
 			{
 				isOnPlatform = true;

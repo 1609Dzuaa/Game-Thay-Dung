@@ -23,6 +23,7 @@
 #define GBRICK_HAS_ITEM_STATE_IS_HITTED	1	//Only use for Gold Brick that has Switch: bị hit thì spawn khói
 #define GBRICK_STATE_NORMAL	2
 #define GBRICK_STATE_TURN_TO_COIN	3
+#define GBRICK_STATE_IS_DESTROYED	4
 
 //chỉ level > SMALL thì mới phá huỷ đc GOLD brick
 #define GOLD_BRICK 1	//Kh thực sự xoá đi gold brick mà biến nó thành vàng
@@ -54,9 +55,10 @@ public:
 	int GetItemType() { return this->item_type; }
 
 	void OnNoCollision(DWORD dt);
-	int IsBlocking() { return state != GBRICK_STATE_TURN_TO_COIN; } //bị biến thành gold coin thì 0 block
+	int IsBlocking() { return state != GBRICK_STATE_TURN_TO_COIN && state != GBRICK_STATE_IS_DESTROYED; } //bị biến thành gold coin thì 0 block
 	void SetHitted(bool para) { this->isBeingHitted = para; }
 	void SetState(int state);
 	void SpawnSwitch();
 	void SpawnMushroom();
+	void SpawnBrickPiece();//finish this
 };
