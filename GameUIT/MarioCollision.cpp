@@ -98,7 +98,7 @@ void CMario::OnCollisionWithBlockingObjects(LPCOLLISIONEVENT e)
 		{
 			vx = 0;
 		}
-	} //Nếu 0 phải Brick (Tube, quesbrick, ...)
+	} //Nếu 0 phải Brick (Tube, quesbrick, Plat ...)
 	else if (e->ny != 0 && e->obj->IsBlocking())
 	{
 		if (dynamic_cast<CTube*>(e->obj))
@@ -110,14 +110,44 @@ void CMario::OnCollisionWithBlockingObjects(LPCOLLISIONEVENT e)
 					isAllowToUseTube = true;
 				else
 					isAllowToUseTube = false;
+				if (!isTravelling)
+				{
+					vy = 0; 
+					isOnPlatform = true;
+					CountJumpOnEnemies = 0;
+					start_y = y + MARIO_BIG_BBOX_HEIGHT / 2;
+				}
 			}
 		}
-		if (e->ny < 0)
+		else if (dynamic_cast<CPlatform*>(e->obj))
 		{
-			y += 1.5f;
+			CPlatform* plat = dynamic_cast<CPlatform*>(e->obj);
+			if (plat->GetType() == PLATFORM_UDW_TUBE)	//Nếu Platform đó là Ống chui lên
+			{
+				//Muốn Travel ngược về phải thoả 3ĐK:
+				//1. Ở vị trí x cho phép
+				//2. Combo phím Up và S được bấm
+				//3. Va cột từ dưới lên (ny > 0)
+				isAllowToUseTube = true;
+				if (e->ny > 0 && isAllowToUseTube) //xét ngược lại
+				{
+					isTravelling = true;
+					start_y = y - MARIO_BIG_BBOX_HEIGHT / 2;
+					this->SetState(MARIO_STATE_TRAVELLING);
+				}
+			}
+			else
+			{
+				vy = 0;
+				isOnPlatform = true;
+				CountJumpOnEnemies = 0;
+			}
+		}
+		else
+		{
 			vy = 0;
 			isOnPlatform = true;
-			CountJumpOnEnemies = 0; //Chạm đất thì reset số lần nhảy
+			CountJumpOnEnemies = 0;
 		}
 	}
 	else if (e->nx != 0 && e->obj->IsBlocking())
@@ -282,7 +312,6 @@ void CMario::HandleCollisionOtherDirectionWithGoomba(LPCOLLISIONEVENT e, CGoomba
 void CMario::OnCollisionWithCoin(LPCOLLISIONEVENT e)
 {
 	e->obj->Delete();
-	coin++;
 }
 
 void CMario::OnCollisionWithKoopa(LPCOLLISIONEVENT e)

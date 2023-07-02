@@ -90,7 +90,7 @@ void CBrick::Render()
 	if (type == STRIPE_BRICK)
 		animations->Get(ID_ANI_STRIPE_BRICK)->Render(x, y, false);
 	else if (type == BLUE_BRICK)
-		animations->Get(ID_ANI_BLUE_BRICK)->Render(x, y, false);
+		;// animations->Get(ID_ANI_BLUE_BRICK)->Render(x, y, false);
 	else if(state == GBRICK_HAS_ITEM_STATE_IS_HITTED)
 		animations->Get(ID_ANI_QUESTION_BRICK_HITTED)->Render(x, y, false);
 	else if(state == GBRICK_STATE_TURN_TO_COIN)

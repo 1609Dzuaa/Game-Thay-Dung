@@ -15,18 +15,23 @@ void CSampleKeyHandler::OnKeyDown(int KeyCode)
 	switch (KeyCode)
 	{
 	case DIK_RIGHT:
-		mario->SetState(MARIO_STATE_WALKING_RIGHT);
+		if (!mario->GetIsTravelling())
+			mario->SetState(MARIO_STATE_WALKING_RIGHT);
 		break;
 
 	case DIK_LEFT:
-		mario->SetState(MARIO_STATE_WALKING_LEFT);
+		if (!mario->GetIsTravelling())
+			mario->SetState(MARIO_STATE_WALKING_LEFT);
 		break;
 
 	case DIK_DOWN:
 		if (!mario->GetIsAllowToUseTube())
 			mario->SetState(MARIO_STATE_SIT);
-		else 
-			mario->SetState(MARIO_STATE_USING_TUBE);
+		else
+		{
+			mario->SetIsTravelDown(true);
+			mario->SetState(MARIO_STATE_TRAVELLING);
+		}
 		break;
 
 	case DIK_Z: //Tạm cài nút Z vì nút A có lỗi ch fix đc
@@ -55,11 +60,26 @@ void CSampleKeyHandler::OnKeyDown(int KeyCode)
 			mario->SetState(MARIO_RACOON_STATE_ATTACK);
 		else if (mario->GetIsOnPlatform()) //Phải ở trên nền thì mới cho nhảy 
 			mario->SetState(MARIO_STATE_JUMPING);
+		else if (game->IsKeyDown(DIK_UP))
+		{
+			 mario->SetIsTravelUp(true);
+			 //mario->SetState(MARIO_STATE_TRAVELLING);
+		}
 		break;
 		//case DIK_Z:
 			//if (mario->GetState() == MARIO_RACOON_STATE_ATTACK) break;
 			//if (mario->GetLevel() == MARIO_LEVEL_RACOON)
 			//	mario->SetState(MARIO_RACOON_STATE_ATTACK);
+
+	case DIK_T:
+		mario->SetIsAtMainWorld(false);
+		mario->SetPosition(130, 495);
+		break;
+
+	case DIK_B:
+		mario->SetIsAtMainWorld(true);
+		mario->SetPosition(2248, 60);
+		break;
 
 	case DIK_1:
 		mario->SetLevel(MARIO_LEVEL_SMALL);
@@ -97,7 +117,8 @@ void CSampleKeyHandler::OnKeyUp(int KeyCode)
 		break;
 
 	case DIK_DOWN:
-		mario->SetState(MARIO_STATE_SIT_RELEASE);
+		if (!mario->GetIsTravelling())
+			mario->SetState(MARIO_STATE_SIT_RELEASE);
 		break;
 	}
 }

@@ -22,6 +22,9 @@
 #define ID_ANI_SMALL_TUBE 5501
 #define ID_ANI_TUBE_WITH_STRIPE_BRICK 5502
 
+#define DOWN_TUBE_POSITION_X	135
+#define DOWN_TUBE_POSITION_Y	412
+
 class CTube :public CGameObject 
 {
 	int Type; //Has shootin' flower, has Carni flower

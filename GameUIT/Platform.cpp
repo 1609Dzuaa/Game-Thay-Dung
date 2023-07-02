@@ -17,7 +17,7 @@ void CPlatform::Render()
 {
 	if (!CCamera::GetInstance()->isViewable(this)) return;
 
-	if (this->spriteIdBegin == 0) return; //đéo vẽ
+	if (this->spriteIdBegin == 0) return; //0 vẽ
 	if (this->length <= 0) return;
 	float xx = x;
 	CSprites* s = CSprites::GetInstance();

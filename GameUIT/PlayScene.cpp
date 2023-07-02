@@ -200,11 +200,12 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 		int sprite_begin = atoi(tokens[6].c_str());
 		int sprite_middle = atoi(tokens[7].c_str());
 		int sprite_end = atoi(tokens[8].c_str());
+		int isUdw_Tube = atoi(tokens[9].c_str());
 
 		obj = new CPlatform(
 			x, y,
 			cell_width, cell_height, length,
-			sprite_begin, sprite_middle, sprite_end
+			sprite_begin, sprite_middle, sprite_end, isUdw_Tube
 		);
 
 		break;
@@ -362,8 +363,8 @@ void CPlayScene::Update(DWORD dt)
 
 	//block player if go over Min, Max of the Map
 	if (player->GetX() <= 0)
-		player->SetPosition(0, player->GetY()); 
-	else if(player->GetX() >= MAP1_1_WIDTH - 10.0f)
+		player->SetPosition(0, player->GetY());
+	else if (player->GetX() >= MAP1_1_WIDTH - 10.0f)
 		player->SetPosition(MAP1_1_WIDTH - 10.0f, player->GetY());
 
 	//DebugOutTitle(L"X, Y, x, y: %f, %f, %f, %f", Cam->GetCamPos().x, Cam->GetCamPos().y, player->GetX(), player->GetY());
@@ -375,19 +376,25 @@ void CPlayScene::Render()
 	//Trước khi vẽ, hãy thử sắp xếp lại thứ tự vector object
 	//std::sort(objects.begin(), objects.end(), );
 	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
-	//if (mario->GetIsAtMainWorld())
+	if (mario->GetIsAtMainWorld())
 	{
 		if (map != NULL)
 			map->Render();
 		else
 			DebugOut(L"[INFO] Map was NULL\n");
-	}//else 
-	if (underworld_map != NULL)
-		underworld_map->Render();
-	else
-		DebugOut(L"[INFO] UnderworldMap was NULL\n");
+	}
+
+	if (!mario->GetIsAtMainWorld())
+	{
+		if (underworld_map != NULL)
+			underworld_map->Render();
+		else
+			DebugOut(L"[INFO] UnderworldMap was NULL\n");
+	}
+
 	for (int i = 0; i < objects.size(); i++)
-		objects[i]->Render();
+		//if (CCamera::GetInstance()->isViewable(objects[i]))
+			objects[i]->Render();
 }
 
 /*

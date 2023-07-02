@@ -25,4 +25,6 @@ public:
 	void SetTargetToFollow(LPGAMEOBJECT obj); //Set đối tượng follow
 	void Update();
 	bool isViewable(LPGAMEOBJECT object); //Check obj có trong Cam không
+	void SetCamPosX(float x) { this->posX = x; }
+	void SetCamPosY(float y) { this->posY = y; }
 };

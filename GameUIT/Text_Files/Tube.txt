@@ -9,7 +9,6 @@
 #tube with 2 stripe brick
 5403	2	44	33	75	50
 
-
 # ani_id	sprite1_id	time1	sprite2_id	time2	...
 [ANIMATIONS]
 #ANI TUBE

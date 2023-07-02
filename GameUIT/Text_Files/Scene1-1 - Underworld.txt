@@ -7,7 +7,7 @@ Text_Files\ColorPlatform.txt
 Text_Files\Platform.txt
 
 [OBJECTS]
-0	140	20
+#0	140	20
 
 #Coin
 4	208	42

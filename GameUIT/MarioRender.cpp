@@ -25,6 +25,8 @@ void CMario::Render()
 
 void CMario::HandleUntouchableDrawState()
 {
+	//when untouchable, there are 2 states of drawing: Draw & NOT draw
+
 	//0 vẽ
 	if (untouchable && GetTickCount64() - untouch_draw_0 >= UNTOUCH_DRAW_TIME && untouch_0)
 	{
@@ -269,7 +271,11 @@ int CMario::GetAniIdRacoon()
 	int aniId = -1;
 	if (!isOnPlatform) //included fly, jump, landing, fall
 	{
-		if (nx > 0 && isFlying)
+		if (isTravelling)
+		{
+			aniId = ID_ANI_MARIO_RACOON_TRAVELLING;
+		}
+		else if (nx > 0 && isFlying)
 		{
 			aniId = ID_ANI_MARIO_RACOON_FLYING_RIGHT; 
 		}
@@ -328,11 +334,7 @@ int CMario::GetAniIdRacoon()
 	}
 	else
 	{
-		if (isUsingTube)
-		{
-			aniId = ID_ANI_MARIO_RACOON_USING_TUBE;
-		}
-		else if (isSitting)
+		if (isSitting)
 		{
 			if (nx > 0)
 				aniId = ID_ANI_MARIO_RACOON_SIT_RIGHT;

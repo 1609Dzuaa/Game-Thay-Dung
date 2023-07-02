@@ -29,6 +29,7 @@
 #define MARIO_JUMP_RUN_SPEED_Y	0.5f
 //#define MARIO_FLYING_SPEED	0.315f;
 #define MARIO_FLYING_SPEED	0.4f;
+#define MARIO_TRAVELLING_SPEED	0.02815f
 
 //#define MARIO_GRAVITY	0.001f
 #define MARIO_GRAVITY	0.0018f
@@ -46,7 +47,6 @@
 
 #define MARIO_EVOLVE_BBOX_WIDTH 14
 #define MARIO_EVOLVE_BBOX_HEIGHT 20
-
 #define MARIO_RACOON_BBOX_WIDTH  24 
 
 #define MARIO_SIT_HEIGHT_ADJUST ((MARIO_BIG_BBOX_HEIGHT - MARIO_BIG_SITTING_BBOX_HEIGHT) / 2)
@@ -106,7 +106,7 @@
 
 #define MARIO_STATE_HOLDING 735
 
-#define MARIO_STATE_USING_TUBE	740
+#define MARIO_STATE_TRAVELLING	740
 
 #pragma endregion STATE
 //==================================================//
@@ -252,13 +252,12 @@
 #define ID_ANI_MARIO_RACOON_FLYING_LEFT	2850	
 #define ID_ANI_MARIO_RACOON_FLYING_RIGHT	2851
 
-#define ID_ANI_MARIO_RACOON_USING_TUBE	2860
+#define ID_ANI_MARIO_RACOON_TRAVELLING	2860
 
 #pragma endregion
 
 class CMario : public CGameObject
 {
-	BOOLEAN isIdleing;
 	BOOLEAN isSitting;
 	BOOLEAN isWalking;
 	BOOLEAN isRunning;
@@ -280,7 +279,7 @@ class CMario : public CGameObject
 	BOOLEAN isHitSwitch;
 	BOOLEAN isInitialized;
 	BOOLEAN isAllowToUseTube;
-	BOOLEAN isUsingTube;
+	BOOLEAN isTravelling;
 	BOOLEAN isAtMainWorld;
 	CKoopa* ghost_koopa; //khi đang giữ Koopa, coi nó như item của mình, đang bật khiên, đụng là chết
 	//về cơ bản cũng khá giống cái đuôi, cũng cần đc vẽ bbox
@@ -288,8 +287,8 @@ class CMario : public CGameObject
 	float maxRunningSpeed;
 	float ax;				// acceleration on x 
 	float ay;				// acceleration on y 
-	CTail* tail;	//Nên tạo sẵn cái đuôi và add nó to scene lúc khởi tạo Mario luôn
-	//khi nào đang dạng racoon mà bấm Z || A thì mới allow to use that weapon
+	float start_y;			//Điểm bắt đầu chui xuống
+	CTail* tail;
 
 	int level;
 	int untouchable, untouchdraw;
@@ -306,8 +305,9 @@ class CMario : public CGameObject
 	ULONGLONG shakeUp_start, shakeDown_start;
 	BOOLEAN isShakeUp;
 	BOOLEAN isOnPlatform;
+	BOOLEAN isTravelUp;
+	BOOLEAN isTravelDown;
 	int CountJumpOnEnemies; //Đếm số bước nhảy 0 CHẠM ĐẤT để có số điểm tương ứng
-	int coin;
 
 	//Collision Func
 	void OnCollisionWithColorPlatform(LPCOLLISIONEVENT e);
@@ -348,10 +348,10 @@ public:
 
 	int IsCollidable()
 	{
-		return (state != MARIO_STATE_DIE);
+		return (state != MARIO_STATE_DIE && !isTravelling);
 	}
 
-	int IsBlocking() { return (state != MARIO_STATE_DIE && untouchable == 0); }
+	int IsBlocking() { return 0; }
 	//Để ý ở đây Mario có thuộc tính blocking => đôi lúc nó sẽ khiến các quái vật khác đổi hướng khi va chạm với nó
 	//Khi nó ở trạng thái vô địch(untouchable) và CHƯA CHẾT
 
@@ -359,8 +359,6 @@ public:
 	int GetLevel() { return level; };
 	void StartUntouchable() 
 	{ untouchable = 1; untouchable_start = GetTickCount64(); untouch_0 = 1; untouch_draw_0 = GetTickCount64(); }
-	/*void StartShaking()
-    { Shaking = 1; shaking_start = GetTickCount64(); isShakeUp = 1; shakeUp_start = GetTickCount64(); }*/
 
 	void GetBoundingBox(float& left, float& top, float& right, float& bottom);
 	int GetMarioNormalX() { return nx; }
@@ -383,8 +381,15 @@ public:
 	BOOLEAN GetIsOnPlatform() { return this->isOnPlatform; }
 	BOOLEAN GetIsAllowToUseTube() { return this->isAllowToUseTube; }
 	BOOLEAN GetIsAtMainWorld() { return this->isAtMainWorld; }
+	BOOLEAN GetIsTravelling() { return this->isTravelling; }
 	void SetHoldKoopa(BOOLEAN para) { this->isAllowToHoldKoopa = para; }
 	void SetIsHoldingKoopa(BOOLEAN para) { this->isHolding = para; }
 	void SetIsHitSwitch(BOOLEAN para) { this->isHitSwitch = para; }
 	void SetIsRunning(BOOLEAN para) { this->isRunning = para; }
+	void SetIsAtMainWorld(BOOLEAN para) { this->isAtMainWorld = para; }
+	void SetIsTravelUp(BOOLEAN para) { this->isTravelUp = para; }
+	void SetIsTravelDown(BOOLEAN para) { this->isTravelDown = para; }
+	void SetAllowToUseTube(BOOLEAN para) { this->isAllowToUseTube = para; }
+	void HandleTravellingDown();
+	void HandleTravellingUp();
 };

@@ -137,8 +137,7 @@ void CMario::SetState(int state)
 	case MARIO_RACOON_STATE_ATTACK:
 	{
 		if (isAttacking) break;
-		if (isIdleing)
-			isIdleing = false;
+		
 
 		attack_start = GetTickCount64();
 		isAttacking = true;
@@ -165,9 +164,13 @@ void CMario::SetState(int state)
 		//nothing special
 		break;
 
-	case MARIO_STATE_USING_TUBE:
-		isUsingTube = true;
-		vy = 0.1f;
+	case MARIO_STATE_TRAVELLING:
+		isTravelling = true;
+		if (isTravelDown)
+			vy = MARIO_TRAVELLING_SPEED;
+		else
+			vy = -MARIO_TRAVELLING_SPEED;
+		ay = 0;
 
 		break;
 

@@ -4,10 +4,11 @@
 #include "Mario.h"
 #include "PlayScene.h"
 #include "Game.h"
+#include "Tube.h"
 
 CMario::CMario(float x, float y) : CGameObject(x, y)
 {
-	isIdleing = false;
+	//isIdleing = false;
 	isSitting = false;
 	isWalking = false;
 	isRunning = false;
@@ -26,10 +27,12 @@ CMario::CMario(float x, float y) : CGameObject(x, y)
 	Shaking = false;
 	isAllowToHoldKoopa = false;
 	isAllowToUseTube = false;
-	isUsingTube = false;
+	isTravelling = false;
 	isHolding = false;
 	isHitSwitch = false;
 	isInitialized = false;
+	isTravelUp = false;
+	isTravelDown = false;
 	isAtMainWorld = true;
 	CountJumpOnEnemies = 0;
 	untouchdraw = -1;
@@ -38,6 +41,7 @@ CMario::CMario(float x, float y) : CGameObject(x, y)
 	untouch_0 = 0;
 	untouch_1 = 0;
 	shaking_start = 0;
+	start_y = -1;
 	fly_start = -1;
 	shakeUp_start = 0;
 	shakeDown_start = 0;
@@ -59,124 +63,6 @@ CMario::CMario(float x, float y) : CGameObject(x, y)
 	attack_start = 0;
 	evolve_start = 0;
 	isOnPlatform = false;
-	coin = 0;
-}
-
-void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
-{
-	//Phải dừng vận tốc ở đây chứ 0 phải ở hàm OnNoCollision
-	//Vì ở đây gọi trc r mới đến OnNoCollision
-	//Cập nhật vị trí Koopa khi đc ôm bởi Mario
-
-	if (!isEvolving)
-	{
-		vy += ay * dt;
-		vx += ax * dt;
-	}
-	else
-	{
-		vx = 0;
-		vy = 0;
-	}
-
-	UpdateMarioState();
-	isOnPlatform = false;
-	CCollision::GetInstance()->Process(this, dt, coObjects);
-	if (isAttacking && !isInitialized)
-	{
-		tail = new CTail(x, y, MARIO_BIG_BBOX_WIDTH, nx, vx);
-		CPlayScene* current_scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
-		current_scene->AddObjectToScene(tail);
-		isInitialized = true;
-		DebugOut(L"Tail was created successfully!\n");
-	}
-	DebugOutTitle(L"x, y: %f, %f", x, y);
-}
-
-void CMario::UpdateMarioState()
-{
-	// reset untouchable timer if untouchable time has passed
-	//when untouchable, there are 2 states of drawing: Draw & NOT draw
-
-	if (GetTickCount64() - untouchable_start > MARIO_UNTOUCHABLE_TIME)
-	{
-		untouchable_start = 0;
-		untouchable = 0;
-	}
-
-	if (GetTickCount64() - shaking_start > SHAKING_TIME)
-	{
-		shaking_start = 0;
-		Shaking = false;
-	}
-
-	if (GetTickCount64() - fly_start > FLYING_TIME && isFlying)
-	{
-		fly_start = 0;
-		vy = 0;
-		isFlying = false;
-		canFly = false;
-	}
-
-	if (GetTickCount64() - evolve_start >= MARIO_EVOLVE_TIME && isEvolving)
-	{
-		//Tiến hoá có 2 loại: tiến hoá lên và tiến hoá lùi
-		if (isEvolveForward)
-		{
-			if (this->level == MARIO_LEVEL_SMALL)
-				this->SetLevel(MARIO_LEVEL_BIG);
-			else
-				this->SetLevel(MARIO_LEVEL_RACOON);
-		}
-		else //Tiến hoá ngược
-		{
-			if (this->level == MARIO_LEVEL_RACOON)
-				this->SetLevel(MARIO_LEVEL_BIG);
-			else if (this->level == MARIO_LEVEL_BIG)
-				this->SetLevel(MARIO_LEVEL_SMALL);
-		}
-		isEvolving = false;
-		isEvolveForward = false;
-		isEvolveBackward = false;
-		isAteItem = false;
-		evolve_start = 0;
-	}
-
-	if (this->state == MARIO_STATE_RUNNING_RIGHT || this->state == MARIO_STATE_WALKING_RIGHT)
-	{
-		if (abs(vx) > abs(maxVx))
-		{
-			vx = maxVx;
-			if (this->state == MARIO_STATE_RUNNING_RIGHT)
-				this->SetState(MARIO_STATE_RUNNING_AT_MAX_SPEED_RIGHT);
-		}
-	}
-	else if (this->state == MARIO_STATE_RUNNING_LEFT || this->state == MARIO_STATE_WALKING_LEFT)
-	{
-		if (abs(vx) > abs(maxVx))
-		{
-			vx = maxVx;
-			if (this->state == MARIO_STATE_RUNNING_LEFT)
-				this->SetState(MARIO_STATE_RUNNING_AT_MAX_SPEED_LEFT);
-		}
-	}
-	else if (this->isAtMaxSpeed && isJumping && isOnPlatform)
-		this->SetState(MARIO_STATE_JUMP_AT_MAX_SPEED);
-
-	if (isKicking && GetTickCount64() - kick_start >= MARIO_KICK_TIME)
-	{
-		isKicking = false;
-		kick_start = 0;
-	}
-
-	if (isAttacking && GetTickCount64() - attack_start >= MARIO_RACOON_ATTACK_TIME)
-	{
-		attack_start = 0;
-		isAttacking = false;
-		isInitialized = false;
-		tail->Delete();
-		DebugOut(L"Delete Tail Success\n");
-	}
 }
 
 void CMario::GetBoundingBox(float& left, float& top, float& right, float& bottom)
@@ -292,4 +178,38 @@ int CMario::KoopaStateThatAllowToHold(CKoopa* koopa)
 	return (koopa->GetState() == KOOPA_STATE_SLEEP || koopa->GetState() == KOOPA_STATE_SLEEP_REVERSE
 		|| koopa->GetState() == KOOPA_STATE_SLEEP_REVERSE_SPECIAL || koopa->GetState() == KOOPA_STATE_REBORN
 		|| koopa->GetState() == KOOPA_STATE_REBORN_REVERSE);
+}
+
+void CMario::HandleTravellingDown()
+{
+	if (isTravelling && y - start_y > MARIO_BIG_BBOX_HEIGHT && isAtMainWorld)
+	{
+		isAtMainWorld = false;
+		SetPosition(DOWN_TUBE_POSITION_X, DOWN_TUBE_POSITION_Y);
+	}
+	else if (isTravelling && y > DOWN_TUBE_POSITION_Y + MARIO_BIG_BBOX_HEIGHT && !isAtMainWorld)
+	{
+		vy = 0;
+		ay = MARIO_GRAVITY;	//Trả lại grav cho nó
+		isTravelling = false;
+		isTravelDown = false;
+	}
+	isAllowToUseTube = false;
+}
+
+void CMario::HandleTravellingUp()
+{
+	if (isTravelling && start_y - y > MARIO_BIG_BBOX_HEIGHT && !isAtMainWorld)
+	{
+		isAtMainWorld = true;
+		SetPosition(2348, 255);
+	}
+	else if (isTravelling && y < 255 + MARIO_BIG_BBOX_HEIGHT && isAtMainWorld)
+	{
+		vy = 0;
+		ay = MARIO_GRAVITY;
+		isTravelling = false;
+		isTravelDown = false;
+	}
+	isAllowToUseTube = false;
 }

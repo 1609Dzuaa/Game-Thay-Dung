@@ -1,5 +1,6 @@
 ﻿#include "Camera.h"
 #include "Game.h"
+#include "PlayScene.h"
 #include "debug.h"
 #include <cstddef>
 
@@ -49,17 +50,27 @@ void CCamera::Update()
     //Set vị trí cho Cam
     SetCamPos(target_follow->GetX(), target_follow->GetY());
 
-    //Giới hạn Left, Top cho Cam
-    if (this->posX < 0) this->posX = 0; 
-    if (this->posY < 0) this->posY = 0; 
-
     //nếu đang ở Underworld thì đánh cờ điều chỉnh cam
-    //Giới hạn Right, Bot cho Cam
-    //if (this->posX + SCREEN_WIDTH >= MAP1_1_WIDTH) this->posX = MAP1_1_WIDTH - SCREEN_WIDTH + 7.5f;
-    if (this->posY + SCREEN_HEIGHT >= MAP1_1_HEIGHT) this->posY = MAP1_1_HEIGHT - SCREEN_HEIGHT;
+    CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
 
-   //if (this->posX + SCREEN_WIDTH >= UNDERWORLD_WIDTH) this->posX = UNDERWORLD_WIDTH - SCREEN_WIDTH + 7.5f;
-   //if (this->posY + SCREEN_HEIGHT >= MAP1_1_HEIGHT) this->posY = MAP1_1_HEIGHT - SCREEN_HEIGHT;
+    if (mario->GetIsAtMainWorld())
+    {
+        //Giới hạn Left, Top cho Cam
+        if (this->posX < 0) this->posX = 0;
+        if (this->posY < 0) this->posY = 0;
+
+        //Giới hạn Right, Bot cho Cam
+        if (this->posX + SCREEN_WIDTH >= MAP1_1_WIDTH) this->posX = MAP1_1_WIDTH - SCREEN_WIDTH + 7.5f;
+        if (this->posY + SCREEN_HEIGHT >= MAP1_1_HEIGHT) this->posY = MAP1_1_HEIGHT - SCREEN_HEIGHT;
+    }
+    else
+    {
+        //Với Underworld thì chỉ cần giới hạn Left, Top, Right cho nó
+        if (this->posX < 0) this->posX = 0;
+        if (this->posY < MAP1_1_HEIGHT + 40.0f) this->posY = MAP1_1_HEIGHT + 40.0f; //Thêm bớt 1 đoạn vì nó ở dưới lòng đất
+
+        if (this->posX + SCREEN_WIDTH >= UNDERWORLD_WIDTH) this->posX = UNDERWORLD_WIDTH - SCREEN_WIDTH + 7.5f;
+    }
 }
 
 bool CCamera::isViewable(LPGAMEOBJECT obj)
