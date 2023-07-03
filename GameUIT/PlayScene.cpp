@@ -14,6 +14,7 @@
 #include "ColorPlatform.h"
 #include "Tube.h"
 #include "FireBullet.h"
+#include "Card.h"
 
 #include "SampleKeyEventHandler.h"
 #include "GameMap.h"
@@ -237,13 +238,8 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 		break;
 	}
 
-	case OBJECT_TYPE_PORTAL:
-	{
-		float r = (float)atof(tokens[3].c_str());
-		float b = (float)atof(tokens[4].c_str());
-		int scene_id = atoi(tokens[5].c_str());
-		obj = new CPortal(x, y, r, b, scene_id);
-	}
+	case OBJECT_TYPE_CARD:
+		obj = new CCard(x, y);
 	break;
 
 	default:
@@ -360,14 +356,14 @@ void CPlayScene::Update(DWORD dt)
 	CCamera* Cam = CCamera::GetInstance();
 	Cam->SetTargetToFollow(player);
 	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
-	//if (!mario->GetIsReachTransPos())
-		Cam->Update();
+	Cam->Update();
 
 	//block player if go over Min, Max of the Map
-	if (player->GetX() <= 0)
-		player->SetPosition(0, player->GetY());
-	else if (player->GetX() >= MAP1_1_WIDTH - 10.0f)
-		player->SetPosition(MAP1_1_WIDTH - 10.0f, player->GetY());
+	//UNLESS When End Game
+	if (mario->GetX() <= 0)
+		mario->SetPosition(0, mario->GetY());
+	else if (mario->GetX() >= MAP1_1_WIDTH - 10.0f && !mario->GetIsEndGame())
+		mario->SetPosition(MAP1_1_WIDTH - 10.0f, player->GetY());
 
 	//DebugOutTitle(L"X, Y, x, y: %f, %f, %f, %f", Cam->GetCamPos().x, Cam->GetCamPos().y, player->GetX(), player->GetY());
 	PurgeDeletedObjects();

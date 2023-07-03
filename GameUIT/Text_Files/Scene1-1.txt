@@ -18,6 +18,7 @@ Text_Files\Flower.txt
 Text_Files\FireBullet.txt
 Text_Files\EffectScore.txt
 Text_Files\EffectCollision.txt
+Text_Files\Card.txt
 #Those 0 - SpriteID use for ? => Read class ColorPlatform.h
 
 [OBJECTS]
@@ -238,7 +239,10 @@ Text_Files\EffectCollision.txt
 1	2256	289	2	0
 
 #Short tube NO FLOWER
-9	2304	313	0		
+9	2304	313	0
+
+#Card
+8	2672	255	
 
 ########################################### UNDERWORLD ###############################################
 #Ống 1 - thêm vào nhằm mục đích vẽ đè -> Mario chui ra từ ống

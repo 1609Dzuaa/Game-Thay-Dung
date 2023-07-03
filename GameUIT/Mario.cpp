@@ -38,6 +38,7 @@ CMario::CMario(float x, float y) : CGameObject(x, y)
 	isComboUpAndS = false;
 	isReachTransPos = false;
 	isWaitingForTrans = true;
+	isEndGame = false;
 	CountJumpOnEnemies = 0;
 	untouchdraw = -1;
 	untouch_draw_0 = 0;

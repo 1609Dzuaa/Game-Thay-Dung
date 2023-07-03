@@ -15,6 +15,7 @@
 #include "PlayScene.h"
 #include "Collision.h"
 #include "Tube.h"
+#include "Card.h"
 
 void CMario::OnNoCollision(DWORD dt)
 {
@@ -186,6 +187,8 @@ void CMario::OnCollisionWithNonBlockingObjects(LPCOLLISIONEVENT e)
 		OnCollisionWithCoin(e);
 	if (dynamic_cast<CSwitch*>(e->obj))
 		OnCollisionWithSwitch(e);
+	if (dynamic_cast<CCard*>(e->obj))
+		OnCollisionWithCard(e);
 }
 
 void CMario::OnCollisionWithColorPlatform(LPCOLLISIONEVENT e)
@@ -603,4 +606,11 @@ void CMario::OnCollisionWithSwitch(LPCOLLISIONEVENT e)
 		Shaking = true;
 		shaking_start = GetTickCount64();
 	}
+}
+
+void CMario::OnCollisionWithCard(LPCOLLISIONEVENT e)
+{
+	e->obj->Delete();
+	isEndGame = true;
+	SetState(MARIO_STATE_END_GAME);	//Need to Improve here
 }

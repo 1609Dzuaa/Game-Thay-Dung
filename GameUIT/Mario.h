@@ -109,6 +109,8 @@
 
 #define MARIO_STATE_TRAVELLING	740
 
+#define MARIO_STATE_END_GAME	745
+
 #pragma endregion STATE
 //==================================================//
 
@@ -312,6 +314,7 @@ class CMario : public CGameObject
 	BOOLEAN isComboUpAndS;
 	BOOLEAN isReachTransPos; //Dùng để nhận biết đã chạm tới điểm trans
 	BOOLEAN isWaitingForTrans;
+	BOOLEAN isEndGame;	//End Game -> bật chế độ tự lái
 	int CountJumpOnEnemies; //Đếm số bước nhảy 0 CHẠM ĐẤT để có số điểm tương ứng
 
 	//Collision Func
@@ -325,7 +328,7 @@ class CMario : public CGameObject
 	void OnCollisionWithFlower(LPCOLLISIONEVENT e);
 	void OnCollisionWithFireBullet(LPCOLLISIONEVENT e);
 	void OnCollisionWithSwitch(LPCOLLISIONEVENT e);
-	void OnCollisionWithPortal(LPCOLLISIONEVENT e);
+	void OnCollisionWithCard(LPCOLLISIONEVENT e);
 	void OnCollisionWithBlockingObjects(LPCOLLISIONEVENT e);
 	void OnCollisionWithNonBlockingObjects(LPCOLLISIONEVENT e);
 	void OnNoCollision(DWORD dt);
@@ -387,6 +390,7 @@ public:
 	BOOLEAN GetIsAllowToUseTube() { return this->isAllowToUseTube; }
 	BOOLEAN GetIsAtMainWorld() { return this->isAtMainWorld; }
 	BOOLEAN GetIsTravelling() { return this->isTravelling; }
+	BOOLEAN GetIsEndGame() { return this->isEndGame; }
 	void SetHoldKoopa(BOOLEAN para) { this->isAllowToHoldKoopa = para; }
 	void SetIsHoldingKoopa(BOOLEAN para) { this->isHolding = para; }
 	void SetIsHitSwitch(BOOLEAN para) { this->isHitSwitch = para; }

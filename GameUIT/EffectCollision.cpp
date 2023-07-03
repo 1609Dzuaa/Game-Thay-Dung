@@ -1,4 +1,6 @@
-#include "EffectCollision.h"
+﻿#include "EffectCollision.h"
+
+//Coi lại tại sao 0 sinh khói
 
 void CEffectCollision::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {

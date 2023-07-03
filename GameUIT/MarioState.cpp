@@ -41,8 +41,14 @@ void CMario::SetState(int state)
 
 	case MARIO_STATE_WALKING_RIGHT:
 		if (isSitting) break;
-		maxVx = MARIO_WALKING_SPEED;
-		ax = MARIO_ACCEL_WALK_X;
+		if (!isEndGame)
+		{
+			maxVx = MARIO_WALKING_SPEED;
+			ax = MARIO_ACCEL_WALK_X;
+		}
+		else
+			vx = MARIO_WALKING_SPEED * 2.0f;
+
 		nx = 1;
 		isWalking = true;
 		break;
@@ -141,7 +147,6 @@ void CMario::SetState(int state)
 
 		attack_start = GetTickCount64();
 		isAttacking = true;
-		//isIdleing = false;
 		isKicking = false;
 		isSitting = false;
 	}
@@ -149,9 +154,14 @@ void CMario::SetState(int state)
 
 	case MARIO_STATE_IDLE:
 		ax = 0.0f;
-		vx = 0.0f;
-		isWalking = false;
-		isRunning = false;
+		if (!isEndGame)
+		{
+			vx = 0.0f;
+			isWalking = false;
+			isRunning = false;
+		}
+		else
+			SetState(MARIO_STATE_WALKING_RIGHT);
 
 		break;
 
@@ -179,6 +189,11 @@ void CMario::SetState(int state)
 		vy = -MARIO_JUMP_DEFLECT_SPEED * 1.5f;
 		vx = 0;
 		ax = 0;
+		break;
+
+	case MARIO_STATE_END_GAME:
+		vx = MARIO_WALKING_SPEED;	//prob here ?
+
 		break;
 	}
 

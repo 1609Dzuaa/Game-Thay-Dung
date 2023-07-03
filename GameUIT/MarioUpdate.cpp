@@ -36,7 +36,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	}
 
 	//DebugOutTitle(L"x, y, isWait, atMW: %f, %f, %d, %d", x, y, isWaitingForTrans, isAtMainWorld);
-	//DebugOut(L"TravUp, x, ay: %d, %f, %f\n", isTravelUp, x, ay);
+	DebugOutTitle(L"St, vx, ax: %d, %f, %f", state, vx, ax);
 }
 
 void CMario::UpdateMarioState()

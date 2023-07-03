@@ -167,10 +167,11 @@ void CSampleKeyHandler::KeyState(BYTE* states)
 			mario->SetState(MARIO_STATE_WALKING_LEFT);
 		}
 	}
+	else if (mario->GetIsEndGame());
 	//else if (game->IsKeyDown(DIK_DOWN))
 		//mario->SetState(MARIO_STATE_SIT);
 	//else if (game->IsKeyDown(DIK_Z) && mario->GetLevel() == MARIO_LEVEL_RACOON)
 		//mario->SetState(MARIO_RACOON_STATE_ATTACK);
-	else
+	else 
 		mario->SetState(MARIO_STATE_IDLE);
 }

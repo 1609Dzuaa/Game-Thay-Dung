@@ -8,7 +8,7 @@ void CEffect::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	if (state == BLACK_SCR_EFF_STATE_DRAW_FROM_0)
 	{
-		Alpha += 0.02;
+		Alpha += 0.02f;
 		if (Alpha >= 1.0f)
 		{
 			Alpha = 1.0f;
@@ -29,7 +29,7 @@ void CEffect::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		}
 	}
 
-	DebugOutTitle(L"St, Al: %d, %f", state, Alpha);
+	//DebugOutTitle(L"St, Al: %d, %f", state, Alpha);
 	CCollision::GetInstance()->Process(this, dt, coObjects);
 }
 
@@ -39,8 +39,8 @@ void CEffect::Render()
 
 	LPTEXTURE bbox = CTextures::GetInstance()->Get(ID_BLACK_SCREEN);
 
-	float l, t, r, b;
-	//Coi lại 1 đống Warning here
+	int l, t, r, b;
+	//Done Warning here!
 	l = static_cast<int>(x - CCamera::GetInstance()->GetCamPos().x);
 	t = static_cast<int>(y - CCamera::GetInstance()->GetCamPos().y);
 	r = static_cast<int>(l + CGame::GetInstance()->GetBackBufferWidth());
@@ -49,7 +49,7 @@ void CEffect::Render()
 	x = static_cast<float>(CGame::GetInstance()->GetBackBufferWidth() / 2);
 	y = static_cast<float>(CGame::GetInstance()->GetBackBufferHeight() / 2);
 
-	CGame::GetInstance()->Draw(CGame::GetInstance()->GetBackBufferWidth() / 2, CGame::GetInstance()->GetBackBufferHeight() / 2, bbox, l, t, r, b, Alpha);
+	CGame::GetInstance()->Draw(x, y, bbox, l, t, r, b, Alpha);
 }
 
 void CEffect::SetState(int state)
@@ -70,4 +70,6 @@ void CEffect::SetState(int state)
 
 		break;
 	}
+
+	CGameObject::SetState(state);
 }
