@@ -17,9 +17,14 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		vx = 0;
 		vy = 0;
 	}
+	if (isTravelDown)
+		HandleTravellingDown();
+	else if (isTravelUp)
+		HandleTravellingUp();
 
 	UpdateMarioState();
 	isOnPlatform = false;
+	//isComboUpAndS = false;
 	CCollision::GetInstance()->Process(this, dt, coObjects);
 	if (isAttacking && !isInitialized)
 	{
@@ -30,13 +35,8 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		DebugOut(L"Tail was created successfully!\n");
 	}
 
-	if (isTravelDown)
-		HandleTravellingDown();
-	else if(isTravelUp)
-		HandleTravellingUp();
-
-	DebugOutTitle(L"IsAllowTube: %d", isAllowToUseTube);
-	DebugOut(L"y, Vy, isTravel, St: %f, %f, %d, %d\n", y, vy, isTravelling, state);
+	//DebugOutTitle(L"IsAllowTube: %d", isAllowToUseTube);
+	//DebugOut(L"TravUp, x, ay: %d, %f, %f\n", isTravelUp, x, ay);
 }
 
 void CMario::UpdateMarioState()

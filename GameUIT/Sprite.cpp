@@ -15,6 +15,7 @@ CSprite::CSprite(int id, int left, int top, int right, int bottom, LPTEXTURE tex
 	this->Shake = 0;
 	this->noShake = 0;
 	this->Initialized = 0;
+	this->alpha = 1.0f;
 
 	float texWidth = (float)tex->getWidth();
 	float texHeight = (float)tex->getHeight();
@@ -65,6 +66,11 @@ void CSprite::Draw(float x, float y)
 	D3DXMatrixTranslation(&matTranslation, x - (FLOAT)floor(cam.x), g->GetBackBufferHeight() - y + (FLOAT)floor(cam.y), 0.1f);
 
 	this->sprite.matWorld = (this->matScaling * matTranslation);
+	/*if (mario->GetIsTravelling() && !mario->GetIsAtMainWorld())
+	{
+		alpha -= 0.2f;
+		sprite.ColorModulate = D3DXCOLOR(1.0f, 1.0f, 1.0f, alpha);
+	}*/
 
 	g->GetSpriteHandler()->DrawSpritesImmediate(&sprite, 1, 0, 0);
 }

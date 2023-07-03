@@ -34,6 +34,10 @@ void CSampleKeyHandler::OnKeyDown(int KeyCode)
 		}
 		break;
 
+	case DIK_UP:
+		mario->SetCombo(true);
+		break;
+
 	case DIK_Z: //Tạm cài nút Z vì nút A có lỗi ch fix đc
 		if (mario->GetIsAttacking()) break;
 		if (mario->GetLevel() == MARIO_LEVEL_RACOON)
@@ -41,7 +45,15 @@ void CSampleKeyHandler::OnKeyDown(int KeyCode)
 		break;
 
 	case DIK_S: //nếu là racoon mario thì bơm thêm vận tốc theo trục y để bay
-		 if (mario->GetCanFly() && mario->GetLevel() == MARIO_LEVEL_RACOON)
+		 /*if (game->IsKeyDown(DIK_UP))
+		 {
+			 if (mario->GetIsAllowToUseTube())
+			 {
+				 mario->SetIsTravelUp(true);
+				 mario->SetState(MARIO_STATE_TRAVELLING);
+			 }
+		 }
+		 else*/ if (mario->GetCanFly() && mario->GetLevel() == MARIO_LEVEL_RACOON)
 			mario->SetState(MARIO_RACOON_STATE_FLYING); //Max speed + Racoon -> bay
 		 else  if (!mario->GetIsOnPlatform() && mario->GetLevel() == MARIO_LEVEL_RACOON && !mario->GetIsFlying())
 		 {
@@ -59,12 +71,8 @@ void CSampleKeyHandler::OnKeyDown(int KeyCode)
 		else if (mario->GetIsAttacking())
 			mario->SetState(MARIO_RACOON_STATE_ATTACK);
 		else if (mario->GetIsOnPlatform()) //Phải ở trên nền thì mới cho nhảy 
-			mario->SetState(MARIO_STATE_JUMPING);
-		else if (game->IsKeyDown(DIK_UP))
-		{
-			 mario->SetIsTravelUp(true);
-			 //mario->SetState(MARIO_STATE_TRAVELLING);
-		}
+			mario->SetState(MARIO_STATE_JUMPING);	//maybe prob here
+		
 		break;
 		//case DIK_Z:
 			//if (mario->GetState() == MARIO_RACOON_STATE_ATTACK) break;
@@ -104,7 +112,8 @@ void CSampleKeyHandler::OnKeyUp(int KeyCode)
 	switch (KeyCode)
 	{
 	case DIK_S:
-		mario->SetState(MARIO_STATE_RELEASE_JUMP);
+		if (!mario->GetIsTravelling())
+			mario->SetState(MARIO_STATE_RELEASE_JUMP);	//0 Travel thì release tránh TH nhảy phát lên luôn
 
 		break;
 
@@ -119,6 +128,10 @@ void CSampleKeyHandler::OnKeyUp(int KeyCode)
 	case DIK_DOWN:
 		if (!mario->GetIsTravelling())
 			mario->SetState(MARIO_STATE_SIT_RELEASE);
+		break;
+
+	case DIK_UP:
+		mario->SetCombo(false);
 		break;
 	}
 }

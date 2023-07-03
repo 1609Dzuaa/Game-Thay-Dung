@@ -34,6 +34,7 @@ CMario::CMario(float x, float y) : CGameObject(x, y)
 	isTravelUp = false;
 	isTravelDown = false;
 	isAtMainWorld = true;
+	isComboUpAndS = false;
 	CountJumpOnEnemies = 0;
 	untouchdraw = -1;
 	untouch_draw_0 = 0;
@@ -202,14 +203,14 @@ void CMario::HandleTravellingUp()
 	if (isTravelling && start_y - y > MARIO_BIG_BBOX_HEIGHT && !isAtMainWorld)
 	{
 		isAtMainWorld = true;
-		SetPosition(2348, 255);
+		SetPosition(SHORT_TUBE_POSITION_X, SHORT_TUBE_POSITION_Y);
 	}
-	else if (isTravelling && y < 255 + MARIO_BIG_BBOX_HEIGHT && isAtMainWorld)
+	else if (isTravelling && y < SHORT_TUBE_POSITION_Y - MARIO_BIG_BBOX_HEIGHT && isAtMainWorld)
 	{
 		vy = 0;
 		ay = MARIO_GRAVITY;
 		isTravelling = false;
-		isTravelDown = false;
+		isTravelUp = false;
 	}
 	isAllowToUseTube = false;
 }

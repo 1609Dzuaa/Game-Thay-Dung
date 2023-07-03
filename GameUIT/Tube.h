@@ -25,6 +25,9 @@
 #define DOWN_TUBE_POSITION_X	135
 #define DOWN_TUBE_POSITION_Y	412
 
+#define SHORT_TUBE_POSITION_X	2304
+#define SHORT_TUBE_POSITION_Y	310
+
 class CTube :public CGameObject 
 {
 	int Type; //Has shootin' flower, has Carni flower

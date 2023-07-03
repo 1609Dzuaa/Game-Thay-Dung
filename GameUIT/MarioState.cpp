@@ -166,11 +166,12 @@ void CMario::SetState(int state)
 
 	case MARIO_STATE_TRAVELLING:
 		isTravelling = true;
+		ay = 0;
+
 		if (isTravelDown)
 			vy = MARIO_TRAVELLING_SPEED;
-		else
+		else if (isTravelUp)
 			vy = -MARIO_TRAVELLING_SPEED;
-		ay = 0;
 
 		break;
 

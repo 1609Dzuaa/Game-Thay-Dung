@@ -307,6 +307,7 @@ class CMario : public CGameObject
 	BOOLEAN isOnPlatform;
 	BOOLEAN isTravelUp;
 	BOOLEAN isTravelDown;
+	BOOLEAN isComboUpAndS;
 	int CountJumpOnEnemies; //Đếm số bước nhảy 0 CHẠM ĐẤT để có số điểm tương ứng
 
 	//Collision Func
@@ -390,6 +391,7 @@ public:
 	void SetIsTravelUp(BOOLEAN para) { this->isTravelUp = para; }
 	void SetIsTravelDown(BOOLEAN para) { this->isTravelDown = para; }
 	void SetAllowToUseTube(BOOLEAN para) { this->isAllowToUseTube = para; }
+	void SetCombo(BOOLEAN para) { this->isComboUpAndS = para; }
 	void HandleTravellingDown();
 	void HandleTravellingUp();
 };

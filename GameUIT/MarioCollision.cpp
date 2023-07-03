@@ -106,17 +106,21 @@ void CMario::OnCollisionWithBlockingObjects(LPCOLLISIONEVENT e)
 			CTube* tube = dynamic_cast<CTube*>(e->obj);
 			if (tube->GetType() == LONG_TUBE)
 			{
-				if (this->x >= tube->GetX() - 1.5f || this->x <= tube->GetX() + 1.5f)
+				if (x > tube->GetX() - 7.0f && x < tube->GetX() + 7.0f)
 					isAllowToUseTube = true;
 				else
 					isAllowToUseTube = false;
-				if (!isTravelling)
-				{
-					vy = 0; 
-					isOnPlatform = true;
-					CountJumpOnEnemies = 0;
-					start_y = y + MARIO_BIG_BBOX_HEIGHT / 2;
-				}
+
+				vy = 0;
+				isOnPlatform = true;
+				CountJumpOnEnemies = 0;
+				start_y = y + MARIO_BIG_BBOX_HEIGHT / 2;
+			}
+			else //Nếu nó là các loại ống còn lại
+			{
+				vy = 0;
+				isOnPlatform = true;
+				CountJumpOnEnemies = 0;
 			}
 		}
 		else if (dynamic_cast<CPlatform*>(e->obj))
@@ -128,12 +132,16 @@ void CMario::OnCollisionWithBlockingObjects(LPCOLLISIONEVENT e)
 				//1. Ở vị trí x cho phép
 				//2. Combo phím Up và S được bấm
 				//3. Va cột từ dưới lên (ny > 0)
-				isAllowToUseTube = true;
-				if (e->ny > 0 && isAllowToUseTube) //xét ngược lại
+				if (x > plat->GetX() + 5.5f && x < plat->GetX() + 15.0f)
+					isAllowToUseTube = true;
+				else
+					isAllowToUseTube = false;
+
+				if (e->ny > 0 && isAllowToUseTube && isComboUpAndS) 
 				{
-					isTravelling = true;
 					start_y = y - MARIO_BIG_BBOX_HEIGHT / 2;
-					this->SetState(MARIO_STATE_TRAVELLING);
+					isTravelUp = true;
+					SetState(MARIO_STATE_TRAVELLING);
 				}
 			}
 			else
@@ -164,14 +172,14 @@ void CMario::OnCollisionWithNonBlockingObjects(LPCOLLISIONEVENT e)
 		OnCollisionWithGoomba(e);
 	if (dynamic_cast<CKoopa*>(e->obj))
 		OnCollisionWithKoopa(e);
-	if (dynamic_cast<CQuestionBrick*>(e->obj) && e->obj->GetState() != QBRICK_STATE_HITTED) //chưa bị đụng thì mới có collision
+	if (dynamic_cast<CQuestionBrick*>(e->obj) && e->obj->GetState() != QBRICK_STATE_HITTED)
 		OnCollisionWithQuesBrick(e);
 	if (dynamic_cast<CMushroom*>(e->obj))
 		OnCollisionWithMushroom(e);
 	if (dynamic_cast<CLeaf*>(e->obj))
 		OnCollisionWithLeaf(e);
 	if (dynamic_cast<CFlower*>(e->obj))
-		OnCollisionWithFlower(e); //Prob here with Canivour flower
+		OnCollisionWithFlower(e); 
 	if (dynamic_cast<CFireBullet*>(e->obj))
 		OnCollisionWithFireBullet(e);
 	if (dynamic_cast<CCoin*>(e->obj))
