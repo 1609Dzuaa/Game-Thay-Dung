@@ -35,7 +35,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		DebugOut(L"Tail was created successfully!\n");
 	}
 
-	//DebugOutTitle(L"IsAllowTube: %d", isAllowToUseTube);
+	//DebugOutTitle(L"x, y, isWait, atMW: %f, %f, %d, %d", x, y, isWaitingForTrans, isAtMainWorld);
 	//DebugOut(L"TravUp, x, ay: %d, %f, %f\n", isTravelUp, x, ay);
 }
 

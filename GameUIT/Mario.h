@@ -5,6 +5,7 @@
 #include "Animation.h"
 #include "Animations.h"
 #include "ColorPlatform.h"
+#include "Effect.h"
 #include "EffectScore.h"
 #include "Tail.h"
 
@@ -289,6 +290,7 @@ class CMario : public CGameObject
 	float ay;				// acceleration on y 
 	float start_y;			//Điểm bắt đầu chui xuống
 	CTail* tail;
+	CEffect* black_eff;
 
 	int level;
 	int untouchable, untouchdraw;
@@ -308,6 +310,8 @@ class CMario : public CGameObject
 	BOOLEAN isTravelUp;
 	BOOLEAN isTravelDown;
 	BOOLEAN isComboUpAndS;
+	BOOLEAN isReachTransPos; //Dùng để nhận biết đã chạm tới điểm trans
+	BOOLEAN isWaitingForTrans;
 	int CountJumpOnEnemies; //Đếm số bước nhảy 0 CHẠM ĐẤT để có số điểm tương ứng
 
 	//Collision Func
@@ -392,6 +396,7 @@ public:
 	void SetIsTravelDown(BOOLEAN para) { this->isTravelDown = para; }
 	void SetAllowToUseTube(BOOLEAN para) { this->isAllowToUseTube = para; }
 	void SetCombo(BOOLEAN para) { this->isComboUpAndS = para; }
+	void SetIsWaitingForTrans(BOOLEAN para) { this->isWaitingForTrans = para; }
 	void HandleTravellingDown();
 	void HandleTravellingUp();
 };

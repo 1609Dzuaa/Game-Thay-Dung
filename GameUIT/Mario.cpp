@@ -5,6 +5,7 @@
 #include "PlayScene.h"
 #include "Game.h"
 #include "Tube.h"
+#include "Effect.h"
 
 CMario::CMario(float x, float y) : CGameObject(x, y)
 {
@@ -35,6 +36,8 @@ CMario::CMario(float x, float y) : CGameObject(x, y)
 	isTravelDown = false;
 	isAtMainWorld = true;
 	isComboUpAndS = false;
+	isReachTransPos = false;
+	isWaitingForTrans = true;
 	CountJumpOnEnemies = 0;
 	untouchdraw = -1;
 	untouch_draw_0 = 0;
@@ -48,6 +51,7 @@ CMario::CMario(float x, float y) : CGameObject(x, y)
 	shakeDown_start = 0;
 	isShakeUp = 0;
 	tail = NULL;
+	black_eff = NULL;
 	//Thêm đuôi trước tương tự như mushroom
 	ghost_koopa = NULL; //Khi đang Hold Koopa thì coi nó như thuộc tính của Mario
 	//Giống như bật khiên
@@ -183,10 +187,16 @@ int CMario::KoopaStateThatAllowToHold(CKoopa* koopa)
 
 void CMario::HandleTravellingDown()
 {
+	//đã chui tới điểm dịch chuyển từ ống trên -> trans và chờ yên đấy
 	if (isTravelling && y - start_y > MARIO_BIG_BBOX_HEIGHT && isAtMainWorld)
 	{
-		isAtMainWorld = false;
-		SetPosition(DOWN_TUBE_POSITION_X, DOWN_TUBE_POSITION_Y);
+		isReachTransPos = true;
+		isWaitingForTrans = true;
+		y = start_y + MARIO_BIG_BBOX_HEIGHT; //giữ nguyên vị trí
+		vy = 0;
+		CEffect* blck_eff = new CEffect(x, y, 0.0f);
+		CPlayScene* current_scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
+		current_scene->AddObjectToScene(blck_eff);
 	}
 	else if (isTravelling && y > DOWN_TUBE_POSITION_Y + MARIO_BIG_BBOX_HEIGHT && !isAtMainWorld)
 	{
@@ -195,6 +205,20 @@ void CMario::HandleTravellingDown()
 		isTravelling = false;
 		isTravelDown = false;
 	}
+
+	if (!isWaitingForTrans && isReachTransPos) //trans xong roi moi tele -> doi trans tiep
+	{
+		SetPosition(DOWN_TUBE_POSITION_X, DOWN_TUBE_POSITION_Y);
+		isAtMainWorld = 0;
+		CEffect* blck_eff = new CEffect(x, y, 1.0f);
+		CPlayScene* current_scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
+		current_scene->AddObjectToScene(blck_eff);
+		isReachTransPos = false;
+		isWaitingForTrans = true; //chờ alpha từ 0 -> 1 rồi sau đó trả tự do cho nó
+	}
+
+	if (!isAtMainWorld && !isWaitingForTrans && isTravelling)
+		vy = MARIO_TRAVELLING_SPEED;
 	isAllowToUseTube = false;
 }
 
@@ -202,8 +226,13 @@ void CMario::HandleTravellingUp()
 {
 	if (isTravelling && start_y - y > MARIO_BIG_BBOX_HEIGHT && !isAtMainWorld)
 	{
-		isAtMainWorld = true;
-		SetPosition(SHORT_TUBE_POSITION_X, SHORT_TUBE_POSITION_Y);
+		isReachTransPos = true;
+		isWaitingForTrans = true;
+		y = start_y - MARIO_BIG_BBOX_HEIGHT; //giữ nguyên vị trí
+		vy = 0;
+		CEffect* blck_eff = new CEffect(x, y, 0.0f);
+		CPlayScene* current_scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
+		current_scene->AddObjectToScene(blck_eff);
 	}
 	else if (isTravelling && y < SHORT_TUBE_POSITION_Y - MARIO_BIG_BBOX_HEIGHT && isAtMainWorld)
 	{
@@ -212,5 +241,19 @@ void CMario::HandleTravellingUp()
 		isTravelling = false;
 		isTravelUp = false;
 	}
+
+	if (!isWaitingForTrans && isReachTransPos) //trans xong roi moi tele -> doi trans tiep
+	{
+		SetPosition(SHORT_TUBE_POSITION_X, SHORT_TUBE_POSITION_Y);
+		isAtMainWorld = 1;
+		CEffect* blck_eff = new CEffect(x, y, 1.0f);
+		CPlayScene* current_scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
+		current_scene->AddObjectToScene(blck_eff);
+		isReachTransPos = false;
+		isWaitingForTrans = true; //chờ alpha từ 0 -> 1 rồi sau đó trả tự do cho nó
+	}
+
+	if (isAtMainWorld && !isWaitingForTrans && isTravelling)
+		vy = -MARIO_TRAVELLING_SPEED;
 	isAllowToUseTube = false;
 }

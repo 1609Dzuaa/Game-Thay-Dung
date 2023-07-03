@@ -14,6 +14,7 @@ start	1
 # id	file 
 [TEXTURES]
 -100	textures\bbox.png
+255	textures\Black_Screen.jpg
 0	textures\mario_trans.png
 10	textures\enemies_transparent.png
 15	textures\enemies_transparent_3.png

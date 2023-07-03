@@ -359,7 +359,9 @@ void CPlayScene::Update(DWORD dt)
 	// Update camera to follow mario - CAM START HERE !
 	CCamera* Cam = CCamera::GetInstance();
 	Cam->SetTargetToFollow(player);
-	Cam->Update();
+	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
+	//if (!mario->GetIsReachTransPos())
+		Cam->Update();
 
 	//block player if go over Min, Max of the Map
 	if (player->GetX() <= 0)
@@ -386,8 +388,12 @@ void CPlayScene::Render()
 
 	if (!mario->GetIsAtMainWorld())
 	{
+		//Vẽ Underworld <=> đã reachTransPos và đc Tele xuống Underworld cũng như hết thời gian chuyển cảnh
 		if (underworld_map != NULL)
-			underworld_map->Render();
+		{
+			if (!mario->GetIsAtMainWorld())
+				underworld_map->Render();
+		}
 		else
 			DebugOut(L"[INFO] UnderworldMap was NULL\n");
 	}

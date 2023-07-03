@@ -5,7 +5,8 @@
 
 #define SHAKING_TIME	240
 #define SHAKE_TIME	40
-#define	BLACK_TRANSITION_TIME	1000
+#define	BLACK_TRANSITION_TIME	1600
+#define DECREASE_ALPHA_TIME_OUT	200
 
 class CSprite
 {
@@ -15,7 +16,6 @@ class CSprite
 	int top;
 	int right;
 	int bottom;
-	float alpha;
 
 	LPTEXTURE texture;
 	D3DX10_SPRITE sprite;

@@ -178,6 +178,7 @@
     <ClCompile Include="Brick.cpp" />
     <ClCompile Include="BrickPiece.cpp" />
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="Effect.cpp" />
     <ClCompile Include="Coin.cpp" />
     <ClCompile Include="Collision.cpp" />
     <ClCompile Include="ColorPlatform.cpp" />
