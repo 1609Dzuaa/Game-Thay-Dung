@@ -23,11 +23,14 @@
 
 using namespace std;
 
+int CPlayScene::timer = 299;
+
 CPlayScene::CPlayScene(int id, LPCWSTR filePath) :
 	CScene(id, filePath)
 {
 	player = NULL;
 	key_handler = new CSampleKeyHandler(this);
+	timer_start = GetTickCount64();
 }
 
 
@@ -338,6 +341,13 @@ void CPlayScene::Update(DWORD dt)
 	//Problem here: if Draw Mario later it will affect the collision proccess
 	// We know that Mario is the first object in the list hence we won't add him into the colliable object list
 	// TO-DO: This is a "dirty" way, need a more organized way!
+
+	if (GetTickCount64() - timer_start >= 1000)
+	{
+		timer--;
+		timer_start = GetTickCount64();
+	}
+	DebugOutTitle(L"Time: %d", timer);
 
 	vector<LPGAMEOBJECT> coObjects;
 	for (size_t i = 1; i < objects.size(); i++)

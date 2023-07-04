@@ -23,7 +23,7 @@ void CCard::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			SetState(CARD_STATE_MUSHROOM);
 	}
 
-	DebugOutTitle(L"St, y: %d, %f", state, y);
+	//DebugOutTitle(L"St, y: %d, %f", state, y);
 	CCollision::GetInstance()->Process(this, dt, coObjects);
 }
 

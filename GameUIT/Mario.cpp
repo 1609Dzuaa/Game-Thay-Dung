@@ -7,9 +7,12 @@
 #include "Tube.h"
 #include "Effect.h"
 
+int CMario::HP = 4;
+int CMario::coin = 0;
+int CMario::points = 0;
+
 CMario::CMario(float x, float y) : CGameObject(x, y)
 {
-	//isIdleing = false;
 	isSitting = false;
 	isWalking = false;
 	isRunning = false;

@@ -10,6 +10,7 @@ CHud* CHud::GetInstance()
 		float x = CCamera::GetInstance()->GetCamPos().x + CGame::GetInstance()->GetBackBufferWidth() / 2;
 		float y = CCamera::GetInstance()->GetCamPos().y + CGame::GetInstance()->GetBackBufferHeight() - 16.0f;
 		__HudInstance = new CHud(x, y);
+		DebugOut(L"Create Hud Successfully\n");
 	}
 	return __HudInstance;
 }
@@ -24,8 +25,79 @@ void CHud::Update()
 void CHud::Render()
 {
 	CAnimations* animations = CAnimations::GetInstance();
+	//Vẽ thanh Hud
 	animations->Get(ID_HUD)->Render(x, y, false);
+	//Vẽ World number -> vì world hiện tại là 1 nên mặc định vẽ tại đây luôn
+	animations->Get(ID_NUMBER_1)->Render(x - 77.0f, y - 2.5f, false);
+	//Vẽ M ;)
+	animations->Get(ID_LETTER_M)->Render(x - 106.0f, y + 5.5f, false);
+	RenderHP();
+	RenderCoin();
+	RenderTimer();
+	RenderPoints();
 	RenderCard();
+}
+
+void CHud::RenderHP()
+{
+	//Coi lại một chút
+	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
+	CAnimations* animations = CAnimations::GetInstance();
+	animations->Get(mario->GetHP())->Render(x - 77.0f, y + 5.0f, false);
+}
+
+void CHud::RenderCoin()
+{
+	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
+	CAnimations* animations = CAnimations::GetInstance();
+	//if <= 9 : vẽ 1 số
+	//Quay về mấy bài NMLT năm nhất, tìm chữ số hàng đơn vị, hàng chục, đảo ngc số, ...
+	//else CT chung: Hàng đơn vị = GetCoin() % 10, Hàng chục = GetCoin() / 10
+	if (mario->GetCoin() <= 9)
+		animations->Get(mario->GetCoin())->Render(x + 25.0f, y - 3.0f, false);
+	else
+	{
+		int	OnesPlace = mario->GetCoin() % 10;	//Hàng đơn vị
+		int TensPlace = mario->GetCoin() / 10;	//Hàng chục
+		animations->Get(OnesPlace)->Render(x + 25.0f, y - 3.0f, false);
+		animations->Get(TensPlace)->Render(x + 17.0f, y - 3.0f, false);
+	}
+}
+
+void CHud::RenderPoints()
+{
+	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
+	CAnimations* animations = CAnimations::GetInstance();
+	int points = mario->GetPoints();
+
+	int	OnesPlace = points % 10;	//Hàng đơn vị
+	int TensPlace = (points / 10) % 10;	//Hàng chục
+	int Hundreds = (points / 100) % 10;	//Hàng trăm
+	int Thousands = (points / 1000) % 10;	//Hàng ngàn
+	int	TenThousands = (points / 10000) % 10;	//Hàng chục ngàn
+	int HundredThousands = (points / 100000) % 10;	//Hàng trăm ngàn
+	int Millions = points / 1000000;	//Hàng triệu
+
+	animations->Get(OnesPlace)->Render(x - 18.0f, y + 5.0f, false);
+	animations->Get(TensPlace)->Render(x - 25.0f, y + 5.0f, false);
+	animations->Get(Hundreds)->Render(x - 32.0f, y + 5.0f, false);
+	animations->Get(Thousands)->Render(x - 39.0f, y + 5.0f, false);
+	animations->Get(TenThousands)->Render(x - 46.0f, y + 5.0f, false);
+	animations->Get(HundredThousands)->Render(x - 53.0f, y + 5.0f, false);
+	animations->Get(Millions)->Render(x - 60.0f, y + 5.0f, false);
+}
+
+void CHud::RenderTimer()
+{
+	CAnimations* animations = CAnimations::GetInstance();
+	CPlayScene* current_scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
+	int	OnesPlace = current_scene->GetTimer() % 10;	//Hàng đơn vị
+	int TensPlace = (current_scene->GetTimer() / 10) % 10;	//Hàng chục
+	int Hundreds = current_scene->GetTimer() / 100;	//Hàng trăm
+
+	animations->Get(OnesPlace)->Render(x + 26.0f, y +5.5f, false);
+	animations->Get(TensPlace)->Render(x + 18.0f, y + 5.5f, false);
+	animations->Get(Hundreds)->Render(x + 10.0f, y + 5.5f, false);
 }
 
 void CHud::RenderCard()

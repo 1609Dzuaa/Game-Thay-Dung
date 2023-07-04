@@ -16,6 +16,8 @@ protected:
 	LPGAMEOBJECT player;
 	CMap* map = nullptr;
 	CMap* underworld_map = nullptr; //được giấu ở dưới theo trục y
+	static int timer;
+	ULONGLONG timer_start;
 
 	vector<LPGAMEOBJECT> objects;
 
@@ -44,6 +46,7 @@ public:
 
 	static bool IsGameObjectDeleted(const LPGAMEOBJECT& o);
 	void AddObjectToScene(LPGAMEOBJECT game_object);
+	int GetTimer() { return timer; }
 };
 
 typedef CPlayScene* LPPLAYSCENE;

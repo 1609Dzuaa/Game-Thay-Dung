@@ -298,6 +298,9 @@ class CMario : public CGameObject
 	CTail* tail;
 	CEffect* black_eff;
 
+	static int HP;
+	static int coin;	//Ăn Coin cho 50đ, 100 coin đổi 1 mạng, coin từ 99 về 0
+	static int points;
 	int level;
 	int untouchable, untouchdraw;
 	ULONGLONG untouchable_start;
@@ -375,6 +378,9 @@ public:
 
 	void GetBoundingBox(float& left, float& top, float& right, float& bottom);
 	int GetMarioNormalX() { return nx; }
+	static int GetHP() { return HP; }
+	static int GetCoin() { return coin; }
+	static int GetPoints() { return points; }
 	BOOLEAN GetCanFly() { return canFly; }
 	BOOLEAN GetisAtMaxSpeed() { return isAtMaxSpeed; }
 	void SetisJumping(BOOLEAN para) { this->isJumping = para; }

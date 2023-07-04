@@ -28,6 +28,11 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		return; //ngưng update
 	}
 
+	if (coin == 100)
+	{
+
+	}
+
 	UpdateMarioState();
 	isOnPlatform = false;
 	CCollision::GetInstance()->Process(this, dt, coObjects);

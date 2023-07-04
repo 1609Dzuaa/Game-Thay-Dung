@@ -79,6 +79,14 @@ void CMario::OnCollisionWithBlockingObjects(LPCOLLISIONEVENT e)
 			else
 			{
 				br->Delete();
+				if (coin == 99)
+				{
+					coin = 0;
+					HP++;
+				}
+				else
+					coin++;
+				points += 50;
 				//Tăng điểm cho Mario
 			}
 		}
@@ -333,6 +341,14 @@ void CMario::HandleCollisionOtherDirectionWithGoomba(LPCOLLISIONEVENT e, CGoomba
 void CMario::OnCollisionWithCoin(LPCOLLISIONEVENT e)
 {
 	e->obj->Delete();
+	if (coin == 99)
+	{
+		coin = 0;
+		HP++;
+	}
+	else
+		coin++;
+	points += 50;
 }
 
 void CMario::OnCollisionWithKoopa(LPCOLLISIONEVENT e)
@@ -526,6 +542,7 @@ void CMario::OnCollisionWithMushroom(LPCOLLISIONEVENT e)
 		{
 			SpawnScore(mr); //Spawn Level Up
 			mr->Delete();
+			points += 1000;
 		}
 	}
 	//Da Fuq Mario blocking Mushroom ??
@@ -547,6 +564,7 @@ void CMario::OnCollisionWithLeaf(LPCOLLISIONEVENT e)
 	}
 	SpawnScore(leaf);
 	leaf->Delete();
+	points += 1000;
 }
 
 void CMario::OnCollisionWithFlower(LPCOLLISIONEVENT e)
@@ -622,6 +640,12 @@ void CMario::OnCollisionWithCard(LPCOLLISIONEVENT e)
 {
 	//End game rồi nhưng phải chạm đất sau đó mới Auto Move!
 	this->TypeOfCardCollected = e->obj->GetState();	//Lấy loại card collect đc
+	if (TypeOfCardCollected == CARD_STATE_MUSHROOM)
+		points += 1350;
+	else if (TypeOfCardCollected == CARD_STATE_STAR)
+		points += 1450;
+	else 
+		points += 1500;
 	e->obj->SetState(CARD_STATE_BE_COLLECTED);
 	isEndGame = true;
 	CEffectScore* eff = new CEffectScore(COURSE_CLEAR_X, COURSE_CLEAR_Y, 0, COURSE_CLEAR_TEXT);

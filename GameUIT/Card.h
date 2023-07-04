@@ -4,9 +4,9 @@
 #define CARD_BBOX_WIDTH		16
 #define CARD_BBOX_HEIGHT	16
 
-#define CARD_STATE_MUSHROOM	0
-#define CARD_STATE_STAR	1
-#define CARD_STATE_FLOWER	2
+#define CARD_STATE_MUSHROOM	0	//1350đ
+#define CARD_STATE_STAR	1	//1450đ
+#define CARD_STATE_FLOWER	2	//1500đ
 #define CARD_STATE_BE_COLLECTED	3
 #define CARD_STATE_STATIC	4	//Card nằm trong dòng chữ You Got A Card
 
@@ -27,6 +27,7 @@
 #define CARD_FLY_SPEED		0.06f
 
 //Card có 2 bug: 1 của Mario khiến nó 0 di chuyển, 1 là hiện Text quá nhanh
+//Kh thấy card ở Hud ???
 
 class CCard : public CGameObject
 {

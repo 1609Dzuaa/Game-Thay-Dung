@@ -72,10 +72,10 @@ void CEffectScore::SpawnCardType()
 {
 	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
 
-	CCard* static_card1 = new CCard(2745.0f, GOT_A_CARD_Y - 3.0f);
-	static_card1->SetState(mario->GetTypeOfCardCollected());
-	static_card1->SetState(CARD_STATE_STATIC);
+	CCard* static_card = new CCard(2745.0f, GOT_A_CARD_Y - 3.0f);
+	static_card->SetState(mario->GetTypeOfCardCollected());
+	static_card->SetState(CARD_STATE_STATIC);
 	CPlayScene* current_scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
-	current_scene->AddObjectToScene(static_card1);
+	current_scene->AddObjectToScene(static_card);
 	CHud::GetInstance()->SetAllowToRenderCard(); //You Got A Card -> Vẽ Card lên Hud
 }

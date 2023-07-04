@@ -32,9 +32,6 @@ Text_Files\Hud.txt
 #MARIO
 0	2670	285
 
-#Hud
-10	0	315
-
 #Red Koopa ON GOLD BRICK
 3	2080	278	3
 
@@ -246,7 +243,7 @@ Text_Files\Hud.txt
 9	2304	313	0
 
 #Card
-8	2672	257	
+8	2672	256	
 
 ########################################### UNDERWORLD ###############################################
 #Ống 1 - thêm vào nhằm mục đích vẽ đè -> Mario chui ra từ ống
