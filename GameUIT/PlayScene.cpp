@@ -15,6 +15,7 @@
 #include "Tube.h"
 #include "FireBullet.h"
 #include "Card.h"
+#include "Hud.h"
 
 #include "SampleKeyEventHandler.h"
 #include "GameMap.h"
@@ -353,10 +354,10 @@ void CPlayScene::Update(DWORD dt)
 	if (player == NULL) return;
 
 	// Update camera to follow mario - CAM START HERE !
-	CCamera* Cam = CCamera::GetInstance();
-	Cam->SetTargetToFollow(player);
+	CCamera::GetInstance()->SetTargetToFollow(player);
+	CCamera::GetInstance()->Update();
+	CHud::GetInstance()->Update();
 	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
-	Cam->Update();
 
 	//block player if go over Min, Max of the Map
 	//UNLESS When End Game
@@ -397,6 +398,10 @@ void CPlayScene::Render()
 	for (int i = 0; i < objects.size(); i++)
 		//if (CCamera::GetInstance()->isViewable(objects[i]))
 			objects[i]->Render();
+
+	//Vẽ sau cùng tránh bị object đè: 
+	//Thứ tự: Hud đè Object, Object đè map
+	CHud::GetInstance()->Render();
 }
 
 /*

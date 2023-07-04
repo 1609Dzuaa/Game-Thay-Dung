@@ -16,8 +16,8 @@
 //Adjust Constant: not yet
 //Finish Tail: not yet, cho cái đuôi di chuyển 1 vòng
 //Adding HUD, tính điểm, mạng, thời gian
+//Card có bug hiển thị ngay lập tức card static cũng như end game
 //Render WORLD MAP
-//LITTLE FIX OF END GAME STATE rơi xuống nền rồi mới đi bộ
 //Intro
 //Grid: Làm sau cùng
 
@@ -38,7 +38,7 @@
 //#define MARIO_GRAVITY	0.001f
 #define MARIO_GRAVITY	0.0018f
 
-#define MARIO_JUMP_DEFLECT_SPEED  0.004f
+#define MARIO_JUMP_DEFLECT_SPEED  0.4f
 
 #define	MARIO_LEVEL_SMALL	1
 #define	MARIO_LEVEL_BIG		2

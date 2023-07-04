@@ -19,6 +19,7 @@ Text_Files\FireBullet.txt
 Text_Files\EffectScore.txt
 Text_Files\EffectCollision.txt
 Text_Files\Card.txt
+Text_Files\Hud.txt
 #Those 0 - SpriteID use for ? => Read class ColorPlatform.h
 
 [OBJECTS]
@@ -29,7 +30,10 @@ Text_Files\Card.txt
 #Khỏi phải vẽ nền, dùng sprite 0
 #How about adding object that "more collidable" sooner than other object ?
 #MARIO
-0	2590	285
+0	2670	285
+
+#Hud
+10	0	315
 
 #Red Koopa ON GOLD BRICK
 3	2080	278	3

@@ -26,6 +26,8 @@
 
 #define CARD_FLY_SPEED		0.06f
 
+//Card có 2 bug: 1 của Mario khiến nó 0 di chuyển, 1 là hiện Text quá nhanh
+
 class CCard : public CGameObject
 {
 	ULONGLONG switch_card_start;

@@ -28,4 +28,5 @@ start	1
 70	textures\mario (1).png
 80	textures\holding.png
 90	textures\ItemCard.png
+100	textures\Hud.png
 #Why 70? -> Sitting animation in texture 0 has some problem so i use this instead
