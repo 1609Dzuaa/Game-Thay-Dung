@@ -12,11 +12,14 @@
 #include "debug.h"
 
 //Task:
-//Finish Flying & Landing: 95%
-//Adjust Constant
-//Finish Tail: not yet
-//Initialize Use Tube Switch Scene: nope
-//Render Underworld may has bug cuz of Render func in GameMap: will check it later
+//Finish Flying & Landing: 100%
+//Adjust Constant: not yet
+//Finish Tail: not yet, cho cái đuôi di chuyển 1 vòng
+//Adding HUD, tính điểm, mạng, thời gian
+//Render WORLD MAP
+//LITTLE FIX OF END GAME STATE rơi xuống nền rồi mới đi bộ
+//Intro
+//Grid: Làm sau cùng
 
 #pragma region CONST & TIME
 
@@ -61,6 +64,8 @@
 #define MARIO_EVOLVE_TIME 750
 #define UNTOUCH_DRAW_TIME 100
 #define FLYING_TIME	4000
+
+#define END_POS	2700.0f
 
 #pragma endregion CONST & TIME
 
@@ -108,8 +113,6 @@
 #define MARIO_STATE_HOLDING 735
 
 #define MARIO_STATE_TRAVELLING	740
-
-#define MARIO_STATE_END_GAME	745
 
 #pragma endregion STATE
 //==================================================//
@@ -284,6 +287,7 @@ class CMario : public CGameObject
 	BOOLEAN isAllowToUseTube;
 	BOOLEAN isTravelling;
 	BOOLEAN isAtMainWorld;
+	BOOLEAN isReachEndPos;	//để nhận biết khi đến vị trí end game thì spawn text
 	CKoopa* ghost_koopa; //khi đang giữ Koopa, coi nó như item của mình, đang bật khiên, đụng là chết
 	//về cơ bản cũng khá giống cái đuôi, cũng cần đc vẽ bbox
 	float maxVx;
@@ -316,6 +320,7 @@ class CMario : public CGameObject
 	BOOLEAN isWaitingForTrans;
 	BOOLEAN isEndGame;	//End Game -> bật chế độ tự lái
 	int CountJumpOnEnemies; //Đếm số bước nhảy 0 CHẠM ĐẤT để có số điểm tương ứng
+	int TypeOfCardCollected;
 
 	//Collision Func
 	void OnCollisionWithColorPlatform(LPCOLLISIONEVENT e);
@@ -391,6 +396,8 @@ public:
 	BOOLEAN GetIsAtMainWorld() { return this->isAtMainWorld; }
 	BOOLEAN GetIsTravelling() { return this->isTravelling; }
 	BOOLEAN GetIsEndGame() { return this->isEndGame; }
+	BOOLEAN GetIsReachEndPos() { return this->isReachEndPos; }
+	int GetTypeOfCardCollected() { return this->TypeOfCardCollected; }
 	void SetHoldKoopa(BOOLEAN para) { this->isAllowToHoldKoopa = para; }
 	void SetIsHoldingKoopa(BOOLEAN para) { this->isHolding = para; }
 	void SetIsHitSwitch(BOOLEAN para) { this->isHitSwitch = para; }

@@ -195,6 +195,16 @@ void CMario::OnCollisionWithColorPlatform(LPCOLLISIONEVENT e)
 {
 	if (e->ny < 0)
 	{
+		if (isEndGame)
+		{
+			CColorPlatform* cl_pf = dynamic_cast<CColorPlatform*>(e->obj);
+			HandleCollisionWithColorPlatform(e, cl_pf);
+			CountJumpOnEnemies = 0;
+			isOnPlatform = true;
+			isLanding = false;
+			SetState(MARIO_STATE_WALKING_RIGHT);
+			return;
+		}
 		CColorPlatform* cl_pf = dynamic_cast<CColorPlatform*>(e->obj);
 		HandleCollisionWithColorPlatform(e, cl_pf);
 		CountJumpOnEnemies = 0;
@@ -610,7 +620,11 @@ void CMario::OnCollisionWithSwitch(LPCOLLISIONEVENT e)
 
 void CMario::OnCollisionWithCard(LPCOLLISIONEVENT e)
 {
-	e->obj->Delete();
+	//End game rồi nhưng phải chạm đất sau đó mới Auto Move!
+	this->TypeOfCardCollected = e->obj->GetState();	//Lấy loại card collect đc
+	e->obj->SetState(CARD_STATE_BE_COLLECTED);
 	isEndGame = true;
-	SetState(MARIO_STATE_END_GAME);	//Need to Improve here
+	CEffectScore* eff = new CEffectScore(COURSE_CLEAR_X, COURSE_CLEAR_Y, 0, COURSE_CLEAR_TEXT);
+	CPlayScene* current_scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
+	current_scene->AddObjectToScene(eff);
 }

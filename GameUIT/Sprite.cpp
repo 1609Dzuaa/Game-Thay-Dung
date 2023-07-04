@@ -46,7 +46,6 @@ void CSprite::Draw(float x, float y)
 	CGame* g = CGame::GetInstance();
 	D3DXVECTOR2 cam = CCamera::GetInstance()->GetCamPos(); //Lấy vị trí cam để vẽ
 	D3DXMATRIX matTranslation;
-
 	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
 
 	if (mario->GetShaking() && !Initialized)
@@ -67,9 +66,7 @@ void CSprite::Draw(float x, float y)
 	//Nếu không, map sẽ không di chuyển
 	//Đoạn: (FLOAT)floor(cam.x) rất quan trọng, nếu 0 có nó thì khi di chuyển map sẽ trông như bị GLITCH
 	D3DXMatrixTranslation(&matTranslation, x - (FLOAT)floor(cam.x), g->GetBackBufferHeight() - y + (FLOAT)floor(cam.y), 0.1f);
-
 	this->sprite.matWorld = (this->matScaling * matTranslation);
-
 	g->GetSpriteHandler()->DrawSpritesImmediate(&sprite, 1, 0, 0);
 }
 

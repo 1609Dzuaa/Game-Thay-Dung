@@ -29,7 +29,7 @@ Text_Files\Card.txt
 #Khỏi phải vẽ nền, dùng sprite 0
 #How about adding object that "more collidable" sooner than other object ?
 #MARIO
-0	25	285
+0	2590	285
 
 #Red Koopa ON GOLD BRICK
 3	2080	278	3
@@ -193,7 +193,7 @@ Text_Files\Card.txt
 1	1968	304	1	0
 1	1984	304	1	0
 1	2000	304	1	0
-1	2016	304	1	0
+#1	2016	304	1	0
 
 #7 Viên hàng dưới
 1	1936	320	1	0
@@ -201,8 +201,8 @@ Text_Files\Card.txt
 1	1968	320	1	0
 1	1984	320	1	0
 1	2000	320	1	0
-1	2016	320	1	0
-1	2032	320	1	0
+#1	2016	320	1	0
+#1	2032	320	1	0
 
 #2 Viên gần Pink plat
 1	2080	320	1	0
@@ -242,7 +242,7 @@ Text_Files\Card.txt
 9	2304	313	0
 
 #Card
-8	2672	255	
+8	2672	257	
 
 ########################################### UNDERWORLD ###############################################
 #Ống 1 - thêm vào nhằm mục đích vẽ đè -> Mario chui ra từ ống

@@ -22,9 +22,14 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	else if (isTravelUp)
 		HandleTravellingUp();
 
+	if (this->y >= END_POS)
+	{
+		isReachEndPos = true;
+		return; //ngưng update
+	}
+
 	UpdateMarioState();
 	isOnPlatform = false;
-	//isComboUpAndS = false;
 	CCollision::GetInstance()->Process(this, dt, coObjects);
 	if (isAttacking && !isInitialized)
 	{
@@ -36,7 +41,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	}
 
 	//DebugOutTitle(L"x, y, isWait, atMW: %f, %f, %d, %d", x, y, isWaitingForTrans, isAtMainWorld);
-	DebugOutTitle(L"St, vx, ax: %d, %f, %f", state, vx, ax);
+	//DebugOutTitle(L"St, vx, End: %d, %f, %d", state, vx, isEndGame);
 }
 
 void CMario::UpdateMarioState()

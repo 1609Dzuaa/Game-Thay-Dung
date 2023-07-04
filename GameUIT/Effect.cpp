@@ -30,7 +30,6 @@ void CEffect::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	}
 
 	//DebugOutTitle(L"St, Al: %d, %f", state, Alpha);
-	CCollision::GetInstance()->Process(this, dt, coObjects);
 }
 
 void CEffect::Render()

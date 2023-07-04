@@ -13,7 +13,7 @@ class CEffect : public CGameObject
 {
 	float Alpha; //Dùng để làm mờ
 public:
-	CEffect(float x, float y) { Alpha = -1; };
+	CEffect(float x, float y) { Alpha = 1; this->x = x; this->y = y; };
 	CEffect(float x, float y, float _alpha) :CGameObject(x, y) 
 	{ 
 		Alpha = _alpha;

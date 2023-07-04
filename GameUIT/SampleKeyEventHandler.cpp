@@ -114,7 +114,6 @@ void CSampleKeyHandler::OnKeyUp(int KeyCode)
 	case DIK_S:
 		if (!mario->GetIsTravelling())
 			mario->SetState(MARIO_STATE_RELEASE_JUMP);	//0 Travel thì release tránh TH nhảy phát lên luôn
-
 		break;
 
 	case DIK_A:
@@ -167,7 +166,6 @@ void CSampleKeyHandler::KeyState(BYTE* states)
 			mario->SetState(MARIO_STATE_WALKING_LEFT);
 		}
 	}
-	else if (mario->GetIsEndGame());
 	//else if (game->IsKeyDown(DIK_DOWN))
 		//mario->SetState(MARIO_STATE_SIT);
 	//else if (game->IsKeyDown(DIK_Z) && mario->GetLevel() == MARIO_LEVEL_RACOON)

@@ -47,7 +47,7 @@ void CMario::SetState(int state)
 			ax = MARIO_ACCEL_WALK_X;
 		}
 		else
-			vx = MARIO_WALKING_SPEED * 2.0f;
+			vx = MARIO_WALKING_SPEED;
 
 		nx = 1;
 		isWalking = true;
@@ -161,7 +161,7 @@ void CMario::SetState(int state)
 			isRunning = false;
 		}
 		else
-			SetState(MARIO_STATE_WALKING_RIGHT);
+			state = MARIO_STATE_WALKING_RIGHT;
 
 		break;
 
@@ -189,11 +189,6 @@ void CMario::SetState(int state)
 		vy = -MARIO_JUMP_DEFLECT_SPEED * 1.5f;
 		vx = 0;
 		ax = 0;
-		break;
-
-	case MARIO_STATE_END_GAME:
-		vx = MARIO_WALKING_SPEED;	//prob here ?
-
 		break;
 	}
 

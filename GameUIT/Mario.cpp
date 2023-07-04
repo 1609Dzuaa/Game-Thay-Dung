@@ -39,6 +39,7 @@ CMario::CMario(float x, float y) : CGameObject(x, y)
 	isReachTransPos = false;
 	isWaitingForTrans = true;
 	isEndGame = false;
+	isReachEndPos = false;
 	CountJumpOnEnemies = 0;
 	untouchdraw = -1;
 	untouch_draw_0 = 0;
@@ -51,6 +52,7 @@ CMario::CMario(float x, float y) : CGameObject(x, y)
 	shakeUp_start = 0;
 	shakeDown_start = 0;
 	isShakeUp = 0;
+	TypeOfCardCollected = -1;
 	tail = NULL;
 	black_eff = NULL;
 	//Thêm đuôi trước tương tự như mushroom
