@@ -31,6 +31,7 @@ CPlayScene::CPlayScene(int id, LPCWSTR filePath) :
 	player = NULL;
 	key_handler = new CSampleKeyHandler(this);
 	timer_start = GetTickCount64();
+	IsWait = false;
 }
 
 
@@ -341,11 +342,35 @@ void CPlayScene::Update(DWORD dt)
 	//Problem here: if Draw Mario later it will affect the collision proccess
 	// We know that Mario is the first object in the list hence we won't add him into the colliable object list
 	// TO-DO: This is a "dirty" way, need a more organized way!
+	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
 
-	if (GetTickCount64() - timer_start >= 1000)
+	if (IsWait)
 	{
-		timer--;
-		timer_start = GetTickCount64();
+		for (size_t i = 0; i < objects.size(); i++)
+			objects[i]->SetWait(1);
+		return;
+	}
+	else
+		for (size_t i = 0; i < objects.size(); i++)
+			objects[i]->SetWait(0);
+
+	if (!mario->GetIsReachEndPos())
+	{
+		if (mario->GetIsEndGame()); //ngưng thời gian khi ăn card (end game)
+		else if (GetTickCount64() - timer_start >= 1000)
+		{
+			timer--;
+			timer_start = GetTickCount64();
+		}
+	}
+	else //Reach End Pos thì reset thời gian nhanh chóng về 0
+	{
+		if (GetTickCount64() - timer_start >= 1)
+		{
+			if (timer == 0) return;	//timer == 0 ngưng Update
+			timer--;
+			timer_start = GetTickCount64();
+		}
 	}
 	DebugOutTitle(L"Time: %d", timer);
 
@@ -367,7 +392,6 @@ void CPlayScene::Update(DWORD dt)
 	CCamera::GetInstance()->SetTargetToFollow(player);
 	CCamera::GetInstance()->Update();
 	CHud::GetInstance()->Update();
-	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
 
 	//block player if go over Min, Max of the Map
 	//UNLESS When End Game

@@ -24,18 +24,23 @@ void CHud::Update()
 
 void CHud::Render()
 {
+	//Không nên set các giá trị != 0 sau dấu . (VD: 3.5f) tại vị trí vẽ vì
+	//đôi lúc nó sẽ bị lệch do 0 theo kịp
 	CAnimations* animations = CAnimations::GetInstance();
+	CPlayScene* current_scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
+	if (current_scene->GetWait())
+		RenderPauseText();
 	//Vẽ thanh Hud
 	animations->Get(ID_HUD)->Render(x, y, false);
 	//Vẽ World number -> vì world hiện tại là 1 nên mặc định vẽ tại đây luôn
-	animations->Get(ID_NUMBER_1)->Render(x - 77.0f, y - 2.5f, false);
+	animations->Get(ID_NUMBER_1)->Render(x - 77.0f, y - 3.0f, false);
 	//Vẽ M ;)
-	animations->Get(ID_LETTER_M)->Render(x - 106.0f, y + 5.5f, false);
+	animations->Get(ID_LETTER_M)->Render(x - 106.0f, y + 5.0f, false);
 	RenderHP();
 	RenderCoin();
 	RenderTimer();
 	RenderPoints();
-	RenderCard();
+	RenderCard(); //Có vấn đề: Lâu lâu lại 0 hiện ?!!!
 }
 
 void CHud::RenderHP()
@@ -95,9 +100,9 @@ void CHud::RenderTimer()
 	int TensPlace = (current_scene->GetTimer() / 10) % 10;	//Hàng chục
 	int Hundreds = current_scene->GetTimer() / 100;	//Hàng trăm
 
-	animations->Get(OnesPlace)->Render(x + 26.0f, y +5.5f, false);
-	animations->Get(TensPlace)->Render(x + 18.0f, y + 5.5f, false);
-	animations->Get(Hundreds)->Render(x + 10.0f, y + 5.5f, false);
+	animations->Get(OnesPlace)->Render(x + 26.0f, y +5.0f, false);
+	animations->Get(TensPlace)->Render(x + 18.0f, y + 5.0f, false);
+	animations->Get(Hundreds)->Render(x + 10.0f, y + 5.0f, false);
 }
 
 void CHud::RenderCard()
@@ -147,4 +152,16 @@ void CHud::HandleCardDrawState()
 		untouch_draw_0 = GetTickCount64();
 		untouch_draw_1 = 0;
 	}
+}
+
+void CHud::RenderPauseText()
+{
+	CAnimations* animations = CAnimations::GetInstance();
+	float x = CCamera::GetInstance()->GetCamPos().x + CGame::GetInstance()->GetBackBufferWidth() / 2;
+	float y = CCamera::GetInstance()->GetCamPos().y + CGame::GetInstance()->GetBackBufferHeight() / 2;
+	animations->Get(ID_LETTER_P)->Render(x, y, false);
+	animations->Get(ID_LETTER_A)->Render(x + 10.0f, y, false);
+	animations->Get(ID_LETTER_U)->Render(x + 20.0f, y, false);
+	animations->Get(ID_LETTER_S)->Render(x + 30.0f, y, false);
+	animations->Get(ID_LETTER_E)->Render(x + 40.0f, y, false);
 }

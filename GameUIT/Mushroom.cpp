@@ -6,6 +6,8 @@
 
 void CMushroom::Render()
 {
+	if (IsWaiting && IsWaitable) return;
+
 	CAnimations* animations = CAnimations::GetInstance();
 	if (state != MUSHROOM_STATE_IN_THE_BRICK)
 	{

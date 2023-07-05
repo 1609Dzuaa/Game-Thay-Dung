@@ -16,6 +16,7 @@ public:
 		this->vx = _vx;
 		this->vy = -_vy;
 		this->ay = BRICK_PIECE_GRAVITY;
+		IsWaitable = true;
 	}
 	void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
 	void OnNoCollision(DWORD dt);

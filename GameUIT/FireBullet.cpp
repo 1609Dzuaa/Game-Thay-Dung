@@ -31,6 +31,8 @@ void CFireBullet::GetBoundingBox(float& left, float& top, float& right, float& b
 
 void CFireBullet::Render()
 {
+	if (IsWaiting && IsWaitable) return;
+
 	CAnimations* animations = CAnimations::GetInstance();
 	animations->Get(ID_ANI_FIRE_BULLET)->Render(x, y, true);
 }

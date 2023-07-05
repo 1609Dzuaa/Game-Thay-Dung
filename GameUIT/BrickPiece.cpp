@@ -20,6 +20,8 @@ void CBrickPiece::OnNoCollision(DWORD dt)
 
 void CBrickPiece::Render()
 {
+	if (IsWaiting && IsWaitable) return;
+
 	CAnimations* animations = CAnimations::GetInstance();
 	animations->Get(ID_ANI_BRICK_PIECE)->Render(x, y, true);
 }

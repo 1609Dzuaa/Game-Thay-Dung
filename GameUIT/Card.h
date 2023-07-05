@@ -41,6 +41,7 @@ public:
 		isMushroom = 0;
 		isStar = 1;
 		isFlower = 0;
+		IsWaitable = true;
 	}
 	void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
 	void Render();

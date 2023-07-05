@@ -18,6 +18,8 @@ void CEffectCollision::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 void CEffectCollision::Render()
 {
+	if (IsWaiting && IsWaitable) return;
+
 	int aniID = GetAniEffect();
 	CAnimations* animations = CAnimations::GetInstance();
 	animations->Get(aniID)->Render(x, y, false);

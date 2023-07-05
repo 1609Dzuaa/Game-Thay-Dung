@@ -13,6 +13,7 @@ CLeaf::CLeaf(float x, float y) : CGameObject(x, y)
 	maxX = x + 31.0f;
 	Fall_Up_start = -1;
 	reachMinOrMax_X = false;
+	IsWaitable = true;
 }
 
 void CLeaf::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
@@ -45,6 +46,8 @@ void CLeaf::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 void CLeaf::Render()
 {
+	if (IsWaiting && IsWaitable) return;
+
 	CAnimations* animations = CAnimations::GetInstance();
 	if (vx > 0)
 		animations->Get(ID_ANI_LEAF_RIGHT)->Render(x, y, true);

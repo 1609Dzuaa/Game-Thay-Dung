@@ -7,11 +7,15 @@
 #include "Koopa.h"
 #include "PlayScene.h"
 
+int CKeyEventHandler::wait = 0;
+
 void CSampleKeyHandler::OnKeyDown(int KeyCode)
 {
 	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
 	CGame* game = CGame::GetInstance();
-	if (mario->GetIsEndGame()) return;
+	if (mario->GetIsEndGame() && KeyCode != DIK_W) 
+		return; //ngoại trừ W khi EndGame vẫn bấm đc
+
 	DebugOut(L"[INFO] KeyDown: %d\n", KeyCode);
 	switch (KeyCode)
 	{
@@ -102,6 +106,20 @@ void CSampleKeyHandler::OnKeyDown(int KeyCode)
 		mario->SetLevel(MARIO_LEVEL_RACOON);
 		break;
 		//set racoon attack by A here
+
+	case DIK_W:
+		CPlayScene* current_scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
+		if (!wait)
+		{
+			current_scene->SetWait(true);
+			wait = 1;
+		}
+		else
+		{
+			current_scene->SetWait(false);
+			wait = 0;
+		}
+		break;
 	}
 }
 

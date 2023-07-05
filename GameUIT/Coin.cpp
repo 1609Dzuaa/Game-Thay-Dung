@@ -6,6 +6,7 @@
 void CCoin::Render()
 {
 	if (!CCamera::GetInstance()->isViewable(this)) return;
+	if (IsWaiting && IsWaitable) return;
 
 	CAnimations* animations = CAnimations::GetInstance();
 	animations->Get(ID_ANI_COIN)->Render(x, y, false);
@@ -43,6 +44,7 @@ void CCoin::HandleFlyingCoin()
 		vy = 0;
 		this->Delete();
 		mario->SpawnScore(this); //only give 100
+		mario->AddCoin();
 	}
 }
 

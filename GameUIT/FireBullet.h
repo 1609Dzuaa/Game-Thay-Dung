@@ -16,6 +16,7 @@ public:
 	{
 		vx = FIRE_BULLET_VX;
 		vy = FIRE_BULLET_VY;
+		IsWaitable = true;
 	}
 	void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
 	void Render();

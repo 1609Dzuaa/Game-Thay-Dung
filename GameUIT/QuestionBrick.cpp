@@ -49,6 +49,7 @@ void CQuestionBrick::HandleBouncingBrick()
 		y = currentY;
 		vy = 0;
 		isEmpty = true;
+		IsWaitable = false;
 	}
 }
 

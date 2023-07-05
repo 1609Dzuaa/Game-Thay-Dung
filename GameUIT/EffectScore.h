@@ -3,11 +3,13 @@
 
 #define EFFECT_SCORE_VELO_Y 0.03f
 
+//Các animation điểm 10 <= point_animation <= 100
 #define NORMAL_SCORE 10
 #define DOUBLE_SCORE 20
 #define QUADRA_SCORE 40
 #define DOUBLE_QUADRA_SCORE 80
 #define ITEM_SCORE 100 //Mushroom, Leaf
+
 #define ITEM_SCORE_LV_UP	110
 #define COURSE_CLEAR_TEXT	120
 #define GOT_A_CARD_TEXT		130
@@ -40,6 +42,7 @@ public:
 		isSpawnGotCard = false;
 		delay_start = 0;
 		state = 0;
+		IsWaitable = true;
 	};
 	void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
 	void Render();
@@ -48,4 +51,5 @@ public:
 	void SetState(int state);
 	void HandleSpawnGotACard();
 	void SpawnCardType(); //dùng để vẽ card tĩnh cùng lúc với dòng Got A Card
+	int GetScore() { return this->aniId * 10; } //Tại sao x10 ? => Vì AniID của từng điểm = chính nó / 10
 };

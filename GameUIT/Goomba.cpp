@@ -21,6 +21,7 @@ CGoomba::CGoomba(float x, float y, int type) :CGameObject(x, y)
 	this->SetState(GOOMBA_STATE_WALKING);
 	if (this->type == PARA_GOOMBA)
 		this->level = PARA_GOOMBA_LEVEL_HAS_WINGS;
+	IsWaitable = true;
 }
 
 void CGoomba::GetBoundingBox(float& left, float& top, float& right, float& bottom)
@@ -164,6 +165,7 @@ void CGoomba::Render()
 {
 	//should check if the object is in the camera => then RENDER it! 
 	if (!CCamera::GetInstance()->isViewable(this)) return;
+	if (IsWaiting && IsWaitable) return;
 
 	int aniId;
 	if (type == GOOMBA)

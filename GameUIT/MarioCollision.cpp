@@ -281,6 +281,7 @@ void CMario::HandleCollisionUpperDirectionWithGoomba(CGoomba* goomba)
 			goomba->SetLevel(PARA_GOOMBA_LEVEL_NO_WINGS);
 			CountJumpOnEnemies++;
 			SpawnScore(goomba);
+			//points += 100;
 			vy = -MARIO_JUMP_DEFLECT_SPEED;
 		}
 		else if (goomba->GetType() == PARA_GOOMBA && goomba->GetLevel() == PARA_GOOMBA_LEVEL_NO_WINGS)
@@ -296,6 +297,7 @@ void CMario::HandleCollisionUpperDirectionWithGoomba(CGoomba* goomba)
 			CountJumpOnEnemies++;
 			SpawnScore(goomba);
 			vy = -MARIO_JUMP_DEFLECT_SPEED; //nảy lên
+			//points += 100;
 		}
 	}
 }
@@ -542,9 +544,9 @@ void CMario::OnCollisionWithMushroom(LPCOLLISIONEVENT e)
 		{
 			SpawnScore(mr); //Spawn Level Up
 			mr->Delete();
-			points += 1000;
 		}
 	}
+	//points += 1000;
 	//Da Fuq Mario blocking Mushroom ??
 }
 
@@ -564,7 +566,7 @@ void CMario::OnCollisionWithLeaf(LPCOLLISIONEVENT e)
 	}
 	SpawnScore(leaf);
 	leaf->Delete();
-	points += 1000;
+	//points += 1000;
 }
 
 void CMario::OnCollisionWithFlower(LPCOLLISIONEVENT e)

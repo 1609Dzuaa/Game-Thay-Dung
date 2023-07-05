@@ -37,6 +37,7 @@ public:
 		type = COIN_TYPE_FLY;
 		this->currentY = y;
 		this->minY = currentY - 100.0f;
+		IsWaitable = true;
 	}
 
 	void Render();

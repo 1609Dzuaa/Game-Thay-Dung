@@ -13,6 +13,11 @@
 #define ID_NUMBER_8	8
 #define ID_NUMBER_9	9
 #define ID_LETTER_M	13
+#define ID_LETTER_P	16
+#define ID_LETTER_A	17
+#define ID_LETTER_U	18
+#define ID_LETTER_S	19
+#define ID_LETTER_E	21
 
 #define CARD_UNDRAW_TIME	200
 
@@ -49,4 +54,5 @@ public:
 	void RenderCard();
 	void SetAllowToRenderCard() { this->allowToRenderCard = 1; }
 	void HandleCardDrawState();
+	void RenderPauseText();
 };

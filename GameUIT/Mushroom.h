@@ -35,6 +35,7 @@ public:
 		this->vy = 0;
 		brickminY = brickmin_Y;
 		state = MUSHROOM_STATE_IN_THE_BRICK; //Ban đầu sẽ ở trong cục gạch -> không vẽ
+		IsWaitable = true;
 	}
 	void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
 

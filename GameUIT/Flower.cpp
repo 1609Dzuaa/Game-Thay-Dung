@@ -79,6 +79,8 @@ void CFlower::OnNoCollision(DWORD dt)
 
 void CFlower::Render()
 {
+	if (IsWaiting && IsWaitable) return;
+
 	CAnimations* animations = CAnimations::GetInstance();
 	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
 	int animation_ID = -1;

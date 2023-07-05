@@ -26,6 +26,7 @@ public:
 		this->effect_start = -1; 
 		this->type = type;
 		this->effect_start = eff_col_start;
+		IsWaitable = true;
 	};
 
 	void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);

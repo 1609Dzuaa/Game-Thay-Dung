@@ -53,8 +53,8 @@ public:
 	void UpdateGoldCoin();
 
 	void GetBoundingBox(float& l, float& t, float& r, float& b);
-	int GetType() { return this->type; }
-	int GetItemType() { return this->item_type; }
+	int GetType() { return this->type; } //loại gạch nào ?
+	int GetItemType() { return this->item_type; } //nếu là gạch vàng thì có item hay 0 và item loại gì
 
 	void OnNoCollision(DWORD dt);
 	int IsBlocking() { return state != GBRICK_STATE_TURN_TO_COIN && state != GBRICK_STATE_IS_DESTROYED; } //bị biến thành gold coin thì 0 block

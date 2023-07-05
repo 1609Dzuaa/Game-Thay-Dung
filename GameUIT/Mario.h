@@ -17,6 +17,7 @@
 //Finish Tail: not yet, cho cái đuôi di chuyển 1 vòng
 //Adding HUD, tính điểm, mạng, thời gian
 //Card có bug hiển thị ngay lập tức card static cũng như end game
+//Red Koopa vẫn còn bug lúc ôm, vụt nó
 //Render WORLD MAP
 //Intro
 //Grid: Làm sau cùng
@@ -386,7 +387,7 @@ public:
 	void SetisJumping(BOOLEAN para) { this->isJumping = para; }
 	void SetisAtMaxSpeed(BOOLEAN para) { this->isAtMaxSpeed = para; }
 	BOOLEAN GetIsJumping() { return isJumping; }
-	CEffectScore* ClassifyScore(LPGAMEOBJECT obj, CEffectScore* eff_scr);
+	CEffectScore* ClassifyScore(LPGAMEOBJECT obj, CEffectScore*& eff_scr);
 	void SetIsLanding(bool para) { this->isLanding = para; }
 	void SpawnScore(LPGAMEOBJECT obj);
 	void SpawnEffect(LPCOLLISIONEVENT e, LPGAMEOBJECT obj, int eff_type); //nên cho vào class EffectCol
@@ -414,6 +415,8 @@ public:
 	void SetAllowToUseTube(BOOLEAN para) { this->isAllowToUseTube = para; }
 	void SetCombo(BOOLEAN para) { this->isComboUpAndS = para; }
 	void SetIsWaitingForTrans(BOOLEAN para) { this->isWaitingForTrans = para; }
+	void AddCoin() { coin++; }
+	void AddPoints(int points_para) { points += points_para; }
 	void HandleTravellingDown();
 	void HandleTravellingUp();
 };

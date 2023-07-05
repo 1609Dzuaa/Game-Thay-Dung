@@ -43,6 +43,7 @@ CMario::CMario(float x, float y) : CGameObject(x, y)
 	isWaitingForTrans = true;
 	isEndGame = false;
 	isReachEndPos = false;
+	IsWaitable = true;
 	CountJumpOnEnemies = 0;
 	untouchdraw = -1;
 	untouch_draw_0 = 0;
@@ -119,13 +120,16 @@ void CMario::SetLevel(int l)
 
 void CMario::SpawnScore(LPGAMEOBJECT obj)
 {
+	//Nên cộng điểm trong này luôn
 	CEffectScore* eff_scr = new CEffectScore(obj->GetX(), obj->GetY() - 15.0f, obj->GetY() - 45.0f, NORMAL_SCORE);
 	CPlayScene* current_scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
 	current_scene->AddObjectToScene(ClassifyScore(obj, eff_scr));
+	points += eff_scr->GetScore();
 }
 
-CEffectScore* CMario::ClassifyScore(LPGAMEOBJECT obj, CEffectScore* eff_scr)
+CEffectScore* CMario::ClassifyScore(LPGAMEOBJECT obj, CEffectScore*& eff_scr)
 {
+	//Quên kẹp tham chiếu :v
 	if (!obj->IsSpecialItem())
 	{
 		switch (CountJumpOnEnemies)
@@ -154,7 +158,7 @@ CEffectScore* CMario::ClassifyScore(LPGAMEOBJECT obj, CEffectScore* eff_scr)
 			else
 				eff_scr = new CEffectScore(obj->GetX(), obj->GetY() - 15.0f, obj->GetY() - 45.0f, ITEM_SCORE_LV_UP);
 		}
-		else
+		else //Leaf
 			eff_scr = new CEffectScore(obj->GetX(), obj->GetY() - 15.0f, obj->GetY() - 45.0f, ITEM_SCORE);
 	}
 	return eff_scr;

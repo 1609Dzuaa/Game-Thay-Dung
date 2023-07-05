@@ -89,6 +89,7 @@ void CTail::OnCollisionWithGoomba(LPCOLLISIONEVENT e)
 	CGoomba* goomba = dynamic_cast<CGoomba*>(e->obj);
 	goomba->SetState(GOOMBA_STATE_DIE_REVERSE);
 	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
+	mario->SpawnScore(goomba);
 	mario->SpawnEffect(e, this, EFF_COL_TYPE_NORMAL);
 }
 
@@ -122,16 +123,18 @@ void CTail::OnCollisionWithFlower(LPCOLLISIONEVENT e)
 void CTail::OnCollisionWithGoldBrick(LPCOLLISIONEVENT e)
 {
 	CBrick* br = dynamic_cast<CBrick*>(e->obj);
-	/*if (br->GetType() == GOLD_BRICK)
+	if (br->GetType() == GOLD_BRICK)
 	{
-		if (br->GetHasSwitch())
+		//Nếu có item ở trong và chưa bị bóc
+		if (br->GetItemType() != NO_ITEM && br->GetState() != GBRICK_HAS_ITEM_STATE_IS_HITTED)
 		{
-			br->SetState(GOLD_BRICK_HAS_SW_STATE_IS_HITTED);
+			br->SetSpeed(0, -GOLD_BRICK_BOUNCING_SPEED);
+			br->SetHitted(true);
+			br->SetState(GBRICK_HAS_ITEM_STATE_IS_HITTED);
 		}
-		else*/ //Hiện đang có lỗi phá gạch chứa Switch
-			br->Delete();
-		//Thêm hiệu ứng phá gạch
-	//}
+		else if(br->GetItemType() == NO_ITEM)
+			br->SetState(GBRICK_STATE_IS_DESTROYED);
+	}
 }
 
 void CTail::GetBoundingBox(float& l, float& t, float& r, float& b)

@@ -29,7 +29,10 @@ void CCard::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 void CCard::Render()
 {
-	//if (!CCamera::GetInstance()->isViewable(this)) return;
+	if (!CCamera::GetInstance()->isViewable(this)) return;
+	//Card tĩnh cuối game cũng 0 bị ảnh hưởng bởi W
+	if (IsWaiting && IsWaitable && state != CARD_STATE_STATIC)
+		return;
 
 	int aniID = -1;
 	if (state == CARD_STATE_MUSHROOM)

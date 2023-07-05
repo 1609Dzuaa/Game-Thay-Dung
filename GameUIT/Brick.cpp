@@ -155,7 +155,9 @@ void CBrick::SpawnMushroom()
 
 void CBrick::SpawnBrickPiece()
 {
+	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
 	CPlayScene* current_scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
+
 	//Spawn 4 mảnh vỡ: left top, left bot, right top, right bot
 	CBrickPiece* piece1 = new CBrickPiece(x - 3.0f, y - 5.0f, -0.025f, 0.35f);
 	CBrickPiece* piece2 = new CBrickPiece(x - 3.0f, y + 5.0f, -0.02f, 0.3f);
@@ -165,4 +167,6 @@ void CBrick::SpawnBrickPiece()
 	current_scene->AddObjectToScene(piece2);
 	current_scene->AddObjectToScene(piece3);
 	current_scene->AddObjectToScene(piece4);
+
+	mario->AddPoints(10); //Phá gạch vàng cho 10đ
 }

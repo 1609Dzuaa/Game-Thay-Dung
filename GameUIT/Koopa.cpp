@@ -10,11 +10,6 @@
 
 CKoopa::CKoopa(float x, float y, int type) :CGameObject(x, y)
 {
-	//this->x_initial = x;
-	//this->y_initial = y;
-	//type_initial = type;
-	//isInitialized = true;
-
 	this->ax = 0;
 	this->ay = KOOPA_GRAVITY;
 	this->type = type;
@@ -47,6 +42,7 @@ CKoopa::CKoopa(float x, float y, int type) :CGameObject(x, y)
 	KillCount = 0;
 	isOnPlatform = false;
 	isBeingHeld = false;
+	IsWaitable = true;
 }
 
 void CKoopa::GetBoundingBox(float& left, float& top, float& right, float& bottom)
@@ -286,6 +282,7 @@ void CKoopa::UpdateKoopaState()
 void CKoopa::Render()
 {
 	if (!CCamera::GetInstance()->isViewable(this)) return;
+	if (IsWaiting && IsWaitable) return;
 	
 	//RenderBoundingBox();
 	//Nếu đang bị hold và chưa tới thời gian reborn

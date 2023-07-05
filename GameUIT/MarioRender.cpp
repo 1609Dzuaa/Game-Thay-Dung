@@ -6,6 +6,7 @@ void CMario::Render()
 	if (isEvolving && level == MARIO_LEVEL_BIG && isEvolveForward) return; //Big biến thành gấu mèo thì 0 vẽ trong 1 khoảng thgian
 	if (isEvolving && level == MARIO_LEVEL_RACOON && isEvolveBackward) return; //Gấu mèo biến về Big thì cũng 0 vẽ
 	if (untouchable && untouch_0) return;
+	if (IsWaiting && IsWaitable) return;
 
 	CAnimations* animations = CAnimations::GetInstance();
 	int aniId = -1;

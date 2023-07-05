@@ -38,7 +38,7 @@ public:
 		CPlayScene* current_scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
 		this->Type = type; 
 		flower = new CFlower(this->x, this->y, type);
-		current_scene->AddObjectToScene(flower); 
+		current_scene->AddObjectToScene(flower);
 		//add nó vào scene nhưng vì Mario chưa lại gần Red_zone nên nó sẽ ở 
 		//trạng thái wait -> chờ được vẽ và cập nhật lên
 	};

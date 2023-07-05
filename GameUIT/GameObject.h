@@ -28,6 +28,8 @@ protected:
 
 	int state;
 
+	int IsWaitable, IsWaiting;
+
 	bool isDeleted;
 public:
 	void SetPosition(float x, float y) { this->x = x, this->y = y; }
@@ -45,13 +47,23 @@ public:
 	void RenderBoundingBox();
 
 	CGameObject();
-	CGameObject(float x, float y) :CGameObject() { this->x = x; this->y = y; }
+	CGameObject(float x, float y) :CGameObject()
+	{
+		this->x = x;
+		this->y = y;
+		this->IsWaitable = false;
+		this->IsWaiting = false;
+	}
 
 
 	virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom) = 0;
-	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects = NULL) {};
+	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects = NULL) 
+	{
+		if (IsWaiting && IsWaitable) return;
+	};
 	virtual void Render() = 0;
 	virtual void SetState(int state) { this->state = state; }
+	virtual void SetWait(int wait) { this->IsWaiting = wait; }
 
 	//
 	// Collision ON or OFF ? This can change depending on object's state. For example: die

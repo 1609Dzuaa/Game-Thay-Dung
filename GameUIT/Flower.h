@@ -81,6 +81,7 @@ public:
 		eff_die = NULL;
 		type = -1;
 		ay = FLOWER_GRAVITY;
+		//Trash Constructor, but I have to initialize its value to reduce warning
 	};
 	CFlower(float x, float y, int type) :CGameObject(x, y)
 	{
@@ -102,6 +103,7 @@ public:
 		die_start = 0;
 		enableToShoot = true;
 		eff_die = NULL;
+		IsWaitable = true;
 	}
 	void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
 	void Render();
