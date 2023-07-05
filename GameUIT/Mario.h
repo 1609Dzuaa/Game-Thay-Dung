@@ -292,12 +292,10 @@ class CMario : public CGameObject
 	CKoopa* ghost_koopa; //khi đang giữ Koopa, coi nó như item của mình, đang bật khiên, đụng là chết
 	//về cơ bản cũng khá giống cái đuôi, cũng cần đc vẽ bbox
 	float maxVx;
-	float maxRunningSpeed;
 	float ax;				// acceleration on x 
 	float ay;				// acceleration on y 
 	float start_y;			//Điểm bắt đầu chui xuống
 	CTail* tail;
-	CEffect* black_eff;
 
 	static int HP;
 	static int coin;	//Ăn Coin cho 50đ, 100 coin đổi 1 mạng, coin từ 99 về 0
@@ -314,14 +312,12 @@ class CMario : public CGameObject
 	ULONGLONG untouch_draw_0; //thgian 0 vẽ
 	ULONGLONG untouch_draw_1; //thgian vẽ
 	ULONGLONG shaking_start;
-	ULONGLONG shakeUp_start, shakeDown_start;
-	BOOLEAN isShakeUp;
 	BOOLEAN isOnPlatform;
 	BOOLEAN isTravelUp;
 	BOOLEAN isTravelDown;
-	BOOLEAN isComboUpAndS;
+	BOOLEAN isComboUpAndS;	//Dùng để biết combo Up + S đã đc bấm để chui ống
 	BOOLEAN isReachTransPos; //Dùng để nhận biết đã chạm tới điểm trans
-	BOOLEAN isWaitingForTrans;
+	BOOLEAN isWaitingForTrans; //Dùng để biết có đang đợi chuyển cảnh hay kh
 	BOOLEAN isEndGame;	//End Game -> bật chế độ tự lái
 	int CountJumpOnEnemies; //Đếm số bước nhảy 0 CHẠM ĐẤT để có số điểm tương ứng
 	int TypeOfCardCollected;
@@ -360,6 +356,7 @@ public:
 	CMario(float x, float y);
 	void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
 	void UpdateMarioState();
+	void UpdateTime();
 	void Render();
 	void SetState(int state);
 
@@ -369,8 +366,6 @@ public:
 	}
 
 	int IsBlocking() { return 0; }
-	//Để ý ở đây Mario có thuộc tính blocking => đôi lúc nó sẽ khiến các quái vật khác đổi hướng khi va chạm với nó
-	//Khi nó ở trạng thái vô địch(untouchable) và CHƯA CHẾT
 
 	void SetLevel(int l);
 	int GetLevel() { return level; };

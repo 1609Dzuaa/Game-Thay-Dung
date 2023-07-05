@@ -50,6 +50,7 @@ public:
 	int GetTimer() { return timer; }
 	BOOLEAN GetWait() { return IsWait; }
 	void SetWait(BOOLEAN para) { this->IsWait = para; }
+	void HandleTimerAndWait();
 };
 
 typedef CPlayScene* LPPLAYSCENE;

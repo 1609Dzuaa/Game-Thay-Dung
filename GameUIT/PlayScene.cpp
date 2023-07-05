@@ -16,6 +16,7 @@
 #include "FireBullet.h"
 #include "Card.h"
 #include "Hud.h"
+#include "BlackScreen.h"
 
 #include "SampleKeyEventHandler.h"
 #include "GameMap.h"
@@ -343,36 +344,8 @@ void CPlayScene::Update(DWORD dt)
 	// We know that Mario is the first object in the list hence we won't add him into the colliable object list
 	// TO-DO: This is a "dirty" way, need a more organized way!
 	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
-
-	if (IsWait)
-	{
-		for (size_t i = 0; i < objects.size(); i++)
-			objects[i]->SetWait(1);
-		return;
-	}
-	else
-		for (size_t i = 0; i < objects.size(); i++)
-			objects[i]->SetWait(0);
-
-	if (!mario->GetIsReachEndPos())
-	{
-		if (mario->GetIsEndGame()); //ngưng thời gian khi ăn card (end game)
-		else if (GetTickCount64() - timer_start >= 1000)
-		{
-			timer--;
-			timer_start = GetTickCount64();
-		}
-	}
-	else //Reach End Pos thì reset thời gian nhanh chóng về 0
-	{
-		if (GetTickCount64() - timer_start >= 1)
-		{
-			if (timer == 0) return;	//timer == 0 ngưng Update
-			timer--;
-			timer_start = GetTickCount64();
-		}
-	}
-	DebugOutTitle(L"Time: %d", timer);
+	
+	HandleTimerAndWait(); //Xử lý thời gian và Wait trong game
 
 	vector<LPGAMEOBJECT> coObjects;
 	for (size_t i = 1; i < objects.size(); i++)
@@ -382,16 +355,18 @@ void CPlayScene::Update(DWORD dt)
 
 	for (size_t i = 0; i < objects.size(); i++)
 	{
-		objects[i]->Update(dt, &coObjects);
+		//if (CCamera::GetInstance()->isViewable(objects[i]))
+			objects[i]->Update(dt, &coObjects);
 	}
 
 	// skip the rest if scene was already unloaded (Mario::Update might trigger PlayScene::Unload)
 	if (player == NULL) return;
 
-	// Update camera to follow mario - CAM START HERE !
+	// Update Each Instance Of The Game Here:
 	CCamera::GetInstance()->SetTargetToFollow(player);
 	CCamera::GetInstance()->Update();
 	CHud::GetInstance()->Update();
+	CBlackScreen::GetInstance()->Update();
 
 	//block player if go over Min, Max of the Map
 	//UNLESS When End Game
@@ -421,21 +396,23 @@ void CPlayScene::Render()
 	{
 		//Vẽ Underworld <=> đã reachTransPos và đc Tele xuống Underworld cũng như hết thời gian chuyển cảnh
 		if (underworld_map != NULL)
-		{
-			if (!mario->GetIsAtMainWorld())
-				underworld_map->Render();
-		}
+			underworld_map->Render();
 		else
 			DebugOut(L"[INFO] UnderworldMap was NULL\n");
 	}
 
 	for (int i = 0; i < objects.size(); i++)
-		//if (CCamera::GetInstance()->isViewable(objects[i]))
+		if (CCamera::GetInstance()->isViewable(objects[i])) //Giảm đc 5MB
 			objects[i]->Render();
 
 	//Vẽ sau cùng tránh bị object đè: 
-	//Thứ tự: Hud đè Object, Object đè map
+	//Thứ tự: Black Screen đè Hud, Hud đè Object, Object đè map
 	CHud::GetInstance()->Render();
+	if (mario->GetIsTravelling())	//Giảm đc thêm 8 MB
+	{
+		CBlackScreen::GetInstance()->Render();
+		//DebugOut(L"[INFO] Start Drawing BlackScreen\n");
+	}
 }
 
 /*
@@ -495,4 +472,40 @@ void CPlayScene::AddObjectToScene(LPGAMEOBJECT game_object)
 	this->objects.push_back(game_object);
 	//Thêm vật thể vào scene hiện tại
 	//objects.insert(objects.begin() + 1, game_object);
+}
+
+void CPlayScene::HandleTimerAndWait()
+{
+	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
+
+	if (IsWait)
+	{
+		for (size_t i = 0; i < objects.size(); i++)
+			objects[i]->SetWait(1);
+		return;
+	}
+	else
+		for (size_t i = 0; i < objects.size(); i++)
+			objects[i]->SetWait(0);
+
+	if (!mario->GetIsReachEndPos())
+	{
+		//ngưng thời gian khi ăn card (end game) hoặc khi Travelling
+		if (mario->GetIsEndGame() || mario->GetIsTravelling());
+		else if (GetTickCount64() - timer_start >= 1000)
+		{
+			timer--;
+			timer_start = GetTickCount64();
+		}
+	}
+	else //Reach End Pos thì reset thời gian nhanh chóng về 0
+	{
+		if (GetTickCount64() - timer_start >= 1)
+		{
+			if (timer == 0) return;	//timer == 0 ngưng Update
+			timer--;
+			timer_start = GetTickCount64();
+		}
+	}
+	//DebugOutTitle(L"Time: %d", timer);
 }

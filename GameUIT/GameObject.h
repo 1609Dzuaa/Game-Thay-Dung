@@ -59,7 +59,8 @@ public:
 	virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom) = 0;
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects = NULL) 
 	{
-		if (IsWaiting && IsWaitable) return;
+		if (IsWaiting && IsWaitable) //Nếu vật đang đợi VÀ CÓ THỂ ĐỢI 
+			return;
 	};
 	virtual void Render() = 0;
 	virtual void SetState(int state) { this->state = state; }

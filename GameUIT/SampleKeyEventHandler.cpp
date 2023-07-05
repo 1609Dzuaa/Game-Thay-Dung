@@ -9,11 +9,15 @@
 
 int CKeyEventHandler::wait = 0;
 
+//Combo A + S + Up + Right khi travel up sinh ra bug tự chạy max speed đến cuối map
+//dù animate là travel
+//Combo Key state right + S + Up
+
 void CSampleKeyHandler::OnKeyDown(int KeyCode)
 {
 	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
 	CGame* game = CGame::GetInstance();
-	if (mario->GetIsEndGame() && KeyCode != DIK_W) 
+	if (mario->GetIsEndGame() && KeyCode != DIK_W || mario->GetIsTravelling()) 
 		return; //ngoại trừ W khi EndGame vẫn bấm đc
 
 	DebugOut(L"[INFO] KeyDown: %d\n", KeyCode);
@@ -43,36 +47,28 @@ void CSampleKeyHandler::OnKeyDown(int KeyCode)
 		mario->SetCombo(true);
 		break;
 
-	case DIK_Z: //Tạm cài nút Z vì nút A có lỗi ch fix đc
+	case DIK_A: //Tạm cài nút Z vì nút A có lỗi ch fix đc
 		if (mario->GetIsAttacking()) break;
 		if (mario->GetLevel() == MARIO_LEVEL_RACOON)
 			mario->SetState(MARIO_RACOON_STATE_ATTACK);
 		break;
 
 	case DIK_S: //nếu là racoon mario thì bơm thêm vận tốc theo trục y để bay
-		 /*if (game->IsKeyDown(DIK_UP))
-		 {
-			 if (mario->GetIsAllowToUseTube())
-			 {
-				 mario->SetIsTravelUp(true);
-				 mario->SetState(MARIO_STATE_TRAVELLING);
-			 }
-		 }
-		 else*/ if (mario->GetCanFly() && mario->GetLevel() == MARIO_LEVEL_RACOON)
+		if (mario->GetCanFly() && mario->GetLevel() == MARIO_LEVEL_RACOON)
 			mario->SetState(MARIO_RACOON_STATE_FLYING); //Max speed + Racoon -> bay
-		 else  if (!mario->GetIsOnPlatform() && mario->GetLevel() == MARIO_LEVEL_RACOON && !mario->GetIsFlying())
-		 {
-			 //Nếu Racoon 0 ở trên nền mà còn bấm S
-			 //VÀ không phải trạng thái BAY thì bật state hạ cánh
-			 mario->SetState(MARIO_RACOON_STATE_LANDING);
-		 }
-		 else if (mario->GetisAtMaxSpeed() && !mario->GetIsFlying())
-		 {
-			 if (mario->GetMarioNormalX() > 0)
-				 mario->SetState(MARIO_STATE_RUNNING_AT_MAX_SPEED_RIGHT);
-			 else if (mario->GetMarioNormalX() < 0)
-				 mario->SetState(MARIO_STATE_RUNNING_AT_MAX_SPEED_LEFT);
-		 }
+		else  if (!mario->GetIsOnPlatform() && mario->GetLevel() == MARIO_LEVEL_RACOON && !mario->GetIsFlying())
+		{
+			//Nếu Racoon 0 ở trên nền mà còn bấm S
+			//VÀ không phải trạng thái BAY thì bật state hạ cánh
+			mario->SetState(MARIO_RACOON_STATE_LANDING);
+		}
+		else if (mario->GetisAtMaxSpeed() && !mario->GetIsFlying())
+		{
+			if (mario->GetMarioNormalX() > 0)
+				mario->SetState(MARIO_STATE_JUMP_AT_MAX_SPEED);
+			else if (mario->GetMarioNormalX() < 0)
+				mario->SetState(MARIO_STATE_JUMP_AT_MAX_SPEED);
+		}
 		else if (mario->GetIsAttacking())
 			mario->SetState(MARIO_RACOON_STATE_ATTACK);
 		else if (mario->GetIsOnPlatform()) //Phải ở trên nền thì mới cho nhảy 
@@ -126,7 +122,7 @@ void CSampleKeyHandler::OnKeyDown(int KeyCode)
 void CSampleKeyHandler::OnKeyUp(int KeyCode)
 {
 	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
-	if (mario->GetIsEndGame()) return;
+	if (mario->GetIsEndGame() || mario->GetIsTravelling()) return;
 
 	DebugOut(L"[INFO] KeyUp: %d\n", KeyCode);
 	switch (KeyCode)
@@ -158,7 +154,8 @@ void CSampleKeyHandler::OnKeyUp(int KeyCode)
 void CSampleKeyHandler::KeyState(BYTE* states)
 {
 	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
-	if (mario->GetIsEndGame()) return;
+	if (mario->GetIsEndGame() || mario->GetIsTravelling()) return;
+
 	CGame* game = CGame::GetInstance();
 
 	if (game->IsKeyDown(DIK_RIGHT))

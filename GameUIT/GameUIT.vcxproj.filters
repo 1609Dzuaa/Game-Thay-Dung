@@ -150,6 +150,9 @@
     <ClInclude Include="Hud.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="BlackScreen.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -272,13 +275,13 @@
     <ClCompile Include="MarioUpdate.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Effect.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Card.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Hud.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BlackScreen.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

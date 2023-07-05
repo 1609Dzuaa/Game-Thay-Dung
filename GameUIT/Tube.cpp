@@ -34,7 +34,8 @@ void CTube::SpawnFlower()
 
 void CTube::Render()
 {
-	if (!CCamera::GetInstance()->isViewable(this)) return;
+	if (!CCamera::GetInstance()->isViewable(this))
+		return;
 
 	CAnimations* animations = CAnimations::GetInstance();
 	if (Type == TUBE_HAS_GREEN_CARNIVOURING_FLOWER || Type == SHORT_TUBE_HAS_NO_FLOWER)

@@ -542,6 +542,7 @@ void CMario::OnCollisionWithMushroom(LPCOLLISIONEVENT e)
 	{
 		if (mr->GetState() != MUSHROOM_STATE_IN_THE_BRICK)
 		{
+			HP++;
 			SpawnScore(mr); //Spawn Level Up
 			mr->Delete();
 		}

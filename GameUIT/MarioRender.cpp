@@ -122,7 +122,7 @@ int CMario::GetAniIdSmall()
 			{
 				if (ax < 0)
 					aniId = ID_ANI_MARIO_SMALL_BRACE_RIGHT;
-				else if (vx >= maxRunningSpeed)  //Đặt thằng này lên trc vì lúc chạy ax = accel run (obviously!)
+				else if (isAtMaxSpeed && vx >= maxVx)  //Đặt thằng này lên trc vì lúc chạy ax = accel run (obviously!)
 					aniId = ID_ANI_MARIO_SMALL_RUNNING_MAX_SPEED_RIGHT;
 				else if (ax == MARIO_ACCEL_RUN_X)
 					aniId = ID_ANI_MARIO_SMALL_RUNNING_RIGHT;
@@ -133,7 +133,7 @@ int CMario::GetAniIdSmall()
 			{
 				if (ax > 0)
 					aniId = ID_ANI_MARIO_SMALL_BRACE_LEFT;
-				else if (abs(vx) >= maxRunningSpeed)
+				else if (isAtMaxSpeed && abs(vx) >= maxVx)
 					aniId = ID_ANI_MARIO_SMALL_RUNNING_MAX_SPEED_LEFT;
 				else if (ax == -MARIO_ACCEL_RUN_X)
 					aniId = ID_ANI_MARIO_SMALL_RUNNING_LEFT;
@@ -376,10 +376,10 @@ int CMario::GetAniIdRacoon()
 			}
 			else if (vx > 0)
 			{
-				if (ax < 0)
-					aniId = ID_ANI_MARIO_RACOON_BRACE_LEFT;
-				else if (vx >= maxRunningSpeed)
+				if (isAtMaxSpeed && vx >= maxVx)
 					aniId = ID_ANI_MARIO_RACOON_RUNNING_MAX_SPEED_RIGHT;
+			    else if (ax < 0)
+					aniId = ID_ANI_MARIO_RACOON_BRACE_LEFT;
 				else if (ax == MARIO_ACCEL_RUN_X)
 					aniId = ID_ANI_MARIO_RACOON_RUNNING_RIGHT;
 				else if (ax == MARIO_ACCEL_WALK_X || isEndGame)
@@ -387,10 +387,10 @@ int CMario::GetAniIdRacoon()
 			}
 			else // vx < 0
 			{
-				if (ax > 0)
-					aniId = ID_ANI_MARIO_RACOON_BRACE_RIGHT;
-				else if (abs(vx) >= maxRunningSpeed)
+				if (isAtMaxSpeed && abs(vx) >= maxVx)
 					aniId = ID_ANI_MARIO_RACOON_RUNNING_MAX_SPEED_LEFT;
+				else if (ax > 0)
+					aniId = ID_ANI_MARIO_RACOON_BRACE_RIGHT;
 				else if (ax == -MARIO_ACCEL_RUN_X)
 					aniId = ID_ANI_MARIO_RACOON_RUNNING_LEFT;
 				else if (ax == -MARIO_ACCEL_WALK_X)

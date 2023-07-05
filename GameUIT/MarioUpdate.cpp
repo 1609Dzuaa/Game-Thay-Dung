@@ -6,6 +6,9 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	//Phải dừng vận tốc ở đây chứ 0 phải ở hàm OnNoCollision
 	//Vì ở đây gọi trc r mới đến OnNoCollision
 	//Cập nhật vị trí Koopa khi đc ôm bởi Mario
+	//Tạo 1 biến đếm độ max speed để cho phép chạy
+	//Chỉ khi trên mặt đất thì biến đấy mới tăng dần lên
+	//Còn nếu đang chạy mà nhảy (not on platform) thì cái biến đấy giảm dần
 
 	if (!isEvolving)
 	{
@@ -28,11 +31,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		return; //ngưng update
 	}
 
-	if (coin == 100)
-	{
-
-	}
-
+	UpdateTime();
 	UpdateMarioState();
 	isOnPlatform = false;
 	CCollision::GetInstance()->Process(this, dt, coObjects);
@@ -45,14 +44,38 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		DebugOut(L"Tail was created successfully!\n");
 	}
 
-	//DebugOutTitle(L"x, y, isWait, atMW: %f, %f, %d, %d", x, y, isWaitingForTrans, isAtMainWorld);
+	DebugOutTitle(L"vx, isRaMS, isJ, isOn: %f, %d, %d, %d", vx, isAtMaxSpeed, isJumping, isOnPlatform);
 	//DebugOutTitle(L"St, vx, End: %d, %f, %d", state, vx, isEndGame);
 }
 
 void CMario::UpdateMarioState()
 {
-	// reset untouchable timer if untouchable time has passed
+	//Walk & Run
+	if (this->state == MARIO_STATE_RUNNING_RIGHT || this->state == MARIO_STATE_WALKING_RIGHT)
+	{
+		if (abs(vx) > abs(maxVx))
+		{
+			vx = maxVx;
+			if (this->state == MARIO_STATE_RUNNING_RIGHT)
+				this->SetState(MARIO_STATE_RUNNING_AT_MAX_SPEED_RIGHT);
+		}
+	}
+	else if (this->state == MARIO_STATE_RUNNING_LEFT || this->state == MARIO_STATE_WALKING_LEFT)
+	{
+		if (abs(vx) > abs(maxVx))
+		{
+			vx = maxVx;
+			if (this->state == MARIO_STATE_RUNNING_LEFT)
+				this->SetState(MARIO_STATE_RUNNING_AT_MAX_SPEED_LEFT);
+		}
+	}
+	else if (this->isAtMaxSpeed && isJumping && isOnPlatform)
+		this->SetState(MARIO_STATE_JUMP_AT_MAX_SPEED);
+}
 
+void CMario::UpdateTime()
+{
+	// reset untouchable timer if untouchable time has passed
 	if (GetTickCount64() - untouchable_start > MARIO_UNTOUCHABLE_TIME)
 	{
 		untouchable_start = 0;
@@ -96,27 +119,6 @@ void CMario::UpdateMarioState()
 		isAteItem = false;
 		evolve_start = 0;
 	}
-
-	if (this->state == MARIO_STATE_RUNNING_RIGHT || this->state == MARIO_STATE_WALKING_RIGHT)
-	{
-		if (abs(vx) > abs(maxVx))
-		{
-			vx = maxVx;
-			if (this->state == MARIO_STATE_RUNNING_RIGHT)
-				this->SetState(MARIO_STATE_RUNNING_AT_MAX_SPEED_RIGHT);
-		}
-	}
-	else if (this->state == MARIO_STATE_RUNNING_LEFT || this->state == MARIO_STATE_WALKING_LEFT)
-	{
-		if (abs(vx) > abs(maxVx))
-		{
-			vx = maxVx;
-			if (this->state == MARIO_STATE_RUNNING_LEFT)
-				this->SetState(MARIO_STATE_RUNNING_AT_MAX_SPEED_LEFT);
-		}
-	}
-	else if (this->isAtMaxSpeed && isJumping && isOnPlatform)
-		this->SetState(MARIO_STATE_JUMP_AT_MAX_SPEED);
 
 	if (isKicking && GetTickCount64() - kick_start >= MARIO_KICK_TIME)
 	{

@@ -132,6 +132,7 @@
     <ClInclude Include="AnimationFrame.h" />
     <ClInclude Include="Animations.h" />
     <ClInclude Include="AssetIDs.h" />
+    <ClInclude Include="BlackScreen.h" />
     <ClInclude Include="Brick.h" />
     <ClInclude Include="BrickPiece.h" />
     <ClInclude Include="Camera.h" />
@@ -177,11 +178,11 @@
   <ItemGroup>
     <ClCompile Include="Animation.cpp" />
     <ClCompile Include="Animations.cpp" />
+    <ClCompile Include="BlackScreen.cpp" />
     <ClCompile Include="Brick.cpp" />
     <ClCompile Include="BrickPiece.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Card.cpp" />
-    <ClCompile Include="Effect.cpp" />
     <ClCompile Include="Coin.cpp" />
     <ClCompile Include="Collision.cpp" />
     <ClCompile Include="ColorPlatform.cpp" />

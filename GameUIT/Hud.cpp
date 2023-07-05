@@ -18,6 +18,7 @@ CHud* CHud::GetInstance()
 void CHud::Update()
 {
 	//Update vị trí của Hud theo Cam
+	//Chia ra vị trí ở MainWorld và Underground
 	this->x= CCamera::GetInstance()->GetCamPos().x + CGame::GetInstance()->GetBackBufferWidth() / 2;
 	this->y= CCamera::GetInstance()->GetCamPos().y + CGame::GetInstance()->GetBackBufferHeight() - 16.0f;
 }
@@ -40,6 +41,7 @@ void CHud::Render()
 	RenderCoin();
 	RenderTimer();
 	RenderPoints();
+	RenderSpeedBar();
 	RenderCard(); //Có vấn đề: Lâu lâu lại 0 hiện ?!!!
 }
 
@@ -64,8 +66,8 @@ void CHud::RenderCoin()
 	{
 		int	OnesPlace = mario->GetCoin() % 10;	//Hàng đơn vị
 		int TensPlace = mario->GetCoin() / 10;	//Hàng chục
-		animations->Get(OnesPlace)->Render(x + 25.0f, y - 3.0f, false);
-		animations->Get(TensPlace)->Render(x + 17.0f, y - 3.0f, false);
+		animations->Get(OnesPlace)->Render(x + 26.0f, y - 3.0f, false);
+		animations->Get(TensPlace)->Render(x + 18.0f, y - 3.0f, false);
 	}
 }
 
@@ -90,6 +92,23 @@ void CHud::RenderPoints()
 	animations->Get(TenThousands)->Render(x - 46.0f, y + 5.0f, false);
 	animations->Get(HundredThousands)->Render(x - 53.0f, y + 5.0f, false);
 	animations->Get(Millions)->Render(x - 60.0f, y + 5.0f, false);
+}
+
+void CHud::RenderSpeedBar()
+{
+	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
+	CAnimations* animations = CAnimations::GetInstance();
+	//Bar
+	//if()
+	animations->Get(ID_SPEED_BAR)->Render(x - 62.0f, y - 4.0f, false);
+	animations->Get(ID_SPEED_BAR)->Render(x - 54.0f, y - 4.0f, false);
+	animations->Get(ID_SPEED_BAR)->Render(x - 46.0f, y - 4.0f, false);
+	animations->Get(ID_SPEED_BAR)->Render(x - 38.0f, y - 4.0f, false);
+	animations->Get(ID_SPEED_BAR)->Render(x - 30.0f, y - 4.0f, false);
+	animations->Get(ID_SPEED_BAR)->Render(x - 22.0f, y - 4.0f, false);
+
+	//P vẽ đc 5 thằng trên thì mới vẽ thằng này (Undraw như untouchable)
+	animations->Get(ID_P_BUTTON)->Render(x - 9.0f, y - 4.0f, false);
 }
 
 void CHud::RenderTimer()

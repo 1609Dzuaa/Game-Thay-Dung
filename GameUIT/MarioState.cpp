@@ -9,13 +9,13 @@ void CMario::SetState(int state)
 	{
 	case MARIO_STATE_RUNNING_RIGHT:
 		if (isSitting) break;
-		maxVx = MARIO_RUNNING_SPEED;
+		maxVx = 0.2f;
 		ax = MARIO_ACCEL_RUN_X;
 		nx = 1;
 		isRunning = true;
 		break;
 
-	case MARIO_STATE_RUNNING_AT_MAX_SPEED_RIGHT:
+	case MARIO_STATE_RUNNING_AT_MAX_SPEED_RIGHT: //Ở state này thì mới cho bay
 		if (isSitting) break;
 		isAtMaxSpeed = true;
 		if (this->level == MARIO_LEVEL_RACOON)
@@ -25,7 +25,7 @@ void CMario::SetState(int state)
 
 	case MARIO_STATE_RUNNING_LEFT:
 		if (isSitting) break;
-		maxVx = -MARIO_RUNNING_SPEED;
+		maxVx = -0.2f;
 		ax = -MARIO_ACCEL_RUN_X;
 		nx = -1;
 		isRunning = true;
@@ -79,10 +79,18 @@ void CMario::SetState(int state)
 		{
 			isJumping = true;
 			isLanding = false;
-			if (abs(this->vx) == MARIO_RUNNING_SPEED)
-				vy = -MARIO_JUMP_RUN_SPEED_Y;
+			if (isRunning)
+				vy = -0.5f;
 			else
-				vy = -MARIO_JUMP_SPEED_Y;
+				vy = -0.45f;
+		}
+		break;
+
+	case MARIO_STATE_JUMP_AT_MAX_SPEED:
+		if (isOnPlatform)
+		{
+			isJumping = true;
+			vy = -0.6f;
 		}
 		break;
 
@@ -144,7 +152,6 @@ void CMario::SetState(int state)
 	{
 		if (isAttacking) break;
 		
-
 		attack_start = GetTickCount64();
 		isAttacking = true;
 		isKicking = false;
