@@ -85,4 +85,6 @@ public:
 	int GetType() { return this->type; };
 	void SetLevel(int para) { this->level = para; this->state = GOOMBA_STATE_WALKING; }
 	int GetLevel() { return this->level; }
+	void OnCollisionWithGhostPlatform(LPCOLLISIONEVENT e, CColorPlatform* cl_pf);
+	void SnappingToAnEdge();
 };

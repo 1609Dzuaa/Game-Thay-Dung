@@ -31,9 +31,12 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		return; //ngưng update
 	}
 
+	//if (isOnPlatform) vy = 0;
+
 	UpdateTime();
+	UpdateSpeedBar();
 	UpdateMarioState();
-	isOnPlatform = false;
+	isOnPlatform = false;	
 	CCollision::GetInstance()->Process(this, dt, coObjects);
 	if (isAttacking && !isInitialized)
 	{
@@ -44,8 +47,8 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		DebugOut(L"Tail was created successfully!\n");
 	}
 
-	DebugOutTitle(L"vx, isRaMS, isJ, isOn: %f, %d, %d, %d", vx, isAtMaxSpeed, isJumping, isOnPlatform);
-	//DebugOutTitle(L"St, vx, End: %d, %f, %d", state, vx, isEndGame);
+	//DebugOutTitle(L"SpeedBar, isR, isAMS: %d, %d, %d", SpeedBar, isRunning, isAtMaxSpeed);
+	DebugOut(L"%d\n", SpeedBar);
 }
 
 void CMario::UpdateMarioState()
@@ -133,5 +136,23 @@ void CMario::UpdateTime()
 		isInitialized = false;
 		tail->Delete();
 		DebugOut(L"Delete Tail Success\n");
+	}
+}
+
+void CMario::UpdateSpeedBar()
+{
+	//Cắt maxSpeed thành 6 khúc ~ nhau
+	if (isRunning && SpeedBar < 7)
+	{
+		if (abs(this->vx) - prevVx >= abs(maxVx / 6))
+		{
+			prevVx = vx;
+			SpeedBar++;
+		}
+	}
+	//Còn phần giảm, phần tăng có vẻ ổn r
+	else if (!isRunning && SpeedBar != 0)
+	{
+		SpeedBar--;
 	}
 }

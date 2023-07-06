@@ -25,10 +25,10 @@ void CMario::OnNoCollision(DWORD dt)
 
 void CMario::OnCollisionWith(LPCOLLISIONEVENT e)
 {
-	OnCollisionWithBlockingObjects(e);
-
-	//Va chạm với vật KHÔNG CÓ thuộc tính BLOCK HOẶC Question Brick
-	OnCollisionWithNonBlockingObjects(e);
+	
+		OnCollisionWithBlockingObjects(e);
+	//else //Va chạm với vật KHÔNG CÓ thuộc tính BLOCK HOẶC Question Brick
+		OnCollisionWithNonBlockingObjects(e);
 }
 
 void CMario::OnCollisionWithBlockingObjects(LPCOLLISIONEVENT e)
@@ -65,10 +65,13 @@ void CMario::OnCollisionWithBlockingObjects(LPCOLLISIONEVENT e)
 					}
 					else if (e->ny < 0)
 					{
-						isOnPlatform = true;
+						/*isOnPlatform = true;
 						isLanding = false;
 						CountJumpOnEnemies = 0; //Chạm đất thì reset số lần nhảy
-						vy = 0;
+						vy = 0;*/
+						SnappingToAnEdge(e, br);
+						//vy = 0;
+						isOnPlatform = true;
 					}
 				}
 				else if (e->nx != 0 && e->obj->IsBlocking())
@@ -92,15 +95,12 @@ void CMario::OnCollisionWithBlockingObjects(LPCOLLISIONEVENT e)
 		}
 		else if (e->ny != 0 && e->obj->IsBlocking())
 		{
-			//this->y = br->GetY() - 100 / 2 - MARIO_BIG_BBOX_HEIGHT / 2;
-			//vy = 0;
-			//Player.TopY + Player.Height > ColorPlat.TopY = > SNAP
-			//this->y = color_platf->GetY() - color_platf->GetCellHeight() / 2 - MARIO_BIG_BBOX_HEIGHT / 2;
+			vy = 0;
 			if (e->ny < 0)
 			{
 				isOnPlatform = true;
 				CountJumpOnEnemies = 0; //Chạm đất thì reset số lần nhảy
-				vy = 0;
+				//vy = 0; bcuz of this
 			}
 		}
 		else if (e->nx != 0 && e->obj->IsBlocking())
@@ -120,14 +120,14 @@ void CMario::OnCollisionWithBlockingObjects(LPCOLLISIONEVENT e)
 				else
 					isAllowToUseTube = false;
 
-				vy = 0;
+				//vy = 0;
 				isOnPlatform = true;
 				CountJumpOnEnemies = 0;
 				start_y = y + MARIO_BIG_BBOX_HEIGHT / 2;
 			}
 			else //Nếu nó là các loại ống còn lại
 			{
-				vy = 0;
+				//vy = 0;
 				isOnPlatform = true;
 				CountJumpOnEnemies = 0;
 			}
@@ -155,13 +155,21 @@ void CMario::OnCollisionWithBlockingObjects(LPCOLLISIONEVENT e)
 			}
 			else
 			{
-				vy = 0;
+				//vy = 0;
+				SnappingToAnEdge(e, e->obj);
 				isOnPlatform = true;
-				CountJumpOnEnemies = 0;
+				//this->y = e->obj->GetY() - 16.0f / 2.0f - MARIO_BIG_BBOX_HEIGHT / 2.0f + 0.5f;
+				//vy = 0.0f;
+				//isOnPlatform = true;
+				//CountJumpOnEnemies = 0;
 			}
 		}
 		else
 		{
+			//SNAP: Player.Y = ColorPlat.Y - ColorPlat.Height / 2 - Player.Height / 2
+			//this->y = static_cast<float>(e->obj->GetY() - 16.0f / 2.0f - MARIO_BIG_BBOX_HEIGHT / 2.0f);
+			//vy = 0.0f;
+			//ay = 0;
 			vy = 0;
 			isOnPlatform = true;
 			CountJumpOnEnemies = 0;
@@ -281,23 +289,21 @@ void CMario::HandleCollisionUpperDirectionWithGoomba(CGoomba* goomba)
 			goomba->SetLevel(PARA_GOOMBA_LEVEL_NO_WINGS);
 			CountJumpOnEnemies++;
 			SpawnScore(goomba);
-			//points += 100;
-			vy = -MARIO_JUMP_DEFLECT_SPEED;
+			vy = -0.23f;
 		}
 		else if (goomba->GetType() == PARA_GOOMBA && goomba->GetLevel() == PARA_GOOMBA_LEVEL_NO_WINGS)
 		{
 			goomba->SetState(GOOMBA_STATE_DIE);
 			CountJumpOnEnemies++;
 			SpawnScore(goomba);
-			vy = -MARIO_JUMP_DEFLECT_SPEED; //nảy lên
+			vy = -0.23f; //nảy lên
 		}
 		else //Goomba thường
 		{
 			goomba->SetState(GOOMBA_STATE_DIE);
 			CountJumpOnEnemies++;
 			SpawnScore(goomba);
-			vy = -MARIO_JUMP_DEFLECT_SPEED; //nảy lên
-			//points += 100;
+			vy = -0.23f; //nảy lên
 		}
 	}
 }
@@ -654,4 +660,48 @@ void CMario::OnCollisionWithCard(LPCOLLISIONEVENT e)
 	CEffectScore* eff = new CEffectScore(COURSE_CLEAR_X, COURSE_CLEAR_Y, 0, COURSE_CLEAR_TEXT);
 	CPlayScene* current_scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
 	current_scene->AddObjectToScene(eff);
+}
+
+void CMario::SnappingToAnEdge(LPCOLLISIONEVENT e, LPGAMEOBJECT obj)
+{
+	if (this->level != MARIO_LEVEL_SMALL) //level gấu mèo và BIG dùng chung BBox được vì diff 0 đáng kể
+	{
+		/*if (!isSitting) {
+			if (gameobject->GetY() - GetY() < MARIO_BIG_BBOX_HEIGHT)
+			{
+				SetY(gameobject->GetY() - MARIO_BIG_BBOX_HEIGHT + 4);
+				vy = 0;
+				isOnPlatform = true;
+			}
+		}*/
+		if (!isSitting)
+		{
+			if (this->y + MARIO_BIG_BBOX_HEIGHT / 2 > obj->GetY() - 18.0f)
+			{
+				//SNAP: Player.Y = ColorPlat.Y - ColorPlat.Height / 2 - Player.Height / 2
+				this->y = obj->GetY() - MARIO_BIG_BBOX_HEIGHT / 2 - 18.0f;
+				//vy = 0.022f;		
+				vy = 0;
+				isOnPlatform = true;
+			}
+		}
+		else
+		{
+			if (this->y + MARIO_BIG_BBOX_HEIGHT / 2 + 3.5 > obj->GetY())
+			{
+				this->y = obj->GetY() - MARIO_BIG_BBOX_HEIGHT / 2 - 3.5f; //trừ một lượng vừa đủ
+				vy = 0;
+				isOnPlatform = true;
+			}
+		}
+	}
+	else
+	{
+		if (this->y + MARIO_SMALL_BBOX_HEIGHT / 2 > obj->GetY())
+		{
+			this->y = obj->GetY() - MARIO_SMALL_BBOX_HEIGHT / 2;
+			vy = 0;
+			isOnPlatform = true;
+		}
+	}
 }

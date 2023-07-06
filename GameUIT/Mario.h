@@ -291,7 +291,7 @@ class CMario : public CGameObject
 	BOOLEAN isReachEndPos;	//để nhận biết khi đến vị trí end game thì spawn text
 	CKoopa* ghost_koopa; //khi đang giữ Koopa, coi nó như item của mình, đang bật khiên, đụng là chết
 	//về cơ bản cũng khá giống cái đuôi, cũng cần đc vẽ bbox
-	float maxVx;
+	float maxVx, prevVx;
 	float ax;				// acceleration on x 
 	float ay;				// acceleration on y 
 	float start_y;			//Điểm bắt đầu chui xuống
@@ -321,6 +321,7 @@ class CMario : public CGameObject
 	BOOLEAN isEndGame;	//End Game -> bật chế độ tự lái
 	int CountJumpOnEnemies; //Đếm số bước nhảy 0 CHẠM ĐẤT để có số điểm tương ứng
 	int TypeOfCardCollected;
+	int SpeedBar; //thanh tốc độ
 
 	//Collision Func
 	void OnCollisionWithColorPlatform(LPCOLLISIONEVENT e);
@@ -357,6 +358,7 @@ public:
 	void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
 	void UpdateMarioState();
 	void UpdateTime();
+	void UpdateSpeedBar();
 	void Render();
 	void SetState(int state);
 
@@ -399,6 +401,7 @@ public:
 	BOOLEAN GetIsTravelling() { return this->isTravelling; }
 	BOOLEAN GetIsEndGame() { return this->isEndGame; }
 	BOOLEAN GetIsReachEndPos() { return this->isReachEndPos; }
+	int GetSpeedBar() { return this->SpeedBar; }
 	int GetTypeOfCardCollected() { return this->TypeOfCardCollected; }
 	void SetHoldKoopa(BOOLEAN para) { this->isAllowToHoldKoopa = para; }
 	void SetIsHoldingKoopa(BOOLEAN para) { this->isHolding = para; }
@@ -414,4 +417,5 @@ public:
 	void AddPoints(int points_para) { points += points_para; }
 	void HandleTravellingDown();
 	void HandleTravellingUp();
+	void SnappingToAnEdge(LPCOLLISIONEVENT e, LPGAMEOBJECT obj);
 };

@@ -29,6 +29,7 @@ class CHud
 	static CHud* __HudInstance;	//Đảm bảo chỉ có duy nhất 1 HUD
 	float x, y;
 	int allowToRenderCard;	//Hiện dòng "You Got A Card" thì mới cho vẽ Card lên Hud
+	int allowToRenderP;
 	BOOLEAN isUndrawInitialized;
 	BOOLEAN untouch_0; // cờ 0 vẽ
 	BOOLEAN untouch_1; // cờ vẽ
@@ -45,6 +46,7 @@ public:
 		untouch_0 = 0;
 		untouch_1 = 0;
 		isUndrawInitialized = 0;
+		allowToRenderP = 0;
 	}
 	static CHud* GetInstance();
 	void Update();

@@ -55,6 +55,8 @@ CMario::CMario(float x, float y) : CGameObject(x, y)
 	start_y = -1;
 	fly_start = -1;
 	TypeOfCardCollected = -1;
+	SpeedBar = 0;
+	prevVx = 0;
 	tail = NULL;
 	//Thêm đuôi trước tương tự như mushroom
 	ghost_koopa = NULL; //Khi đang Hold Koopa thì coi nó như thuộc tính của Mario
@@ -62,9 +64,9 @@ CMario::CMario(float x, float y) : CGameObject(x, y)
 
 	maxVx = 0;
 	ax = 0.0f;
-	ay = MARIO_GRAVITY;
+	ay = 0.002f;
 
-	level = MARIO_LEVEL_SMALL;
+	level = 2;
 	untouchable = 0;
 	untouchable_start = -1;
 	kick_start = 0;
@@ -201,9 +203,6 @@ void CMario::HandleTravellingDown()
 		y = start_y + MARIO_BIG_BBOX_HEIGHT; //giữ nguyên vị trí
 		vy = 0;
 		CBlackScreen::GetInstance()->SetState(BLACK_SCR_EFF_STATE_DRAW_FROM_0);
-		//CEffect* blck_eff = new CEffect(x, y, 0.0f);
-		//CPlayScene* current_scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
-		//current_scene->AddObjectToScene(blck_eff);
 	}
 	else if (isTravelling && y > DOWN_TUBE_POSITION_Y + MARIO_BIG_BBOX_HEIGHT && !isAtMainWorld)
 	{
@@ -218,9 +217,6 @@ void CMario::HandleTravellingDown()
 		SetPosition(DOWN_TUBE_POSITION_X, DOWN_TUBE_POSITION_Y);
 		isAtMainWorld = 0;
 		CBlackScreen::GetInstance()->SetState(BLACK_SCR_EFF_STATE_DRAW_FROM_1);
-		//CEffect* blck_eff = new CEffect(x, y, 1.0f);
-		//CPlayScene* current_scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
-		//current_scene->AddObjectToScene(blck_eff);
 		isReachTransPos = false;
 		isWaitingForTrans = true; //chờ alpha từ 0 -> 1 rồi sau đó trả tự do cho nó
 	}
@@ -239,9 +235,6 @@ void CMario::HandleTravellingUp()
 		y = start_y - MARIO_BIG_BBOX_HEIGHT; //giữ nguyên vị trí
 		vy = 0;
 		CBlackScreen::GetInstance()->SetState(BLACK_SCR_EFF_STATE_DRAW_FROM_0);
-		//CEffect* blck_eff = new CEffect(x, y, 0.0f);
-		//CPlayScene* current_scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
-		//current_scene->AddObjectToScene(blck_eff);
 	}
 	else if (isTravelling && y < SHORT_TUBE_POSITION_Y - MARIO_BIG_BBOX_HEIGHT && isAtMainWorld)
 	{
@@ -256,9 +249,6 @@ void CMario::HandleTravellingUp()
 		SetPosition(SHORT_TUBE_POSITION_X, SHORT_TUBE_POSITION_Y);
 		isAtMainWorld = 1;
 		CBlackScreen::GetInstance()->SetState(BLACK_SCR_EFF_STATE_DRAW_FROM_1);
-		//CEffect* blck_eff = new CEffect(x, y, 1.0f);
-		//CPlayScene* current_scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
-		//current_scene->AddObjectToScene(blck_eff);
 		isReachTransPos = false;
 		isWaitingForTrans = true; //chờ alpha từ 0 -> 1 rồi sau đó trả tự do cho nó
 	}

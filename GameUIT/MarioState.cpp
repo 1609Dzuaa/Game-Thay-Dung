@@ -80,9 +80,9 @@ void CMario::SetState(int state)
 			isJumping = true;
 			isLanding = false;
 			if (isRunning)
-				vy = -0.5f;
+				vy = -0.57f;
 			else
-				vy = -0.45f;
+				vy = -0.52f;
 		}
 		break;
 
@@ -122,7 +122,7 @@ void CMario::SetState(int state)
 
 	case MARIO_STATE_RELEASE_JUMP: 
 		if (vy < 0) 
-			vy += MARIO_JUMP_SPEED_Y / 2; //Nhảy cao hơn
+			vy += 0.37f / 2.0f; //Nhảy cao hơn
 		isJumping = false; 
 		break;
 
@@ -143,6 +143,7 @@ void CMario::SetState(int state)
 	case MARIO_STATE_SIT_RELEASE:
 		if (isSitting)
 		{
+			ay = 0.00042f;
 			isSitting = false;
 			y -= MARIO_SIT_HEIGHT_ADJUST;
 		}

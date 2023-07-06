@@ -494,6 +494,7 @@ void CPlayScene::HandleTimerAndWait()
 		if (mario->GetIsEndGame() || mario->GetIsTravelling());
 		else if (GetTickCount64() - timer_start >= 1000)
 		{
+			if (timer == 0) return;
 			timer--;
 			timer_start = GetTickCount64();
 		}

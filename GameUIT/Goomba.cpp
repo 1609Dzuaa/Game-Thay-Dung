@@ -73,7 +73,12 @@ void CGoomba::OnCollisionWith(LPCOLLISIONEVENT e)
 	//Xét va chạm giữa Goomba và VẬT KHÁC
 	if (e->obj->IsBlocking()) HandleCollisionWithBlockingObjects(e);
 
-	if (!e->obj->IsBlocking()) return; //Nếu nó không có thuộc tính block thì kết thúc hàm này (On no collision inside here)
+	if (dynamic_cast<CColorPlatform*>(e->obj))
+	{
+		CColorPlatform* cl_pf = dynamic_cast<CColorPlatform*>(e->obj);
+		OnCollisionWithGhostPlatform(e, cl_pf);
+	}
+	//if (!e->obj->IsBlocking()) return; //Nếu nó không có thuộc tính block thì kết thúc hàm này (On no collision inside here)
 }
 
 void CGoomba::HandleCollisionWithBlockingObjects(LPCOLLISIONEVENT e)
@@ -233,4 +238,15 @@ void CGoomba::SetState(int state)
 	}
 
 	CGameObject::SetState(state);
+}
+
+void CGoomba::OnCollisionWithGhostPlatform(LPCOLLISIONEVENT e, CColorPlatform* cl_pf)
+{
+	this->y = cl_pf->GetY() - cl_pf->GetCellHeight() / 2 - GOOMBA_BBOX_HEIGHT / 2;
+	vy = 0;
+}
+
+void CGoomba::SnappingToAnEdge()
+{
+
 }

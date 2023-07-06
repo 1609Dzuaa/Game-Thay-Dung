@@ -174,14 +174,10 @@ void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	//How about respawn it if go too far but comeback later ?!
 	if (!CCamera::GetInstance()->isViewable(this))
-	{
-		//this->Delete();
-		//isInitialized = false;
 		return;
-	}
-
-	//if (!isInitialized)
-		//this->Respawn();
+	
+	//if (IsWaiting && IsWaitable)
+		//;//giữ nguyên thời gian khi đang wait
 
 	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
 	if (mario->GetStopWatch()) return;

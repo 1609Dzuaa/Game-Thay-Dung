@@ -33,7 +33,8 @@ public:
 
 	void Render();
 	void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
-	int IsBlocking() { return 1; } //Platform là loại Object đặc biệt
+	int IsBlocking() { return 1; }
+	//int IsBlocking() { return 1; } //Platform là loại Object đặc biệt
 	void GetBoundingBox(float& l, float& t, float& r, float& b);
 	int GetType() { return this->isUnderworldTube; }
 	//void RenderBoundingBox();
