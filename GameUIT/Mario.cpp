@@ -38,7 +38,7 @@ CMario::CMario(float x, float y) : CGameObject(x, y)
 	isInitialized = false;
 	isTravelUp = false;
 	isTravelDown = false;
-	isAtMainWorld = true;
+	isAtMainWorld = false;
 	isComboUpAndS = false;
 	isReachTransPos = false;
 	isWaitingForTrans = true;
@@ -57,9 +57,6 @@ CMario::CMario(float x, float y) : CGameObject(x, y)
 	TypeOfCardCollected = -1;
 	SpeedBar = 0;
 	prevVx = 0;
-	speed_start = 0;
-	speed_stop = 0;
-	start_prepare = 0;
 	tail = NULL;
 	//Thêm đuôi trước tương tự như mushroom
 	ghost_koopa = NULL; //Khi đang Hold Koopa thì coi nó như thuộc tính của Mario

@@ -1,7 +1,9 @@
 ﻿#include "GameMap.h"
 #include "Utils.h"
 #include "Game.h"
+#include "PlayScene.h"
 #include "debug.h"
+
 CMap::CMap(int Tileset_Id, int Map_Rows, int Map_Collums, int Tileset_Rows, int  Tileset_Collums, int num_sprites, int dr_st_y)
 {
 	Texture_TileSet = CTextures::GetInstance()->Get(Tileset_Id);
@@ -54,19 +56,37 @@ void CMap::Render()
 	int Viewable_Col_end = 0;
 	int startRow = 0;
 	int endRow = 0;
+	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
 
-	isViewable(Viewable_Col_start, Viewable_Col_end, startRow, endRow);
+	//Khi đang ở WorldPlayScene thì IsAtMainWorld = false
+	if (mario->GetIsAtMainWorld())
+	{
+		//Vẽ Map trong đây
+		isViewable(Viewable_Col_start, Viewable_Col_end, startRow, endRow);
+		for (int CurrentRow = 0; CurrentRow < MapRows; CurrentRow++)
+			for (int CurrentColumn = Viewable_Col_start; CurrentColumn < Viewable_Col_end; CurrentColumn++)
+			{
+				//Chỉ số ID của Sprites trong Tileset sẽ tương ứng với chỉ số trong vector SpritesSplited
+				int Sprite_ID = Map_Matrix[CurrentRow][CurrentColumn];
 
-	for (int CurrentRow = 0; CurrentRow < MapRows; CurrentRow++)
-		for (int CurrentColumn = Viewable_Col_start; CurrentColumn < Viewable_Col_end; CurrentColumn++)
-		{
-			//Chỉ số ID của Sprites trong Tileset sẽ tương ứng với chỉ số trong vector SpritesSplited
-			int Sprite_ID = Map_Matrix[CurrentRow][CurrentColumn];
+				float Draw_X = static_cast<float>(CurrentColumn * TILE_WIDTH);
+				float Draw_Y = static_cast<float>((CurrentRow + start_draw_at_index_y) * TILE_HEIGHT);
+				SpritesSplitted.at(Sprite_ID)->Draw(Draw_X, Draw_Y); //Vẽ Sprites được tách tại vị trí x, y
+			}
+	}
+	else //vẽ World ở đây
+	{
+		for (int CurrentRow = 0; CurrentRow < MapRows; CurrentRow++)
+			for (int CurrentColumn = 0; CurrentColumn < MapCollums; CurrentColumn++)
+			{
+				//Chỉ số ID của Sprites trong Tileset sẽ tương ứng với chỉ số trong vector SpritesSplited
+				int Sprite_ID = Map_Matrix[CurrentRow][CurrentColumn];
 
-			float Draw_X = static_cast<float>(CurrentColumn * TILE_WIDTH);
-			float Draw_Y = static_cast<float>((CurrentRow + start_draw_at_index_y) * TILE_HEIGHT);
-			SpritesSplitted.at(Sprite_ID)->Draw(Draw_X, Draw_Y); //Vẽ Sprites được tách tại vị trí x, y
-		}
+				float Draw_X = static_cast<float>(CurrentColumn * TILE_WIDTH);
+				float Draw_Y = static_cast<float>((CurrentRow + start_draw_at_index_y) * TILE_HEIGHT);
+				SpritesSplitted.at(Sprite_ID)->Draw(Draw_X, Draw_Y); //Vẽ Sprites được tách tại vị trí x, y
+			}
+	}
 }
 
 void CMap::SetMapMatrix(int** map_mat)

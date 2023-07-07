@@ -329,7 +329,8 @@ void CPlayScene::Load()
 		case SCENE_SECTION_MAP:	
 			_ParseSection_MAP_MATRIX(line, this->map); 
 			break;
-		case SCENE_SECTION_UNDERWORLD: _ParseSection_MAP_MATRIX(line, this->underworld_map); break;
+		case SCENE_SECTION_UNDERWORLD: _ParseSection_MAP_MATRIX(line, this->underworld_map); 
+			break;
 		}
 	}
 
@@ -344,7 +345,7 @@ void CPlayScene::Update(DWORD dt)
 	// We know that Mario is the first object in the list hence we won't add him into the colliable object list
 	// TO-DO: This is a "dirty" way, need a more organized way!
 	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
-	
+
 	HandleTimerAndWait(); //Xử lý thời gian và Wait trong game
 
 	vector<LPGAMEOBJECT> coObjects;
@@ -372,8 +373,8 @@ void CPlayScene::Update(DWORD dt)
 	//UNLESS When End Game
 	if (mario->GetX() <= 0)
 		mario->SetPosition(0, mario->GetY());
-	else if (mario->GetX() >= MAP1_1_WIDTH - 10.0f && !mario->GetIsEndGame())
-		mario->SetPosition(MAP1_1_WIDTH - 10.0f, player->GetY());
+	//else if (mario->GetX() >= MAP1_1_WIDTH - 10.0f && !mario->GetIsEndGame())
+		//mario->SetPosition(MAP1_1_WIDTH - 10.0f, player->GetY());
 
 	//DebugOutTitle(L"X, Y, x, y: %f, %f, %f, %f", Cam->GetCamPos().x, Cam->GetCamPos().y, player->GetX(), player->GetY());
 	PurgeDeletedObjects();
@@ -488,7 +489,7 @@ void CPlayScene::HandleTimerAndWait()
 		for (size_t i = 0; i < objects.size(); i++)
 			objects[i]->SetWait(0);
 
-	if (!mario->GetIsReachEndPos())
+	/*if (!mario->GetIsReachEndPos())
 	{
 		//ngưng thời gian khi ăn card (end game) hoặc khi Travelling
 		if (mario->GetIsEndGame() || mario->GetIsTravelling());
@@ -507,6 +508,6 @@ void CPlayScene::HandleTimerAndWait()
 			timer--;
 			timer_start = GetTickCount64();
 		}
-	}
+	}*/
 	//DebugOutTitle(L"Time: %d", timer);
 }

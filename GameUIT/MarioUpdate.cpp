@@ -150,6 +150,7 @@ void CMario::UpdateSpeedBar()
 	//if (SpeedBar == 0) prevVx = 0; //Reset prevVx
 	//Vẫn còn trường hợp đang chạy max nhưng speedbar 0 đạt tới max
 	//xem xét giảm vx dựa trên speedbar ?
+	//Nếu di chuyển bthg rồi 1 lúc sau tăng tốc (A) thì SpeedBar 0 đạt max
 
 	//Chia maxSpeed thành 7 khúc ~ nhau
 	if (isRunning && SpeedBar < 7 && isOnPlatform)	//Chỉ Running mới tích đc lực

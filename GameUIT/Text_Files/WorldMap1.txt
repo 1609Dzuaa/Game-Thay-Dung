@@ -1,0 +1,7 @@
+# list of object assets to load in this scene
+[MAP]
+Game_Maps\World_1.txt
+[ASSETS]
+Text_Files\Mario.txt
+[OBJECTS]
+100	140	20

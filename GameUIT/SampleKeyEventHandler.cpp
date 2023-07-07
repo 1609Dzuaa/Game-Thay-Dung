@@ -1,10 +1,7 @@
 ﻿#include "SampleKeyEventHandler.h"
-
 #include "debug.h"
 #include "Game.h"
-
 #include "Mario.h"
-#include "Koopa.h"
 #include "PlayScene.h"
 
 int CKeyEventHandler::wait = 0;
@@ -17,8 +14,8 @@ void CSampleKeyHandler::OnKeyDown(int KeyCode)
 {
 	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
 	CGame* game = CGame::GetInstance();
-	if (mario->GetIsEndGame() && KeyCode != DIK_W || mario->GetIsTravelling()) 
-		return; //ngoại trừ W khi EndGame vẫn bấm đc
+	//if (mario->GetIsEndGame() && KeyCode != DIK_W || mario->GetIsTravelling()) 
+	//	return; //ngoại trừ W khi EndGame vẫn bấm đc
 
 	DebugOut(L"[INFO] KeyDown: %d\n", KeyCode);
 	switch (KeyCode)
@@ -122,7 +119,7 @@ void CSampleKeyHandler::OnKeyDown(int KeyCode)
 void CSampleKeyHandler::OnKeyUp(int KeyCode)
 {
 	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
-	if (mario->GetIsEndGame() || mario->GetIsTravelling()) return;
+	//if (mario->GetIsEndGame() || mario->GetIsTravelling()) return;
 
 	DebugOut(L"[INFO] KeyUp: %d\n", KeyCode);
 	switch (KeyCode)
@@ -154,7 +151,7 @@ void CSampleKeyHandler::OnKeyUp(int KeyCode)
 void CSampleKeyHandler::KeyState(BYTE* states)
 {
 	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
-	if (mario->GetIsEndGame() || mario->GetIsTravelling()) return;
+	//if (mario->GetIsEndGame() || mario->GetIsTravelling()) return;
 
 	CGame* game = CGame::GetInstance();
 

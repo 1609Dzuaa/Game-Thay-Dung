@@ -144,6 +144,7 @@
     <ClInclude Include="Effect.h" />
     <ClInclude Include="EffectCollision.h" />
     <ClInclude Include="EffectScore.h" />
+    <ClInclude Include="Entrance.h" />
     <ClInclude Include="FireBullet.h" />
     <ClInclude Include="GameMap.h" />
     <ClInclude Include="GameObject.h" />
@@ -151,6 +152,7 @@
     <ClInclude Include="GhostObject.h" />
     <ClInclude Include="Goomba.h" />
     <ClInclude Include="GoombaAssetIDs.h" />
+    <ClInclude Include="Grass.h" />
     <ClInclude Include="Head.h" />
     <ClInclude Include="Hud.h" />
     <ClInclude Include="KeyEventHandler.h" />
@@ -159,6 +161,7 @@
     <ClInclude Include="Leaf.h" />
     <ClInclude Include="Mario.h" />
     <ClInclude Include="MarioAssetIDs.h" />
+    <ClInclude Include="MarioWorld.h" />
     <ClInclude Include="Mushroom.h" />
     <ClInclude Include="Platform.h" />
     <ClInclude Include="PlayScene.h" />
@@ -174,6 +177,8 @@
     <ClInclude Include="Textures.h" />
     <ClInclude Include="Tube.h" />
     <ClInclude Include="Utils.h" />
+    <ClInclude Include="WorldKeyHandler.h" />
+    <ClInclude Include="WorldPlayScene.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Animation.cpp" />
@@ -204,6 +209,7 @@
     <ClCompile Include="MarioRender.cpp" />
     <ClCompile Include="MarioState.cpp" />
     <ClCompile Include="MarioUpdate.cpp" />
+    <ClCompile Include="MarioWorld.cpp" />
     <ClCompile Include="Mushroom.cpp" />
     <ClCompile Include="Platform.cpp" />
     <ClCompile Include="PlayScene.cpp" />
@@ -218,6 +224,8 @@
     <ClCompile Include="Textures.cpp" />
     <ClCompile Include="Tube.cpp" />
     <ClCompile Include="Utils.cpp" />
+    <ClCompile Include="WorldKeyHandler.cpp" />
+    <ClCompile Include="WorldPlayScene.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

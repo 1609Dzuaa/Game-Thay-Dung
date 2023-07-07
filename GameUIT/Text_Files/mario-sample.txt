@@ -1,5 +1,5 @@
 [SETTINGS]
-start	1
+start	2
 #width	320
 #height	240
 
@@ -7,9 +7,9 @@ start	1
 # type: 0: intro, 1: play scene 
 #remember mario_trans, ...
 [SCENES]
-0	intro.txt
-1	Text_Files\Scene1-1.txt
-2	Text_Files\Scene1-1 - Underworld.txt
+0	0	intro.txt
+#1	1	Text_Files\Scene1-1.txt
+2	2	Text_Files\WorldMap1.txt
 
 # id	file 
 [TEXTURES]
@@ -30,4 +30,5 @@ start	1
 90	textures\ItemCard.png
 100	textures\Hud.png
 110	textures\Hud_2.png
+115	Game_Maps\Tileset-World_1.png
 #Why 70? -> Sitting animation in texture 0 has some problem so i use this instead

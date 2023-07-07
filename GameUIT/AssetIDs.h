@@ -9,6 +9,7 @@
 #define ID_TEX_MISC 20
 #define ID_TEX_MISC_2 30
 
+#pragma region MAP1-1
 
 #define OBJECT_TYPE_MARIO	0
 #define OBJECT_TYPE_BRICK	1
@@ -22,6 +23,16 @@
 #define OBJECT_TYPE_TUBE	9
 #define OBJECT_TYPE_PORTAL	50
 
+#pragma endregion
+
+#pragma region WORLD MAP
+
+#define OBJECT_TYPE_MARIO_AT_WORLD_MAP	100
+#define OBJECT_TYPE_GRASS	110
+#define OBJECT_TYPE_ENTRANCE	120
+#define OBJECT_TYPE_GATE_KEEPER	130
+
+#pragma endregion
 
 #pragma region BRICK 
 
