@@ -308,6 +308,9 @@
     <ClCompile Include="WorldKeyHandler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Entrance.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="..\..\MarioGame\MarioGame\brick.ico">

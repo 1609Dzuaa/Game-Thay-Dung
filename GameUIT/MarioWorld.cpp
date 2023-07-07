@@ -36,7 +36,8 @@ void CWorldMapPlayer::OnNoCollision(DWORD dt)
 
 void CWorldMapPlayer::OnCollisionWith(LPCOLLISIONEVENT e) 
 {
-	if (e->obj->IsBlocking()) {
+	if (e->obj->IsBlocking())
+	{
 		vx = 0;
 		vy = 0;
 	}
@@ -52,5 +53,10 @@ void CWorldMapPlayer::OnCollisionWithEntrance(LPCOLLISIONEVENT e)
 
 void CWorldMapPlayer::SetState(int state) 
 {
-	
+	switch (state)
+	{
+	case MARIO_WORLD_STATE_MOVE_RIGHT:
+		vx = 0.1f;
+		break;
+	}
 }

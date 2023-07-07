@@ -194,6 +194,7 @@
     <ClCompile Include="debug.cpp" />
     <ClCompile Include="EffectCollision.cpp" />
     <ClCompile Include="EffectScore.cpp" />
+    <ClCompile Include="Entrance.cpp" />
     <ClCompile Include="FireBullet.cpp" />
     <ClCompile Include="GameMap.cpp" />
     <ClCompile Include="GameObject.cpp" />

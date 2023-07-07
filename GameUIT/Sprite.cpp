@@ -48,12 +48,12 @@ void CSprite::Draw(float x, float y)
 	D3DXMATRIX matTranslation;
 	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
 
-	/*if (mario->GetShaking() && !Initialized)
+	if (mario->GetIsAtMainWorld() && mario->GetShaking() && !Initialized)
 		StartShaking(); //khởi tạo và đánh dấu đã khởi tạo
-	else if (mario->GetShaking())
+	else if (mario->GetIsAtMainWorld() && mario->GetShaking())
 		HandleShaking();
 
-	if (Shake && mario->GetShaking())
+	/*if (Shake && mario->GetShaking() && mario->GetIsAtMainWorld())
 	{
 		x += 1.0f;
 		y += 2.0f;

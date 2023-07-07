@@ -9,6 +9,7 @@
 #include "Sprites.h"
 #include "MarioWorld.h"
 #include "Grass.h"
+#include "Entrance.h"
 #include "Hud.h"
 #include "BlackScreen.h"
 
@@ -149,11 +150,13 @@ void CWorldPlayScene::_ParseSection_OBJECTS(string line)
 
 		DebugOut(L"[INFO] Player object has been created!\n");
 		break;
-	case OBJECT_TYPE_GRASS: obj = new CGrass(x, y); break;
+	case OBJECT_TYPE_GRASS: obj = new CGrass(x, y); 
+		break;
 
 	case OBJECT_TYPE_ENTRANCE:
 	{
-
+		int type = (int)atoi(tokens[3].c_str());
+		obj = new CEntrance(x, y, type);
 		break;
 	}
 	default:
