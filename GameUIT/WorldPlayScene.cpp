@@ -1,4 +1,4 @@
-#include <iostream>
+﻿#include <iostream>
 #include <fstream>
 #include <cctype>
 
@@ -74,29 +74,27 @@ void CWorldPlayScene::_ParseSection_ASSETS(string line)
 
 void CWorldPlayScene::_ParseSection_MAP_MATRIX(string line, CMap*& map_para)
 {
-	int ID, rowMap, columnMap, columnTile, rowTile, totalTiles, startX, startY;
+	int ID, rowMap, columnMap, columnTile, rowTile, totalTiles, dr_st_y;
 	LPCWSTR path = ToLPCWSTR(line);
 	ifstream f;
+	DebugOut(L"[INFO] Start Parse Map From File: %s\n", path);
 
 	f.open(path);
-	f >> ID >> rowMap >> columnMap >> rowTile >> columnTile >> totalTiles >> startY;
-	//Init Map Matrix
+	f >> ID >> rowMap >> columnMap >> rowTile >> columnTile >> totalTiles >> dr_st_y;
 
 	int** TileMapData = new int* [rowMap];
 	for (int i = 0; i < rowMap; i++)
 	{
 		TileMapData[i] = new int[columnMap];
 		for (int j = 0; j < columnMap; j++)
-		{
-			f >> TileMapData[i][j];
-		}
-
+			f >> TileMapData[i][j]; //Đọc và tạo Ma trận map
 	}
 	f.close();
 
-	world_map = new CMap(ID, rowMap, columnMap, rowTile, columnTile, totalTiles, startY);
-	world_map->ClipSpritesFromTileset();
-	world_map->SetMapMatrix(TileMapData);
+	map_para = new CMap(ID, rowMap, columnMap, rowTile, columnTile, totalTiles, dr_st_y);
+	map_para->ClipSpritesFromTileset(); //bóc từng sprite từ tileSet
+	map_para->SetMapMatrix(TileMapData);
+	DebugOut(L"[INFO] Parse Map Matrix Success: %s \n", path);
 }
 
 void CWorldPlayScene::_ParseSection_ANIMATIONS(string line) 

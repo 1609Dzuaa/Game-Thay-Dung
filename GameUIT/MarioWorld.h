@@ -22,47 +22,19 @@
 
 class CWorldMapPlayer : public CGameObject
 {
-	ULONGLONG start_stop_hud_sub;
-	int saveDoorProcess = 0;
-	int sceneChange = 0;
-	bool isCanGoWorld = false;
-	float startX, startY;
-	bool isGoingNodeX = false;
-	bool isGoingNodeY = false;
-	bool isAllowLeft;
-	bool isAllowRight;
-	bool isAllowTop;
-	bool isAllowBottom;
-
-	void OnCollisionWithEntrance(LPCOLLISIONEVENT e);
-	//void OnCollisionWithOtherObject(LPCOLLISIONEVENT e);
 public:
 	CWorldMapPlayer(float x, float y) : CGameObject(x, y) 
 	{
-		//CDataGame* data = CGame::GetInstance()->GetDataGame();
-		start_stop_hud_sub = GetTickCount64();
-		isAllowLeft = 0;
-		isAllowRight = 0;
-		isAllowTop = 0;
-		isAllowBottom = 0;
-		startX = startY = 0;
+
 	}
 	void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
-	virtual void Render();
-	virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom);
+	void Render();
+	void GetBoundingBox(float& left, float& top, float& right, float& bottom);
 	int IsCollidable() { return 1; }
 	int IsBlocking() { return 1; }
-	virtual void OnNoCollision(DWORD dt);
-	virtual void OnCollisionWith(LPCOLLISIONEVENT e);
+	void OnNoCollision(DWORD dt);
+	void OnCollisionWith(LPCOLLISIONEVENT e);
+	void OnCollisionWithEntrance(LPCOLLISIONEVENT e);
 
-	virtual void SetState(int state);
-	bool GetAllowLeft() { return isAllowLeft; }
-	bool GetAllowTop() { return isAllowTop; }
-	bool GetAllowRight() { return isAllowRight; }
-	bool GetAllowBottom() { return isAllowBottom; }
-
-	int CanActive() { return !vx && !vy; }
-	void Go1NodeX(LPGAMEOBJECT gameobject);
-	void Go1NodeY(LPGAMEOBJECT gameobject);
-	void SaveData();
+	void SetState(int state);
 };

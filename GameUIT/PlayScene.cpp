@@ -373,8 +373,8 @@ void CPlayScene::Update(DWORD dt)
 	//UNLESS When End Game
 	if (mario->GetX() <= 0)
 		mario->SetPosition(0, mario->GetY());
-	//else if (mario->GetX() >= MAP1_1_WIDTH - 10.0f && !mario->GetIsEndGame())
-		//mario->SetPosition(MAP1_1_WIDTH - 10.0f, player->GetY());
+	else if (mario->GetX() >= MAP1_1_WIDTH - 10.0f && !mario->GetIsEndGame())
+		mario->SetPosition(MAP1_1_WIDTH - 10.0f, player->GetY());
 
 	//DebugOutTitle(L"X, Y, x, y: %f, %f, %f, %f", Cam->GetCamPos().x, Cam->GetCamPos().y, player->GetX(), player->GetY());
 	PurgeDeletedObjects();

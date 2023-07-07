@@ -466,33 +466,12 @@ void CGame::_ParseSection_SCENES(string line)
 
 	if (type == 1)
 		scene = new CPlayScene(id, path);
-	else 
+	else
 		scene = new CWorldPlayScene(id, path);
 	//LPSCENE scene = new CPlayScene(id, path);
-	
+
 	scenes[id] = scene;
 
-	/*vector<string> tokens = split(line);
-	if (tokens.size() < 2) return;
-	LPSCENE scene;
-	int id = atoi(tokens[0].c_str());
-	LPCWSTR path = ToLPCWSTR(tokens[1]);   // file: ASCII format (single-byte char) => Wide Char
-	int type = atoi(tokens[2].c_str());
-	DebugOut(L"TYPE CUA CAI VUA LOAD %d\n", type);
-	switch(type){
-	case TYPE_WORLD_PLAY:
-		scene = new CPlayScene(id, path);
-		scenes[id] = scene;
-		break;
-	case TYPE_WORLD_MAP:
-		scene = new CWorldMapScene(id, path);
-		scenes[id] = scene;
-		break;
-	case TYPE_WORLD_INTRO:
-		scene = new CIntroScene(id, path);
-		scenes[id] = scene;
-		break;
-	}*/
 }
 
 /*
