@@ -47,15 +47,19 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		DebugOut(L"Tail was created successfully!\n");
 	}
 
-	//DebugOutTitle(L"SpeedBar, isR, isAMS: %d, %d, %d", SpeedBar, isRunning, isAtMaxSpeed);
+	DebugOutTitle(L"vx, ax, maxVx ST: %f, %f, %f, %d", vx, ax, maxVx, state);
+	//DebugOutTitle(L"SpeedBar, prevVx, vx, MS: %d, %f, %f, %d", SpeedBar, prevVx, vx, isAtMaxSpeed);
 	DebugOut(L"%d\n", SpeedBar);
 }
 
 void CMario::UpdateMarioState()
 {
 	//Walk & Run
-	if (this->state == MARIO_STATE_RUNNING_RIGHT || this->state == MARIO_STATE_WALKING_RIGHT)
+	if (state == MARIO_STATE_RUNNING_RIGHT || state == MARIO_STATE_WALKING_RIGHT
+		|| state == MARIO_RACOON_STATE_FLYING)
 	{
+		//Thêm ĐK này: vy >= 0 && vx > 0 || vy >= 0 && vx <0
+		//vì có thể khi 0 bay nữa mà giữ nút A thì đâm ra vận tốc rất lớn
 		if (abs(vx) > abs(maxVx))
 		{
 			vx = maxVx;
@@ -63,7 +67,8 @@ void CMario::UpdateMarioState()
 				this->SetState(MARIO_STATE_RUNNING_AT_MAX_SPEED_RIGHT);
 		}
 	}
-	else if (this->state == MARIO_STATE_RUNNING_LEFT || this->state == MARIO_STATE_WALKING_LEFT)
+	if (state == MARIO_STATE_RUNNING_LEFT || state == MARIO_STATE_WALKING_LEFT
+		|| state == MARIO_RACOON_STATE_FLYING)
 	{
 		if (abs(vx) > abs(maxVx))
 		{
@@ -72,7 +77,7 @@ void CMario::UpdateMarioState()
 				this->SetState(MARIO_STATE_RUNNING_AT_MAX_SPEED_LEFT);
 		}
 	}
-	else if (this->isAtMaxSpeed && isJumping && isOnPlatform)
+	if (this->isAtMaxSpeed && isJumping && isOnPlatform)
 		this->SetState(MARIO_STATE_JUMP_AT_MAX_SPEED);
 }
 
@@ -97,6 +102,7 @@ void CMario::UpdateTime()
 		vy = 0;
 		isFlying = false;
 		canFly = false;
+		isAtMaxSpeed = false; 
 	}
 
 	if (GetTickCount64() - evolve_start >= MARIO_EVOLVE_TIME && isEvolving)
@@ -141,18 +147,53 @@ void CMario::UpdateTime()
 
 void CMario::UpdateSpeedBar()
 {
-	//Cắt maxSpeed thành 6 khúc ~ nhau
-	if (isRunning && SpeedBar < 7)
+	//if (SpeedBar == 0) prevVx = 0; //Reset prevVx
+	//Vẫn còn trường hợp đang chạy max nhưng speedbar 0 đạt tới max
+	//xem xét giảm vx dựa trên speedbar ?
+
+	//Chia maxSpeed thành 7 khúc ~ nhau
+	if (isRunning && SpeedBar < 7 && isOnPlatform)	//Chỉ Running mới tích đc lực
 	{
-		if (abs(this->vx) - prevVx >= abs(maxVx / 6))
+		//7 phần như nhau => cắt 8 khúc
+		if (vx > 0)
 		{
-			prevVx = vx;
-			SpeedBar++;
+			if (this->vx - prevVx >= maxVx / 8)
+			{
+				SpeedBar++;
+				prevVx = vx;
+			}
+		}
+		else if (vx < 0)
+		{
+			if (this->vx - prevVx <= maxVx / 8)
+			{
+				SpeedBar++;
+				prevVx = vx;
+			}
 		}
 	}
-	//Còn phần giảm, phần tăng có vẻ ổn r
-	else if (!isRunning && SpeedBar != 0)
+	else if (SpeedBar > 0) //SpeedBar phải > 0 thì mới giảm đc (obviously)
 	{
-		SpeedBar--;
+		//Các TH SpeedBar bị giảm trong game:
+		//Không chạy tích lực nữa VÀ đang ở trên nền (Done!)
+		//Đang chạy NHƯNG va phải vật
+		//Đang Bay và hết thời gian bay (Done!)
+		//Đang chạy NHƯNG phanh lại
+		//Đang chạy NHƯNG lại nhảy khi chưa maxspeed (Done!)
+		if (!isRunning && isOnPlatform || !isAtMaxSpeed || ax * vx < 0)
+		{
+			//Để khi bay nhưng 0 đạt MaxSpeed thì nó vẫn 0 giảm SB
+			if (isFlying) return;
+			//đôi lúc khi bay sẽ thấy bay theo trục x nhan vcl @@, cần giới hạn nó
+			//Bug brace khi chạy, nó sẽ 0 brace mà chạy lại hướng ngược lại
+			if (abs(vx - prevVx) >= abs(maxVx / 8))
+			{
+				SpeedBar--;
+				if (SpeedBar == 0) 
+					prevVx = 0; //Reset prevVx
+				else 
+					prevVx -= abs(maxVx / 8);
+			}
+		}
 	}
 }

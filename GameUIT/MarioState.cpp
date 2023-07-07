@@ -18,7 +18,7 @@ void CMario::SetState(int state)
 	case MARIO_STATE_RUNNING_AT_MAX_SPEED_RIGHT: //Ở state này thì mới cho bay
 		if (isSitting) break;
 		isAtMaxSpeed = true;
-		if (this->level == MARIO_LEVEL_RACOON)
+		if (this->level == MARIO_LEVEL_RACOON && SpeedBar == 7)
 			canFly = true;
 		isRunning = true;
 		break;
@@ -34,7 +34,7 @@ void CMario::SetState(int state)
 	case MARIO_STATE_RUNNING_AT_MAX_SPEED_LEFT:
 		if (isSitting) break;
 		isAtMaxSpeed = true;
-		if (this->level == MARIO_LEVEL_RACOON)
+		if (this->level == MARIO_LEVEL_RACOON && SpeedBar == 7)
 			canFly = true;
 		isRunning = true;
 		break;
@@ -110,6 +110,8 @@ void CMario::SetState(int state)
 		if (!isFlying)
 		{
 			isFlying = true;
+			isAtMaxSpeed = true;
+			isRunning = false;
 			isLanding = false;
 			isJumping = false;
 			fly_start = GetTickCount64();

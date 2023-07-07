@@ -98,26 +98,17 @@ void CHud::RenderSpeedBar()
 {
 	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
 	CAnimations* animations = CAnimations::GetInstance();
+	
 	//Bar
-	for (int i = 1; i <= 6; i++)
+	for (int i = 1; i <= mario->GetSpeedBar(); i++)
 	{
-		if (mario->GetSpeedBar() == 6) allowToRenderP = 1;
-		else allowToRenderP = 0;
 		for (int j = 1; j <= mario->GetSpeedBar(); j++)
 		{
-			animations->Get(ID_SPEED_BAR)->Render(x - (62 - 8 * (j - 1)), y - 4.0f, false);
+			//Vẽ đc 6 thằng trên thì mới vẽ thằng này (Undraw như untouchable)
+			if (j == 7)animations->Get(ID_P_BUTTON)->Render(x - 9.0f, y - 4.0f, false);
+			else animations->Get(ID_SPEED_BAR)->Render(x - (62 - 8 * (j - 1)), y - 4.0f, false);
 		}
 	}
-	/*animations->Get(ID_SPEED_BAR)->Render(x - 62.0f, y - 4.0f, false);
-	animations->Get(ID_SPEED_BAR)->Render(x - 54.0f, y - 4.0f, false);
-	animations->Get(ID_SPEED_BAR)->Render(x - 46.0f, y - 4.0f, false);
-	animations->Get(ID_SPEED_BAR)->Render(x - 38.0f, y - 4.0f, false);
-	animations->Get(ID_SPEED_BAR)->Render(x - 30.0f, y - 4.0f, false);
-	animations->Get(ID_SPEED_BAR)->Render(x - 22.0f, y - 4.0f, false);*/
-
-	//P vẽ đc 5 thằng trên thì mới vẽ thằng này (Undraw như untouchable)
-	if (allowToRenderP)
-		animations->Get(ID_P_BUTTON)->Render(x - 9.0f, y - 4.0f, false);
 }
 
 void CHud::RenderTimer()

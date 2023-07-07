@@ -57,12 +57,15 @@ CMario::CMario(float x, float y) : CGameObject(x, y)
 	TypeOfCardCollected = -1;
 	SpeedBar = 0;
 	prevVx = 0;
+	speed_start = 0;
+	speed_stop = 0;
+	start_prepare = 0;
 	tail = NULL;
 	//Thêm đuôi trước tương tự như mushroom
 	ghost_koopa = NULL; //Khi đang Hold Koopa thì coi nó như thuộc tính của Mario
 	//Giống như bật khiên
 
-	maxVx = 0;
+	maxVx = 0.0f;
 	ax = 0.0f;
 	ay = 0.002f;
 
