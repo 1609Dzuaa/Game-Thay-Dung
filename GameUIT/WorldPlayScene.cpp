@@ -276,6 +276,7 @@ void CWorldPlayScene::Load()
 
 void CWorldPlayScene::Update(DWORD dt) 
 {
+	//Với Hud ở World thì khởi tạo 1 lần duy nhất, 0 CẦN Update
 	CBlackScreen::GetInstance()->Update();
 
 	vector<LPGAMEOBJECT> coObjects;
@@ -301,8 +302,7 @@ void CWorldPlayScene::Render()
 	for (unsigned int i = 0; i < objects.size(); i++)
 		objects[i]->Render();
 
-	//having big bug here
-	//CHud::GetInstance()->Render();
+	CHud::GetInstance()->Render(); //Done major bug
 	//CBlackScreen::GetInstance()->Render(); //prob here
 }
 

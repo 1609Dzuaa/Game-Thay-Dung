@@ -18,7 +18,7 @@ public:
 		this->target_follow = NULL;
 	};
 	CCamera(int width, int height);
-	~CCamera() {};
+	~CCamera();
 	static CCamera* GetInstance(); 
 	D3DXVECTOR2 GetCamPos(); //Lấy vị trí cam
 	void SetCamPos(float x, float y); //Set vị trí mới cho cam

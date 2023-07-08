@@ -56,10 +56,11 @@ void CMap::Render()
 	int Viewable_Col_end = 0;
 	int startRow = 0;
 	int endRow = 0;
-	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
+	CScene* current_scene = (CScene*)CGame::GetInstance()->GetCurrentScene();
+	//CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
 
 	//Khi đang ở WorldPlayScene thì IsAtMainWorld = false
-	if (mario->GetIsAtMainWorld())
+	if (current_scene->GetID() != ID_WORLD)
 	{
 		//Vẽ Map trong đây
 		isViewable(Viewable_Col_start, Viewable_Col_end, startRow, endRow);
@@ -74,7 +75,7 @@ void CMap::Render()
 				SpritesSplitted.at(Sprite_ID)->Draw(Draw_X, Draw_Y); //Vẽ Sprites được tách tại vị trí x, y
 			}
 	}
-	else //vẽ World ở đây
+	else //vẽ World ở đây, nó có chui vào đây để vẽ nhưng hình như Cam bị lệch
 	{
 		for (int CurrentRow = 0; CurrentRow < MapRows; CurrentRow++)
 			for (int CurrentColumn = 0; CurrentColumn < MapCollums; CurrentColumn++)
@@ -83,7 +84,7 @@ void CMap::Render()
 				int Sprite_ID = Map_Matrix[CurrentRow][CurrentColumn];
 
 				float Draw_X = static_cast<float>(CurrentColumn * TILE_WIDTH);
-				float Draw_Y = static_cast<float>((CurrentRow + start_draw_at_index_y) * TILE_HEIGHT);
+				float Draw_Y = static_cast<float>((CurrentRow) * TILE_HEIGHT); 
 				SpritesSplitted.at(Sprite_ID)->Draw(Draw_X, Draw_Y); //Vẽ Sprites được tách tại vị trí x, y
 			}
 	}

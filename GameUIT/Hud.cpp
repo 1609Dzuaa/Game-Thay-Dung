@@ -16,8 +16,8 @@ CHud* CHud::GetInstance()
 		}
 		else
 		{
-			float x = CGame::GetInstance()->GetBackBufferWidth() / 2;
-			float y = CGame::GetInstance()->GetBackBufferHeight() - 90.0f;
+			float x = static_cast<float>(CGame::GetInstance()->GetBackBufferWidth() / 2 + 3.5f);
+			float y = static_cast<float>(CGame::GetInstance()->GetBackBufferHeight() / 2 + 35.0f);
 			__HudInstance = new CHud(x, y);
 		}
 		DebugOut(L"Create Hud Successfully\n");
@@ -53,13 +53,13 @@ void CHud::Render()
 	RenderCoin();
 	RenderTimer();
 	RenderPoints();
-	RenderSpeedBar();
+	RenderSpeedBar(); //prob here
 	RenderCard(); //Có vấn đề: Lâu lâu lại 0 hiện ?!!!
 }
 
 void CHud::RenderHP()
 {
-	//Coi lại một chút
+	//Bug đêm qua -1 là do chết quá số mạng nên nó 0 tìm thấy frame - 1 xDDDDDDD
 	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
 	CAnimations* animations = CAnimations::GetInstance();
 	animations->Get(mario->GetHP())->Render(x - 77.0f, y + 5.0f, false);
@@ -108,6 +108,12 @@ void CHud::RenderPoints()
 
 void CHud::RenderSpeedBar()
 {
+	CScene* current_scene = (CScene*)CGame::GetInstance()->GetCurrentScene();
+	//Không có đoạn If này thì khi ở World diagnostic lên đến vài GB ;)
+	//1 of Major bug's been solved
+	if (current_scene->GetID() == ID_WORLD) 
+		return;
+
 	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
 	CAnimations* animations = CAnimations::GetInstance();
 	
@@ -125,15 +131,26 @@ void CHud::RenderSpeedBar()
 
 void CHud::RenderTimer()
 {
-	CAnimations* animations = CAnimations::GetInstance();
-	CPlayScene* current_scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
-	int	OnesPlace = current_scene->GetTimer() % 10;	//Hàng đơn vị
-	int TensPlace = (current_scene->GetTimer() / 10) % 10;	//Hàng chục
-	int Hundreds = current_scene->GetTimer() / 100;	//Hàng trăm
+	CScene* current_scene = (CScene*)CGame::GetInstance()->GetCurrentScene();
 
-	animations->Get(OnesPlace)->Render(x + 26.0f, y +5.0f, false);
-	animations->Get(TensPlace)->Render(x + 18.0f, y + 5.0f, false);
-	animations->Get(Hundreds)->Render(x + 10.0f, y + 5.0f, false);
+	if (current_scene->GetID() != ID_WORLD)
+	{
+		CAnimations* animations = CAnimations::GetInstance();
+		CPlayScene* current_scene_1 = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
+		int	OnesPlace = current_scene_1->GetTimer() % 10;	//Hàng đơn vị
+		int TensPlace = (current_scene_1->GetTimer() / 10) % 10;	//Hàng chục
+		int Hundreds = current_scene_1->GetTimer() / 100;	//Hàng trăm
+
+		animations->Get(OnesPlace)->Render(x + 26.0f, y + 5.0f, false);
+		animations->Get(TensPlace)->Render(x + 18.0f, y + 5.0f, false);
+		animations->Get(Hundreds)->Render(x + 10.0f, y + 5.0f, false);
+	}
+	else
+	{
+		CAnimations* animations = CAnimations::GetInstance();
+		for (int i = 0; i < 3; i++)
+			animations->Get(ID_NUMBER_0)->Render(x + 10.0f + i * 8.0f, y + 5.0f, false);
+	}
 }
 
 void CHud::RenderCard()

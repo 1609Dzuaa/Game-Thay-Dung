@@ -1,4 +1,5 @@
 ﻿#include "Mario.h"
+#include "Camera.h"
 
 void CMario::SetState(int state)
 {
@@ -199,6 +200,8 @@ void CMario::SetState(int state)
 		vy = -MARIO_JUMP_DEFLECT_SPEED * 1.5f;
 		vx = 0;
 		ax = 0;
+		HP--;
+		CCamera::GetInstance()->SetTargetToFollow(nullptr); //Neccessary?
 		break;
 	}
 

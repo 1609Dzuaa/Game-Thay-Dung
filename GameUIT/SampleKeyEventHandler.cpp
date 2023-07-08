@@ -20,6 +20,10 @@ void CSampleKeyHandler::OnKeyDown(int KeyCode)
 	DebugOut(L"[INFO] KeyDown: %d\n", KeyCode);
 	switch (KeyCode)
 	{
+	case DIK_D:
+		mario->SetState(MARIO_STATE_DIE);
+		break;
+
 	case DIK_RIGHT:
 		if (!mario->GetIsTravelling())
 			mario->SetState(MARIO_STATE_WALKING_RIGHT);

@@ -26,6 +26,12 @@ CCamera::CCamera(int width, int height)
     this->target_follow = NULL;
 }
 
+CCamera::~CCamera()
+{
+    delete __Instance;
+    __Instance = nullptr;
+}
+
 D3DXVECTOR2 CCamera::GetCamPos()
 {
 	return D3DXVECTOR2(posX, posY);
@@ -45,13 +51,26 @@ void CCamera::SetTargetToFollow(LPGAMEOBJECT obj)
 
 void CCamera::Update()
 {
-    if (!target_follow) return;
+    CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
+
+    if (!target_follow) 
+        return;
+    if (mario->GetState() == MARIO_STATE_DIE)
+    {
+        this->posX = 0;
+        this->posY = 0;
+        return;
+    }
+
+    //Khi Enter Map 1-1 thì pos Cam lúc này là (0,96) dẫn đến việc khi chết
+    //World bị lệch trên 1 khúc => lúc chết thì set lại vị trí cam thành (0,0)
+    //Để World khỏi bị dời hình 
 
     //Set vị trí cho Cam
     SetCamPos(target_follow->GetX(), target_follow->GetY());
 
     //nếu đang ở Underworld thì đánh cờ điều chỉnh cam
-    CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
+    //CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
 
     if (mario->GetIsAtMainWorld())
     {

@@ -384,6 +384,7 @@ void CPlayScene::Render()
 {
 	//Trước khi vẽ, hãy thử sắp xếp lại thứ tự vector object
 	//std::sort(objects.begin(), objects.end(), );
+	//CScene* current_scene = (CScene*)CGame::GetInstance()->GetCurrentScene();
 	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
 	if (mario->GetIsAtMainWorld())
 	{
@@ -442,6 +443,10 @@ void CPlayScene::Unload()
 
 	objects.clear();
 	player = NULL;
+	delete map;
+	map = nullptr;
+	delete underworld_map;
+	underworld_map = nullptr;
 
 	DebugOut(L"[INFO] Scene %d unloaded! \n", id);
 }

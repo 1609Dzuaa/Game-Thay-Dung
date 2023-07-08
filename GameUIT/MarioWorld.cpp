@@ -3,6 +3,7 @@
 #include "GameObject.h"
 #include "Entrance.h"
 #include "BlockPoint.h"
+#include "BlackScreen.h"
 #include "Game.h"
 #include "debug.h"
 
@@ -13,14 +14,19 @@ void CMarioWorld::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 	if (state == MARIO_WORLD_STATE_ENTER_ENTRANCE)
 	{
-		CGame::GetInstance()->InitiateSwitchScene(Entrance_ID);
+		if (Entrance_ID != 0) //tránh nhấn S khi Collide với Start Entrance
+		{
+			//CBlackScreen::GetInstance()->SetState(BLACK_SCR_EFF_STATE_DRAW_FROM_1);
+			CGame::GetInstance()->InitiateSwitchScene(Entrance_ID);
+		}
 		//CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
 		//mario->SetIsAtMainWorld(1);
 		return;
 	}
 	
 	CCollision::GetInstance()->Process(this, dt, coObjects);
-	DebugOutTitle(L"isAllow, atMW: %d, %d", isAllowToPlayThatEntrance, Entrance_ID);
+	//DebugOutTitle(L"isAllow, atMW: %d, %d", isAllowToPlayThatEntrance, Entrance_ID);
+	DebugOut(L"CamX, CamY: %f, %f\n", CCamera::GetInstance()->GetCamPos().x, CCamera::GetInstance()->GetCamPos().y);
 }
 
 void CMarioWorld::HandlePositionWithEntranceAndBlock()

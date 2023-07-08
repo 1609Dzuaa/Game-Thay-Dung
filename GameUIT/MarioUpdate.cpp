@@ -10,6 +10,21 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	//Chỉ khi trên mặt đất thì biến đấy mới tăng dần lên
 	//Còn nếu đang chạy mà nhảy (not on platform) thì cái biến đấy giảm dần
 
+	if (state == MARIO_STATE_DIE)
+	{
+		//tắt Cam chứ 0 thì nó bị lệch xuống dưới
+		isAtMainWorld = false;
+		
+		DebugOut(L"CamX, CamY: %f, %f\n", CCamera::GetInstance()->GetCamPos().x, CCamera::GetInstance()->GetCamPos().y);
+		//CCamera::GetInstance()->SetTargetToFollow(NULL);
+		//CCamera::GetInstance()->~CCamera();
+		//CCamera::GetInstance()->SetCamPos(CGame::GetInstance()->GetBackBufferWidth(), CGame::GetInstance()->GetBackBufferHeight());
+		//DebugOut(L"")
+		CGame::GetInstance()->InitiateSwitchScene(2);
+		return;
+	}
+	DebugOut(L"CamX, CamY: %f, %f\n", CCamera::GetInstance()->GetCamPos().x, CCamera::GetInstance()->GetCamPos().y);
+
 	if (!isEvolving)
 	{
 		vy += ay * dt;

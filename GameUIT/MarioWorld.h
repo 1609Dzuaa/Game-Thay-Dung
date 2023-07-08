@@ -26,6 +26,7 @@ class CMarioWorld : public CGameObject
 	D3DXVECTOR2 Entrance_Position;
 	D3DXVECTOR4 Direct_Been_Blocked; //Nếu chưa qua entrance thì entrance đó block hết các hướng còn lại
 	BOOLEAN isTravelling;
+	BOOLEAN isWaitingForTrans;
 	//Thu hẹp ViewPort ?
 public:
 	CMarioWorld(float x, float y) : CGameObject(x, y)
@@ -42,6 +43,7 @@ public:
 		Direct_Been_Blocked.y = 1;
 		Direct_Been_Blocked.w = 1;
 		isTravelling = 0;
+		isWaitingForTrans = 0;
 	}
 	void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
 	void Render();
@@ -55,7 +57,9 @@ public:
 	void HandlePositionWithEntranceAndBlock(); //Xử lý vị trí của Mario với Entrance và Block
 	bool IsPassedThisEntrance(int entr_type);
 	void SetState(int state);
+	void SetIsWaitingForTrans(bool para) { this->isWaitingForTrans = para; }
 	bool GetIsMoving() { return this->isMoving; }
 	bool GetIsAllowEnter() { return this->isAllowToPlayThatEntrance; }
+	bool GetIsWaitingForTrans() { return this->isWaitingForTrans; }
 	D3DXVECTOR4 GetBlockDirect() { return this->Direct_Been_Blocked; }
 };

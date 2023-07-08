@@ -2,6 +2,7 @@
 #include "Camera.h"
 #include "Textures.h"
 #include "PlayScene.h"
+#include "WorldPlayScene.h"
 #include "debug.h"
 
 CBlackScreen* CBlackScreen::__BlackScrInstance = nullptr;
@@ -48,6 +49,7 @@ void CBlackScreen::Update()
 			Alpha = 1.0f;
 			state = BLACK_SCR_EFF_STATE_DRAW_FROM_1;
 			CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
+			//CMario* mario = (CMario*)((LPWORLDPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
 			mario->SetIsWaitingForTrans(0);
 		}
 	}
