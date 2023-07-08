@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "KeyEventHandler.h"
 
@@ -25,6 +25,7 @@ public:
 	virtual void Unload() = 0;
 	virtual void Update(DWORD dt) = 0;
 	virtual void Render() = 0;
+	int GetID() { return this->id; } //Để biết xem đang ở scene nào
 };
 typedef CScene* LPSCENE;
 

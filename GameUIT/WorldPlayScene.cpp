@@ -269,6 +269,8 @@ void CWorldPlayScene::Load()
 
 void CWorldPlayScene::Update(DWORD dt) 
 {
+	CBlackScreen::GetInstance()->Update();
+
 	vector<LPGAMEOBJECT> coObjects;
 	for (size_t i = 1; i < objects.size(); i++)
 	{
@@ -291,10 +293,14 @@ void CWorldPlayScene::Render()
 	world_map->Render();
 	for (unsigned int i = 0; i < objects.size(); i++)
 		objects[i]->Render();
+
+	CHud::GetInstance()->Render();
+	CBlackScreen::GetInstance()->Render(); //prob here
 }
 
-void CWorldPlayScene::Unload() {
-	for (unsigned int i = 0; i < objects.size(); i++)
+void CWorldPlayScene::Unload() 
+{
+	for (int i = 0; i < objects.size(); i++)
 		delete objects[i];
 
 	objects.clear();

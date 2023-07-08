@@ -7,9 +7,19 @@ CHud* CHud::GetInstance()
 {
 	if (__HudInstance == NULL)
 	{
-		float x = CCamera::GetInstance()->GetCamPos().x + CGame::GetInstance()->GetBackBufferWidth() / 2;
-		float y = CCamera::GetInstance()->GetCamPos().y + CGame::GetInstance()->GetBackBufferHeight() - 16.0f;
-		__HudInstance = new CHud(x, y);
+		CScene* current_scene = (CScene*)CGame::GetInstance()->GetCurrentScene();
+		if (current_scene->GetID() != ID_WORLD)
+		{
+			float x = CCamera::GetInstance()->GetCamPos().x + CGame::GetInstance()->GetBackBufferWidth() / 2;
+			float y = CCamera::GetInstance()->GetCamPos().y + CGame::GetInstance()->GetBackBufferHeight() - 16.0f;
+			__HudInstance = new CHud(x, y);
+		}
+		else
+		{
+			float x = CGame::GetInstance()->GetBackBufferWidth() / 2;
+			float y = CGame::GetInstance()->GetBackBufferHeight() - 90.0f;
+			__HudInstance = new CHud(x, y);
+		}
 		DebugOut(L"Create Hud Successfully\n");
 	}
 	return __HudInstance;
@@ -19,8 +29,8 @@ void CHud::Update()
 {
 	//Update vị trí của Hud theo Cam
 	//Chia ra vị trí ở MainWorld và Underground
-	this->x= CCamera::GetInstance()->GetCamPos().x + CGame::GetInstance()->GetBackBufferWidth() / 2;
-	this->y= CCamera::GetInstance()->GetCamPos().y + CGame::GetInstance()->GetBackBufferHeight() - 16.0f;
+	this->x = CCamera::GetInstance()->GetCamPos().x + CGame::GetInstance()->GetBackBufferWidth() / 2;
+	this->y = CCamera::GetInstance()->GetCamPos().y + CGame::GetInstance()->GetBackBufferHeight() - 16.0f;
 }
 
 void CHud::Render()
@@ -28,9 +38,11 @@ void CHud::Render()
 	//Không nên set các giá trị != 0 sau dấu . (VD: 3.5f) tại vị trí vẽ vì
 	//đôi lúc nó sẽ bị lệch do 0 theo kịp
 	CAnimations* animations = CAnimations::GetInstance();
-	CPlayScene* current_scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
-	if (current_scene->GetWait())
+	CScene* current_scene = (CScene*)CGame::GetInstance()->GetCurrentScene();
+	CPlayScene* play_scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
+	if (play_scene->GetWait() && current_scene->GetID() != ID_WORLD)
 		RenderPauseText();
+
 	//Vẽ thanh Hud
 	animations->Get(ID_HUD)->Render(x, y, false);
 	//Vẽ World number -> vì world hiện tại là 1 nên mặc định vẽ tại đây luôn

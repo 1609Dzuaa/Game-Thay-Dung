@@ -8,7 +8,7 @@ start	2
 #remember mario_trans, ...
 [SCENES]
 0	0	intro.txt
-#1	1	Text_Files\Scene1-1.txt
+1	1	Text_Files\Scene1-1.txt
 2	2	Text_Files\WorldMap1.txt
 
 # id	file 

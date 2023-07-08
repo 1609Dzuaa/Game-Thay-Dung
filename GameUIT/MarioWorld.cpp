@@ -1,5 +1,5 @@
 ﻿#include "MarioWorld.h"
-//#include "PlayScene.h" Get Mario's level, coin, HP, Score, to Update World Hud
+#include "PlayScene.h" //Get Mario's level, coin, HP, Score, to Update World Hud
 #include "GameObject.h"
 #include "Entrance.h"
 #include "BlockPoint.h"
@@ -10,9 +10,17 @@ void CMarioWorld::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	if (HasCollidedWithEntrance || HasCollidedWithBlock)
 		HandlePositionWithEntranceAndBlock();
+
+	if (state == MARIO_WORLD_STATE_ENTER_ENTRANCE)
+	{
+		CGame::GetInstance()->InitiateSwitchScene(Entrance_ID);
+		//CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
+		//mario->SetIsAtMainWorld(1);
+		return;
+	}
 	
 	CCollision::GetInstance()->Process(this, dt, coObjects);
-	DebugOutTitle(L"MarX, EntrX: %f, %f", x, Entrance_Position.x);
+	DebugOutTitle(L"isAllow, atMW: %d, %d", isAllowToPlayThatEntrance, Entrance_ID);
 }
 
 void CMarioWorld::HandlePositionWithEntranceAndBlock()
@@ -97,20 +105,22 @@ void CMarioWorld::OnCollisionWith(LPCOLLISIONEVENT e)
 void CMarioWorld::OnCollisionWithBlockPoint(LPCOLLISIONEVENT e)
 {
 	CBlockPoint* blockPoint = dynamic_cast<CBlockPoint*>(e->obj);
+	isAllowToPlayThatEntrance = false;
 	isMoving = false;
+	HasCollidedWithBlock = true;
 	Entrance_Position.x = blockPoint->GetX();
 	Entrance_Position.y = blockPoint->GetY();
-	HasCollidedWithBlock = true;
 	Direct_Been_Blocked = blockPoint->GetBlockDirect(); //Cập nhật hướng Block cho Mario
 }
 
 void CMarioWorld::OnCollisionWithEntrance(LPCOLLISIONEVENT e) 
 {
 	CEntrance* entr = dynamic_cast<CEntrance*>(e->obj);
-	Entrance_Type = entr->GetType();
+	Entrance_ID = entr->GetSceneID();
 	Entrance_Position.x = e->obj->GetX();
 	Entrance_Position.y = e->obj->GetY();
 	HasCollidedWithEntrance = true;
+	isAllowToPlayThatEntrance = true;
 	Direct_Been_Blocked = entr->GetBlockDirect(); //Cập nhật hướng Block cho Mario
 }
 
@@ -143,10 +153,12 @@ void CMarioWorld::SetState(int state)
 		break;
 
 	case MARIO_WORLD_STATE_ENTER_ENTRANCE:
-		if (!IsPassedThisEntrance(Entrance_Type))
-			isAllowToPlayThatEntrance = true;
+		//if (!IsPassedThisEntrance(Entrance_Type))
+			//isAllowToPlayThatEntrance = true;
+
 		break;
 	}
+	CGameObject::SetState(state);
 }
 
 bool CMarioWorld::IsPassedThisEntrance(int entr_type)

@@ -38,7 +38,8 @@ CMario::CMario(float x, float y) : CGameObject(x, y)
 	isInitialized = false;
 	isTravelUp = false;
 	isTravelDown = false;
-	isAtMainWorld = false;
+	isAtMainWorld = true;
+	isAtWorld = true;
 	isComboUpAndS = false;
 	isReachTransPos = false;
 	isWaitingForTrans = true;
@@ -66,7 +67,7 @@ CMario::CMario(float x, float y) : CGameObject(x, y)
 	ax = 0.0f;
 	ay = 0.002f;
 
-	level = 2;
+	level = MARIO_LEVEL_SMALL;
 	untouchable = 0;
 	untouchable_start = -1;
 	kick_start = 0;

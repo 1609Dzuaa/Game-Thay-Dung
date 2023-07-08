@@ -49,7 +49,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 	DebugOutTitle(L"vx, ax, maxVx ST: %f, %f, %f, %d", vx, ax, maxVx, state);
 	//DebugOutTitle(L"SpeedBar, prevVx, vx, MS: %d, %f, %f, %d", SpeedBar, prevVx, vx, isAtMaxSpeed);
-	DebugOut(L"%d\n", SpeedBar);
+	//DebugOut(L"%d\n", SpeedBar);
 }
 
 void CMario::UpdateMarioState()

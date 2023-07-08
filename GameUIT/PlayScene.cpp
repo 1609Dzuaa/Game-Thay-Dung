@@ -363,7 +363,7 @@ void CPlayScene::Update(DWORD dt)
 	// skip the rest if scene was already unloaded (Mario::Update might trigger PlayScene::Unload)
 	if (player == NULL) return;
 
-	// Update Each Instance Of The Game Here:
+	//Update Each Instance Of The Game Here:
 	CCamera::GetInstance()->SetTargetToFollow(player);
 	CCamera::GetInstance()->Update();
 	CHud::GetInstance()->Update();
@@ -489,7 +489,7 @@ void CPlayScene::HandleTimerAndWait()
 		for (size_t i = 0; i < objects.size(); i++)
 			objects[i]->SetWait(0);
 
-	/*if (!mario->GetIsReachEndPos())
+	if (!mario->GetIsReachEndPos())
 	{
 		//ngưng thời gian khi ăn card (end game) hoặc khi Travelling
 		if (mario->GetIsEndGame() || mario->GetIsTravelling());
@@ -508,6 +508,6 @@ void CPlayScene::HandleTimerAndWait()
 			timer--;
 			timer_start = GetTickCount64();
 		}
-	}*/
+	}
 	//DebugOutTitle(L"Time: %d", timer);
 }

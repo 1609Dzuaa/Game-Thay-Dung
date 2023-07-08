@@ -5,6 +5,7 @@ Game_Maps\World_1.txt
 Text_Files\Mario.txt
 Text_Files\Grass.txt
 Text_Files\Entrance.txt
+Text_Files\Hud.txt
 [OBJECTS]
 100	35	50
 

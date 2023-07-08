@@ -2,7 +2,7 @@
 
 void CBlockPoint::Render()
 {
-	RenderBoundingBox();
+	//RenderBoundingBox();
 }
 
 void CBlockPoint::GetBoundingBox(float& left, float& top, float& right, float& bottom)

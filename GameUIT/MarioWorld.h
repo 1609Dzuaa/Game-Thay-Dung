@@ -22,10 +22,11 @@ class CMarioWorld : public CGameObject
 	BOOLEAN HasCollidedWithEntrance, HasCollidedWithBlock;
 	BOOLEAN isMoving;
 	vector<int> EntranceHasPassed;
-	int Entrance_Type;
+	int Entrance_ID;
 	D3DXVECTOR2 Entrance_Position;
-	D3DXVECTOR4 Direct_Been_Blocked;
-	//Nếu chưa qua entrance thì entrance đó block hết các hướng còn lại
+	D3DXVECTOR4 Direct_Been_Blocked; //Nếu chưa qua entrance thì entrance đó block hết các hướng còn lại
+	BOOLEAN isTravelling;
+	//Thu hẹp ViewPort ?
 public:
 	CMarioWorld(float x, float y) : CGameObject(x, y)
 	{
@@ -35,11 +36,12 @@ public:
 		isMoving = false;
 		Entrance_Position.x = 0;
 		Entrance_Position.y = 0;
-		Entrance_Type = 0;
+		Entrance_ID = 0;
 		//Ban đầu vị trí ở Start(Block L, T, B) -> obviously
 		Direct_Been_Blocked.x = 1;
 		Direct_Been_Blocked.y = 1;
 		Direct_Been_Blocked.w = 1;
+		isTravelling = 0;
 	}
 	void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
 	void Render();
@@ -54,5 +56,6 @@ public:
 	bool IsPassedThisEntrance(int entr_type);
 	void SetState(int state);
 	bool GetIsMoving() { return this->isMoving; }
+	bool GetIsAllowEnter() { return this->isAllowToPlayThatEntrance; }
 	D3DXVECTOR4 GetBlockDirect() { return this->Direct_Been_Blocked; }
 };

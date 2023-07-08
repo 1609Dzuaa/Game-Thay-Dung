@@ -27,7 +27,7 @@ void CWorldMapKeyEvent::OnKeyDown(int KeyCode)
 			mario->SetState(MARIO_WORLD_STATE_MOVE_DOWN);
 		break;
 	case DIK_S:
-		if (!mario->GetIsMoving())
+		if (!mario->GetIsMoving() && mario->GetIsAllowEnter())
 			mario->SetState(MARIO_WORLD_STATE_ENTER_ENTRANCE);
 		break;
 	}

@@ -19,7 +19,7 @@
 //Card có bug hiển thị ngay lập tức card static cũng như end game
 //Red Koopa vẫn còn bug lúc ôm, vụt nó
 //Render WORLD MAP
-//Intro
+//Intro: Cũng là PlayScene nhưng đa số là automatic
 //Grid: Làm sau cùng
 
 #pragma region CONST & TIME
@@ -287,7 +287,8 @@ class CMario : public CGameObject
 	BOOLEAN isInitialized;
 	BOOLEAN isAllowToUseTube;
 	BOOLEAN isTravelling;
-	BOOLEAN isAtMainWorld;
+	BOOLEAN isAtMainWorld; //1-1
+	BOOLEAN isAtWorld; //World 1
 	BOOLEAN isReachEndPos;	//để nhận biết khi đến vị trí end game thì spawn text
 	CKoopa* ghost_koopa; //khi đang giữ Koopa, coi nó như item của mình, đang bật khiên, đụng là chết
 	//về cơ bản cũng khá giống cái đuôi, cũng cần đc vẽ bbox
@@ -398,6 +399,7 @@ public:
 	BOOLEAN GetIsOnPlatform() { return this->isOnPlatform; }
 	BOOLEAN GetIsAllowToUseTube() { return this->isAllowToUseTube; }
 	BOOLEAN GetIsAtMainWorld() { return this->isAtMainWorld; }
+	BOOLEAN GetIsAtWorld() { return this->isAtWorld; }
 	BOOLEAN GetIsTravelling() { return this->isTravelling; }
 	BOOLEAN GetIsEndGame() { return this->isEndGame; }
 	BOOLEAN GetIsReachEndPos() { return this->isReachEndPos; }
@@ -408,6 +410,7 @@ public:
 	void SetIsHitSwitch(BOOLEAN para) { this->isHitSwitch = para; }
 	void SetIsRunning(BOOLEAN para) { this->isRunning = para; }
 	void SetIsAtMainWorld(BOOLEAN para) { this->isAtMainWorld = para; }
+	void SetIsAtWorld(BOOLEAN para) { this->isAtWorld = para; }
 	void SetIsTravelUp(BOOLEAN para) { this->isTravelUp = para; }
 	void SetIsTravelDown(BOOLEAN para) { this->isTravelDown = para; }
 	void SetAllowToUseTube(BOOLEAN para) { this->isAllowToUseTube = para; }
