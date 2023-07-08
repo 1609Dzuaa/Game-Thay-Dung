@@ -16,11 +16,17 @@
 class CEntrance :public CGameObject 
 {
 	int type, scene_id; //Similiar to Portal
+	D3DXVECTOR4 BlockDirect;
 public:
-	CEntrance(float x, float y, int type, int scene_ID) :CGameObject(x, y)
+	CEntrance(float x, float y, int type, int scene_ID, float block_L, float block_T, float block_R, float block_B) :CGameObject(x, y)
 	{
 		this->type = type;
 		this->scene_id = scene_ID;
+
+		BlockDirect.x = block_L;
+		BlockDirect.y = block_T;
+		BlockDirect.z = block_R;
+		BlockDirect.w = block_B;
 	};
 	void GetBoundingBox(float& left, float& top, float& right, float& bottom);
 	void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects) {};
@@ -28,4 +34,6 @@ public:
 	int GetType() { return this->type; }
 	int IsBlocking() { return 0; }
 	int GetSceneID() { return this->scene_id; }
+	//Lấy hướng Block: x, y, z, w lần lượt là L, T, R, B
+	D3DXVECTOR4 GetBlockDirect() { return this->BlockDirect; }
 };

@@ -6,30 +6,74 @@ Text_Files\Mario.txt
 Text_Files\Grass.txt
 Text_Files\Entrance.txt
 [OBJECTS]
-100	140	18
+100	35	50
 
-120	35	50	0	0
+#Kiểu Entrance(120) -> x, y, type, scene, bl_l, bl_t, bl_r, bl_b 
+#START
+120	35	50	0	0	1	1	0	1
+
+#BLOCK	Between Start & 1
+130	68	50	0	0	1	1
 
 #1
-120	65	18	1	1
+120	66	18	1	1	1	1	0	0
+
+#BLOCK	Between 1 & 2
+130	100	18	0	1	0	1
 
 #2
-120	128	18	2	1
+120	128	18	2	1	0	1	0	0
+
+#BLOCK	Between 2 & Bích
+130	130	50	1	0	0	0
 
 #3
-120	160	18	3	1
+120	160	18	3	1	0	1	0	1
+
+#BLOCK	Between 3 & Mushroom House
+130	195	18	0	1	1	0
+
+#Mushroom House
+130	193	50	0	0	1	1
 
 #4
-120	160	50	4	1
+120	160	50	4	1	0	1	0	1
 
 #5
-120	65	144	5	1
+120	65	144	5	1	1	0	0	1
+
+#BLOCK	Between 5 & 6
+130	100	146	0	1	0	1
 
 #6
-120	128	144	6	1
+120	128	144	6	1	0	0	1	1
+
+#BLOCK	Between 6 & Bridge
+130	130	112	0	1	0	0
+
+#BLOCK	Between Bridge & Castle
+130	165	112	0	1	0	1
+
+#Castle
+130	190	112	0	1	1	1
+
+#Mushroom House Opposite Bridge
+130	95	112	1	1	0	1
 
 #BÍCH
-120	128	80	7	1
+120	128	80	7	1	0	0	1	1
+
+#GOLD BLOCK
+130	70	65	1	1	1	0
+
+#GOLD FORT
+130	95	78	0	1	0	1
+
+#BLOCK	Between Bích & Gold Fort
+130	70	83	1	0	0	0
+
+#BLOCK	Between GOLD LOCK & 5
+130	70	113	1	0	1	0
 
 #GRASS
 110	15	20

@@ -19,20 +19,27 @@
 class CMarioWorld : public CGameObject
 {
 	BOOLEAN isAllowToPlayThatEntrance;
-	BOOLEAN HasCollidedWithEntrance;
+	BOOLEAN HasCollidedWithEntrance, HasCollidedWithBlock;
 	BOOLEAN isMoving;
 	vector<int> EntranceHasPassed;
 	int Entrance_Type;
 	D3DXVECTOR2 Entrance_Position;
+	D3DXVECTOR4 Direct_Been_Blocked;
+	//Nếu chưa qua entrance thì entrance đó block hết các hướng còn lại
 public:
 	CMarioWorld(float x, float y) : CGameObject(x, y)
 	{
 		isAllowToPlayThatEntrance = false;
-		HasCollidedWithEntrance = false;
+		HasCollidedWithEntrance = false; //Để nhận biết có thể chuyển Scene
+		HasCollidedWithBlock = false;
 		isMoving = false;
 		Entrance_Position.x = 0;
 		Entrance_Position.y = 0;
 		Entrance_Type = 0;
+		//Ban đầu vị trí ở Start(Block L, T, B) -> obviously
+		Direct_Been_Blocked.x = 1;
+		Direct_Been_Blocked.y = 1;
+		Direct_Been_Blocked.w = 1;
 	}
 	void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
 	void Render();
@@ -42,8 +49,10 @@ public:
 	void OnNoCollision(DWORD dt);
 	void OnCollisionWith(LPCOLLISIONEVENT e);
 	void OnCollisionWithEntrance(LPCOLLISIONEVENT e);
-	void HandlePositionWithEntrance(); //Xử lý vị trí của Mario với Entrance
+	void OnCollisionWithBlockPoint(LPCOLLISIONEVENT e);
+	void HandlePositionWithEntranceAndBlock(); //Xử lý vị trí của Mario với Entrance và Block
 	bool IsPassedThisEntrance(int entr_type);
 	void SetState(int state);
 	bool GetIsMoving() { return this->isMoving; }
+	D3DXVECTOR4 GetBlockDirect() { return this->Direct_Been_Blocked; }
 };

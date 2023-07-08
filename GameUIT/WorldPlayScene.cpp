@@ -10,6 +10,7 @@
 #include "MarioWorld.h"
 #include "Grass.h"
 #include "Entrance.h"
+#include "BlockPoint.h"
 #include "Hud.h"
 #include "BlackScreen.h"
 
@@ -134,7 +135,6 @@ void CWorldPlayScene::_ParseSection_OBJECTS(string line)
 	float y = (float)atof(tokens[2].c_str());
 
 	CGameObject* obj = NULL;
-	//CDataGame* data = CGame::GetInstance()->GetDataGame();
 	switch (object_type)
 	{
 	case OBJECT_TYPE_MARIO_AT_WORLD_MAP:
@@ -143,8 +143,6 @@ void CWorldPlayScene::_ParseSection_OBJECTS(string line)
 			DebugOut(L"[ERROR] MARIO object was created before!\n");
 			return;
 		}
-		//x = data->GetPositionXWorldMap();
-		//y = data->GetPositionYWorldMap();
 		obj = new CMarioWorld(x, y);
 		player = (CMarioWorld*)obj;
 
@@ -157,9 +155,25 @@ void CWorldPlayScene::_ParseSection_OBJECTS(string line)
 	{
 		int type = (int)atoi(tokens[3].c_str());
 		int scene_id= (int)atoi(tokens[4].c_str());
-		obj = new CEntrance(x, y, type, scene_id);
+
+		float l = (float)atoi(tokens[5].c_str());
+		float t = (float)atoi(tokens[6].c_str());
+		float r = (float)atoi(tokens[7].c_str());
+		float b = (float)atoi(tokens[8].c_str());
+
+		obj = new CEntrance(x, y, type, scene_id, l, t, r, b);
 		break;
 	}
+	case OBJECT_TYPE_BLOCK_POINT:
+	{
+		float l = (float)atoi(tokens[3].c_str());
+		float t = (float)atoi(tokens[4].c_str());
+		float r = (float)atoi(tokens[5].c_str());
+		float b = (float)atoi(tokens[6].c_str());
+		obj = new CBlockPoint(x, y, l, t, r, b);
+		break;
+	}
+
 	default:
 		DebugOut(L"[ERROR] Invalid object type: %d\n", object_type);
 		return;

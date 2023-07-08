@@ -11,19 +11,19 @@ void CWorldMapKeyEvent::OnKeyDown(int KeyCode)
 	switch (KeyCode)
 	{
 	case DIK_RIGHT:
-		if (!mario->GetIsMoving())
+		if (!mario->GetIsMoving() && !mario->GetBlockDirect().z)
 			mario->SetState(MARIO_WORLD_STATE_MOVE_RIGHT);
 		break;
 	case DIK_LEFT:
-		if (!mario->GetIsMoving())
+		if (!mario->GetIsMoving() && !mario->GetBlockDirect().x)
 			mario->SetState(MARIO_WORLD_STATE_MOVE_LEFT);
 		break;
 	case DIK_UP:
-		if (!mario->GetIsMoving())
+		if (!mario->GetIsMoving() && !mario->GetBlockDirect().y)
 			mario->SetState(MARIO_WORLD_STATE_MOVE_UP);
 		break;
 	case DIK_DOWN:
-		if (!mario->GetIsMoving())
+		if (!mario->GetIsMoving() && !mario->GetBlockDirect().w)
 			mario->SetState(MARIO_WORLD_STATE_MOVE_DOWN);
 		break;
 	case DIK_S:
