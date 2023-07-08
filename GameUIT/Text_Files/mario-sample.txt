@@ -32,4 +32,5 @@ start	2
 110	textures\Hud_2.png
 115	Game_Maps\Tileset-World_1.png
 131	textures\World1_Tileset.png
+132	textures\World1_Tileset_Right.png
 #Why 70? -> Sitting animation in texture 0 has some problem so i use this instead

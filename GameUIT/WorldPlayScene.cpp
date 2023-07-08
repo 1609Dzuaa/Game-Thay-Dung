@@ -11,6 +11,7 @@
 #include "Grass.h"
 #include "Entrance.h"
 #include "BlockPoint.h"
+#include "GateKeeper.h"
 #include "Hud.h"
 #include "BlackScreen.h"
 
@@ -148,7 +149,11 @@ void CWorldPlayScene::_ParseSection_OBJECTS(string line)
 
 		DebugOut(L"[INFO] Player object has been created!\n");
 		break;
-	case OBJECT_TYPE_GRASS: obj = new CGrass(x, y); 
+	case OBJECT_TYPE_GRASS: 
+	{
+		int isHelp = (int)atoi(tokens[3].c_str());
+		obj = new CGrass(x, y, isHelp);
+	}
 		break;
 
 	case OBJECT_TYPE_ENTRANCE:
@@ -173,6 +178,8 @@ void CWorldPlayScene::_ParseSection_OBJECTS(string line)
 		obj = new CBlockPoint(x, y, l, t, r, b);
 		break;
 	}
+	case OBJECT_TYPE_GATE_KEEPER: obj = new CGateKeeper(x, y);
+		break;
 
 	default:
 		DebugOut(L"[ERROR] Invalid object type: %d\n", object_type);
@@ -294,8 +301,9 @@ void CWorldPlayScene::Render()
 	for (unsigned int i = 0; i < objects.size(); i++)
 		objects[i]->Render();
 
-	CHud::GetInstance()->Render();
-	CBlackScreen::GetInstance()->Render(); //prob here
+	//having big bug here
+	//CHud::GetInstance()->Render();
+	//CBlackScreen::GetInstance()->Render(); //prob here
 }
 
 void CWorldPlayScene::Unload() 

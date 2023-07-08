@@ -150,6 +150,7 @@
     <ClInclude Include="GameMap.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="Game.h" />
+    <ClInclude Include="GateKeeper.h" />
     <ClInclude Include="GhostObject.h" />
     <ClInclude Include="Goomba.h" />
     <ClInclude Include="GoombaAssetIDs.h" />
@@ -201,6 +202,7 @@
     <ClCompile Include="GameMap.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="Game.cpp" />
+    <ClCompile Include="GateKeeper.cpp" />
     <ClCompile Include="Goomba.cpp" />
     <ClCompile Include="Head.cpp" />
     <ClCompile Include="Hud.cpp" />
