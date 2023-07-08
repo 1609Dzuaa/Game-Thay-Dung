@@ -5,12 +5,30 @@
 
 void CWorldMapKeyEvent::OnKeyDown(int KeyCode)
 {
-	CWorldMapPlayer* player = (CWorldMapPlayer*)((LPWORLDPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
+	CMarioWorld* mario = (CMarioWorld*)((LPWORLDPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
 	DebugOut(L"[INFO] KeyDown: %d\n", KeyCode);
+	//Thêm phần Block phím khi đang move
 	switch (KeyCode)
 	{
 	case DIK_RIGHT:
-		player->SetState(MARIO_WORLD_STATE_MOVE_RIGHT);
+		if (!mario->GetIsMoving())
+			mario->SetState(MARIO_WORLD_STATE_MOVE_RIGHT);
+		break;
+	case DIK_LEFT:
+		if (!mario->GetIsMoving())
+			mario->SetState(MARIO_WORLD_STATE_MOVE_LEFT);
+		break;
+	case DIK_UP:
+		if (!mario->GetIsMoving())
+			mario->SetState(MARIO_WORLD_STATE_MOVE_UP);
+		break;
+	case DIK_DOWN:
+		if (!mario->GetIsMoving())
+			mario->SetState(MARIO_WORLD_STATE_MOVE_DOWN);
+		break;
+	case DIK_S:
+		if (!mario->GetIsMoving())
+			mario->SetState(MARIO_WORLD_STATE_ENTER_ENTRANCE);
 		break;
 	}
 }

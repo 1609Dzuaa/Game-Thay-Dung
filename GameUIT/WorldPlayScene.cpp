@@ -145,8 +145,8 @@ void CWorldPlayScene::_ParseSection_OBJECTS(string line)
 		}
 		//x = data->GetPositionXWorldMap();
 		//y = data->GetPositionYWorldMap();
-		obj = new CWorldMapPlayer(x, y);
-		player = (CWorldMapPlayer*)obj;
+		obj = new CMarioWorld(x, y);
+		player = (CMarioWorld*)obj;
 
 		DebugOut(L"[INFO] Player object has been created!\n");
 		break;
@@ -156,7 +156,8 @@ void CWorldPlayScene::_ParseSection_OBJECTS(string line)
 	case OBJECT_TYPE_ENTRANCE:
 	{
 		int type = (int)atoi(tokens[3].c_str());
-		obj = new CEntrance(x, y, type);
+		int scene_id= (int)atoi(tokens[4].c_str());
+		obj = new CEntrance(x, y, type, scene_id);
 		break;
 	}
 	default:
@@ -164,7 +165,8 @@ void CWorldPlayScene::_ParseSection_OBJECTS(string line)
 		return;
 	}
 	obj->SetPosition(x, y);
-	objects.push_back(obj);
+	objects.insert(objects.begin(), obj);
+	//objects.push_back(obj);
 
 }
 
