@@ -19,6 +19,8 @@ protected:
 	static int timer;
 	ULONGLONG timer_start;
 	BOOLEAN IsWait;
+	BOOLEAN init;
+	int prevHP;
 
 	vector<LPGAMEOBJECT> objects;
 

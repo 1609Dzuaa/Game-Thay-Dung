@@ -313,6 +313,7 @@ class CMario : public CGameObject
 	ULONGLONG untouch_draw_0; //thgian 0 vẽ
 	ULONGLONG untouch_draw_1; //thgian vẽ
 	ULONGLONG shaking_start;
+	ULONGLONG wait_end_game;
 	BOOLEAN isOnPlatform;
 	BOOLEAN isTravelUp;
 	BOOLEAN isTravelDown;

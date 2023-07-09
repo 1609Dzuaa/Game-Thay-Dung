@@ -42,7 +42,7 @@ void CMario::OnCollisionWithBlockingObjects(LPCOLLISIONEVENT e)
 			{
 				if (e->ny != 0)
 				{
-					//vy = 0;
+					vy = 0;
 					if (e->ny > 0)
 					{
 						//Nếu là viên chứa Item và state chưa bị hit
@@ -65,13 +65,13 @@ void CMario::OnCollisionWithBlockingObjects(LPCOLLISIONEVENT e)
 					}
 					else if (e->ny < 0)
 					{
-						/*isOnPlatform = true;
-						isLanding = false;
-						CountJumpOnEnemies = 0; //Chạm đất thì reset số lần nhảy
-						vy = 0;*/
-						SnappingToAnEdge(e, br);
 						//vy = 0;
 						isOnPlatform = true;
+						isLanding = false;
+						CountJumpOnEnemies = 0; //Chạm đất thì reset số lần nhảy
+						//SnappingToAnEdge(e, br);
+						//vy = 0;
+						//isOnPlatform = true;
 					}
 				}
 				else if (e->nx != 0 && e->obj->IsBlocking())
@@ -98,9 +98,9 @@ void CMario::OnCollisionWithBlockingObjects(LPCOLLISIONEVENT e)
 			vy = 0;
 			if (e->ny < 0)
 			{
+				vy = 0; //bcuz of this
 				isOnPlatform = true;
 				CountJumpOnEnemies = 0; //Chạm đất thì reset số lần nhảy
-				//vy = 0; bcuz of this
 			}
 		}
 		else if (e->nx != 0 && e->obj->IsBlocking())
@@ -120,7 +120,7 @@ void CMario::OnCollisionWithBlockingObjects(LPCOLLISIONEVENT e)
 				else
 					isAllowToUseTube = false;
 
-				//vy = 0;
+				vy = 0;
 				isOnPlatform = true;
 				CountJumpOnEnemies = 0;
 				start_y = y + MARIO_BIG_BBOX_HEIGHT / 2;
@@ -155,21 +155,14 @@ void CMario::OnCollisionWithBlockingObjects(LPCOLLISIONEVENT e)
 			}
 			else
 			{
-				//vy = 0;
+				vy = 0;
 				SnappingToAnEdge(e, e->obj);
 				isOnPlatform = true;
-				//this->y = e->obj->GetY() - 16.0f / 2.0f - MARIO_BIG_BBOX_HEIGHT / 2.0f + 0.5f;
-				//vy = 0.0f;
-				//isOnPlatform = true;
-				//CountJumpOnEnemies = 0;
+				CountJumpOnEnemies = 0;
 			}
 		}
 		else
 		{
-			//SNAP: Player.Y = ColorPlat.Y - ColorPlat.Height / 2 - Player.Height / 2
-			//this->y = static_cast<float>(e->obj->GetY() - 16.0f / 2.0f - MARIO_BIG_BBOX_HEIGHT / 2.0f);
-			//vy = 0.0f;
-			//ay = 0;
 			vy = 0;
 			isOnPlatform = true;
 			CountJumpOnEnemies = 0;

@@ -24,7 +24,7 @@
 
 using namespace std;
 
-int CPlayScene::timer = 299;
+int CPlayScene::timer = 300;
 
 CPlayScene::CPlayScene(int id, LPCWSTR filePath) :
 	CScene(id, filePath)
@@ -33,6 +33,8 @@ CPlayScene::CPlayScene(int id, LPCWSTR filePath) :
 	key_handler = new CSampleKeyHandler(this);
 	timer_start = GetTickCount64();
 	IsWait = false;
+	init = 0;
+	prevHP = 4;
 }
 
 
@@ -346,6 +348,8 @@ void CPlayScene::Update(DWORD dt)
 	// TO-DO: This is a "dirty" way, need a more organized way!
 	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
 
+	//Xem lại tại sao va chạm ở Map1-1 khá kém (0 va đc với FireBullet???)
+	//Điều chỉnh lại gravity
 	HandleTimerAndWait(); //Xử lý thời gian và Wait trong game
 
 	vector<LPGAMEOBJECT> coObjects;
@@ -356,7 +360,6 @@ void CPlayScene::Update(DWORD dt)
 
 	for (size_t i = 0; i < objects.size(); i++)
 	{
-		//if (CCamera::GetInstance()->isViewable(objects[i]))
 			objects[i]->Update(dt, &coObjects);
 	}
 
@@ -410,11 +413,8 @@ void CPlayScene::Render()
 	//Vẽ sau cùng tránh bị object đè: 
 	//Thứ tự: Black Screen đè Hud, Hud đè Object, Object đè map
 	CHud::GetInstance()->Render();
-	if (mario->GetIsTravelling())	//Giảm đc thêm 8 MB
-	{
-		CBlackScreen::GetInstance()->Render();
-		//DebugOut(L"[INFO] Start Drawing BlackScreen\n");
-	}
+	CBlackScreen::GetInstance()->Render();
+	//DebugOut(L"[INFO] Start Drawing BlackScreen\n");
 }
 
 /*
@@ -483,6 +483,13 @@ void CPlayScene::AddObjectToScene(LPGAMEOBJECT game_object)
 void CPlayScene::HandleTimerAndWait()
 {
 	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
+	
+	//Reset Timer if DIE
+	if (mario->GetHP() == prevHP - 1)
+	{
+		timer = 300;
+		prevHP = mario->GetHP();
+	}
 
 	if (IsWait)
 	{

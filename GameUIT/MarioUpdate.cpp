@@ -10,20 +10,16 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	//Chỉ khi trên mặt đất thì biến đấy mới tăng dần lên
 	//Còn nếu đang chạy mà nhảy (not on platform) thì cái biến đấy giảm dần
 
-	if (state == MARIO_STATE_DIE)
+	if (state == MARIO_STATE_DIE || isReachEndPos)
 	{
 		//tắt Cam chứ 0 thì nó bị lệch xuống dưới
 		isAtMainWorld = false;
-		
 		DebugOut(L"CamX, CamY: %f, %f\n", CCamera::GetInstance()->GetCamPos().x, CCamera::GetInstance()->GetCamPos().y);
-		//CCamera::GetInstance()->SetTargetToFollow(NULL);
-		//CCamera::GetInstance()->~CCamera();
-		//CCamera::GetInstance()->SetCamPos(CGame::GetInstance()->GetBackBufferWidth(), CGame::GetInstance()->GetBackBufferHeight());
-		//DebugOut(L"")
-		CGame::GetInstance()->InitiateSwitchScene(2);
+		CGame::GetInstance()->InitiateSwitchScene(ID_WORLD);
 		return;
 	}
 	DebugOut(L"CamX, CamY: %f, %f\n", CCamera::GetInstance()->GetCamPos().x, CCamera::GetInstance()->GetCamPos().y);
+	DebugOutTitle(L"St, vy, ay: %d, %f, %f", state, vy, ay);
 
 	if (!isEvolving)
 	{
@@ -40,13 +36,15 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	else if (isTravelUp)
 		HandleTravellingUp();
 
-	if (this->y >= END_POS)
+	if (this->x >= 3000.0f)
 	{
 		isReachEndPos = true;
+		wait_end_game = GetTickCount64();
+		vx = 0;
+		vy = 0;
+		ay = 0;
 		return; //ngưng update
 	}
-
-	//if (isOnPlatform) vy = 0;
 
 	UpdateTime();
 	UpdateSpeedBar();
@@ -62,7 +60,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		DebugOut(L"Tail was created successfully!\n");
 	}
 
-	DebugOutTitle(L"vx, ax, maxVx ST: %f, %f, %f, %d", vx, ax, maxVx, state);
+	//DebugOutTitle(L"vx, ax, maxVx ST: %f, %f, %f, %d", vx, ax, maxVx, state);
 	//DebugOutTitle(L"SpeedBar, prevVx, vx, MS: %d, %f, %f, %d", SpeedBar, prevVx, vx, isAtMaxSpeed);
 	//DebugOut(L"%d\n", SpeedBar);
 }

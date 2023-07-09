@@ -16,17 +16,25 @@ void CMarioWorld::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	{
 		if (Entrance_ID != 0) //tránh nhấn S khi Collide với Start Entrance
 		{
-			//CBlackScreen::GetInstance()->SetState(BLACK_SCR_EFF_STATE_DRAW_FROM_1);
-			CGame::GetInstance()->InitiateSwitchScene(Entrance_ID);
+			if (!init)
+			{
+				CBlackScreen::GetInstance()->SetState(BLACK_SCR_EFF_STATE_DRAW_FROM_0);
+				init = 1;
+			}
+			//đợi nó đen toàn World rồi mới chuyển cảnh
+			if (CBlackScreen::GetInstance()->GetAlpha() == 1.0f)
+			{
+				CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
+				mario->SetIsAtWorld(0);
+				CGame::GetInstance()->InitiateSwitchScene(Entrance_ID);
+			}
 		}
-		//CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
-		//mario->SetIsAtMainWorld(1);
 		return;
 	}
 	
 	CCollision::GetInstance()->Process(this, dt, coObjects);
 	//DebugOutTitle(L"isAllow, atMW: %d, %d", isAllowToPlayThatEntrance, Entrance_ID);
-	DebugOut(L"CamX, CamY: %f, %f\n", CCamera::GetInstance()->GetCamPos().x, CCamera::GetInstance()->GetCamPos().y);
+	//DebugOut(L"CamX, CamY: %f, %f\n", CCamera::GetInstance()->GetCamPos().x, CCamera::GetInstance()->GetCamPos().y);
 }
 
 void CMarioWorld::HandlePositionWithEntranceAndBlock()

@@ -57,6 +57,7 @@ void CCamera::Update()
         return;
     if (mario->GetState() == MARIO_STATE_DIE)
     {
+        //chỉnh lại ĐK end game
         this->posX = 0;
         this->posY = 0;
         return;

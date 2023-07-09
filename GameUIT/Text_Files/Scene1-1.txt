@@ -218,8 +218,8 @@ Text_Files\Hud.txt
 #Green Plat
 6	2158	190	16	15	3	0	0	0
 
-#Normal Ground 4 - END vừa + 1 để có gì chạy đến vô cực khi end game
-6	2240	336	16	15	37	0	0	0
+#Normal Ground 4 - END vừa + 4 để có gì chạy đến vô cực khi end game
+6	2240	336	16	15	40	0	0	0
 
 #Tube with 2 stripe brick
 9	2248	313	4
@@ -243,7 +243,7 @@ Text_Files\Hud.txt
 9	2304	313	0
 
 #Card
-#8	2672	256	
+8	2672	256	
 
 ########################################### UNDERWORLD ###############################################
 #Ống 1 - thêm vào nhằm mục đích vẽ đè -> Mario chui ra từ ống

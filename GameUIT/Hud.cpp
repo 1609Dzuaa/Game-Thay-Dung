@@ -172,7 +172,7 @@ void CHud::RenderCard()
 
 	if (aniId == -1) return;
 
-	float x = CCamera::GetInstance()->GetCamPos().x + CGame::GetInstance()->GetBackBufferWidth() - 75.0f;
+	float x = CCamera::GetInstance()->GetCamPos().x + CGame::GetInstance()->GetBackBufferWidth() - 67.0f;
 	animations->Get(aniId)->Render(x, 372.0f, false);
 
 	//Khởi tạo hiệu ứng chớp chớp cho Card

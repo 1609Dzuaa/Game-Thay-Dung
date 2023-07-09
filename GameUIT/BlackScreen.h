@@ -33,4 +33,6 @@ public:
 	void Update();
 	void Render();
 	void SetState(int state);
+	int GetState() { return this->state; }
+	float GetAlpha() { return this->Alpha; }
 };

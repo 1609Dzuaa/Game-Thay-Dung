@@ -303,7 +303,7 @@ void CWorldPlayScene::Render()
 		objects[i]->Render();
 
 	CHud::GetInstance()->Render(); //Done major bug
-	//CBlackScreen::GetInstance()->Render(); //prob here
+	CBlackScreen::GetInstance()->Render(); //prob here
 }
 
 void CWorldPlayScene::Unload() 

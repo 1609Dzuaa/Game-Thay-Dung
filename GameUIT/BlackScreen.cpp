@@ -65,7 +65,7 @@ void CBlackScreen::Update()
 		}
 	}
 
-	//DebugOutTitle(L"St, Al: %d, %f", state, Alpha);
+	DebugOut(L"St, Al: %d, %f\n", state, Alpha);
 }
 
 void CBlackScreen::Render()

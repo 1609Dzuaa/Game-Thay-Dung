@@ -27,6 +27,7 @@ class CMarioWorld : public CGameObject
 	D3DXVECTOR4 Direct_Been_Blocked; //Nếu chưa qua entrance thì entrance đó block hết các hướng còn lại
 	BOOLEAN isTravelling;
 	BOOLEAN isWaitingForTrans;
+	BOOLEAN init;
 	//Thu hẹp ViewPort ?
 public:
 	CMarioWorld(float x, float y) : CGameObject(x, y)
@@ -44,6 +45,7 @@ public:
 		Direct_Been_Blocked.w = 1;
 		isTravelling = 0;
 		isWaitingForTrans = 0;
+		init = 0;
 	}
 	void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
 	void Render();

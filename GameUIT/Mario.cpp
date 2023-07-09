@@ -53,6 +53,7 @@ CMario::CMario(float x, float y) : CGameObject(x, y)
 	untouch_0 = 0;
 	untouch_1 = 0;
 	shaking_start = 0;
+	wait_end_game = 0;
 	start_y = -1;
 	fly_start = -1;
 	TypeOfCardCollected = -1;
