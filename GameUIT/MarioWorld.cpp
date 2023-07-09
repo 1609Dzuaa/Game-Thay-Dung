@@ -27,6 +27,7 @@ void CMarioWorld::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
 				mario->SetIsAtWorld(0);
 				CGame::GetInstance()->InitiateSwitchScene(Entrance_ID);
+				atW = 0;
 			}
 		}
 		return;
@@ -36,7 +37,8 @@ void CMarioWorld::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	//DebugOutTitle(L"isAllow, atMW: %d, %d", isAllowToPlayThatEntrance, Entrance_ID);
 	//DebugOut(L"CamX, CamY: %f, %f\n", CCamera::GetInstance()->GetCamPos().x, CCamera::GetInstance()->GetCamPos().y);
 	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
-	DebugOutTitle(L"isAtW, AtMW: %d, %d", mario->GetIsAtWorld(), mario->GetIsAtMainWorld());
+	//DebugOutTitle(L"CardType: %d", mario->GetTypeOfCardCollected());
+	DebugOutTitle(L"isAtW, AtMW: %d, %d", atW, mario->GetIsAtMainWorld());
 }
 
 void CMarioWorld::HandlePositionWithEntranceAndBlock()

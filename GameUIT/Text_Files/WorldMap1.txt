@@ -6,6 +6,7 @@ Text_Files\Mario.txt
 Text_Files\Grass, Help And Gate Keeper.txt
 Text_Files\Entrance.txt
 Text_Files\Hud.txt
+Text_Files\Card.txt
 [OBJECTS]
 100	35	50
 

@@ -635,7 +635,10 @@ void CMario::OnCollisionWithSwitch(LPCOLLISIONEVENT e)
 void CMario::OnCollisionWithCard(LPCOLLISIONEVENT e)
 {
 	//End game rồi nhưng phải chạm đất sau đó mới Auto Move!
-	this->TypeOfCardCollected = e->obj->GetState();	//Lấy loại card collect đc
+	//Hiện card linh tinh là do 2 đoạn dưới @@, đã sửa
+	CCard* card = dynamic_cast<CCard*>(e->obj);
+	TypeOfCardCollected = card->GetType();	//Lấy loại card collect đc 
+	HasCollectCard = true;
 	if (TypeOfCardCollected == CARD_STATE_MUSHROOM)
 		points += 1350;
 	else if (TypeOfCardCollected == CARD_STATE_STAR)

@@ -23,15 +23,27 @@
 
 #define CARD_UNDRAW_TIME	200
 
+struct Card
+{
+	int type;
+	int aniID;
+	int isInit;
+};
+
 class CHud
 {
 	//Tương đồng với Cam, Map nên sẽ 0 kế thừa từ class nào
 	static CHud* __HudInstance;	//Đảm bảo chỉ có duy nhất 1 HUD
 	float x, y;
 	int allowToRenderCard;	//Hiện dòng "You Got A Card" thì mới cho vẽ Card lên Hud
+	static int numCardCollected;
+	static Card cardCollected[3];
+	//static int cardType[3];  //mảng Card lượm đc
 	BOOLEAN isUndrawInitialized;
 	BOOLEAN untouch_0; // cờ 0 vẽ
 	BOOLEAN untouch_1; // cờ vẽ
+	BOOLEAN isAffect; //Card vừa lượm đc(vẽ chớp chớp ở Hud)
+	BOOLEAN initCard;
 	ULONGLONG untouch_draw_0; //thgian 0 vẽ
 	ULONGLONG untouch_draw_1; //thgian vẽ
 public:
@@ -45,6 +57,8 @@ public:
 		untouch_0 = 0;
 		untouch_1 = 0;
 		isUndrawInitialized = 0;
+		isAffect = 0;
+		initCard = 0;
 	}
 	static CHud* GetInstance();
 	void Update();
@@ -58,4 +72,5 @@ public:
 	void SetAllowToRenderCard() { this->allowToRenderCard = 1; }
 	void HandleCardDrawState();
 	void RenderPauseText();
+	void SetInitCard(BOOLEAN para) { this->initCard = para; }
 };

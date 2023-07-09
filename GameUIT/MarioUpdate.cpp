@@ -20,30 +20,50 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		die_idle_start = 0;
 		die_time_out = GetTickCount64();
 	}
+	//If: Lấy Timer ở PlayScene == 0 và ReachEndPos => bấm giờ để tắt màn cũng như chuyển scene
+	//Sau đó 
+	CPlayScene* play_scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
 
-	if (state == MARIO_STATE_DIE && !isDieIdle || isReachEndPos)
+	if (state == MARIO_STATE_DIE && !isDieIdle || isReachEndPos && play_scene->GetTimer() == 0)
 	{
 		if (GetTickCount64() - die_time_out > 1500 && isDieJump && !init)
 		{
 			//tắt Cam chứ 0 thì nó bị lệch xuống dưới
 			//Hết chết nhảy -> chuyển scene về WORLD
 			isDieJump = false;
-			DebugOut(L"CamX, CamY: %f, %f\n", CCamera::GetInstance()->GetCamPos().x, CCamera::GetInstance()->GetCamPos().y);
+			//DebugOut(L"CamX, CamY: %f, %f\n", CCamera::GetInstance()->GetCamPos().x, CCamera::GetInstance()->GetCamPos().y);
 			CBlackScreen::GetInstance()->SetState(BLACK_SCR_EFF_STATE_DRAW_FROM_0);
 			init = 1;
+		}
+		else if (state != MARIO_STATE_DIE && !initWaitEnd)
+		{
+			//prob here
+			initWaitEnd = true;
+			isWaitEndGame = true;
+			wait_end_game = GetTickCount64();
+		}
+
+		if (isWaitEndGame && GetTickCount64() - wait_end_game >= 1500)
+		{
+			isWaitEndGame = false;
+			CBlackScreen::GetInstance()->SetState(BLACK_SCR_EFF_STATE_DRAW_FROM_0);
 		}
 
 		if (CBlackScreen::GetInstance()->GetAlpha() == 1.0f)
 		{
 			isAtWorld = 1;
+			isAtMainWorld = 0;
 			isTrulyDied = true;
+			isTrulyEnd = true;
 			CGame::GetInstance()->InitiateSwitchScene(ID_WORLD);
 			return;
 		}
 	}
 	DebugOut(L"CamX, CamY: %f, %f\n", CCamera::GetInstance()->GetCamPos().x, CCamera::GetInstance()->GetCamPos().y);
 	DebugOutTitle(L"St, atMW, atW: %d, %d, %d", state, isAtMainWorld, isAtWorld);
-
+	//DebugOutTitle(L"waitEnd, InitWait: %d, %d", isWaitEndGame, initWaitEnd);
+	//DebugOutTitle(L"CardType: %d", TypeOfCardCollected);
+	
 	if (!isEvolving)
 	{
 		vy += ay * dt;
@@ -59,7 +79,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	else if (isTravelUp)
 		HandleTravellingUp();
 
-	if (this->x >= 3000.0f)
+	if (this->x >= 3000.0f && !isWaitEndGame)
 	{
 		isReachEndPos = true;
 		wait_end_game = GetTickCount64();

@@ -278,6 +278,9 @@ void CWorldPlayScene::Update(DWORD dt)
 {
 	//Với Hud ở World thì khởi tạo 1 lần duy nhất, 0 CẦN Update
 	CBlackScreen::GetInstance()->Update();
+	//CHud::GetInstance()->SetUnDrawState(0, 1);
+	CMarioWorld* mario = (CMarioWorld*)((LPWORLDPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
+	mario->SetAtW(1);
 
 	vector<LPGAMEOBJECT> coObjects;
 	for (size_t i = 1; i < objects.size(); i++)

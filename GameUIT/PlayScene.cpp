@@ -17,14 +17,17 @@
 #include "Card.h"
 #include "Hud.h"
 #include "BlackScreen.h"
+#include "WorldPlayScene.h"
 
 #include "SampleKeyEventHandler.h"
 #include "GameMap.h"
 #include "Camera.h"
+#include "MarioWorld.h"
 
 using namespace std;
 
 int CPlayScene::timer = 300;
+//BOOLEAN CPlayScene::init = 0;
 
 CPlayScene::CPlayScene(int id, LPCWSTR filePath) :
 	CScene(id, filePath)
@@ -365,11 +368,16 @@ void CPlayScene::Update(DWORD dt)
 	// skip the rest if scene was already unloaded (Mario::Update might trigger PlayScene::Unload)
 	if (player == NULL) return;
 
+	//Làm sao để nhận biết đã EndScene, chuyển về world map và set init lại từ đầu
+	//if (mario->GetIsTrulyEnd()) return;
+
 	//Update Each Instance Of The Game Start From Here:
 	if (!init)
 	{
 		CCamera::GetInstance()->SetTargetToFollow(player);
 		mario->SetIsAtWorld(0); //Xem lại sự cần thiết của IsAtWorld và AtMainWorld ??
+		mario->SetHasCollectCard(0);
+		CHud::GetInstance()->SetInitCard(0);
 		init = 1;
 		//Đảm bảo chỉ đc Set Follow duy nhất lúc tạo Scene
 		//Tránh việc khi chết xuống r mà Cam vẫn đi theo dù đã set nullptr ở SetState
@@ -457,6 +465,7 @@ void CPlayScene::Unload()
 	map = nullptr;
 	delete underworld_map;
 	underworld_map = nullptr;
+	init = 0; //mò cả buổi, quên mất chỉ cần đặt ở đây là thành công @@
 
 	DebugOut(L"[INFO] Scene %d unloaded! \n", id);
 }
@@ -493,10 +502,11 @@ void CPlayScene::AddObjectToScene(LPGAMEOBJECT game_object)
 void CPlayScene::HandleTimerAndWait()
 {
 	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
-	
+	CMarioWorld* mario_world = (CMarioWorld*)((LPWORLDPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
+
 	if (mario->GetState() == MARIO_STATE_DIE) return; //chết thì 0 đụng đến giờ nữa
 
-	//Reset Timer if DIE
+	//Reset Timer if DIE || Finish Scene
 	if (mario->GetHP() == prevHP - 1)
 	{
 		timer = 300;
@@ -529,7 +539,11 @@ void CPlayScene::HandleTimerAndWait()
 	{
 		if (GetTickCount64() - timer_start >= 1)
 		{
-			if (timer == 0) return;	//timer == 0 ngưng Update
+			if (timer == 0)
+			{
+				//init = 0;
+				return;	//timer == 0 ngưng Update
+			}
 			timer--;
 			timer_start = GetTickCount64();
 		}

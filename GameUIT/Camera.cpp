@@ -61,7 +61,7 @@ void CCamera::Update()
         return;
     }
 
-    if (target_follow == nullptr)
+    if (!target_follow)
         return;
 
     //Khi Enter Map 1-1 thì pos Cam lúc này là (0,96) dẫn đến việc khi chết

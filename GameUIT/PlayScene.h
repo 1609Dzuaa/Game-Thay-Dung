@@ -52,6 +52,7 @@ public:
 	int GetTimer() { return timer; }
 	BOOLEAN GetWait() { return IsWait; }
 	void SetWait(BOOLEAN para) { this->IsWait = para; }
+	void SetInit(BOOLEAN para) { this->init = para; }
 	void HandleTimerAndWait();
 };
 

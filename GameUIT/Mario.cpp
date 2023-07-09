@@ -11,6 +11,7 @@
 int CMario::HP = 4;
 int CMario::coin = 0;
 int CMario::points = 0;
+int CMario::TypeOfCardCollected = 0;
 
 CMario::CMario(float x, float y) : CGameObject(x, y)
 {
@@ -45,11 +46,14 @@ CMario::CMario(float x, float y) : CGameObject(x, y)
 	isWaitingForTrans = true;
 	isEndGame = false;
 	init = false;
+	initWaitEnd = false;
 	isReachEndPos = false;
+	isWaitEndGame = false;
 	IsWaitable = true;
 	isDieIdle = false;
 	isDieJump = false;
 	isTrulyDied = false;
+	isTrulyEnd = false;
 	CountJumpOnEnemies = 0;
 	untouchdraw = -1;
 	untouch_draw_0 = 0;
@@ -62,7 +66,7 @@ CMario::CMario(float x, float y) : CGameObject(x, y)
 	die_time_out = 0;
 	start_y = -1;
 	fly_start = -1;
-	TypeOfCardCollected = -1;
+	//TypeOfCardCollected = -1;
 	SpeedBar = 0;
 	prevVx = 0;
 	tail = NULL;

@@ -288,6 +288,9 @@ class CMario : public CGameObject
 	BOOLEAN isAllowToUseTube;
 	BOOLEAN isTravelling;
 	BOOLEAN init;
+	BOOLEAN initWaitEnd;
+	BOOLEAN isWaitEndGame;
+	BOOLEAN isTrulyEnd;
 	BOOLEAN isAtMainWorld; //1-1
 	BOOLEAN isAtWorld; //World 1
 	BOOLEAN isReachEndPos;	//để nhận biết khi đến vị trí end game thì spawn text
@@ -320,6 +323,7 @@ class CMario : public CGameObject
 	BOOLEAN isDieIdle; //để biết đang animation chết nhưng đứng yên
 	BOOLEAN isDieJump;
 	BOOLEAN isTrulyDied; //để biết đã chết thật sự(rơi xuống dưới) để set Cam về vị trí ban đầu (0, 0)
+	BOOLEAN HasCollectCard;
 	BOOLEAN isOnPlatform;
 	BOOLEAN isTravelUp;
 	BOOLEAN isTravelDown;
@@ -328,7 +332,7 @@ class CMario : public CGameObject
 	BOOLEAN isWaitingForTrans; //Dùng để biết có đang đợi chuyển cảnh hay kh
 	BOOLEAN isEndGame;	//End Game -> bật chế độ tự lái
 	int CountJumpOnEnemies; //Đếm số bước nhảy 0 CHẠM ĐẤT để có số điểm tương ứng
-	int TypeOfCardCollected;
+	static int TypeOfCardCollected;
 	int SpeedBar; //thanh tốc độ
 
 	//Collision Func
@@ -408,8 +412,10 @@ public:
 	BOOLEAN GetIsEndGame() { return this->isEndGame; }
 	BOOLEAN GetIsReachEndPos() { return this->isReachEndPos; }
 	BOOLEAN GetIsTrulyDied() { return this->isTrulyDied; }
+	BOOLEAN GetIsTrulyEnd() { return this->isTrulyEnd; }
+	BOOLEAN GetHasCollectCard() { return this->HasCollectCard; }
 	int GetSpeedBar() { return this->SpeedBar; }
-	int GetTypeOfCardCollected() { return this->TypeOfCardCollected; }
+	static int GetTypeOfCardCollected() { return TypeOfCardCollected; }
 	void SetHoldKoopa(BOOLEAN para) { this->isAllowToHoldKoopa = para; }
 	void SetIsHoldingKoopa(BOOLEAN para) { this->isHolding = para; }
 	void SetIsHitSwitch(BOOLEAN para) { this->isHitSwitch = para; }
@@ -421,6 +427,7 @@ public:
 	void SetAllowToUseTube(BOOLEAN para) { this->isAllowToUseTube = para; }
 	void SetCombo(BOOLEAN para) { this->isComboUpAndS = para; }
 	void SetIsWaitingForTrans(BOOLEAN para) { this->isWaitingForTrans = para; }
+	void SetHasCollectCard(BOOLEAN para) { this->HasCollectCard = para; }
 	void AddCoin() { coin++; }
 	void AddPoints(int points_para) { points += points_para; }
 	void HandleTravellingDown();

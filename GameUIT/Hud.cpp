@@ -1,7 +1,12 @@
 ﻿#include "Hud.h"
 #include "Camera.h"
 #include "PlayScene.h"
+#include "WorldPlayScene.h"
+#include "MarioWorld.h"
 CHud* CHud::__HudInstance = NULL;
+//int CHud::cardType[3] = { 0,0,0 };
+Card CHud::cardCollected[3] = { 0,0,0 };
+int CHud::numCardCollected = 0;
 
 CHud* CHud::GetInstance()
 {
@@ -31,6 +36,7 @@ void CHud::Update()
 	//Chia ra vị trí ở MainWorld và Underground
 	this->x = CCamera::GetInstance()->GetCamPos().x + CGame::GetInstance()->GetBackBufferWidth() / 2;
 	this->y = CCamera::GetInstance()->GetCamPos().y + CGame::GetInstance()->GetBackBufferHeight() - 16.0f;
+	//DebugOutTitle(L"Card1, Card2, Card3: %d, %d, %d", cardType[0], cardType[1], cardType[2]);
 }
 
 void CHud::Render()
@@ -157,10 +163,21 @@ void CHud::RenderCard()
 {
 	CAnimations* animations = CAnimations::GetInstance();
 	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
+	CMarioWorld* mario_world = (CMarioWorld*)((LPWORLDPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
+
 	if (!allowToRenderCard) return;
 
-	HandleCardDrawState();
-	if (untouch_0) return;
+	if (mario->GetIsAtMainWorld()) //nếu đang ở 1-1 thì nhấp nháy card ở Hud (nếu có)
+		HandleCardDrawState(); 
+	else if(mario_world->GetAtW())
+	{
+		untouch_0 = 0;
+		untouch_1 = 1;
+		//Set untouch_1(vẽ) cho card ở Hud lỡ may nếu chớp xong mà untouch_0 vẫn đc bật
+	}
+	//vấn đề card lúc vẽ lúc 0 là do có thể lúc end game biến untouch_0 đc bật
+	if (untouch_0 && mario != nullptr) 
+		return;
 
 	int aniId = -1;
 	if (mario->GetTypeOfCardCollected() == CARD_STATE_MUSHROOM)
@@ -170,16 +187,51 @@ void CHud::RenderCard()
 	else if (mario->GetTypeOfCardCollected() == CARD_STATE_FLOWER)
 		aniId = ID_ANI_STATIC_CARD_FLOWER;
 
-	if (aniId == -1) return;
+	if (aniId == -1)
+		return;
+	//ani != 1 =>có card đc lượm
+	//cardType[numCardCollected] = mario->GetTypeOfCardCollected();
 
-	float x = CCamera::GetInstance()->GetCamPos().x + CGame::GetInstance()->GetBackBufferWidth() - 67.0f;
-	animations->Get(aniId)->Render(x, 372.0f, false);
+	//Quá hớ hênh, coi chừng vi phạm ở đây ??
+	if (mario->GetHasCollectCard() && !initCard)
+	{
+		cardCollected[numCardCollected].type = mario->GetTypeOfCardCollected();
+		cardCollected[numCardCollected].aniID = aniId;
+		cardCollected[numCardCollected].isInit = 1;
+		numCardCollected++;
+		initCard = 1;
+	}
+
+	//Do vấn đề Render chứ card ăn đc vẫn correct
+	//Khả năng cao là do untouch_0 ?
+	if (mario->GetIsAtMainWorld()) //Vẽ Card ở Map 1-1 . if(isaffected)=>vẽ chớp cho nó
+	{
+		float x1 = CCamera::GetInstance()->GetCamPos().x + CGame::GetInstance()->GetBackBufferWidth() - 69.0f;
+		float x2 = CCamera::GetInstance()->GetCamPos().x + CGame::GetInstance()->GetBackBufferWidth() - 55.0f;
+		float x3 = CCamera::GetInstance()->GetCamPos().x + CGame::GetInstance()->GetBackBufferWidth() - 41.0f;
+
+		for (int i = 0; i < numCardCollected; i++)
+		{
+			animations->Get(cardCollected[i].aniID)->Render(x1 + 25 * i, 372.0f, false);
+		}
+	}
+	else if (mario_world->GetAtW()) //Vẽ Card ở World
+	{
+		//allowToRenderCard = false;
+		for (int i = 0; i < numCardCollected; i++)
+		{
+			animations->Get(cardCollected[i].aniID)->Render(x +54.0f + i * 15.0f, y, false);
+		}
+		//initCard = false; //1 đống nấm
+		//Vẽ đc Card ở Hud World rồi thì reset allow để chbi cho card tiếp theo
+		//Nó vào đc tới đây rồi thì hiển nhiên là ani != -1 (tức là có Card đc lượm)
+	}
 
 	//Khởi tạo hiệu ứng chớp chớp cho Card
 	if (!isUndrawInitialized)
 	{
-		untouch_0 = 1;
-		untouch_draw_0 = GetTickCount64();
+		untouch_1 = 1;
+		untouch_draw_1 = GetTickCount64();
 		isUndrawInitialized = 1;
 	}
 }
