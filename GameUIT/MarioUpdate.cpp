@@ -1,5 +1,6 @@
 ﻿#include "Mario.h"
 #include "PlayScene.h"
+#include "BlackScreen.h"
 
 void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
@@ -10,16 +11,38 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	//Chỉ khi trên mặt đất thì biến đấy mới tăng dần lên
 	//Còn nếu đang chạy mà nhảy (not on platform) thì cái biến đấy giảm dần
 
-	if (state == MARIO_STATE_DIE || isReachEndPos)
+	if (GetTickCount64() - die_idle_start > 900 && isDieIdle) //Make sure only 1 time
 	{
-		//tắt Cam chứ 0 thì nó bị lệch xuống dưới
-		isAtMainWorld = false;
-		DebugOut(L"CamX, CamY: %f, %f\n", CCamera::GetInstance()->GetCamPos().x, CCamera::GetInstance()->GetCamPos().y);
-		CGame::GetInstance()->InitiateSwitchScene(ID_WORLD);
-		return;
+		isDieIdle = false;
+		isDieJump = true;
+		vy = -MARIO_JUMP_DEFLECT_SPEED;
+		ay = 0.002f;
+		die_idle_start = 0;
+		die_time_out = GetTickCount64();
+	}
+
+	if (state == MARIO_STATE_DIE && !isDieIdle || isReachEndPos)
+	{
+		if (GetTickCount64() - die_time_out > 1500 && isDieJump && !init)
+		{
+			//tắt Cam chứ 0 thì nó bị lệch xuống dưới
+			//Hết chết nhảy -> chuyển scene về WORLD
+			isDieJump = false;
+			DebugOut(L"CamX, CamY: %f, %f\n", CCamera::GetInstance()->GetCamPos().x, CCamera::GetInstance()->GetCamPos().y);
+			CBlackScreen::GetInstance()->SetState(BLACK_SCR_EFF_STATE_DRAW_FROM_0);
+			init = 1;
+		}
+
+		if (CBlackScreen::GetInstance()->GetAlpha() == 1.0f)
+		{
+			isAtWorld = 1;
+			isTrulyDied = true;
+			CGame::GetInstance()->InitiateSwitchScene(ID_WORLD);
+			return;
+		}
 	}
 	DebugOut(L"CamX, CamY: %f, %f\n", CCamera::GetInstance()->GetCamPos().x, CCamera::GetInstance()->GetCamPos().y);
-	DebugOutTitle(L"St, vy, ay: %d, %f, %f", state, vy, ay);
+	DebugOutTitle(L"St, atMW, atW: %d, %d, %d", state, isAtMainWorld, isAtWorld);
 
 	if (!isEvolving)
 	{

@@ -197,11 +197,18 @@ void CMario::SetState(int state)
 		break;
 
 	case MARIO_STATE_DIE:
-		vy = -MARIO_JUMP_DEFLECT_SPEED;
 		vx = 0;
 		ax = 0;
 		HP--;
-		CCamera::GetInstance()->SetTargetToFollow(nullptr); //Neccessary?
+		//tắt 2 thằng này để có thể chết đứng mà 0 bị rơi 
+		vy = 0;  
+		ay = 0;
+		isDieIdle = true; //bắt đầu chết đứng
+		die_idle_start = GetTickCount64();
+
+		//Code Below Neccessary? -> I Found it Yes AND YES IT IS!!! :))
+		CCamera::GetInstance()->SetTargetToFollow(nullptr);
+
 		break;
 	}
 

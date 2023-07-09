@@ -485,9 +485,7 @@ void CMario::HandleCollisionOtherDirectionWithKoopa(LPCOLLISIONEVENT e, CKoopa* 
 						StartUntouchable();
 					}
 					else
-					{
 						SetState(MARIO_STATE_DIE);
-					}
 				} //các state không gây dmg cho Mario
 				else if (koopa->GetState() == KOOPA_STATE_SLEEP_REVERSE
 					|| koopa->GetState() == KOOPA_STATE_REBORN_REVERSE
@@ -596,9 +594,7 @@ void CMario::OnCollisionWithFlower(LPCOLLISIONEVENT e)
 			StartUntouchable();
 		}
 		else
-		{
 			SetState(MARIO_STATE_DIE);
-		}
 	}
 }
 
@@ -620,9 +616,7 @@ void CMario::OnCollisionWithFireBullet(LPCOLLISIONEVENT e)
 			StartUntouchable();
 		}
 		else
-		{
 			SetState(MARIO_STATE_DIE);
-		}
 	}
 }
 

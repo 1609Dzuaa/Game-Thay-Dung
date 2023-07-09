@@ -53,15 +53,16 @@ void CCamera::Update()
 {
     CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
 
-    if (!target_follow) 
-        return;
-    if (mario->GetState() == MARIO_STATE_DIE)
+    if (mario->GetIsTrulyDied())
     {
         //chỉnh lại ĐK end game
         this->posX = 0;
         this->posY = 0;
         return;
     }
+
+    if (target_follow == nullptr)
+        return;
 
     //Khi Enter Map 1-1 thì pos Cam lúc này là (0,96) dẫn đến việc khi chết
     //World bị lệch trên 1 khúc => lúc chết thì set lại vị trí cam thành (0,0)

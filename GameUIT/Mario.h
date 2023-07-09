@@ -287,6 +287,7 @@ class CMario : public CGameObject
 	BOOLEAN isInitialized;
 	BOOLEAN isAllowToUseTube;
 	BOOLEAN isTravelling;
+	BOOLEAN init;
 	BOOLEAN isAtMainWorld; //1-1
 	BOOLEAN isAtWorld; //World 1
 	BOOLEAN isReachEndPos;	//để nhận biết khi đến vị trí end game thì spawn text
@@ -314,6 +315,11 @@ class CMario : public CGameObject
 	ULONGLONG untouch_draw_1; //thgian vẽ
 	ULONGLONG shaking_start;
 	ULONGLONG wait_end_game;
+	ULONGLONG die_idle_start; //thgian chết đứng im
+	ULONGLONG die_time_out; //thời gian chết nhảy
+	BOOLEAN isDieIdle; //để biết đang animation chết nhưng đứng yên
+	BOOLEAN isDieJump;
+	BOOLEAN isTrulyDied; //để biết đã chết thật sự(rơi xuống dưới) để set Cam về vị trí ban đầu (0, 0)
 	BOOLEAN isOnPlatform;
 	BOOLEAN isTravelUp;
 	BOOLEAN isTravelDown;
@@ -364,10 +370,7 @@ public:
 	void Render();
 	void SetState(int state);
 
-	int IsCollidable()
-	{
-		return (state != MARIO_STATE_DIE && !isTravelling);
-	}
+	int IsCollidable();
 
 	int IsBlocking() { return 0; }
 
@@ -404,6 +407,7 @@ public:
 	BOOLEAN GetIsTravelling() { return this->isTravelling; }
 	BOOLEAN GetIsEndGame() { return this->isEndGame; }
 	BOOLEAN GetIsReachEndPos() { return this->isReachEndPos; }
+	BOOLEAN GetIsTrulyDied() { return this->isTrulyDied; }
 	int GetSpeedBar() { return this->SpeedBar; }
 	int GetTypeOfCardCollected() { return this->TypeOfCardCollected; }
 	void SetHoldKoopa(BOOLEAN para) { this->isAllowToHoldKoopa = para; }

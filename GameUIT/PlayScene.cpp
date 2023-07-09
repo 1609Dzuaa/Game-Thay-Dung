@@ -348,7 +348,6 @@ void CPlayScene::Update(DWORD dt)
 	// TO-DO: This is a "dirty" way, need a more organized way!
 	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
 
-	//Xem lại tại sao va chạm ở Map1-1 khá kém (0 va đc với FireBullet???)
 	//Điều chỉnh lại gravity
 	HandleTimerAndWait(); //Xử lý thời gian và Wait trong game
 
@@ -360,14 +359,21 @@ void CPlayScene::Update(DWORD dt)
 
 	for (size_t i = 0; i < objects.size(); i++)
 	{
-			objects[i]->Update(dt, &coObjects);
+		objects[i]->Update(dt, &coObjects);
 	}
 
 	// skip the rest if scene was already unloaded (Mario::Update might trigger PlayScene::Unload)
 	if (player == NULL) return;
 
-	//Update Each Instance Of The Game Here:
-	CCamera::GetInstance()->SetTargetToFollow(player);
+	//Update Each Instance Of The Game Start From Here:
+	if (!init)
+	{
+		CCamera::GetInstance()->SetTargetToFollow(player);
+		mario->SetIsAtWorld(0); //Xem lại sự cần thiết của IsAtWorld và AtMainWorld ??
+		init = 1;
+		//Đảm bảo chỉ đc Set Follow duy nhất lúc tạo Scene
+		//Tránh việc khi chết xuống r mà Cam vẫn đi theo dù đã set nullptr ở SetState
+	}
 	CCamera::GetInstance()->Update();
 	CHud::GetInstance()->Update();
 	CBlackScreen::GetInstance()->Update();
@@ -389,6 +395,10 @@ void CPlayScene::Render()
 	//std::sort(objects.begin(), objects.end(), );
 	//CScene* current_scene = (CScene*)CGame::GetInstance()->GetCurrentScene();
 	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
+	
+	//Bug: 
+	//1. xthrow.cpp => lỗi của Cam trong quá trình render Map (thường là sai vị trí Cam)
+	//2. badAllocate => lỗi đọc Map || đọc thông tin (bị sai hoặc gì đó)
 	if (mario->GetIsAtMainWorld())
 	{
 		if (map != NULL)
@@ -397,7 +407,7 @@ void CPlayScene::Render()
 			DebugOut(L"[INFO] Map was NULL\n");
 	}
 
-	if (!mario->GetIsAtMainWorld())
+	if (!mario->GetIsAtMainWorld() && !mario->GetIsAtWorld())
 	{
 		//Vẽ Underworld <=> đã reachTransPos và đc Tele xuống Underworld cũng như hết thời gian chuyển cảnh
 		if (underworld_map != NULL)
@@ -484,11 +494,14 @@ void CPlayScene::HandleTimerAndWait()
 {
 	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
 	
+	if (mario->GetState() == MARIO_STATE_DIE) return; //chết thì 0 đụng đến giờ nữa
+
 	//Reset Timer if DIE
 	if (mario->GetHP() == prevHP - 1)
 	{
 		timer = 300;
 		prevHP = mario->GetHP();
+		init = 0;
 	}
 
 	if (IsWait)

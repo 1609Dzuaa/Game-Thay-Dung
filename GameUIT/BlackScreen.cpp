@@ -47,10 +47,9 @@ void CBlackScreen::Update()
 		if (Alpha >= 1.0f)
 		{
 			Alpha = 1.0f;
-			state = BLACK_SCR_EFF_STATE_DRAW_FROM_1;
 			CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
-			//CMario* mario = (CMario*)((LPWORLDPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
 			mario->SetIsWaitingForTrans(0);
+			state = BLACK_SCR_EFF_STATE_DRAW_FROM_1;
 		}
 	}
 	else if (state == BLACK_SCR_EFF_STATE_DRAW_FROM_1)
@@ -65,7 +64,7 @@ void CBlackScreen::Update()
 		}
 	}
 
-	DebugOut(L"St, Al: %d, %f\n", state, Alpha);
+	//DebugOut(L"St, Al: %d, %f\n", state, Alpha);
 }
 
 void CBlackScreen::Render()

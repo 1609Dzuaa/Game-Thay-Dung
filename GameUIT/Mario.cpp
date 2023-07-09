@@ -44,8 +44,12 @@ CMario::CMario(float x, float y) : CGameObject(x, y)
 	isReachTransPos = false;
 	isWaitingForTrans = true;
 	isEndGame = false;
+	init = false;
 	isReachEndPos = false;
 	IsWaitable = true;
+	isDieIdle = false;
+	isDieJump = false;
+	isTrulyDied = false;
 	CountJumpOnEnemies = 0;
 	untouchdraw = -1;
 	untouch_draw_0 = 0;
@@ -54,6 +58,8 @@ CMario::CMario(float x, float y) : CGameObject(x, y)
 	untouch_1 = 0;
 	shaking_start = 0;
 	wait_end_game = 0;
+	die_idle_start = 0;
+	die_time_out = 0;
 	start_y = -1;
 	fly_start = -1;
 	TypeOfCardCollected = -1;
@@ -258,4 +264,10 @@ void CMario::HandleTravellingUp()
 	if (isAtMainWorld && !isWaitingForTrans && isTravelling)
 		vy = -MARIO_TRAVELLING_SPEED;
 	isAllowToUseTube = false;
+}
+
+//Đặt bên đây cho compile nhanh hơn
+int CMario::IsCollidable()
+{
+	return (state != MARIO_STATE_DIE && !isTravelling);
 }
