@@ -62,13 +62,22 @@ void CHud::UpdateCard()
 
 int CHud::Get3Card()
 {
-	//Careful Warning here:
+	//Careful Warning here: DONE!
+	//"unsafe operation: no value of type 'bool' promoted to type 'int' can equal the given constant"
+	//if(a == b == 3) NO 
+	//=> Solution: if(a == 3 && b == 3) 
 	//How about Create An Instance Class That Store Every Data From 1-1 And Bind It To WORLD ?
-	if (cardCollected[0].type == cardCollected[1].type == cardCollected[2].type == CARD_STATE_STAR)
+	if (cardCollected[0].type == CARD_STATE_STAR
+		&& cardCollected[1].type == CARD_STATE_STAR
+		&& cardCollected[2].type == CARD_STATE_STAR)
 		return 5;
-	else if (cardCollected[0].type == cardCollected[1].type == cardCollected[2].type == CARD_STATE_FLOWER)
+	else if (cardCollected[0].type == CARD_STATE_FLOWER 
+		&& cardCollected[1].type == CARD_STATE_FLOWER
+		&& cardCollected[2].type == CARD_STATE_FLOWER)
 		return 3;
-	else if (cardCollected[0].type == cardCollected[1].type == cardCollected[2].type == CARD_STATE_MUSHROOM)
+	else if (cardCollected[0].type == CARD_STATE_MUSHROOM
+		&& cardCollected[1].type == CARD_STATE_MUSHROOM
+		&& cardCollected[2].type == CARD_STATE_MUSHROOM)
 		return 2;
 	else
 		return 1;
