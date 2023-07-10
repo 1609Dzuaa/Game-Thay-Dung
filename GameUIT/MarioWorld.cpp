@@ -9,8 +9,19 @@
 #include "Hud.h"
 #include "debug.h"
 
+BOOLEAN CMarioWorld::isDead5Times = 0;
+
 void CMarioWorld::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
+	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
+
+	if (mario->HP < 0)
+	{
+		isDead5Times = 1;
+		CBlackScreen::GetInstance()->SetState(0);
+		return;
+	}
+
 	if (HasCollidedWithEntrance || HasCollidedWithBlock)
 		HandlePositionWithEntranceAndBlock();
 
@@ -98,6 +109,9 @@ void CMarioWorld::HandlePositionWithEntranceAndBlock()
 
 void CMarioWorld::Render() 
 {
+	if (isDead5Times) 
+		return;
+
 	CAnimations* animations = CAnimations::GetInstance();
 	
 	int aniId = ID_ANI_MARIO_SMALL_AT_WORLD;
@@ -170,6 +184,8 @@ bool CMarioWorld::IsAllowToEnterEntrance(CEntrance* entr_para)
 
 void CMarioWorld::SetState(int state) 
 {
+	if (!CHud::GetInstance()->isAllowToPlay) return;
+
 	switch (state)
 	{
 	case MARIO_WORLD_STATE_MOVE_RIGHT:

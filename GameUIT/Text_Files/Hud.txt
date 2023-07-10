@@ -1,7 +1,16 @@
 # id	left	top	right	bottom	texture_id
 [SPRITES]
-#Hud
+#Hud Normal
 100000	0	0	271	31	100
+
+#Hud Start
+100001	132	0	261	55	133
+
+#Hud End
+100002	1	0	128	63	133
+
+#Red Arrow
+100003	2	70	7	77	133
 
 #Nb 0 -> 9
 0	32	32	41	39	110
@@ -42,6 +51,15 @@
 [ANIMATIONS]
 #Hud
 100000	100000	100
+
+#Hud Start
+100001	100001	100
+
+#Hud End
+100002	100002	100
+
+#Red Arrow
+100003	100003	100
 
 #Number
 0	0	100

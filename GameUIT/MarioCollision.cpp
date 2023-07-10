@@ -202,6 +202,7 @@ void CMario::OnCollisionWithNonBlockingObjects(LPCOLLISIONEVENT e)
 
 void CMario::OnCollisionWithColorPlatform(LPCOLLISIONEVENT e)
 {
+	vy = 0;
 	if (e->ny < 0)
 	{
 		if (isEndGame)

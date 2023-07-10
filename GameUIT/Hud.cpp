@@ -9,6 +9,7 @@ CHud* CHud::__HudInstance = NULL;
 //int CHud::cardType[3] = { 0,0,0 };
 Card CHud::cardCollected[3] = { 0,0,0 };
 int CHud::numCardCollected = 0;
+BOOLEAN CHud::isAllowToPlay = 0;
 
 CHud* CHud::GetInstance()
 {
@@ -37,7 +38,7 @@ void CHud::Update()
 	//Update vị trí của Hud theo Cam
 	//Chia ra vị trí ở MainWorld và Underground
 	//CMarioWorld* mario_world = (CMarioWorld*)((LPWORLDPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
-	//CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
+	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
 	//if (mario_world->GetAtW())
 	//{
 		//for (int i = 0; i < numCardCollected; i++)
@@ -45,7 +46,8 @@ void CHud::Update()
 	this->x = CCamera::GetInstance()->GetCamPos().x + CGame::GetInstance()->GetBackBufferWidth() / 2;
 	this->y = CCamera::GetInstance()->GetCamPos().y + CGame::GetInstance()->GetBackBufferHeight() - 16.0f;
 	//UpdateCard();
-	//DebugOut(L"NumCard, C1, C2, C3: %d, %d, %d\n", numCardCollected, cardCollected[0].type, cardCollected[1].type, cardCollected[2].type);
+	if (mario->HP < 0)
+		AllowRenderHudEnd = 1;
 	DebugOut(L"ID, isPass, NumPass: %d, %d, %d\n", CDataBindings::GetInstance()->WorldEntrance[0].ID, CDataBindings::GetInstance()->WorldEntrance[0].isPassed, CDataBindings::GetInstance()->NumEntrancePass);
 }
 
@@ -104,13 +106,23 @@ void CHud::Render()
 	RenderTimer();
 	RenderPoints();
 	RenderSpeedBar(); //prob here
-	RenderCard(); //Có vấn đề: Lâu lâu lại 0 hiện ?!!!
+	RenderCard(); 
+	if (!(GetTickCount64() - Hud_Start_Draw_Time > 1000 && isStarting))
+		RenderHudStart();
+	else
+		isAllowToPlay = 1; //Chú ý biến này khi Load lại game
+	//if (AllowRenderHudEnd)
+		RenderHudEnd();
 }
 
 void CHud::RenderHP()
 {
 	//Bug đêm qua -1 là do chết quá số mạng nên nó 0 tìm thấy frame - 1 xDDDDDDD
 	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
+	
+	if (mario->HP < 0) 
+		return;
+
 	CAnimations* animations = CAnimations::GetInstance();
 	animations->Get(mario->GetHP())->Render(x - 77.0f, y + 5.0f, false);
 }
@@ -218,26 +230,7 @@ void CHud::RenderCard()
 
 	//Tuy nhiên: vấn đề mới là xem xét lại hàm này vì có lẽ vi phạm quy tắc
 
-	if (mario->GetIsAtMainWorld()) //Vẽ Card ở Map 1-1 . if(isaffected)=>vẽ chớp cho nó
-	{
-		float x1 = CCamera::GetInstance()->GetCamPos().x + CGame::GetInstance()->GetBackBufferWidth() - 69.0f;
-
-		for (int i = 0; i < numCardCollected; i++)
-		{
-			if (cardCollected[i].isInitUndraw && !cardCollected[i].NoFlashAnymore)
-				HandleCardDrawState(cardCollected[i]);
-			else 
-			{
-				cardCollected[i].draw = 1;
-				untouch_draw_1 = GetTickCount64();
-				cardCollected[i].isInitUndraw = 1;
-				//Khởi tạo hiệu ứng chớp chớp cho Card
-			}
-			if (cardCollected[i].aniID != 0 && cardCollected[i].isAllowToRender && cardCollected[i].draw)
-				animations->Get(cardCollected[i].aniID)->Render(x1 + 24 * i, 372.0f, false);
-		}
-	}
-	else if (mario_world->GetAtW()) //Vẽ Card ở World
+	if (mario_world->GetAtW()) //Vẽ Card ở World
 	{
 		for (int i = 0; i < numCardCollected; i++)
 			if (cardCollected[i].aniID != 0)
@@ -245,6 +238,27 @@ void CHud::RenderCard()
 				animations->Get(cardCollected[i].aniID)->Render(x + 54.0f + i * 24.0f, y, false);
 				cardCollected[i].NoFlashAnymore = 1;
 			}
+	}
+	else //Vẽ Card ở Map 1-1 . if(isaffected)=>vẽ chớp cho nó
+	{
+		float x1 = CCamera::GetInstance()->GetCamPos().x + CGame::GetInstance()->GetBackBufferWidth() - 69.0f;
+
+		for (int i = 0; i < numCardCollected; i++)
+		{
+			if (cardCollected[i].isInitUndraw && !cardCollected[i].NoFlashAnymore)
+				HandleCardDrawState(cardCollected[i]);
+			else
+			{
+				cardCollected[i].draw = 1;
+				cardCollected[i].isInitUndraw = 1;
+				//Khởi tạo hiệu ứng chớp chớp cho Card
+			}
+			if (cardCollected[i].aniID != 0 && cardCollected[i].isAllowToRender && cardCollected[i].draw)
+			{
+				float y_draw_pos = CCamera::GetInstance()->GetCamPos().y + CGame::GetInstance()->GetBackBufferHeight() / 2 + 130.0f;
+				animations->Get(cardCollected[i].aniID)->Render(x1 + 24 * i, y_draw_pos, false);
+			}
+		}
 	}
 }
 
@@ -294,4 +308,22 @@ void CHud::RenderPauseText()
 	animations->Get(ID_LETTER_U)->Render(x + 20.0f, y, false);
 	animations->Get(ID_LETTER_S)->Render(x + 30.0f, y, false);
 	animations->Get(ID_LETTER_E)->Render(x + 40.0f, y, false);
+}
+
+void CHud::RenderHudStart()
+{
+	CAnimations* animations = CAnimations::GetInstance();
+	float x_draw_pos = static_cast<float>(CGame::GetInstance()->GetBackBufferWidth() / 2);
+	float y_draw_pos = static_cast<float>(CGame::GetInstance()->GetBackBufferHeight() / 2) - 77.0f;
+	animations->Get(ID_HUD_START)->Render(x_draw_pos, y_draw_pos, false);
+	animations->Get(ID_NUMBER_1)->Render(x_draw_pos + 20.0f, y_draw_pos - 10.0f, false);
+	animations->Get(ID_NUMBER_4)->Render(x_draw_pos + 40.0f, y_draw_pos + 10.0f, false);
+}
+
+void CHud::RenderHudEnd()
+{
+	CAnimations* animations = CAnimations::GetInstance();
+	float x_draw_pos = static_cast<float>(CGame::GetInstance()->GetBackBufferWidth() / 2);
+	float y_draw_pos = static_cast<float>(CGame::GetInstance()->GetBackBufferHeight() / 2) - 77.0f;
+	animations->Get(ID_HUD_END)->Render(x_draw_pos, y_draw_pos, false);
 }

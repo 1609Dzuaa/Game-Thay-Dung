@@ -15,6 +15,8 @@
 #include "Hud.h"
 #include "BlackScreen.h"
 #include "DataBinding.h"
+#include "PlayScene.h"
+#include "RedArrow.h"
 
 #include "WorldKeyHandler.h"
 #include "GameMap.h"
@@ -279,12 +281,20 @@ void CWorldPlayScene::Load()
 void CWorldPlayScene::Update(DWORD dt) 
 {
 	//Với Hud ở World thì khởi tạo 1 lần duy nhất, 0 CẦN Update
+	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
+	CMarioWorld* mario_world = (CMarioWorld*)((LPWORLDPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
+
+	if (mario->HP < 0)
+	{
+		mario_world->isDead5Times = 1;
+		return;
+	}
+
 	CBlackScreen::GetInstance()->Update();
 	//CHud::GetInstance()->SetUnDrawState(0, 1);
-	CMarioWorld* mario = (CMarioWorld*)((LPWORLDPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
-	mario->SetAtW(1);
+	mario_world->SetAtW(1);
 
-	InitializePositionAtWorld(mario);
+	InitializePositionAtWorld(mario_world);
 
 	DebugOut(L"x, y: %f, %f\n", CDataBindings::GetInstance()->WorldEntrance[CDataBindings::GetInstance()->NumEntrancePass - 1].x, CDataBindings::GetInstance()->WorldEntrance[CDataBindings::GetInstance()->NumEntrancePass - 1].y);
 
@@ -308,11 +318,18 @@ void CWorldPlayScene::Update(DWORD dt)
 void CWorldPlayScene::Render() 
 {
 	world_map->Render();
+	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
+
 	for (unsigned int i = 0; i < objects.size(); i++)
 		objects[i]->Render();
 
-	CHud::GetInstance()->Render(); //Done major bug
-	CBlackScreen::GetInstance()->Render(); //prob here
+	CHud::GetInstance()->Render(); //Done major bug	
+	if (mario->HP >= 0)
+	{
+		CBlackScreen::GetInstance()->Render(); //prob here
+	}
+
+	CRedArrow::GetInstance()->Render();
 }
 
 void CWorldPlayScene::Unload() 

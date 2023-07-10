@@ -8,7 +8,7 @@
 #include "Effect.h"
 #include "BlackScreen.h"
 
-int CMario::HP = 4;
+int CMario::HP = 0;
 int CMario::coin = 0;
 int CMario::points = 0;
 int CMario::TypeOfCardCollected = 0;

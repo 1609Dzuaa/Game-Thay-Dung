@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "GameObject.h"
+#include "PlayScene.h"
 
 #define ID_GRASS	3150
 #define ID_HELP		3151
@@ -31,13 +32,18 @@ public:
 	void Render() 
 	{
 		HandleHelpDrawState();
+
 		if (untouch_0) return;
 
 		CAnimations* animations = CAnimations::GetInstance();
 		if (!isHelp)
-			animations->Get(ID_GRASS)->Render(x, y, false);
-		else 
-			animations->Get(ID_HELP)->Render(x, y, false);
+			animations->Get(ID_GRASS)->Render(x, y, true);
+		else
+		{
+			CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
+			if (mario->HP < 0) return;
+			animations->Get(ID_HELP)->Render(x, y, true);
+		}
 	};
 	void GetBoundingBox(float& left, float& top, float& right, float& bottom) {};
 	void HandleHelpDrawState() 

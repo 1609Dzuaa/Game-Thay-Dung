@@ -19,7 +19,7 @@ void CGateKeeper::Render()
 {
 	CAnimations* animations = CAnimations::GetInstance();
 	if (vx > 0)
-		animations->Get(ID_ANI_GATE_KEEPER_MOVE_RIGHT)->Render(x, y, false);
+		animations->Get(ID_ANI_GATE_KEEPER_MOVE_RIGHT)->Render(x, y, true);
 	else
-		animations->Get(ID_ANI_GATE_KEEPER_MOVE_LEFT)->Render(x, y, false);
+		animations->Get(ID_ANI_GATE_KEEPER_MOVE_LEFT)->Render(x, y, true);
 }

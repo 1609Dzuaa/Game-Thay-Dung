@@ -1,6 +1,7 @@
 ﻿#include "WorldKeyHandler.h"
 #include "MarioWorld.h"
 #include "WorldPlayScene.h"
+#include "RedArrow.h"
 #include "debug.h"
 
 void CWorldMapKeyEvent::OnKeyDown(int KeyCode)
@@ -8,6 +9,32 @@ void CWorldMapKeyEvent::OnKeyDown(int KeyCode)
 	CMarioWorld* mario = (CMarioWorld*)((LPWORLDPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
 	DebugOut(L"[INFO] KeyDown: %d\n", KeyCode);
 	//Thêm phần Block phím khi đang move HOẶC đang enter entrance
+	if (mario->isDead5Times)
+	{
+		switch (KeyCode)
+		{
+		case DIK_UP:
+			CRedArrow::GetInstance()->SetLevel(0);
+			break;
+
+		case DIK_DOWN:
+			CRedArrow::GetInstance()->SetLevel(1);
+			break;
+			
+		case DIK_S:
+			if (!CRedArrow::GetInstance()->GetLevel())
+			{
+				//Chuyển Scene thì Reset hết các Data
+				//Sáng mai dậy nhớ Check kĩ các biến static tồn tại trong suốt
+				//quá trình chạy CT
+				CGame::GetInstance()->InitiateSwitchScene(ID_WORLD);
+			}
+			//Dựa vào level của Arrow
+			break;
+		}
+		return; //Chết quá 5 mạng thì chỉ cho phép bấm 3 phím này
+	}
+
 	switch (KeyCode)
 	{
 	case DIK_RIGHT:

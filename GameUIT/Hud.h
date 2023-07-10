@@ -20,6 +20,8 @@
 #define ID_LETTER_E	22
 #define ID_SPEED_BAR 30
 #define ID_P_BUTTON	31
+#define ID_HUD_START	100001
+#define ID_HUD_END	100002
 
 #define CARD_UNDRAW_TIME	200
 
@@ -48,20 +50,23 @@ class CHud
 	BOOLEAN isUndrawInitialized;
 	BOOLEAN isAffect; //Card vừa lượm đc(vẽ chớp chớp ở Hud)
 	BOOLEAN initCard; //Check xem đã khởi tạo thông tin cho Card chưa (mỗi Card 1 lần)
-	ULONGLONG untouch_draw_0; //thgian 0 vẽ
-	ULONGLONG untouch_draw_1; //thgian vẽ
+	BOOLEAN isStarting;
+	BOOLEAN AllowRenderHudEnd;
+	ULONGLONG Hud_Start_Draw_Time;
 public:
 	static int numCardCollected;
+	static BOOLEAN isAllowToPlay; //Cho phép chơi (khi đã hết hiện thanh Hud Start)
 	CHud(float x, float y)
 	{
 		this->x = x;
 		this->y = y;
 		allowToRenderCard = 0;
-		untouch_draw_0 = 0;
-		untouch_draw_1 = 0;
+		Hud_Start_Draw_Time = GetTickCount64();
 		isUndrawInitialized = 0;
 		isAffect = 0;
+		isStarting = 1;
 		initCard = 0;
+		AllowRenderHudEnd = 0;
 	}
 	static CHud* GetInstance();
 	void Update();
@@ -77,6 +82,8 @@ public:
 	void RenderPoints();
 	void RenderSpeedBar();
 	void RenderCard();
+	void RenderHudStart();
+	void RenderHudEnd();
 
 	void SetAllowToRenderCard() { cardCollected[numCardCollected].isAllowToRender = 1; }
 

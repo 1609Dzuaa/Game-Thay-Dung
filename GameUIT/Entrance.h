@@ -20,7 +20,6 @@ class CEntrance :public CGameObject
 {
 	int type, scene_id; //Similiar to Portal
 	D3DXVECTOR4 BlockDirect;
-	BOOLEAN HasBeenPassed;
 public:
 	CEntrance(float x, float y, int type, int scene_ID, float block_L, float block_T, float block_R, float block_B) :CGameObject(x, y)
 	{
@@ -31,7 +30,6 @@ public:
 		BlockDirect.y = block_T;
 		BlockDirect.z = block_R;
 		BlockDirect.w = block_B;
-		HasBeenPassed = 0;
 		state = 0;
 	};
 	void GetBoundingBox(float& left, float& top, float& right, float& bottom);
@@ -43,5 +41,4 @@ public:
 	//Lấy hướng Block: x, y, z, w lần lượt là L, T, R, B
 	D3DXVECTOR4 GetBlockDirect() { return this->BlockDirect; }
 	void SetState(int state);
-	//void SetPassed(BOOLEAN& para) { this->HasBeenPassed = para; }
 };

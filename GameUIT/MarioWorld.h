@@ -30,6 +30,7 @@ class CMarioWorld : public CGameObject
 	BOOLEAN isTravelling;
 	BOOLEAN init;
 public:
+	static 	BOOLEAN isDead5Times; //Chết hẳn
 	CMarioWorld(float x, float y) : CGameObject(x, y)
 	{
 		isAllowToPlayThatEntrance = false;

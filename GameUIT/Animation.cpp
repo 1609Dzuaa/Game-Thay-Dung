@@ -35,7 +35,8 @@ void CAnimation::Render(float x, float y, BOOLEAN affectBySW)
 			DWORD t = frames[currentFrame]->GetTime(); //Lấy thời gian chuyển động của frame hiện tại và gán cho t
 			if (now - lastFrameTime > t)
 			{
-				if (mario->GetStopWatch()); // nếu đang bật đồng hồ ngưng đọng thì giữ nguyên cái frame đó
+				if (mario->GetStopWatch() && mario->GetIsAtWorld() || mario->HP < 0)
+					; // nếu đang bật đồng hồ ngưng đọng thì giữ nguyên cái frame đó
 				else
 					currentFrame++;
 				lastFrameTime = now;

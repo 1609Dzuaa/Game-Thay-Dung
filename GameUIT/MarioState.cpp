@@ -86,9 +86,9 @@ void CMario::SetState(int state)
 			isJumping = true;
 			isLanding = false;
 			if (isRunning)
-				vy = -0.47f;
+				vy = -0.6f;
 			else
-				vy = -0.42f;
+				vy = -0.55f;
 		}
 		break;
 
