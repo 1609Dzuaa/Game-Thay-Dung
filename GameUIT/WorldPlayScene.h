@@ -8,6 +8,7 @@
 #include "Goomba.h"
 #include <string>
 #include "GameMap.h"
+#include "MarioWorld.h"
 
 class CWorldPlayScene : public CScene
 {
@@ -18,6 +19,7 @@ protected:
 	//2. Entrance of World Map
 	LPGAMEOBJECT player;
 	CMap* world_map = nullptr;
+	BOOLEAN initPos; //Đánh dấu khởi tạo vị trí ở WORLD
 
 	vector<LPGAMEOBJECT> objects;
 
@@ -30,6 +32,8 @@ protected:
 	void _ParseSection_OBJECTS(string line);
 
 	void LoadAssets(LPCWSTR assetFile);
+
+	void InitializePositionAtWorld(CMarioWorld* mario); //Hàm khởi tạo vị trí tại World
 
 public:
 	CWorldPlayScene(int id, LPCWSTR filePath);

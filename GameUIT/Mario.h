@@ -115,6 +115,8 @@
 
 #define MARIO_STATE_TRAVELLING	740
 
+#define MARIO_STATE_END_GAME	315
+
 #pragma endregion STATE
 //==================================================//
 
@@ -302,9 +304,6 @@ class CMario : public CGameObject
 	float start_y;			//Điểm bắt đầu chui xuống
 	CTail* tail;
 
-	static int HP;
-	static int coin;	//Ăn Coin cho 50đ, 100 coin đổi 1 mạng, coin từ 99 về 0
-	static int points;
 	int level;
 	int untouchable, untouchdraw;
 	ULONGLONG untouchable_start;
@@ -366,6 +365,11 @@ class CMario : public CGameObject
 	int GetAniIdRacoon();
 	int KoopaStateThatAllowToHold(CKoopa* koopa);
 public:
+
+	static int HP;
+	static int coin;	//Ăn Coin cho 50đ, 100 coin đổi 1 mạng, coin từ 99 về 0
+	static int points;
+
 	CMario(float x, float y);
 	void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
 	void UpdateMarioState();

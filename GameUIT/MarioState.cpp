@@ -4,7 +4,12 @@
 void CMario::SetState(int state)
 {
 	// DIE is the end state, cannot be changed! 
-	if (this->state == MARIO_STATE_DIE) return;
+	//Block thì phải cả 2 ĐK state đang Travel và isTraveling thì mới đúng
+	//Đây là 3 State bất khả xâm phạm 0 cho ng chơi tác động vào nữa
+	if (this->state == MARIO_STATE_DIE 
+		|| this->state == MARIO_STATE_END_GAME 
+		||this->state == MARIO_STATE_TRAVELLING && isTravelling) 
+		return;
 
 	switch (state)
 	{
@@ -208,6 +213,16 @@ void CMario::SetState(int state)
 
 		//Code Below Neccessary? -> I Found it Yes AND YES IT IS!!! :))
 		CCamera::GetInstance()->SetTargetToFollow(nullptr);
+
+		break;
+
+	case MARIO_STATE_END_GAME:
+		vx = 0.11f;
+		ax =0;
+		vy = 0.0f;
+		//ay = 0.0f;
+		nx = 1;
+		isWalking = true;
 
 		break;
 	}

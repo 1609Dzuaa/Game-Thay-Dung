@@ -5,6 +5,8 @@
 #include "BlockPoint.h"
 #include "BlackScreen.h"
 #include "Game.h"
+#include "DataBinding.h"
+#include "Hud.h"
 #include "debug.h"
 
 void CMarioWorld::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
@@ -26,6 +28,12 @@ void CMarioWorld::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			{
 				CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
 				mario->SetIsAtWorld(0);
+				int numEtrPass = CDataBindings::GetInstance()->NumEntrancePass;
+
+				//Cập nhật x, y tại map
+				CDataBindings::GetInstance()->WorldEntrance[numEtrPass].x = x;
+				CDataBindings::GetInstance()->WorldEntrance[numEtrPass].y = y;
+
 				CGame::GetInstance()->InitiateSwitchScene(Entrance_ID);
 				atW = 0;
 			}
@@ -35,10 +43,8 @@ void CMarioWorld::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	
 	CCollision::GetInstance()->Process(this, dt, coObjects);
 	//DebugOutTitle(L"isAllow, atMW: %d, %d", isAllowToPlayThatEntrance, Entrance_ID);
-	//DebugOut(L"CamX, CamY: %f, %f\n", CCamera::GetInstance()->GetCamPos().x, CCamera::GetInstance()->GetCamPos().y);
-	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
-	//DebugOutTitle(L"CardType: %d", mario->GetTypeOfCardCollected());
-	DebugOutTitle(L"isAtW, AtMW: %d, %d", atW, mario->GetIsAtMainWorld());
+	//DebugOut(L"CamX, CamY: %f, %f\n", CCamera::GetInstance()->GetCamPos().x, CCamera::GetInstance()->GetCamPos().y);	//DebugOutTitle(L"CardType: %d", mario->GetTypeOfCardCollected());
+	DebugOutTitle(L"St, x, y: %d, %f, %f", state, x, y);
 }
 
 void CMarioWorld::HandlePositionWithEntranceAndBlock()
@@ -135,11 +141,31 @@ void CMarioWorld::OnCollisionWithEntrance(LPCOLLISIONEVENT e)
 {
 	CEntrance* entr = dynamic_cast<CEntrance*>(e->obj);
 	Entrance_ID = entr->GetSceneID();
-	Entrance_Position.x = e->obj->GetX();
-	Entrance_Position.y = e->obj->GetY();
+	Entrance_Position.x = entr->GetX();
+	Entrance_Position.y = entr->GetY();
+	int numEtrPass = CDataBindings::GetInstance()->NumEntrancePass;
+	CDataBindings::GetInstance()->WorldEntrance[numEtrPass].ID = entr->GetType();
 	HasCollidedWithEntrance = true;
-	isAllowToPlayThatEntrance = true;
+
+	if (IsAllowToEnterEntrance(entr))
+		isAllowToPlayThatEntrance = true;
+
 	Direct_Been_Blocked = entr->GetBlockDirect(); //Cập nhật hướng Block cho Mario
+}
+
+bool CMarioWorld::IsAllowToEnterEntrance(CEntrance* entr_para)
+{
+	//Nếu là Entrance Start thì return false luôn
+	if (!entr_para->GetType()) return false;
+
+	int numEtrPass = CDataBindings::GetInstance()->NumEntrancePass;
+	for (int i = 0; i < numEtrPass; i++)
+	{
+		if (entr_para->GetType() == CDataBindings::GetInstance()->WorldEntrance[i].ID
+			&& CDataBindings::GetInstance()->WorldEntrance[i].isPassed)
+			return false;
+	}
+	return true;
 }
 
 void CMarioWorld::SetState(int state) 

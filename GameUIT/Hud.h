@@ -65,6 +65,11 @@ public:
 	}
 	static CHud* GetInstance();
 	void Update();
+	//Xem xét việc tạo các hàm Update của từng đối tượng trên Hud
+	//Rồi dựa vào đó mà Render tương ứng
+	void UpdateCard();
+	int Get3Card();
+
 	void Render();
 	void RenderHP();
 	void RenderCoin();
@@ -84,6 +89,4 @@ public:
 	void RenderPauseText();
 	void SetInitCard(BOOLEAN para) { this->initCard = para; }
 	int GetAniIDCard();
-	//int 
-	Card* GetCard() { return cardCollected; }
 };

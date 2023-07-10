@@ -652,6 +652,7 @@ void CMario::OnCollisionWithCard(LPCOLLISIONEVENT e)
 	CEffectScore* eff = new CEffectScore(COURSE_CLEAR_X, COURSE_CLEAR_Y, 0, COURSE_CLEAR_TEXT);
 	CPlayScene* current_scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
 	current_scene->AddObjectToScene(eff);
+	this->SetState(MARIO_STATE_END_GAME);
 }
 
 void CMario::SnappingToAnEdge(LPCOLLISIONEVENT e, LPGAMEOBJECT obj)

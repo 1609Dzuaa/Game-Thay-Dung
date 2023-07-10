@@ -9,13 +9,13 @@ int CKeyEventHandler::wait = 0;
 //Combo A + S + Up + Right khi travel up sinh ra bug tự chạy max speed đến cuối map
 //dù animate là travel
 //Combo Key state right + S + Up
+//Tìm cách block phím khi Travel || End Game 
+//DONE!, Đã block bên State 0 cần phải lo bên này
 
 void CSampleKeyHandler::OnKeyDown(int KeyCode)
 {
 	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
 	CGame* game = CGame::GetInstance();
-	//if (mario->GetIsEndGame() && KeyCode != DIK_W || mario->GetIsTravelling()) 
-	//	return; //ngoại trừ W khi EndGame vẫn bấm đc
 
 	DebugOut(L"[INFO] KeyDown: %d\n", KeyCode);
 	switch (KeyCode)

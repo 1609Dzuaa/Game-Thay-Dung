@@ -3,6 +3,8 @@
 #include "PlayScene.h"
 #include "WorldPlayScene.h"
 #include "MarioWorld.h"
+#include"DataBinding.h"
+
 CHud* CHud::__HudInstance = NULL;
 //int CHud::cardType[3] = { 0,0,0 };
 Card CHud::cardCollected[3] = { 0,0,0 };
@@ -34,10 +36,42 @@ void CHud::Update()
 {
 	//Update vị trí của Hud theo Cam
 	//Chia ra vị trí ở MainWorld và Underground
-
+	//CMarioWorld* mario_world = (CMarioWorld*)((LPWORLDPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
+	//CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
+	//if (mario_world->GetAtW())
+	//{
+		//for (int i = 0; i < numCardCollected; i++)
+			//cardCollected[i].NoFlashAnymore = 1;
 	this->x = CCamera::GetInstance()->GetCamPos().x + CGame::GetInstance()->GetBackBufferWidth() / 2;
 	this->y = CCamera::GetInstance()->GetCamPos().y + CGame::GetInstance()->GetBackBufferHeight() - 16.0f;
-	DebugOut(L"NumCard, C1, C2, C3: %d, %d, %d\n", numCardCollected, cardCollected[0].type, cardCollected[1].type, cardCollected[2].type);
+	//UpdateCard();
+	//DebugOut(L"NumCard, C1, C2, C3: %d, %d, %d\n", numCardCollected, cardCollected[0].type, cardCollected[1].type, cardCollected[2].type);
+	DebugOut(L"ID, isPass, NumPass: %d, %d, %d\n", CDataBindings::GetInstance()->WorldEntrance[0].ID, CDataBindings::GetInstance()->WorldEntrance[0].isPassed, CDataBindings::GetInstance()->NumEntrancePass);
+}
+
+void CHud::UpdateCard()
+{
+	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
+	if (numCardCollected == 3)
+	{
+		mario->HP += Get3Card();
+		memset(cardCollected, 0, numCardCollected);
+		numCardCollected = 0;
+	}
+}
+
+int CHud::Get3Card()
+{
+	//Careful Warning here:
+	//How about Create An Instance Class That Store Every Data From 1-1 And Bind It To WORLD ?
+	if (cardCollected[0].type == cardCollected[1].type == cardCollected[2].type == CARD_STATE_STAR)
+		return 5;
+	else if (cardCollected[0].type == cardCollected[1].type == cardCollected[2].type == CARD_STATE_FLOWER)
+		return 3;
+	else if (cardCollected[0].type == cardCollected[1].type == cardCollected[2].type == CARD_STATE_MUSHROOM)
+		return 2;
+	else
+		return 1;
 }
 
 void CHud::Render()

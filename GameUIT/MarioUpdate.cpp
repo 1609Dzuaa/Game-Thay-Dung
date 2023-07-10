@@ -1,6 +1,7 @@
 ﻿#include "Mario.h"
 #include "PlayScene.h"
 #include "BlackScreen.h"
+#include "DataBinding.h"
 
 void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
@@ -56,6 +57,13 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			isTrulyDied = true;
 			isTrulyEnd = true;
 			CGame::GetInstance()->InitiateSwitchScene(ID_WORLD);
+
+			if (isEndGame)
+			{
+				CDataBindings::GetInstance()->WorldEntrance[CDataBindings::NumEntrancePass].isPassed = 1;
+				CDataBindings::NumEntrancePass++;
+				//End game rồi thì mới tính là pass (Obiviously!)
+			}
 			return;
 		}
 	}
@@ -92,6 +100,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	UpdateTime();
 	UpdateSpeedBar();
 	UpdateMarioState();
+	HandleUntouchableDrawState(); //đặt đây thì hợp lý hơn
 	isOnPlatform = false;	
 	CCollision::GetInstance()->Process(this, dt, coObjects);
 	if (isAttacking && !isInitialized)
@@ -135,6 +144,27 @@ void CMario::UpdateMarioState()
 	}
 	if (this->isAtMaxSpeed && isJumping && isOnPlatform)
 		this->SetState(MARIO_STATE_JUMP_AT_MAX_SPEED);
+}
+
+void CMario::HandleUntouchableDrawState()
+{
+	//when untouchable, there are 2 states of drawing: Draw & NOT draw
+
+	//0 vẽ
+	if (untouchable && GetTickCount64() - untouch_draw_0 >= UNTOUCH_DRAW_TIME && untouch_0)
+	{
+		untouch_0 = 0;
+		untouch_1 = 1;
+		untouch_draw_0 = 0;
+		untouch_draw_1 = GetTickCount64();
+	} //vẽ
+	else if (untouchable && GetTickCount64() - untouch_draw_1 >= UNTOUCH_DRAW_TIME && untouch_1)
+	{
+		untouch_0 = 1;
+		untouch_1 = 0;
+		untouch_draw_0 = GetTickCount64();
+		untouch_draw_1 = 0;
+	}
 }
 
 void CMario::UpdateTime()

@@ -2,7 +2,7 @@
 
 void CMario::Render()
 {
-	HandleUntouchableDrawState(); //đặt đây thì hợp lý hơn
+	//Only Render, NO MORE !
 	if (isEvolving && level == MARIO_LEVEL_BIG && isEvolveForward) return; //Big biến thành gấu mèo thì 0 vẽ trong 1 khoảng thgian
 	if (isEvolving && level == MARIO_LEVEL_RACOON && isEvolveBackward) return; //Gấu mèo biến về Big thì cũng 0 vẽ
 	if (untouchable && untouch_0) return;
@@ -22,27 +22,6 @@ void CMario::Render()
 
 	animations->Get(aniId)->Render(x, y, false);
 	//RenderBoundingBox();
-}
-
-void CMario::HandleUntouchableDrawState()
-{
-	//when untouchable, there are 2 states of drawing: Draw & NOT draw
-
-	//0 vẽ
-	if (untouchable && GetTickCount64() - untouch_draw_0 >= UNTOUCH_DRAW_TIME && untouch_0)
-	{
-		untouch_0 = 0;
-		untouch_1 = 1;
-		untouch_draw_0 = 0;
-		untouch_draw_1 = GetTickCount64();
-	} //vẽ
-	else if (untouchable && GetTickCount64() - untouch_draw_1 >= UNTOUCH_DRAW_TIME && untouch_1)
-	{
-		untouch_0 = 1;
-		untouch_1 = 0;
-		untouch_draw_0 = GetTickCount64();
-		untouch_draw_1 = 0;
-	}
 }
 
 //
@@ -126,7 +105,7 @@ int CMario::GetAniIdSmall()
 					aniId = ID_ANI_MARIO_SMALL_RUNNING_MAX_SPEED_RIGHT;
 				else if (ax == MARIO_ACCEL_RUN_X)
 					aniId = ID_ANI_MARIO_SMALL_RUNNING_RIGHT;
-				else if (ax == MARIO_ACCEL_WALK_X || isEndGame)
+				else if (ax == MARIO_ACCEL_WALK_X || state == MARIO_STATE_END_GAME)
 					aniId = ID_ANI_MARIO_SMALL_WALKING_RIGHT;
 			}
 			else // vx < 0
@@ -242,7 +221,7 @@ int CMario::GetAniIdBig()
 					aniId = ID_ANI_MARIO_BIG_RUNNING_MAX_SPEED_RIGHT;
 				else if (ax == MARIO_ACCEL_RUN_X)
 					aniId = ID_ANI_MARIO_RUNNING_RIGHT;
-				else if (ax == MARIO_ACCEL_WALK_X || isEndGame)
+				else if (ax == MARIO_ACCEL_WALK_X || state == MARIO_STATE_END_GAME)
 					aniId = ID_ANI_MARIO_WALKING_RIGHT;
 			}
 			else // vx < 0
@@ -382,7 +361,7 @@ int CMario::GetAniIdRacoon()
 					aniId = ID_ANI_MARIO_RACOON_BRACE_LEFT;
 				else if (ax == MARIO_ACCEL_RUN_X)
 					aniId = ID_ANI_MARIO_RACOON_RUNNING_RIGHT;
-				else if (ax == MARIO_ACCEL_WALK_X || isEndGame)
+				else if (ax == MARIO_ACCEL_WALK_X || state == MARIO_STATE_END_GAME)
 					aniId = ID_ANI_MARIO_RACOON_WALKING_RIGHT;
 			}
 			else // vx < 0

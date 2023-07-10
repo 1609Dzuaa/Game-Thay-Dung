@@ -14,6 +14,7 @@
 #include "GateKeeper.h"
 #include "Hud.h"
 #include "BlackScreen.h"
+#include "DataBinding.h"
 
 #include "WorldKeyHandler.h"
 #include "GameMap.h"
@@ -27,6 +28,7 @@ CWorldPlayScene::CWorldPlayScene(int id, LPCWSTR filePath) :
 {
 	player = NULL;
 	key_handler = new CWorldMapKeyEvent(this);
+	initPos = 0;
 }
 
 
@@ -282,6 +284,10 @@ void CWorldPlayScene::Update(DWORD dt)
 	CMarioWorld* mario = (CMarioWorld*)((LPWORLDPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
 	mario->SetAtW(1);
 
+	InitializePositionAtWorld(mario);
+
+	DebugOut(L"x, y: %f, %f\n", CDataBindings::GetInstance()->WorldEntrance[CDataBindings::GetInstance()->NumEntrancePass - 1].x, CDataBindings::GetInstance()->WorldEntrance[CDataBindings::GetInstance()->NumEntrancePass - 1].y);
+
 	vector<LPGAMEOBJECT> coObjects;
 	for (size_t i = 1; i < objects.size(); i++)
 	{
@@ -316,6 +322,7 @@ void CWorldPlayScene::Unload()
 
 	objects.clear();
 	player = NULL;
+	initPos = 0;
 
 	DebugOut(L"[INFO] Scene %d unloaded! \n", id);
 }
@@ -350,4 +357,15 @@ void CWorldPlayScene::PurgeDeletedObjects()
 	objects.erase(
 		std::remove_if(objects.begin(), objects.end(), CWorldPlayScene::IsGameObjectDeleted),
 		objects.end());
+}
+
+void CWorldPlayScene::InitializePositionAtWorld(CMarioWorld* mario)
+{
+	if (CDataBindings::GetInstance()->NumEntrancePass != 0 && !initPos)
+	{
+		float x = CDataBindings::GetInstance()->WorldEntrance[CDataBindings::GetInstance()->NumEntrancePass - 1].x;
+		float y = CDataBindings::GetInstance()->WorldEntrance[CDataBindings::GetInstance()->NumEntrancePass - 1].y;
+		mario->SetPosition(x, y);
+		initPos = 1;
+	}
 }

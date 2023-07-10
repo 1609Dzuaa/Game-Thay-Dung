@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include "GameObject.h"
-#include "Grass.h"
+#include "DataBinding.h"
 
 #define SPEED_MARIO 0.1f
 #define MARIO_WORLD_MAP_BBOX_WIDTH 8
@@ -66,5 +66,8 @@ public:
 	void SetState(int state);
 	bool GetIsMoving() { return this->isMoving; }
 	bool GetIsAllowEnter() { return this->isAllowToPlayThatEntrance; }
+
+	//Hàm này để check xem có thể chơi map đó kh
+	bool IsAllowToEnterEntrance(CEntrance* entr_para);
 	D3DXVECTOR4 GetBlockDirect() { return this->Direct_Been_Blocked; }
 };

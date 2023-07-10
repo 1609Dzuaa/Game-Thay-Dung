@@ -141,6 +141,7 @@
     <ClInclude Include="Coin.h" />
     <ClInclude Include="Collision.h" />
     <ClInclude Include="ColorPlatform.h" />
+    <ClInclude Include="DataBinding.h" />
     <ClInclude Include="debug.h" />
     <ClInclude Include="Effect.h" />
     <ClInclude Include="EffectCollision.h" />
@@ -194,6 +195,7 @@
     <ClCompile Include="Coin.cpp" />
     <ClCompile Include="Collision.cpp" />
     <ClCompile Include="ColorPlatform.cpp" />
+    <ClCompile Include="DataBinding.cpp" />
     <ClCompile Include="debug.cpp" />
     <ClCompile Include="EffectCollision.cpp" />
     <ClCompile Include="EffectScore.cpp" />
