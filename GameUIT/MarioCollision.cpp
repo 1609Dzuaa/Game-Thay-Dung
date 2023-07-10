@@ -634,6 +634,8 @@ void CMario::OnCollisionWithSwitch(LPCOLLISIONEVENT e)
 
 void CMario::OnCollisionWithCard(LPCOLLISIONEVENT e)
 {
+	if (HasCollectCard) return; //Tránh TH ăn Card 2 lần liên tiếp trong cùng 1 Scene ??!
+
 	//End game rồi nhưng phải chạm đất sau đó mới Auto Move!
 	//Hiện card linh tinh là do 2 đoạn dưới @@, đã sửa
 	CCard* card = dynamic_cast<CCard*>(e->obj);

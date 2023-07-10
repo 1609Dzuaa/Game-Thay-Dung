@@ -34,9 +34,10 @@ void CHud::Update()
 {
 	//Update vị trí của Hud theo Cam
 	//Chia ra vị trí ở MainWorld và Underground
+
 	this->x = CCamera::GetInstance()->GetCamPos().x + CGame::GetInstance()->GetBackBufferWidth() / 2;
 	this->y = CCamera::GetInstance()->GetCamPos().y + CGame::GetInstance()->GetBackBufferHeight() - 16.0f;
-	//DebugOutTitle(L"Card1, Card2, Card3: %d, %d, %d", cardType[0], cardType[1], cardType[2]);
+	DebugOut(L"NumCard, C1, C2, C3: %d, %d, %d\n", numCardCollected, cardCollected[0].type, cardCollected[1].type, cardCollected[2].type);
 }
 
 void CHud::Render()
@@ -165,93 +166,79 @@ void CHud::RenderCard()
 	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
 	CMarioWorld* mario_world = (CMarioWorld*)((LPWORLDPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
 
-	if (!allowToRenderCard) return;
+	//chúng ta sẽ 0 return ở đây mà thêm thuộc tính cho struct Card
+	//đó là AllowToRender, trong khi vẽ chúng ta sẽ Loop 3 vòng Card
+	//Check nếu đc Allow thì vẽ nó, 0 thì bỏ qua
+	//Đã xong, còn lỗi Ăn 2 Card giống nhau liên tiếp thì nó increase 3 card:
+	//vd: vừa ăn xong star => qua scene kế ăn tiếp star thì cho 3 card và vẽ 3 card ???!!
+	//Đã XONG TH ăn 2 Card liên tiếp!!
 
-	if (mario->GetIsAtMainWorld()) //nếu đang ở 1-1 thì nhấp nháy card ở Hud (nếu có)
-		HandleCardDrawState(); 
-	else if(mario_world->GetAtW())
-	{
-		untouch_0 = 0;
-		untouch_1 = 1;
-		//Set untouch_1(vẽ) cho card ở Hud lỡ may nếu chớp xong mà untouch_0 vẫn đc bật
-	}
-	//vấn đề card lúc vẽ lúc 0 là do có thể lúc end game biến untouch_0 đc bật
-	if (untouch_0 && mario != nullptr) 
-		return;
+	//Tuy nhiên: vấn đề mới là xem xét lại hàm này vì có lẽ vi phạm quy tắc
 
-	int aniId = -1;
-	if (mario->GetTypeOfCardCollected() == CARD_STATE_MUSHROOM)
-		aniId = ID_ANI_STATIC_CARD_MUSHROOM;
-	else if (mario->GetTypeOfCardCollected() == CARD_STATE_STAR)
-		aniId = ID_ANI_STATIC_CARD_STAR;
-	else if (mario->GetTypeOfCardCollected() == CARD_STATE_FLOWER)
-		aniId = ID_ANI_STATIC_CARD_FLOWER;
-
-	if (aniId == -1)
-		return;
-	//ani != 1 =>có card đc lượm
-	//cardType[numCardCollected] = mario->GetTypeOfCardCollected();
-
-	//Quá hớ hênh, coi chừng vi phạm ở đây ??
-	if (mario->GetHasCollectCard() && !initCard)
-	{
-		cardCollected[numCardCollected].type = mario->GetTypeOfCardCollected();
-		cardCollected[numCardCollected].aniID = aniId;
-		cardCollected[numCardCollected].isInit = 1;
-		numCardCollected++;
-		initCard = 1;
-	}
-
-	//Do vấn đề Render chứ card ăn đc vẫn correct
-	//Khả năng cao là do untouch_0 ?
 	if (mario->GetIsAtMainWorld()) //Vẽ Card ở Map 1-1 . if(isaffected)=>vẽ chớp cho nó
 	{
 		float x1 = CCamera::GetInstance()->GetCamPos().x + CGame::GetInstance()->GetBackBufferWidth() - 69.0f;
-		float x2 = CCamera::GetInstance()->GetCamPos().x + CGame::GetInstance()->GetBackBufferWidth() - 55.0f;
-		float x3 = CCamera::GetInstance()->GetCamPos().x + CGame::GetInstance()->GetBackBufferWidth() - 41.0f;
 
 		for (int i = 0; i < numCardCollected; i++)
 		{
-			animations->Get(cardCollected[i].aniID)->Render(x1 + 25 * i, 372.0f, false);
+			if (cardCollected[i].isInitUndraw && !cardCollected[i].NoFlashAnymore)
+				HandleCardDrawState(cardCollected[i]);
+			else 
+			{
+				cardCollected[i].draw = 1;
+				untouch_draw_1 = GetTickCount64();
+				cardCollected[i].isInitUndraw = 1;
+				//Khởi tạo hiệu ứng chớp chớp cho Card
+			}
+			if (cardCollected[i].aniID != 0 && cardCollected[i].isAllowToRender && cardCollected[i].draw)
+				animations->Get(cardCollected[i].aniID)->Render(x1 + 24 * i, 372.0f, false);
 		}
 	}
 	else if (mario_world->GetAtW()) //Vẽ Card ở World
 	{
-		//allowToRenderCard = false;
 		for (int i = 0; i < numCardCollected; i++)
-		{
-			animations->Get(cardCollected[i].aniID)->Render(x +54.0f + i * 15.0f, y, false);
-		}
-		//initCard = false; //1 đống nấm
-		//Vẽ đc Card ở Hud World rồi thì reset allow để chbi cho card tiếp theo
-		//Nó vào đc tới đây rồi thì hiển nhiên là ani != -1 (tức là có Card đc lượm)
-	}
-
-	//Khởi tạo hiệu ứng chớp chớp cho Card
-	if (!isUndrawInitialized)
-	{
-		untouch_1 = 1;
-		untouch_draw_1 = GetTickCount64();
-		isUndrawInitialized = 1;
+			if (cardCollected[i].aniID != 0)
+			{
+				animations->Get(cardCollected[i].aniID)->Render(x + 54.0f + i * 24.0f, y, false);
+				cardCollected[i].NoFlashAnymore = 1;
+			}
 	}
 }
 
-void CHud::HandleCardDrawState()
+void CHud::SetTypeCardAndAniID(int para, int type)
 {
-	if (GetTickCount64() - untouch_draw_0 >= CARD_UNDRAW_TIME && untouch_0)
+	cardCollected[para].type = type;
+
+	if (cardCollected[para].type == CARD_STATE_MUSHROOM)
+		cardCollected[para].aniID = ID_ANI_STATIC_CARD_MUSHROOM;
+	else if (cardCollected[para].type == CARD_STATE_STAR)
+		cardCollected[para].aniID = ID_ANI_STATIC_CARD_STAR;
+	else if (cardCollected[para].type == CARD_STATE_FLOWER)
+		cardCollected[para].aniID = ID_ANI_STATIC_CARD_FLOWER;
+}
+
+void CHud::HandleCardDrawState(Card& card_para)
+{
+	if (GetTickCount64() - card_para.undraw_time >= CARD_UNDRAW_TIME && card_para.undraw)
 	{
-		untouch_0 = 0;
-		untouch_1 = 1;
-		untouch_draw_0 = 0;
-		untouch_draw_1 = GetTickCount64();
+		card_para.undraw = 0;
+		card_para.draw = 1;
+		card_para.undraw_time = 0;
+		card_para.draw_time = GetTickCount64();
 	} //vẽ
-	else if (GetTickCount64() - untouch_draw_1 >= CARD_UNDRAW_TIME && untouch_1)
+	else if (GetTickCount64() - card_para.draw_time >= CARD_UNDRAW_TIME && card_para.draw)
 	{
-		untouch_0 = 1;
-		untouch_1 = 0;
-		untouch_draw_0 = GetTickCount64();
-		untouch_draw_1 = 0;
+		card_para.undraw = 1;
+		card_para.draw = 0;
+		card_para.undraw_time = GetTickCount64();
+		card_para.draw_time = 0;
 	}
+	//Kẹp tham chiếu cho nó vì ta muốn giá trị thuộc tính của Card thay đổi sau khi gọi hàm
+}
+
+int CHud::GetAniIDCard()
+{
+	return 0;
 }
 
 void CHud::RenderPauseText()

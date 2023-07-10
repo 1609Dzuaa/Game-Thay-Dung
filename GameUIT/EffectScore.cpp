@@ -84,5 +84,13 @@ void CEffectScore::SpawnCardType()
 	static_card->SetState(CARD_STATE_STATIC);
 	CPlayScene* current_scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
 	current_scene->AddObjectToScene(static_card);
-	CHud::GetInstance()->SetAllowToRenderCard(); //You Got A Card -> Vẽ Card lên Hud
+	//CHud::GetInstance()->GetCard()->isAllowToRender = 1;
+	//Set cardType và Ani  1, 2, 3 vưa nhận đc
+	CHud::GetInstance()->SetTypeCardAndAniID(CHud::GetInstance()->numCardCollected, mario->GetTypeOfCardCollected());
+	
+	CHud::GetInstance()->SetAllowToRenderCard(); //cho Phép vẽ card đó lên Hud
+	
+	CHud::GetInstance()->IncreaseNumCardCollected(); //sau đó tăng số card thu đc lên 1
+	//CHud::GetInstance()->HandleCardDrawState(static_card);
+	//You Got A Card -> Vẽ Card lên Hud
 }

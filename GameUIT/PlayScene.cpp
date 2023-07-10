@@ -368,20 +368,10 @@ void CPlayScene::Update(DWORD dt)
 	// skip the rest if scene was already unloaded (Mario::Update might trigger PlayScene::Unload)
 	if (player == NULL) return;
 
-	//Làm sao để nhận biết đã EndScene, chuyển về world map và set init lại từ đầu
-	//if (mario->GetIsTrulyEnd()) return;
-
 	//Update Each Instance Of The Game Start From Here:
 	if (!init)
-	{
-		CCamera::GetInstance()->SetTargetToFollow(player);
-		mario->SetIsAtWorld(0); //Xem lại sự cần thiết của IsAtWorld và AtMainWorld ??
-		mario->SetHasCollectCard(0);
-		CHud::GetInstance()->SetInitCard(0);
-		init = 1;
-		//Đảm bảo chỉ đc Set Follow duy nhất lúc tạo Scene
-		//Tránh việc khi chết xuống r mà Cam vẫn đi theo dù đã set nullptr ở SetState
-	}
+		Reload(mario, player);
+
 	CCamera::GetInstance()->Update();
 	CHud::GetInstance()->Update();
 	CBlackScreen::GetInstance()->Update();
@@ -461,13 +451,22 @@ void CPlayScene::Unload()
 
 	objects.clear();
 	player = NULL;
-	delete map;
-	map = nullptr;
-	delete underworld_map;
-	underworld_map = nullptr;
+	//delete map;
+	//map = nullptr;
+	//delete underworld_map;
+	//underworld_map = nullptr; //Neccessary?
 	init = 0; //mò cả buổi, quên mất chỉ cần đặt ở đây là thành công @@
-
 	DebugOut(L"[INFO] Scene %d unloaded! \n", id);
+}
+
+void CPlayScene::Reload(CMario* mario, LPGAMEOBJECT obj)
+{
+	CCamera::GetInstance()->SetTargetToFollow(obj);
+	mario->SetIsAtWorld(0); //Xem lại sự cần thiết của IsAtWorld và AtMainWorld ??
+	mario->SetHasCollectCard(0);
+	CHud::GetInstance()->SetInitCard(0);
+	timer = 300;
+	init = 1;
 }
 
 bool CPlayScene::IsGameObjectDeleted(const LPGAMEOBJECT& o) { return o == NULL; }

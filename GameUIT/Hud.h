@@ -27,7 +27,13 @@ struct Card
 {
 	int type;
 	int aniID;
-	int isInit;
+	int isAllowToRender;//Check cho phép vẽ Card lên Hud khi hiện dòng "You Got ..." cuối Game
+	int draw; //2 biến này dùng để vẽ card chớp 
+	int undraw; //2 biến này dùng để vẽ card chớp
+	int isInitUndraw;
+	int NoFlashAnymore; //Để nhận biết card này 0 chớp đc nữa
+	ULONGLONG undraw_time;
+	ULONGLONG draw_time;
 };
 
 class CHud
@@ -36,17 +42,16 @@ class CHud
 	static CHud* __HudInstance;	//Đảm bảo chỉ có duy nhất 1 HUD
 	float x, y;
 	int allowToRenderCard;	//Hiện dòng "You Got A Card" thì mới cho vẽ Card lên Hud
-	static int numCardCollected;
+	//static int numCardCollected;
 	static Card cardCollected[3];
 	//static int cardType[3];  //mảng Card lượm đc
 	BOOLEAN isUndrawInitialized;
-	BOOLEAN untouch_0; // cờ 0 vẽ
-	BOOLEAN untouch_1; // cờ vẽ
 	BOOLEAN isAffect; //Card vừa lượm đc(vẽ chớp chớp ở Hud)
-	BOOLEAN initCard;
+	BOOLEAN initCard; //Check xem đã khởi tạo thông tin cho Card chưa (mỗi Card 1 lần)
 	ULONGLONG untouch_draw_0; //thgian 0 vẽ
 	ULONGLONG untouch_draw_1; //thgian vẽ
 public:
+	static int numCardCollected;
 	CHud(float x, float y)
 	{
 		this->x = x;
@@ -54,8 +59,6 @@ public:
 		allowToRenderCard = 0;
 		untouch_draw_0 = 0;
 		untouch_draw_1 = 0;
-		untouch_0 = 0;
-		untouch_1 = 0;
 		isUndrawInitialized = 0;
 		isAffect = 0;
 		initCard = 0;
@@ -69,8 +72,18 @@ public:
 	void RenderPoints();
 	void RenderSpeedBar();
 	void RenderCard();
-	void SetAllowToRenderCard() { this->allowToRenderCard = 1; }
-	void HandleCardDrawState();
+
+	void SetAllowToRenderCard() { cardCollected[numCardCollected].isAllowToRender = 1; }
+
+	//Dùng để set các thuộc tính cho Card Hud khi nhặt Card ở cuối Game
+	void SetTypeCardAndAniID(int para, int type);
+
+	void IncreaseNumCardCollected() { numCardCollected++; }
+
+	void HandleCardDrawState(Card& card_para);
 	void RenderPauseText();
 	void SetInitCard(BOOLEAN para) { this->initCard = para; }
+	int GetAniIDCard();
+	//int 
+	Card* GetCard() { return cardCollected; }
 };

@@ -44,6 +44,7 @@ public:
 
 	LPGAMEOBJECT GetPlayer() { return player; }
 
+	void Reload(CMario* mario, LPGAMEOBJECT obj);
 	void Clear();
 	void PurgeDeletedObjects();
 
