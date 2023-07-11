@@ -3,6 +3,7 @@
 #include "PlayScene.h"
 #include "ColorPlatform.h"
 #include "debug.h"
+#include "DataBinding.h"
 
 void CMushroom::Render()
 {
@@ -29,8 +30,7 @@ void CMushroom::GetBoundingBox(float& l, float& t, float& r, float& b)
 
 void CMushroom::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
-	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
-	if (mario->GetStopWatch()) return;
+	if (CDataBindings::GetInstance()->IsStopWatch) return;
 
     if (state != MUSHROOM_STATE_OUT_OF_BRICK)
 	{

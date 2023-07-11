@@ -7,6 +7,7 @@
 #include "EffectCollision.h"
 #include "Flower.h"
 #include "debug.h"
+#include "DataBinding.h"
 
 CKoopa::CKoopa(float x, float y, int type) :CGameObject(x, y)
 {
@@ -180,7 +181,7 @@ void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		//;//giữ nguyên thời gian khi đang wait
 
 	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
-	if (mario->GetStopWatch()) return;
+	if (CDataBindings::GetInstance()->IsStopWatch) return;
 
 	if (!mario->GetIsHolding() && StateThatEnableToRelease() && isBeingHeld)
 		HandleReleaseKoopa(); //thả Koopa khi ngưng giữ nút A

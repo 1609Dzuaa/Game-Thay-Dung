@@ -3,11 +3,11 @@
 #include "PlayScene.h"
 #include "Camera.h"
 #include "debug.h"
+#include "DataBinding.h"
 
 void CHead::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
-	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
-	if (mario->GetStopWatch()) return;
+	if (CDataBindings::GetInstance()->IsStopWatch) return;
 
 	if (!CCamera::GetInstance()->isViewable(this)) return;
 

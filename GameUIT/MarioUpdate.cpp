@@ -213,6 +213,7 @@ void CMario::UpdateTime()
 		isEvolveBackward = false;
 		isAteItem = false;
 		evolve_start = 0;
+		CDataBindings::GetInstance()->IsStopWatch = 0;
 	}
 
 	if (isKicking && GetTickCount64() - kick_start >= MARIO_KICK_TIME)

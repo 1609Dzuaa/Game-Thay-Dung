@@ -1,6 +1,6 @@
 ﻿#include "Animation.h"
-#include "PlayScene.h"
 #include "debug.h"
+#include "DataBinding.h"
 
 void CAnimation::Add(int spriteId, DWORD time)
 {
@@ -20,7 +20,6 @@ void CAnimation::Add(int spriteId, DWORD time)
 
 void CAnimation::Render(float x, float y, BOOLEAN affectBySW)
 {
-	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
 	if (affectBySW)
 	{
 		ULONGLONG now = GetTickCount64(); //Hàm này trả về thời gian kể từ khi ứng dụng chạy cho đến hiện tại
@@ -35,7 +34,7 @@ void CAnimation::Render(float x, float y, BOOLEAN affectBySW)
 			DWORD t = frames[currentFrame]->GetTime(); //Lấy thời gian chuyển động của frame hiện tại và gán cho t
 			if (now - lastFrameTime > t)
 			{
-				if (mario->GetStopWatch() && mario->GetIsAtWorld() || mario->HP < 0)
+				if (CDataBindings::GetInstance()->IsStopWatch || CDataBindings::GetInstance()->HP < 0)
 					; // nếu đang bật đồng hồ ngưng đọng thì giữ nguyên cái frame đó
 				else
 					currentFrame++;

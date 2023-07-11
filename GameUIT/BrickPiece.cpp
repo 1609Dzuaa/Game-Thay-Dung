@@ -1,11 +1,11 @@
 ﻿#include "BrickPiece.h"
 #include "Camera.h"
 #include "PlayScene.h"
+#include "DataBinding.h"
 
 void CBrickPiece::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
-	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
-	if (mario->GetStopWatch()) return;
+	if (CDataBindings::GetInstance()->IsStopWatch) return;
 
 	vy += ay * dt;
 	//if(!CCamera::GetInstance()->isViewable(this)) xoá đi nếu đi khỏi tầm

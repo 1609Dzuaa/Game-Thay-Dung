@@ -1,5 +1,6 @@
 ﻿#include "Mario.h"
 #include "Camera.h"
+#include "DataBinding.h"
 
 void CMario::SetState(int state)
 {
@@ -184,6 +185,8 @@ void CMario::SetState(int state)
 	case MARIO_STATE_EVOLVING:
 		evolve_start = GetTickCount64();
 		isEvolving = true;
+		CDataBindings::GetInstance()->IsStopWatch = 1;
+
 		break;
 
 	case MARIO_STATE_HOLDING:
@@ -204,7 +207,8 @@ void CMario::SetState(int state)
 	case MARIO_STATE_DIE:
 		vx = 0;
 		ax = 0;
-		HP--;
+		CDataBindings::GetInstance()->HP--;
+		CDataBindings::GetInstance()->IsStopWatch = 1;
 		//tắt 2 thằng này để có thể chết đứng mà 0 bị rơi 
 		vy = 0;  
 		ay = 0;

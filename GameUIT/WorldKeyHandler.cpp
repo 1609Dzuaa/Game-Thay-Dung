@@ -9,7 +9,7 @@ void CWorldMapKeyEvent::OnKeyDown(int KeyCode)
 	CMarioWorld* mario = (CMarioWorld*)((LPWORLDPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
 	DebugOut(L"[INFO] KeyDown: %d\n", KeyCode);
 	//Thêm phần Block phím khi đang move HOẶC đang enter entrance
-	if (mario->isDead5Times)
+	if (CDataBindings::GetInstance()->HP < 0)
 	{
 		switch (KeyCode)
 		{
@@ -27,6 +27,7 @@ void CWorldMapKeyEvent::OnKeyDown(int KeyCode)
 				//Chuyển Scene thì Reset hết các Data
 				//Sáng mai dậy nhớ Check kĩ các biến static tồn tại trong suốt
 				//quá trình chạy CT
+				CDataBindings::GetInstance()->RefreshAllData();
 				CGame::GetInstance()->InitiateSwitchScene(ID_WORLD);
 			}
 			//Dựa vào level của Arrow

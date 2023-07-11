@@ -2,6 +2,7 @@
 #include "PlayScene.h"
 #include "debug.h"
 #include "Camera.h"
+#include "DataBinding.h"
 
 void CCoin::Render()
 {
@@ -44,7 +45,7 @@ void CCoin::HandleFlyingCoin()
 		vy = 0;
 		this->Delete();
 		mario->SpawnScore(this); //only give 100
-		mario->AddCoin();
+		CDataBindings::GetInstance()->coin++;
 	}
 }
 

@@ -2,6 +2,7 @@
 #include "PlayScene.h"
 #include "Card.h"
 #include "Hud.h"
+#include "DataBinding.h"
 
 void CEffectScore::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
@@ -76,17 +77,15 @@ void CEffectScore::SpawnGotACard()
 
 void CEffectScore::SpawnCardType()
 {
-	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
-
 	//Vì card cũ đi quá màn hình, bị xoá nên tạo card mới, 1 nằm ở chỗ You Got, 2 ở Hud
 	CCard* static_card = new CCard(2745.0f, GOT_A_CARD_Y - 3.0f);
-	static_card->SetState(mario->GetTypeOfCardCollected()); 
+	static_card->SetState(CDataBindings::GetInstance()->TypeOfCardCollected);
 	static_card->SetState(CARD_STATE_STATIC);
 	CPlayScene* current_scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
 	current_scene->AddObjectToScene(static_card);
 
 	//Set cardType và Ani  1, 2, 3 vưa nhận đc và tăng số card lượm đc
-	CHud::GetInstance()->SetTypeCardAndAniID(CHud::GetInstance()->numCardCollected, mario->GetTypeOfCardCollected());
-	CHud::GetInstance()->SetAllowToRenderCard(); //cho Phép vẽ card đó lên Hud
-	CHud::GetInstance()->IncreaseNumCardCollected(); //sau đó tăng số card thu đc lên 1
+	CDataBindings::GetInstance()->SetTypeCardAndAniID(CDataBindings::GetInstance()->numCardCollected, CDataBindings::GetInstance()->TypeOfCardCollected);
+	CDataBindings::GetInstance()->SetAllowToRenderCard(); //cho Phép vẽ card đó lên Hud
+	CDataBindings::GetInstance()->numCardCollected++; //sau đó tăng số card thu đc lên 1
 }

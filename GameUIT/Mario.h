@@ -280,7 +280,6 @@ class CMario : public CGameObject
 	BOOLEAN isEvolveForward;
 	BOOLEAN isEvolveBackward;
 	BOOLEAN isAteItem; //Biến đặc biệt dùng để nhận biết xem được tăng level nhờ item hay nhấn phím, mục đích xem ở hàm SetLevel
-	BOOLEAN StopWatch; //ngưng mọi hoạt động khi Mario đang tiến hoá hoặc chết
 	BOOLEAN Shaking;
 	BOOLEAN isFlying;
 	BOOLEAN isAllowToHoldKoopa; //Allow to hold rồi mới holding
@@ -331,7 +330,6 @@ class CMario : public CGameObject
 	BOOLEAN isWaitingForTrans; //Dùng để biết có đang đợi chuyển cảnh hay kh
 	BOOLEAN isEndGame;	//End Game -> bật chế độ tự lái
 	int CountJumpOnEnemies; //Đếm số bước nhảy 0 CHẠM ĐẤT để có số điểm tương ứng
-	static int TypeOfCardCollected;
 	int SpeedBar; //thanh tốc độ
 
 	//Collision Func
@@ -366,10 +364,6 @@ class CMario : public CGameObject
 	int KoopaStateThatAllowToHold(CKoopa* koopa);
 public:
 
-	static int HP;
-	static int coin;	//Ăn Coin cho 50đ, 100 coin đổi 1 mạng, coin từ 99 về 0
-	static int points;
-
 	CMario(float x, float y);
 	void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
 	void UpdateMarioState();
@@ -389,9 +383,6 @@ public:
 
 	void GetBoundingBox(float& left, float& top, float& right, float& bottom);
 	int GetMarioNormalX() { return nx; }
-	static int GetHP() { return HP; }
-	static int GetCoin() { return coin; }
-	static int GetPoints() { return points; }
 	BOOLEAN GetCanFly() { return canFly; }
 	BOOLEAN GetisAtMaxSpeed() { return isAtMaxSpeed; }
 	void SetisJumping(BOOLEAN para) { this->isJumping = para; }
@@ -401,7 +392,6 @@ public:
 	void SetIsLanding(bool para) { this->isLanding = para; }
 	void SpawnScore(LPGAMEOBJECT obj);
 	void SpawnEffect(LPCOLLISIONEVENT e, LPGAMEOBJECT obj, int eff_type); //nên cho vào class EffectCol
-	BOOLEAN GetStopWatch() { return evolve_start != 0 || this->state == MARIO_STATE_DIE; }
 	BOOLEAN GetShaking() { return this->Shaking; }
 	BOOLEAN GetIsFlying() { return this->isFlying; }
 	BOOLEAN GetIsAttacking() { return this->isAttacking; }
@@ -419,7 +409,6 @@ public:
 	BOOLEAN GetIsTrulyEnd() { return this->isTrulyEnd; }
 	BOOLEAN GetHasCollectCard() { return this->HasCollectCard; }
 	int GetSpeedBar() { return this->SpeedBar; }
-	static int GetTypeOfCardCollected() { return TypeOfCardCollected; }
 	void SetHoldKoopa(BOOLEAN para) { this->isAllowToHoldKoopa = para; }
 	void SetIsHoldingKoopa(BOOLEAN para) { this->isHolding = para; }
 	void SetIsHitSwitch(BOOLEAN para) { this->isHitSwitch = para; }
@@ -432,8 +421,6 @@ public:
 	void SetCombo(BOOLEAN para) { this->isComboUpAndS = para; }
 	void SetIsWaitingForTrans(BOOLEAN para) { this->isWaitingForTrans = para; }
 	void SetHasCollectCard(BOOLEAN para) { this->HasCollectCard = para; }
-	void AddCoin() { coin++; }
-	void AddPoints(int points_para) { points += points_para; }
 	void HandleTravellingDown();
 	void HandleTravellingUp();
 	void SnappingToAnEdge(LPCOLLISIONEVENT e, LPGAMEOBJECT obj);

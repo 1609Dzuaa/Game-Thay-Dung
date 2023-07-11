@@ -7,11 +7,7 @@
 #include "Tube.h"
 #include "Effect.h"
 #include "BlackScreen.h"
-
-int CMario::HP = 0;
-int CMario::coin = 0;
-int CMario::points = 0;
-int CMario::TypeOfCardCollected = 0;
+#include "DataBinding.h"
 
 CMario::CMario(float x, float y) : CGameObject(x, y)
 {
@@ -29,7 +25,6 @@ CMario::CMario(float x, float y) : CGameObject(x, y)
 	isEvolveForward = false;
 	isEvolveBackward = false;
 	isAteItem = false;
-	StopWatch = false;
 	Shaking = false;
 	isAllowToHoldKoopa = false;
 	isAllowToUseTube = false;
@@ -54,6 +49,7 @@ CMario::CMario(float x, float y) : CGameObject(x, y)
 	isDieJump = false;
 	isTrulyDied = false;
 	isTrulyEnd = false;
+	HasCollectCard = false;
 	CountJumpOnEnemies = 0;
 	untouchdraw = -1;
 	untouch_draw_0 = 0;
@@ -66,7 +62,6 @@ CMario::CMario(float x, float y) : CGameObject(x, y)
 	die_time_out = 0;
 	start_y = -1;
 	fly_start = -1;
-	//TypeOfCardCollected = -1;
 	SpeedBar = 0;
 	prevVx = 0;
 	tail = NULL;
@@ -134,7 +129,7 @@ void CMario::SpawnScore(LPGAMEOBJECT obj)
 	CEffectScore* eff_scr = new CEffectScore(obj->GetX(), obj->GetY() - 15.0f, obj->GetY() - 45.0f, NORMAL_SCORE);
 	CPlayScene* current_scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
 	current_scene->AddObjectToScene(ClassifyScore(obj, eff_scr));
-	points += eff_scr->GetScore();
+	CDataBindings::GetInstance()->points += eff_scr->GetScore();
 }
 
 CEffectScore* CMario::ClassifyScore(LPGAMEOBJECT obj, CEffectScore*& eff_scr)

@@ -3,6 +3,7 @@
 #include "PlayScene.h"
 #include "Switch.h"
 #include "BrickPiece.h"
+#include "DataBinding.h"
 #include "debug.h"
 
 CBrick::CBrick(float x, float y, int type, int item_type) : CGameObject(x, y)
@@ -155,7 +156,6 @@ void CBrick::SpawnMushroom()
 
 void CBrick::SpawnBrickPiece()
 {
-	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
 	CPlayScene* current_scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
 
 	//Spawn 4 mảnh vỡ: left top, left bot, right top, right bot
@@ -168,5 +168,5 @@ void CBrick::SpawnBrickPiece()
 	current_scene->AddObjectToScene(piece3);
 	current_scene->AddObjectToScene(piece4);
 
-	mario->AddPoints(10); //Phá gạch vàng cho 10đ
+	CDataBindings::GetInstance()->coin += 10; //Phá gạch vàng cho 10đ
 }

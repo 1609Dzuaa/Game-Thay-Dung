@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include "GameObject.h"
-#include "PlayScene.h"
+#include "DataBinding.h"
 
 #define ID_GRASS	3150
 #define ID_HELP		3151
@@ -40,8 +40,7 @@ public:
 			animations->Get(ID_GRASS)->Render(x, y, true);
 		else
 		{
-			CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
-			if (mario->HP < 0) return;
+			if (CDataBindings::GetInstance()->HP < 0) return; //0 vẽ Help nếu HP <0
 			animations->Get(ID_HELP)->Render(x, y, true);
 		}
 	};

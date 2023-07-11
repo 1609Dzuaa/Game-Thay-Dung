@@ -4,6 +4,7 @@
 #include "ColorPlatform.h"
 #include "Camera.h"
 #include "debug.h"
+#include "DataBinding.h"
 
 CGoomba::CGoomba(float x, float y, int type) :CGameObject(x, y)
 {
@@ -119,7 +120,7 @@ void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	if (!CCamera::GetInstance()->isViewable(this)) return;
 
 	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
-	if (mario->GetStopWatch()) return;
+	if (CDataBindings::GetInstance()->IsStopWatch) return;
 
 	vy += ay * dt;
 	vx += ax * dt;

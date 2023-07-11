@@ -16,6 +16,7 @@
 #include "Collision.h"
 #include "Tube.h"
 #include "Card.h"
+#include "DataBinding.h"
 
 void CMario::OnNoCollision(DWORD dt)
 {
@@ -82,14 +83,14 @@ void CMario::OnCollisionWithBlockingObjects(LPCOLLISIONEVENT e)
 			else
 			{
 				br->Delete();
-				if (coin == 99)
+				if (CDataBindings::GetInstance()->coin == 99)
 				{
-					coin = 0;
-					HP++;
+					CDataBindings::GetInstance()->coin = 0;
+					CDataBindings::GetInstance()->HP++;
 				}
 				else
-					coin++;
-				points += 50;
+					CDataBindings::GetInstance()->coin++;
+				CDataBindings::GetInstance()->points += 50;
 				//Tăng điểm cho Mario
 			}
 		}
@@ -343,14 +344,14 @@ void CMario::HandleCollisionOtherDirectionWithGoomba(LPCOLLISIONEVENT e, CGoomba
 void CMario::OnCollisionWithCoin(LPCOLLISIONEVENT e)
 {
 	e->obj->Delete();
-	if (coin == 99)
+	if (CDataBindings::GetInstance()->coin == 99)
 	{
-		coin = 0;
-		HP++;
+		CDataBindings::GetInstance()->coin = 0;
+		CDataBindings::GetInstance()->HP++;
 	}
 	else
-		coin++;
-	points += 50;
+		CDataBindings::GetInstance()->coin++;
+	CDataBindings::GetInstance()->points += 50;
 }
 
 void CMario::OnCollisionWithKoopa(LPCOLLISIONEVENT e)
@@ -540,7 +541,7 @@ void CMario::OnCollisionWithMushroom(LPCOLLISIONEVENT e)
 	{
 		if (mr->GetState() != MUSHROOM_STATE_IN_THE_BRICK)
 		{
-			HP++;
+			CDataBindings::GetInstance()->HP++;
 			SpawnScore(mr); //Spawn Level Up
 			mr->Delete();
 		}
@@ -640,14 +641,14 @@ void CMario::OnCollisionWithCard(LPCOLLISIONEVENT e)
 	//End game rồi nhưng phải chạm đất sau đó mới Auto Move!
 	//Hiện card linh tinh là do 2 đoạn dưới @@, đã sửa
 	CCard* card = dynamic_cast<CCard*>(e->obj);
-	TypeOfCardCollected = card->GetType();	//Lấy loại card collect đc 
+	CDataBindings::GetInstance()->TypeOfCardCollected = card->GetType();	//Lấy loại card collect đc 
 	HasCollectCard = true;
-	if (TypeOfCardCollected == CARD_STATE_MUSHROOM)
-		points += 1350;
-	else if (TypeOfCardCollected == CARD_STATE_STAR)
-		points += 1450;
+	if (CDataBindings::GetInstance()->TypeOfCardCollected == CARD_STATE_MUSHROOM)
+		CDataBindings::GetInstance()->points += 1350;
+	else if (CDataBindings::GetInstance()->TypeOfCardCollected == CARD_STATE_STAR)
+		CDataBindings::GetInstance()->points += 1450;
 	else 
-		points += 1500;
+		CDataBindings::GetInstance()->points += 1500;
 	e->obj->SetState(CARD_STATE_BE_COLLECTED);
 	isEndGame = true;
 	CEffectScore* eff = new CEffectScore(COURSE_CLEAR_X, COURSE_CLEAR_Y, 0, COURSE_CLEAR_TEXT);

@@ -23,6 +23,7 @@
 #include "GameMap.h"
 #include "Camera.h"
 #include "MarioWorld.h"
+#include "DataBinding.h"
 
 using namespace std;
 
@@ -451,6 +452,7 @@ void CPlayScene::Unload()
 
 	objects.clear();
 	player = NULL;
+	CDataBindings::GetInstance()->IsStopWatch = 0;
 	//delete map;
 	//map = nullptr;
 	//delete underworld_map;
@@ -506,10 +508,10 @@ void CPlayScene::HandleTimerAndWait()
 	if (mario->GetState() == MARIO_STATE_DIE) return; //chết thì 0 đụng đến giờ nữa
 
 	//Reset Timer if DIE || Finish Scene
-	if (mario->GetHP() == prevHP - 1)
+	if (CDataBindings::GetInstance()->HP == prevHP - 1)
 	{
 		timer = 300;
-		prevHP = mario->GetHP();
+		prevHP = CDataBindings::GetInstance()->HP;
 		init = 0;
 	}
 

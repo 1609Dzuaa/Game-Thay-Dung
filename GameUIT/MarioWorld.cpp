@@ -9,15 +9,10 @@
 #include "Hud.h"
 #include "debug.h"
 
-BOOLEAN CMarioWorld::isDead5Times = 0;
-
 void CMarioWorld::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
-	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
-
-	if (mario->HP < 0)
+	if (CDataBindings::GetInstance()->HP < 0)
 	{
-		isDead5Times = 1;
 		CBlackScreen::GetInstance()->SetState(0);
 		return;
 	}
@@ -109,7 +104,7 @@ void CMarioWorld::HandlePositionWithEntranceAndBlock()
 
 void CMarioWorld::Render() 
 {
-	if (isDead5Times) 
+	if (CDataBindings::GetInstance()->HP < 0)
 		return;
 
 	CAnimations* animations = CAnimations::GetInstance();
@@ -157,14 +152,26 @@ void CMarioWorld::OnCollisionWithEntrance(LPCOLLISIONEVENT e)
 	Entrance_ID = entr->GetSceneID();
 	Entrance_Position.x = entr->GetX();
 	Entrance_Position.y = entr->GetY();
-	int numEtrPass = CDataBindings::GetInstance()->NumEntrancePass;
-	CDataBindings::GetInstance()->WorldEntrance[numEtrPass].ID = entr->GetType();
 	HasCollidedWithEntrance = true;
+
+	SetEntranceData(entr);
 
 	if (IsAllowToEnterEntrance(entr))
 		isAllowToPlayThatEntrance = true;
+	else
+		isAllowToPlayThatEntrance = false;
 
 	Direct_Been_Blocked = entr->GetBlockDirect(); //Cập nhật hướng Block cho Mario
+}
+
+void CMarioWorld::SetEntranceData(CEntrance* entr)
+{
+	int numEtrPass = CDataBindings::GetInstance()->NumEntrancePass;
+	CDataBindings::GetInstance()->WorldEntrance[numEtrPass].ID = entr->GetType();
+	CDataBindings::GetInstance()->WorldEntrance[numEtrPass].BlockDirectL = entr->GetBlockDirect().x;
+	CDataBindings::GetInstance()->WorldEntrance[numEtrPass].BlockDirectT = entr->GetBlockDirect().y;
+	CDataBindings::GetInstance()->WorldEntrance[numEtrPass].BlockDirectR = entr->GetBlockDirect().z;
+	CDataBindings::GetInstance()->WorldEntrance[numEtrPass].BlockDirectB = entr->GetBlockDirect().w;
 }
 
 bool CMarioWorld::IsAllowToEnterEntrance(CEntrance* entr_para)
@@ -184,7 +191,7 @@ bool CMarioWorld::IsAllowToEnterEntrance(CEntrance* entr_para)
 
 void CMarioWorld::SetState(int state) 
 {
-	if (!CHud::GetInstance()->isAllowToPlay) return;
+	if (!CDataBindings::GetInstance()->IsCanPlay) return;
 
 	switch (state)
 	{

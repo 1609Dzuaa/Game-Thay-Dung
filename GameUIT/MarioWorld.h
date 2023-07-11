@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "GameObject.h"
 #include "DataBinding.h"
+#include "Entrance.h"
 
 #define SPEED_MARIO 0.1f
 #define MARIO_WORLD_MAP_BBOX_WIDTH 8
@@ -30,7 +31,6 @@ class CMarioWorld : public CGameObject
 	BOOLEAN isTravelling;
 	BOOLEAN init;
 public:
-	static 	BOOLEAN isDead5Times; //Chết hẳn
 	CMarioWorld(float x, float y) : CGameObject(x, y)
 	{
 		isAllowToPlayThatEntrance = false;
@@ -40,10 +40,23 @@ public:
 		Entrance_Position.x = 0;
 		Entrance_Position.y = 0;
 		Entrance_ID = 0;
+		//Kh nên đặt Block ở đây vì có TH finish Map 1 
+		//nhưng kh move bot đc do khởi tạo block ở đây :Đ
 		//Ban đầu vị trí ở Start(Block L, T, B) -> obviously
-		Direct_Been_Blocked.x = 1;
-		Direct_Been_Blocked.y = 1;
-		Direct_Been_Blocked.w = 1;
+		if (!CDataBindings::GetInstance()->IsCanPlay)
+		{
+			Direct_Been_Blocked.x = 1;
+			Direct_Been_Blocked.y = 1;
+			Direct_Been_Blocked.w = 1;
+		}
+		else
+		{
+			int numEntr = CDataBindings::GetInstance()->NumEntrancePass;
+			Direct_Been_Blocked.x = CDataBindings::GetInstance()->WorldEntrance[numEntr - 1].BlockDirectL;
+			Direct_Been_Blocked.y = CDataBindings::GetInstance()->WorldEntrance[numEntr - 1].BlockDirectT;
+			Direct_Been_Blocked.z = CDataBindings::GetInstance()->WorldEntrance[numEntr - 1].BlockDirectR;
+			Direct_Been_Blocked.w = CDataBindings::GetInstance()->WorldEntrance[numEntr - 1].BlockDirectB;
+		}
 		isTravelling = 0;
 		init = 0;
 		CardType = 0;
@@ -63,6 +76,7 @@ public:
 	void HandlePositionWithEntranceAndBlock(); //Xử lý vị trí của Mario với Entrance và Block
 	void SetCardType(int para) { this->CardType = para; }
 	void SetAtW(int atw) { this->atW = atw; }
+	void SetEntranceData(CEntrance* entr); //Dùng để Set data cho Entrance ở DataBindings
 	bool IsPassedThisEntrance(int entr_type);
 	void SetState(int state);
 	bool GetIsMoving() { return this->isMoving; }

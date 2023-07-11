@@ -4,6 +4,7 @@
 #include "FireBullet.h"
 #include "Tail.h"
 #include "debug.h"
+#include "DataBinding.h"
 
 void CFlower::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
@@ -11,8 +12,7 @@ void CFlower::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 	/*if (state == FLOWER_STATE_SHOOT)
 		AimAndShoot();*/
-	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
-	if (mario->GetStopWatch()) return;
+	if (CDataBindings::GetInstance()->IsStopWatch) return;
 
 	if (type == FLOWER_TYPE_SHOOTING_RED)
 		UpdateShootinFlower();

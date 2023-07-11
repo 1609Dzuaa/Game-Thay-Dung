@@ -6,10 +6,6 @@
 #include"DataBinding.h"
 
 CHud* CHud::__HudInstance = NULL;
-//int CHud::cardType[3] = { 0,0,0 };
-Card CHud::cardCollected[3] = { 0,0,0 };
-int CHud::numCardCollected = 0;
-BOOLEAN CHud::isAllowToPlay = 0;
 
 CHud* CHud::GetInstance()
 {
@@ -38,7 +34,7 @@ void CHud::Update()
 	//Update vị trí của Hud theo Cam
 	//Chia ra vị trí ở MainWorld và Underground
 	//CMarioWorld* mario_world = (CMarioWorld*)((LPWORLDPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
-	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
+	//CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
 	//if (mario_world->GetAtW())
 	//{
 		//for (int i = 0; i < numCardCollected; i++)
@@ -46,19 +42,16 @@ void CHud::Update()
 	this->x = CCamera::GetInstance()->GetCamPos().x + CGame::GetInstance()->GetBackBufferWidth() / 2;
 	this->y = CCamera::GetInstance()->GetCamPos().y + CGame::GetInstance()->GetBackBufferHeight() - 16.0f;
 	//UpdateCard();
-	if (mario->HP < 0)
-		AllowRenderHudEnd = 1;
 	DebugOut(L"ID, isPass, NumPass: %d, %d, %d\n", CDataBindings::GetInstance()->WorldEntrance[0].ID, CDataBindings::GetInstance()->WorldEntrance[0].isPassed, CDataBindings::GetInstance()->NumEntrancePass);
 }
 
 void CHud::UpdateCard()
 {
-	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
-	if (numCardCollected == 3)
+	if (CDataBindings::GetInstance()->numCardCollected == 3)
 	{
-		mario->HP += Get3Card();
-		memset(cardCollected, 0, numCardCollected);
-		numCardCollected = 0;
+		CDataBindings::GetInstance()->HP += Get3Card();
+		memset(CDataBindings::GetInstance()->cardCollected, 0, CDataBindings::GetInstance()->numCardCollected);
+		CDataBindings::GetInstance()->numCardCollected = 0;
 	}
 }
 
@@ -69,17 +62,17 @@ int CHud::Get3Card()
 	//if(a == b == 3) NO 
 	//=> Solution: if(a == 3 && b == 3) 
 	//How about Create An Instance Class That Store Every Data From 1-1 And Bind It To WORLD ?
-	if (cardCollected[0].type == CARD_STATE_STAR
-		&& cardCollected[1].type == CARD_STATE_STAR
-		&& cardCollected[2].type == CARD_STATE_STAR)
+	if (CDataBindings::GetInstance()->cardCollected[0].type == CARD_STATE_STAR
+		&& CDataBindings::GetInstance()->cardCollected[1].type == CARD_STATE_STAR
+		&& CDataBindings::GetInstance()->cardCollected[2].type == CARD_STATE_STAR)
 		return 5;
-	else if (cardCollected[0].type == CARD_STATE_FLOWER 
-		&& cardCollected[1].type == CARD_STATE_FLOWER
-		&& cardCollected[2].type == CARD_STATE_FLOWER)
+	else if (CDataBindings::GetInstance()->cardCollected[0].type == CARD_STATE_FLOWER
+		&& CDataBindings::GetInstance()->cardCollected[1].type == CARD_STATE_FLOWER
+		&& CDataBindings::GetInstance()->cardCollected[2].type == CARD_STATE_FLOWER)
 		return 3;
-	else if (cardCollected[0].type == CARD_STATE_MUSHROOM
-		&& cardCollected[1].type == CARD_STATE_MUSHROOM
-		&& cardCollected[2].type == CARD_STATE_MUSHROOM)
+	else if (CDataBindings::GetInstance()->cardCollected[0].type == CARD_STATE_MUSHROOM
+		&& CDataBindings::GetInstance()->cardCollected[1].type == CARD_STATE_MUSHROOM
+		&& CDataBindings::GetInstance()->cardCollected[2].type == CARD_STATE_MUSHROOM)
 		return 2;
 	else
 		return 1;
@@ -107,39 +100,38 @@ void CHud::Render()
 	RenderPoints();
 	RenderSpeedBar(); //prob here
 	RenderCard(); 
-	if (!(GetTickCount64() - Hud_Start_Draw_Time > 1000 && isStarting))
+	if (!(GetTickCount64() - Hud_Start_Draw_Time > 1500 && isStarting))
 		RenderHudStart();
 	else
-		isAllowToPlay = 1; //Chú ý biến này khi Load lại game
-	//if (AllowRenderHudEnd)
+		CDataBindings::IsCanPlay = 1; //Chú ý biến này khi Load lại game
+	if (CDataBindings::GetInstance()->HP < 0)
 		RenderHudEnd();
 }
 
 void CHud::RenderHP()
 {
 	//Bug đêm qua -1 là do chết quá số mạng nên nó 0 tìm thấy frame - 1 xDDDDDDD
-	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
-	
-	if (mario->HP < 0) 
+	//CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
+	int current_HP = CDataBindings::GetInstance()->HP;
+	if (current_HP < 0)
 		return;
 
 	CAnimations* animations = CAnimations::GetInstance();
-	animations->Get(mario->GetHP())->Render(x - 77.0f, y + 5.0f, false);
+	animations->Get(current_HP)->Render(x - 77.0f, y + 5.0f, false);
 }
 
 void CHud::RenderCoin()
 {
-	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
 	CAnimations* animations = CAnimations::GetInstance();
 	//if <= 9 : vẽ 1 số
 	//Quay về mấy bài NMLT năm nhất, tìm chữ số hàng đơn vị, hàng chục, đảo ngc số, ...
 	//else CT chung: Hàng đơn vị = GetCoin() % 10, Hàng chục = GetCoin() / 10
-	if (mario->GetCoin() <= 9)
-		animations->Get(mario->GetCoin())->Render(x + 25.0f, y - 3.0f, false);
+	if (CDataBindings::GetInstance()->coin <= 9)
+		animations->Get(CDataBindings::GetInstance()->coin)->Render(x + 25.0f, y - 3.0f, false);
 	else
 	{
-		int	OnesPlace = mario->GetCoin() % 10;	//Hàng đơn vị
-		int TensPlace = mario->GetCoin() / 10;	//Hàng chục
+		int	OnesPlace = CDataBindings::GetInstance()->coin % 10;	//Hàng đơn vị
+		int TensPlace = CDataBindings::GetInstance()->coin / 10;	//Hàng chục
 		animations->Get(OnesPlace)->Render(x + 26.0f, y - 3.0f, false);
 		animations->Get(TensPlace)->Render(x + 18.0f, y - 3.0f, false);
 	}
@@ -149,7 +141,7 @@ void CHud::RenderPoints()
 {
 	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
 	CAnimations* animations = CAnimations::GetInstance();
-	int points = mario->GetPoints();
+	int points = CDataBindings::GetInstance()->points;
 
 	int	OnesPlace = points % 10;	//Hàng đơn vị
 	int TensPlace = (points / 10) % 10;	//Hàng chục
@@ -232,65 +224,38 @@ void CHud::RenderCard()
 
 	if (mario_world->GetAtW()) //Vẽ Card ở World
 	{
-		for (int i = 0; i < numCardCollected; i++)
-			if (cardCollected[i].aniID != 0)
+		for (int i = 0; i < CDataBindings::GetInstance()->numCardCollected; i++)
+			if (CDataBindings::GetInstance()->cardCollected[i].aniID != 0)
 			{
-				animations->Get(cardCollected[i].aniID)->Render(x + 54.0f + i * 24.0f, y, false);
-				cardCollected[i].NoFlashAnymore = 1;
+				animations->Get(CDataBindings::GetInstance()->cardCollected[i].aniID)->Render(x + 54.0f + i * 24.0f, y, false);
+				CDataBindings::GetInstance()->cardCollected[i].NoFlashAnymore = 1;
 			}
 	}
 	else //Vẽ Card ở Map 1-1 . if(isaffected)=>vẽ chớp cho nó
 	{
 		float x1 = CCamera::GetInstance()->GetCamPos().x + CGame::GetInstance()->GetBackBufferWidth() - 69.0f;
 
-		for (int i = 0; i < numCardCollected; i++)
+		for (int i = 0; i < CDataBindings::GetInstance()->numCardCollected; i++)
 		{
-			if (cardCollected[i].isInitUndraw && !cardCollected[i].NoFlashAnymore)
-				HandleCardDrawState(cardCollected[i]);
+			if (CDataBindings::GetInstance()->cardCollected[i].isInitUndraw 
+				&& !CDataBindings::GetInstance()->cardCollected[i].NoFlashAnymore)
+				CDataBindings::GetInstance()->HandleCardDrawState(CDataBindings::GetInstance()->cardCollected[i]);
 			else
 			{
-				cardCollected[i].draw = 1;
-				cardCollected[i].isInitUndraw = 1;
+				CDataBindings::GetInstance()->cardCollected[i].draw = 1;
+				CDataBindings::GetInstance()->cardCollected[i].isInitUndraw = 1;
 				//Khởi tạo hiệu ứng chớp chớp cho Card
 			}
-			if (cardCollected[i].aniID != 0 && cardCollected[i].isAllowToRender && cardCollected[i].draw)
+
+			if (CDataBindings::GetInstance()->cardCollected[i].aniID != 0 
+				&& CDataBindings::GetInstance()->cardCollected[i].isAllowToRender 
+				&& CDataBindings::GetInstance()->cardCollected[i].draw)
 			{
 				float y_draw_pos = CCamera::GetInstance()->GetCamPos().y + CGame::GetInstance()->GetBackBufferHeight() / 2 + 130.0f;
-				animations->Get(cardCollected[i].aniID)->Render(x1 + 24 * i, y_draw_pos, false);
+				animations->Get(CDataBindings::GetInstance()->cardCollected[i].aniID)->Render(x1 + 24 * i, y_draw_pos, false);
 			}
 		}
 	}
-}
-
-void CHud::SetTypeCardAndAniID(int para, int type)
-{
-	cardCollected[para].type = type;
-
-	if (cardCollected[para].type == CARD_STATE_MUSHROOM)
-		cardCollected[para].aniID = ID_ANI_STATIC_CARD_MUSHROOM;
-	else if (cardCollected[para].type == CARD_STATE_STAR)
-		cardCollected[para].aniID = ID_ANI_STATIC_CARD_STAR;
-	else if (cardCollected[para].type == CARD_STATE_FLOWER)
-		cardCollected[para].aniID = ID_ANI_STATIC_CARD_FLOWER;
-}
-
-void CHud::HandleCardDrawState(Card& card_para)
-{
-	if (GetTickCount64() - card_para.undraw_time >= CARD_UNDRAW_TIME && card_para.undraw)
-	{
-		card_para.undraw = 0;
-		card_para.draw = 1;
-		card_para.undraw_time = 0;
-		card_para.draw_time = GetTickCount64();
-	} //vẽ
-	else if (GetTickCount64() - card_para.draw_time >= CARD_UNDRAW_TIME && card_para.draw)
-	{
-		card_para.undraw = 1;
-		card_para.draw = 0;
-		card_para.undraw_time = GetTickCount64();
-		card_para.draw_time = 0;
-	}
-	//Kẹp tham chiếu cho nó vì ta muốn giá trị thuộc tính của Card thay đổi sau khi gọi hàm
 }
 
 int CHud::GetAniIDCard()

@@ -1,11 +1,11 @@
 #include "FireBullet.h"
 #include "Mario.h"
 #include "PlayScene.h"
+#include "DataBinding.h"
 
 void CFireBullet::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
-	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
-	if (mario->GetStopWatch()) return;
+	if (CDataBindings::GetInstance()->IsStopWatch) return;
 
 	CCollision::GetInstance()->Process(this, dt, coObjects);
 }

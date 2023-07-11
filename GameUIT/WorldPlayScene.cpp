@@ -281,22 +281,18 @@ void CWorldPlayScene::Load()
 void CWorldPlayScene::Update(DWORD dt) 
 {
 	//Với Hud ở World thì khởi tạo 1 lần duy nhất, 0 CẦN Update
-	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
+	if (CDataBindings::GetInstance()->HP < 0)
+		return;
+
 	CMarioWorld* mario_world = (CMarioWorld*)((LPWORLDPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
 
-	if (mario->HP < 0)
-	{
-		mario_world->isDead5Times = 1;
-		return;
-	}
-
 	CBlackScreen::GetInstance()->Update();
-	//CHud::GetInstance()->SetUnDrawState(0, 1);
 	mario_world->SetAtW(1);
 
 	InitializePositionAtWorld(mario_world);
 
-	DebugOut(L"x, y: %f, %f\n", CDataBindings::GetInstance()->WorldEntrance[CDataBindings::GetInstance()->NumEntrancePass - 1].x, CDataBindings::GetInstance()->WorldEntrance[CDataBindings::GetInstance()->NumEntrancePass - 1].y);
+	DebugOut(L"ID, Pass: %d, %d\n", CDataBindings::GetInstance()->WorldEntrance[CDataBindings::GetInstance()->NumEntrancePass - 1].ID, CDataBindings::GetInstance()->WorldEntrance[CDataBindings::GetInstance()->NumEntrancePass - 1].isPassed);
+	//DebugOut(L"St: %d\n", mario_world->GetState());
 
 	vector<LPGAMEOBJECT> coObjects;
 	for (size_t i = 1; i < objects.size(); i++)
@@ -318,18 +314,22 @@ void CWorldPlayScene::Update(DWORD dt)
 void CWorldPlayScene::Render() 
 {
 	world_map->Render();
-	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
+	//CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
 
 	for (unsigned int i = 0; i < objects.size(); i++)
 		objects[i]->Render();
 
+	int current_HP = CDataBindings::GetInstance()->HP;
+
 	CHud::GetInstance()->Render(); //Done major bug	
-	if (mario->HP >= 0)
+	if (current_HP >= 0)
 	{
 		CBlackScreen::GetInstance()->Render(); //prob here
 	}
-
-	CRedArrow::GetInstance()->Render();
+	if (current_HP < 0)
+	{
+		CRedArrow::GetInstance()->Render();
+	}
 }
 
 void CWorldPlayScene::Unload() 
