@@ -36,6 +36,7 @@ protected:
 	void InitializePositionAtWorld(CMarioWorld* mario); //Hàm khởi tạo vị trí tại World
 
 public:
+	static int initStartHud;
 	CWorldPlayScene(int id, LPCWSTR filePath);
 
 	virtual void Load();

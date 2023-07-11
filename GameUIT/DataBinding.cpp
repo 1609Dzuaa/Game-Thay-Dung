@@ -1,6 +1,7 @@
 ﻿#include "DataBinding.h"
 #include "Entrance.h"
 #include "Card.h"
+#include "Hud.h"
 
 CDataBindings* CDataBindings::__DBInstance = nullptr;
 
@@ -14,6 +15,7 @@ int CDataBindings::points = 0;
 int CDataBindings::TypeOfCardCollected = 0;
 int CDataBindings::IsStopWatch = 0;
 int CDataBindings::IsCanPlay = 0;
+int CDataBindings::timer = 300;
 
 CDataBindings* CDataBindings::GetInstance()
 {
@@ -56,14 +58,18 @@ void CDataBindings::HandleCardDrawState(Card& card_para)
 void CDataBindings::RefreshAllData()
 {
 	//Đang có bug chết ở màn 1 mà chưa qua thì khi Continue 0 move đc
+	//Solved!!! Coi lại timer
 	memset(WorldEntrance, 0, NumEntrancePass);
 	memset(cardCollected, 0, numCardCollected);
 	CDataBindings::NumEntrancePass = 0;
 	CDataBindings::numCardCollected = 0;
-	CDataBindings::HP = 4;
+	CDataBindings::HP = 0;
 	CDataBindings::coin = 0;
 	CDataBindings::points = 0;
 	CDataBindings::TypeOfCardCollected = 0;
 	CDataBindings::IsStopWatch = 0;
 	CDataBindings::IsCanPlay = 0;
+	//CDataBindings::timer = 300;
+	CHud::isStarting = 0;
+	CHud::Hud_Start_Draw_Time = 0;
 }

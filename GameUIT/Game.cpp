@@ -8,6 +8,7 @@
 #include "Animations.h"
 #include "PlayScene.h"
 #include "WorldPlayScene.h"
+#include "DataBinding.h"
 
 CGame* CGame::__instance = NULL;
 
@@ -466,10 +467,8 @@ void CGame::_ParseSection_SCENES(string line)
 
 	if (type == 1)
 		scene = new CPlayScene(id, path);
-	else
+	else 
 		scene = new CWorldPlayScene(id, path);
-	//LPSCENE scene = new CPlayScene(id, path);
-
 	scenes[id] = scene;
 
 }
@@ -523,7 +522,11 @@ void CGame::Load(LPCWSTR gameFile)
 
 void CGame::SwitchScene()
 {
-	if (next_scene < 0 || next_scene == current_scene) return;
+	//Mò cả chiều @@ 
+	//Hoá ra là do trùng Scene nên 0 thể load đc ID_WORLD khi bấm continue
+	//Solution: =>Tạo 1 World dự phòng để Load scene xen kẽ nhau
+	if (next_scene < 0 || next_scene == current_scene) //Prob here
+		return;
 
 	DebugOut(L"[INFO] Switching to scene %d\n", next_scene);
 

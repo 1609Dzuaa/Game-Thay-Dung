@@ -6,6 +6,10 @@
 #include"DataBinding.h"
 
 CHud* CHud::__HudInstance = NULL;
+BOOLEAN CHud::isStarting = 0;
+BOOLEAN CHud::initStart = 0;
+BOOLEAN CHud::isAllowToRenderHudStart = 0;
+ULONGLONG CHud::Hud_Start_Draw_Time = 0;
 
 CHud* CHud::GetInstance()
 {
@@ -33,16 +37,10 @@ void CHud::Update()
 {
 	//Update vị trí của Hud theo Cam
 	//Chia ra vị trí ở MainWorld và Underground
-	//CMarioWorld* mario_world = (CMarioWorld*)((LPWORLDPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
-	//CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
-	//if (mario_world->GetAtW())
-	//{
-		//for (int i = 0; i < numCardCollected; i++)
-			//cardCollected[i].NoFlashAnymore = 1;
 	this->x = CCamera::GetInstance()->GetCamPos().x + CGame::GetInstance()->GetBackBufferWidth() / 2;
 	this->y = CCamera::GetInstance()->GetCamPos().y + CGame::GetInstance()->GetBackBufferHeight() - 16.0f;
 	//UpdateCard();
-	DebugOut(L"ID, isPass, NumPass: %d, %d, %d\n", CDataBindings::GetInstance()->WorldEntrance[0].ID, CDataBindings::GetInstance()->WorldEntrance[0].isPassed, CDataBindings::GetInstance()->NumEntrancePass);
+	//DebugOut(L"ID, isPass, NumPass: %d, %d, %d\n", CDataBindings::GetInstance()->WorldEntrance[0].ID, CDataBindings::GetInstance()->WorldEntrance[0].isPassed, CDataBindings::GetInstance()->NumEntrancePass);
 }
 
 void CHud::UpdateCard()
@@ -85,7 +83,7 @@ void CHud::Render()
 	CAnimations* animations = CAnimations::GetInstance();
 	CScene* current_scene = (CScene*)CGame::GetInstance()->GetCurrentScene();
 	CPlayScene* play_scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
-	if (play_scene->GetWait() && current_scene->GetID() != ID_WORLD)
+	if (play_scene->GetWait() && current_scene->GetID() != ID_WORLD && current_scene->GetID() != ID_WORLD_SUB)
 		RenderPauseText();
 
 	//Vẽ thanh Hud
@@ -100,10 +98,10 @@ void CHud::Render()
 	RenderPoints();
 	RenderSpeedBar(); //prob here
 	RenderCard(); 
-	if (!(GetTickCount64() - Hud_Start_Draw_Time > 1500 && isStarting))
+
+	if (isAllowToRenderHudStart)
 		RenderHudStart();
-	else
-		CDataBindings::IsCanPlay = 1; //Chú ý biến này khi Load lại game
+	
 	if (CDataBindings::GetInstance()->HP < 0)
 		RenderHudEnd();
 }

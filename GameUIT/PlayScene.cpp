@@ -453,10 +453,10 @@ void CPlayScene::Unload()
 	objects.clear();
 	player = NULL;
 	CDataBindings::GetInstance()->IsStopWatch = 0;
-	//delete map;
-	//map = nullptr;
-	//delete underworld_map;
-	//underworld_map = nullptr; //Neccessary?
+	delete map;
+	map = nullptr;
+	delete underworld_map;
+	underworld_map = nullptr; //Neccessary?
 	init = 0; //mò cả buổi, quên mất chỉ cần đặt ở đây là thành công @@
 	DebugOut(L"[INFO] Scene %d unloaded! \n", id);
 }

@@ -6,10 +6,12 @@ start	2
 #id	type	file
 # type: 0: intro, 1: play scene 
 #remember mario_trans, ...
+#Why having 2 id same file ? => See function SwitchScene() at file Game.cpp
 [SCENES]
 0	0	intro.txt
 1	1	Text_Files\Scene1-1.txt
 2	2	Text_Files\WorldMap1.txt
+3	2	Text_Files\WorldMap1.txt
 
 # id	file 
 [TEXTURES]

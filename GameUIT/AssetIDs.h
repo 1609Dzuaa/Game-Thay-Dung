@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 //
 // This file contains all IDs of game assets 
@@ -8,6 +8,7 @@
 
 #define ID_MAP_1_1	1
 #define ID_WORLD	2
+#define ID_WORLD_SUB 3 //World dự phòng để Load lại game
 
 #pragma endregion
 

@@ -43,10 +43,12 @@ public:
 		//Kh nên đặt Block ở đây vì có TH finish Map 1 
 		//nhưng kh move bot đc do khởi tạo block ở đây :Đ
 		//Ban đầu vị trí ở Start(Block L, T, B) -> obviously
+		//Như vậy là khi chết rồi refresh lại nó 0 vào if
 		if (!CDataBindings::GetInstance()->IsCanPlay)
 		{
 			Direct_Been_Blocked.x = 1;
 			Direct_Been_Blocked.y = 1;
+			Direct_Been_Blocked.z = 0;
 			Direct_Been_Blocked.w = 1;
 		}
 		else

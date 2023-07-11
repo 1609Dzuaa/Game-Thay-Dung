@@ -57,10 +57,9 @@ void CMap::Render()
 	int startRow = 0;
 	int endRow = 0;
 	CScene* current_scene = (CScene*)CGame::GetInstance()->GetCurrentScene();
-	//CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
 
 	//Khi đang ở WorldPlayScene thì IsAtMainWorld = false
-	if (current_scene->GetID() != ID_WORLD)
+	if (current_scene->GetID() == 1)
 	{
 		//Vẽ Map trong đây
 		isViewable(Viewable_Col_start, Viewable_Col_end, startRow, endRow);
@@ -75,7 +74,7 @@ void CMap::Render()
 				SpritesSplitted.at(Sprite_ID)->Draw(Draw_X, Draw_Y); //Vẽ Sprites được tách tại vị trí x, y
 			}
 	}
-	else //vẽ World ở đây, nó có chui vào đây để vẽ nhưng hình như Cam bị lệch
+	else if(current_scene->GetID() == ID_WORLD || current_scene->GetID() == ID_WORLD_SUB)//vẽ World ở đây, nó có chui vào đây để vẽ nhưng hình như Cam bị lệch
 	{
 		for (int CurrentRow = 0; CurrentRow < MapRows; CurrentRow++)
 			for (int CurrentColumn = 0; CurrentColumn < MapCollums; CurrentColumn++)

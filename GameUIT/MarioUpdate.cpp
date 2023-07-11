@@ -68,7 +68,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		}
 	}
 	//DebugOut(L"CamX, CamY: %f, %f\n", CCamera::GetInstance()->GetCamPos().x, CCamera::GetInstance()->GetCamPos().y);
-	DebugOutTitle(L"St, atMW, atW: %d, %d, %d", state, isAtMainWorld, isAtWorld);
+	//DebugOutTitle(L"St, atMW, atW: %d, %d, %d", state, isAtMainWorld, isAtWorld);
 	//DebugOutTitle(L"waitEnd, InitWait: %d, %d", isWaitEndGame, initWaitEnd);
 	//DebugOutTitle(L"CardType: %d", TypeOfCardCollected);
 	

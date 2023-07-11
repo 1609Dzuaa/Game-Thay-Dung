@@ -31,18 +31,17 @@ class CHud
 	BOOLEAN isUndrawInitialized;
 	BOOLEAN isAffect; //Card vừa lượm đc(vẽ chớp chớp ở Hud)
 	BOOLEAN initCard; //Check xem đã khởi tạo thông tin cho Card chưa (mỗi Card 1 lần)
-	BOOLEAN isStarting;
-	ULONGLONG Hud_Start_Draw_Time;
 public:
-	
+	static BOOLEAN isStarting;
+	static BOOLEAN initStart;
+	static ULONGLONG Hud_Start_Draw_Time;
+	static BOOLEAN isAllowToRenderHudStart;
 	CHud(float x, float y)
 	{
 		this->x = x;
 		this->y = y;
-		Hud_Start_Draw_Time = GetTickCount64();
 		isUndrawInitialized = 0;
 		isAffect = 0;
-		isStarting = 1;
 		initCard = 0;
 	}
 	static CHud* GetInstance();

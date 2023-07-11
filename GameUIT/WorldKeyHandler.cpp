@@ -3,6 +3,7 @@
 #include "WorldPlayScene.h"
 #include "RedArrow.h"
 #include "debug.h"
+#include "Scene.h"
 
 void CWorldMapKeyEvent::OnKeyDown(int KeyCode)
 {
@@ -28,7 +29,12 @@ void CWorldMapKeyEvent::OnKeyDown(int KeyCode)
 				//Sáng mai dậy nhớ Check kĩ các biến static tồn tại trong suốt
 				//quá trình chạy CT
 				CDataBindings::GetInstance()->RefreshAllData();
-				CGame::GetInstance()->InitiateSwitchScene(ID_WORLD);
+				CScene* current_scene = (CScene*)CGame::GetInstance()->GetCurrentScene();
+				
+				if (current_scene->GetID() == ID_WORLD)
+					CGame::GetInstance()->InitiateSwitchScene(ID_WORLD_SUB);
+				else 
+					CGame::GetInstance()->InitiateSwitchScene(ID_WORLD);
 			}
 			//Dựa vào level của Arrow
 			break;

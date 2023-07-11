@@ -46,6 +46,7 @@ public:
 	static int TypeOfCardCollected;
 	static int IsStopWatch; //ngưng mọi hoạt động khi Mario đang tiến hoá hoặc chết
 	static int IsCanPlay; //Cho phép chơi (khi đã hết hiện thanh Hud Start)
+	static int timer; //có nên thêm vào hay kh ?
 	CDataBindings() {};
 	~CDataBindings() {};
 	static CDataBindings* GetInstance();

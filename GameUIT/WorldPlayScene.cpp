@@ -25,6 +25,8 @@
 
 using namespace std;
 
+int CWorldPlayScene::initStartHud = 0;
+
 CWorldPlayScene::CWorldPlayScene(int id, LPCWSTR filePath) :
 	CScene(id, filePath)
 {
@@ -281,6 +283,25 @@ void CWorldPlayScene::Load()
 void CWorldPlayScene::Update(DWORD dt) 
 {
 	//Với Hud ở World thì khởi tạo 1 lần duy nhất, 0 CẦN Update
+	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
+	
+	if (!initStartHud)
+	{
+		CHud::Hud_Start_Draw_Time = GetTickCount64();
+		CHud::isAllowToRenderHudStart = 1;
+		CHud::isStarting = 1;
+		initStartHud = 1;
+	}
+
+	if (GetTickCount64() - CHud::Hud_Start_Draw_Time > 1500 && CHud::isStarting)
+	{
+		CHud::isAllowToRenderHudStart = 0;
+		CHud::isStarting = 0;
+		CDataBindings::IsCanPlay = 1;
+	}
+
+	DebugOut(L"Can Play: %d\n", CDataBindings::GetInstance()->IsCanPlay);
+
 	if (CDataBindings::GetInstance()->HP < 0)
 		return;
 
@@ -288,12 +309,14 @@ void CWorldPlayScene::Update(DWORD dt)
 
 	CBlackScreen::GetInstance()->Update();
 	mario_world->SetAtW(1);
+	mario->SetIsAtMainWorld(0);
 
 	InitializePositionAtWorld(mario_world);
 
-	DebugOut(L"ID, Pass: %d, %d\n", CDataBindings::GetInstance()->WorldEntrance[CDataBindings::GetInstance()->NumEntrancePass - 1].ID, CDataBindings::GetInstance()->WorldEntrance[CDataBindings::GetInstance()->NumEntrancePass - 1].isPassed);
+	//DebugOut(L"st, ID, Pass, NumPass: %d, %d, %d, %d\n", mario_world->GetState(), CDataBindings::GetInstance()->WorldEntrance[CDataBindings::GetInstance()->NumEntrancePass - 1].ID, CDataBindings::GetInstance()->WorldEntrance[CDataBindings::GetInstance()->NumEntrancePass - 1].isPassed, CDataBindings::GetInstance()->NumEntrancePass);
 	//DebugOut(L"St: %d\n", mario_world->GetState());
-
+	//DebugOut(L"Block L, T, R, B: %d, %d, %d, %d\n", mario_world->GetBlockDirect().x, mario_world->GetBlockDirect().y, mario_world->GetBlockDirect().z, mario_world->GetBlockDirect().w);
+	
 	vector<LPGAMEOBJECT> coObjects;
 	for (size_t i = 1; i < objects.size(); i++)
 	{
@@ -314,7 +337,6 @@ void CWorldPlayScene::Update(DWORD dt)
 void CWorldPlayScene::Render() 
 {
 	world_map->Render();
-	//CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
 
 	for (unsigned int i = 0; i < objects.size(); i++)
 		objects[i]->Render();
@@ -340,6 +362,7 @@ void CWorldPlayScene::Unload()
 	objects.clear();
 	player = NULL;
 	initPos = 0;
+	initStartHud = 0;
 
 	DebugOut(L"[INFO] Scene %d unloaded! \n", id);
 }
