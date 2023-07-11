@@ -2,6 +2,8 @@
 #include "Entrance.h"
 #include "Card.h"
 #include "Hud.h"
+#include "PlayScene.h"
+#include "WorldPlayScene.h"
 
 CDataBindings* CDataBindings::__DBInstance = nullptr;
 
@@ -58,7 +60,7 @@ void CDataBindings::HandleCardDrawState(Card& card_para)
 void CDataBindings::RefreshAllData()
 {
 	//Đang có bug chết ở màn 1 mà chưa qua thì khi Continue 0 move đc
-	//Solved!!! Coi lại timer
+	//Solved!!! Chỉnh lại Cam đôi chỗ
 	memset(WorldEntrance, 0, NumEntrancePass);
 	memset(cardCollected, 0, numCardCollected);
 	CDataBindings::NumEntrancePass = 0;
@@ -69,7 +71,8 @@ void CDataBindings::RefreshAllData()
 	CDataBindings::TypeOfCardCollected = 0;
 	CDataBindings::IsStopWatch = 0;
 	CDataBindings::IsCanPlay = 0;
-	//CDataBindings::timer = 300;
+	CPlayScene::timer = 300;
+	CWorldPlayScene::initStartHud = 0; //Chỉ cho phép hiện Start Hud khi Load lại màn chơi từ đầu
 	CHud::isStarting = 0;
 	CHud::Hud_Start_Draw_Time = 0;
 }

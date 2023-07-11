@@ -188,10 +188,9 @@ void CHud::RenderTimer()
 	if (current_scene->GetID() != ID_WORLD)
 	{
 		CAnimations* animations = CAnimations::GetInstance();
-		CPlayScene* current_scene_1 = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
-		int	OnesPlace = current_scene_1->GetTimer() % 10;	//Hàng đơn vị
-		int TensPlace = (current_scene_1->GetTimer() / 10) % 10;	//Hàng chục
-		int Hundreds = current_scene_1->GetTimer() / 100;	//Hàng trăm
+		int	OnesPlace = CPlayScene::timer % 10;	//Hàng đơn vị
+		int TensPlace = (CPlayScene::timer / 10) % 10;	//Hàng chục
+		int Hundreds = CPlayScene::timer / 100;	//Hàng trăm
 
 		animations->Get(OnesPlace)->Render(x + 26.0f, y + 5.0f, false);
 		animations->Get(TensPlace)->Render(x + 18.0f, y + 5.0f, false);

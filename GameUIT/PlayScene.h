@@ -16,7 +16,6 @@ protected:
 	LPGAMEOBJECT player;
 	CMap* map = nullptr;
 	CMap* underworld_map = nullptr; //được giấu ở dưới theo trục y
-	static int timer;
 	ULONGLONG timer_start;
 	BOOLEAN IsWait;
 	BOOLEAN init;
@@ -35,6 +34,8 @@ protected:
 	void LoadAssets(LPCWSTR assetFile);
 
 public:
+	static int timer;
+
 	CPlayScene(int id, LPCWSTR filePath);
 
 	virtual void Load();

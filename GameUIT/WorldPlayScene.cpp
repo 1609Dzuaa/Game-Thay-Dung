@@ -284,7 +284,8 @@ void CWorldPlayScene::Update(DWORD dt)
 {
 	//Với Hud ở World thì khởi tạo 1 lần duy nhất, 0 CẦN Update
 	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
-	
+	CPlayScene::timer = 0;
+
 	if (!initStartHud)
 	{
 		CHud::Hud_Start_Draw_Time = GetTickCount64();
@@ -362,7 +363,6 @@ void CWorldPlayScene::Unload()
 	objects.clear();
 	player = NULL;
 	initPos = 0;
-	initStartHud = 0;
 
 	DebugOut(L"[INFO] Scene %d unloaded! \n", id);
 }
