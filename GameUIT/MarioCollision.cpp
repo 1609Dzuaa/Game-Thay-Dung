@@ -230,11 +230,6 @@ void CMario::HandleCollisionWithColorPlatform(LPCOLLISIONEVENT e, CColorPlatform
 	//Nhằm tránh việc nó bị rơi xuống dù có va chạm
 	//Tương tự như hàm SetLevel trong framework của thầy.
 
-	//Tham khảo mục "Snapping to an Edge" của bài viết: 
-	// https://happycoding.io/tutorials/processing/collision-detection
-	//"we want the position of the bottom of the player to equal the position of the top of the ground. 
-	//And since our player’s position is usually stored as its top Y value and a height, 
-	//that means we want the position of the top of our player to equal the ground’s top minus the player’s height.":
 	//Condition that I learned: |Player.TopY + Player.Height > ColorPlat.TopY => SNAP|
 	if (this->level != MARIO_LEVEL_SMALL) //level gấu mèo và BIG dùng chung BBox được vì diff 0 đáng kể
 	{

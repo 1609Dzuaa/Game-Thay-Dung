@@ -59,7 +59,7 @@ void CMap::Render()
 	CScene* current_scene = (CScene*)CGame::GetInstance()->GetCurrentScene();
 
 	//Khi đang ở WorldPlayScene thì IsAtMainWorld = false
-	if (current_scene->GetID() == 1)
+	if (current_scene->GetID() == ID_MAP_1_1)
 	{
 		//Vẽ Map trong đây
 		isViewable(Viewable_Col_start, Viewable_Col_end, startRow, endRow);

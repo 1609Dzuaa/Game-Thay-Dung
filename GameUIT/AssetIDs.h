@@ -6,6 +6,7 @@
 
 #pragma region ID_EACH_SCENE
 
+#define ID_INTRO	5
 #define ID_MAP_1_1	1
 #define ID_WORLD	2
 #define ID_WORLD_SUB 3 //World dự phòng để Load lại game
@@ -40,6 +41,17 @@
 #define OBJECT_TYPE_ENTRANCE	120
 #define OBJECT_TYPE_BLOCK_POINT	130
 #define OBJECT_TYPE_GATE_KEEPER	140
+
+#pragma endregion
+
+#pragma region INTRO
+
+#define OBJECT_TYPE_INTRO_LAYER	800
+#define OBJECT_TYPE_RED_CURTAIN	900
+#define OBJECT_TYPE_MARIO_INTRO	1000
+#define OBJECT_TYPE_LUIGI_INTRO	1100
+#define OBJECT_TYPE_SMB3_CURTAIN	1200
+#define OBJECT_TYPE_NUMBER_3_RACOON	1300
 
 #pragma endregion
 

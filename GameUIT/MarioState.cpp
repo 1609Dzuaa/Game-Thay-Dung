@@ -171,14 +171,9 @@ void CMario::SetState(int state)
 
 	case MARIO_STATE_IDLE:
 		ax = 0.0f;
-		if (!isEndGame)
-		{
-			vx = 0.0f;
-			isWalking = false;
-			isRunning = false;
-		}
-		else
-			state = MARIO_STATE_WALKING_RIGHT;
+		vx = 0.0f;
+		isWalking = false;
+		isRunning = false;
 
 		break;
 

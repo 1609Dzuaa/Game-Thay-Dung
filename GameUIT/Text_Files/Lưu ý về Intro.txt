@@ -1,0 +1,15 @@
+Các vật thể (GameObject):
+
+Cái rèm đỏ kéo từ từ lên(cho nó vận tốc hướng lên)
+Nền đất (Obivously) - Use Ghost Object
+2 anh em Mario và Luigi (NPC)
+Cái rèm SMB3
+Số 3 có đuôi(có frame animation)
+Nấm chạy trái
+1 Goomba
+3 Koopa xanh
+Mai rùa xanh, đen
+Lá
+Sao nhảy xuống rồi nhảy bên phải đi mất
+
+Load cái màn đen cùng nền Juventus lên trc, vẽ vật thể sau

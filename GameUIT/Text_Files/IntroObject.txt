@@ -1,0 +1,7 @@
+# id	left	top	right	bottom	texture_id
+[SPRITES]
+#Nền đen và Ground Juventus
+500000	257	0	514	224	315
+
+[ANIMATIONS]
+500000	500000	100

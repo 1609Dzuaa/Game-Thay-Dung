@@ -133,6 +133,7 @@
     <ClInclude Include="Animations.h" />
     <ClInclude Include="AssetIDs.h" />
     <ClInclude Include="BlackScreen.h" />
+    <ClInclude Include="IntroLayer.h" />
     <ClInclude Include="BlockPoint.h" />
     <ClInclude Include="Brick.h" />
     <ClInclude Include="BrickPiece.h" />
@@ -158,12 +159,16 @@
     <ClInclude Include="Grass.h" />
     <ClInclude Include="Head.h" />
     <ClInclude Include="Hud.h" />
+    <ClInclude Include="IntroKeyHandler.h" />
+    <ClInclude Include="IntroPlayScene.h" />
     <ClInclude Include="KeyEventHandler.h" />
     <ClInclude Include="Koopa.h" />
     <ClInclude Include="KoopaAssetIDs.h" />
     <ClInclude Include="Leaf.h" />
+    <ClInclude Include="LuigiNPC.h" />
     <ClInclude Include="Mario.h" />
     <ClInclude Include="MarioAssetIDs.h" />
+    <ClInclude Include="MarioNPC.h" />
     <ClInclude Include="MarioWorld.h" />
     <ClInclude Include="Mushroom.h" />
     <ClInclude Include="Platform.h" />
@@ -171,6 +176,7 @@
     <ClInclude Include="Portal.h" />
     <ClInclude Include="QuestionBrick.h" />
     <ClInclude Include="RedArrow.h" />
+    <ClInclude Include="RedCurtain.h" />
     <ClInclude Include="SampleKeyEventHandler.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Flower.h" />
@@ -209,11 +215,15 @@
     <ClCompile Include="Goomba.cpp" />
     <ClCompile Include="Head.cpp" />
     <ClCompile Include="Hud.cpp" />
+    <ClCompile Include="IntroKeyHandler.cpp" />
+    <ClCompile Include="IntroPlayScene.cpp" />
     <ClCompile Include="Koopa.cpp" />
     <ClCompile Include="Leaf.cpp" />
+    <ClCompile Include="LuigiNPC.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Mario.cpp" />
     <ClCompile Include="MarioCollision.cpp" />
+    <ClCompile Include="MarioNPC.cpp" />
     <ClCompile Include="MarioRender.cpp" />
     <ClCompile Include="MarioState.cpp" />
     <ClCompile Include="MarioUpdate.cpp" />
@@ -224,6 +234,7 @@
     <ClCompile Include="Portal.cpp" />
     <ClCompile Include="QuestionBrick.cpp" />
     <ClCompile Include="RedArrow.cpp" />
+    <ClCompile Include="RedCurtain.cpp" />
     <ClCompile Include="SampleKeyEventHandler.cpp" />
     <ClCompile Include="Flower.cpp" />
     <ClCompile Include="Sprite.cpp" />

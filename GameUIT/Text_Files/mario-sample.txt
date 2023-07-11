@@ -1,5 +1,5 @@
 [SETTINGS]
-start	2
+start	5
 #width	320
 #height	240
 
@@ -8,7 +8,7 @@ start	2
 #remember mario_trans, ...
 #Why having 2 id same file ? => See function SwitchScene() at file Game.cpp
 [SCENES]
-0	0	intro.txt
+5	0	Text_Files\Intro.txt
 1	1	Text_Files\Scene1-1.txt
 2	2	Text_Files\WorldMap1.txt
 3	2	Text_Files\WorldMap1.txt
@@ -36,4 +36,6 @@ start	2
 131	textures\World1_Tileset.png
 132	textures\World1_Tileset_Right.png
 133	textures\Hud_Start & Hud_End.png
+315	textures\Intro.png
+
 #Why 70? -> Sitting animation in texture 0 has some problem so i use this instead

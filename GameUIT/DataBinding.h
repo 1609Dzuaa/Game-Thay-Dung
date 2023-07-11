@@ -32,6 +32,7 @@ struct Card
 	unsigned long long int draw_time;
 };
 
+//Hiện có chút vấn đề nếu để Start Scene là 1 thì crash :v
 class CDataBindings
 {
 	static CDataBindings* __DBInstance;	//Đảm bảo chỉ có duy nhất 1 Instance
