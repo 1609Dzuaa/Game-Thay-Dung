@@ -6,13 +6,16 @@
 
 void CMarioNPC::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
-
+	//vx += ax * dt;
+	//vy += ay * dt;
 
 	CCollision::GetInstance()->Process(this, dt, coObjects);
 }
 
 void CMarioNPC::OnCollisionWith(LPCOLLISIONEVENT e)
 {
+	if (e->obj->IsBlocking())
+		OnCollisionWithBlockingObject(e);
 	if (dynamic_cast<CColorPlatform*>(e->obj))
 		OnCollisionWithColorPlatform(e);
 	if (dynamic_cast<CGoomba*>(e->obj))
@@ -25,6 +28,13 @@ void CMarioNPC::OnNoCollision(DWORD dt)
 {
 	x += vx * dt;
 	y += vy * dt;
+}
+
+void CMarioNPC::OnCollisionWithBlockingObject(LPCOLLISIONEVENT e)
+{
+	vy = 0;
+	if (e->ny < 0)
+		isOnPlatform = true;
 }
 
 void CMarioNPC::OnCollisionWithColorPlatform(LPCOLLISIONEVENT e)
@@ -85,6 +95,7 @@ void CMarioNPC::Render()
 	//	aniId = GetAniIdSmall();
 	//else if (level == MARIO_LEVEL_RACOON)
 	//	aniId = GetAniIdRacoon();
+	animations->Get(aniId)->Render(x, y, false);
 }
 
 int CMarioNPC::GetAniIdBig()

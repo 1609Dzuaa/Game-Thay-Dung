@@ -14,7 +14,7 @@ class CIntroPlayScene : public CScene
 {
 protected:
 	// A play scene has to have player, right? 
-	LPGAMEOBJECT player;
+	//LPGAMEOBJECT player;
 
 	vector<LPGAMEOBJECT> objects;
 
@@ -34,9 +34,10 @@ public:
 	virtual void Render();
 	virtual void Unload();
 
-	LPGAMEOBJECT GetPlayer() { return player; }
-
-	void AddObjectToScene(LPGAMEOBJECT game_object) {};
+	void AddObjectToScene(LPGAMEOBJECT game_object) 
+	{
+		objects.push_back(game_object);
+	};
 
 	void Clear();
 	void PurgeDeletedObjects();

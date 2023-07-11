@@ -13,6 +13,7 @@
 #include "Mushroom.h"
 #include "Goomba.h"
 #include "Koopa.h"
+#include "Platform.h"
 #include "ColorPlatform.h"
 #include "DataBinding.h"
 #include "RedArrow.h"
@@ -27,7 +28,6 @@ CIntroPlayScene::CIntroPlayScene(int id, LPCWSTR filePath) :
 	CScene(id, filePath)
 {
 	//Intro 0 có Player ?, toàn NPC
-	player = NULL;
 	key_handler = new CWorldMapKeyEvent(this);
 }
 
@@ -117,6 +117,24 @@ void CIntroPlayScene::_ParseSection_OBJECTS(string line)
 	case OBJECT_TYPE_INTRO_LAYER:
 		obj = new CIntroLayer(x, y);
 		break;
+
+	case 5:
+	{
+		float cell_width = (float)atof(tokens[3].c_str());
+		float cell_height = (float)atof(tokens[4].c_str());
+		int length = atoi(tokens[5].c_str());
+		int sprite_begin = atoi(tokens[6].c_str());
+		int sprite_middle = atoi(tokens[7].c_str());
+		int sprite_end = atoi(tokens[8].c_str());
+		int is_UdwTube = atoi(tokens[9].c_str());
+
+		obj = new CPlatform(
+			x, y,
+			cell_width, cell_height, length,
+			sprite_begin, sprite_middle, sprite_end, is_UdwTube
+		);
+	}
+	break;
 
 	case OBJECT_TYPE_RED_CURTAIN:
 		obj = new CRedCurtain(x, y);

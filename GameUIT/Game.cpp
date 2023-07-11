@@ -466,9 +466,9 @@ void CGame::_ParseSection_SCENES(string line)
 	LPCWSTR path = ToLPCWSTR(tokens[2]);   // file: ASCII format (single-byte char) => Wide Char
 	LPSCENE scene;
 
-	if (type == 0)
+	if (type == TYPE_INTRO)
 		scene = new CIntroPlayScene(id, path);
-	else if (type == ID_MAP_1_1)
+	else if (type == TYPE_MAP_1_1)
 		scene = new CPlayScene(id, path);
 	else
 		scene = new CWorldPlayScene(id, path);
@@ -528,13 +528,15 @@ void CGame::SwitchScene()
 	//Mò cả chiều @@ 
 	//Hoá ra là do trùng Scene nên 0 thể load đc ID_WORLD khi bấm continue
 	//Solution: =>Tạo 1 World dự phòng để Load scene xen kẽ nhau
-	//Phím lỗi do đây
+	//Phím lỗi do đây: Solved
+	//Đã fix, bug 0 load đc scene
+	//Cần scene rác (0	0	intro.txt) để nó Unload scene
 	if (next_scene < 0 || next_scene == current_scene) //Prob here
 		return;
 
 	DebugOut(L"[INFO] Switching to scene %d\n", next_scene);
 
-	scenes[current_scene]->Unload(); //prob here
+	scenes[current_scene]->Unload(); //prob here: DONE~
 
 	CSprites::GetInstance()->Clear();
 	CAnimations::GetInstance()->Clear();

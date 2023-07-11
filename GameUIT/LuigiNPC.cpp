@@ -21,7 +21,7 @@ void CLuigiNPC::OnNoCollision(DWORD dt)
 void CLuigiNPC::Render()
 {
 	CAnimations* animations = CAnimations::GetInstance();
-	//animations->Get()->Render(x, y, false);
+	animations->Get(ID_ANI_BIG_LUIGI_IDLE_RIGHT)->Render(x, y, false);
 }
 
 void CLuigiNPC::SetState(int state)

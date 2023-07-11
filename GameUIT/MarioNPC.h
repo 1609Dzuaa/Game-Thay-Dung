@@ -21,9 +21,11 @@ class CMarioNPC : public CGameObject
 public:
 	CMarioNPC(float x, float y) :CGameObject(x, y)
 	{
+		this->nx = -1;
 		ax = MARIO_ACCEL_WALK_X;
-		ay = 0.0018f;
+		ay = 0.0001f;
 		level = MARIO_LEVEL_BIG;
+		SetState(MARIO_STATE_IDLE);
 		isOnPlatform = 1;
 		isKicking = 0;
 		isHolding = 0;
@@ -44,6 +46,7 @@ public:
 	void Render();
 	void OnNoCollision(DWORD dt);
 	void OnCollisionWith(LPCOLLISIONEVENT e);
+	void OnCollisionWithBlockingObject(LPCOLLISIONEVENT e);
 	void OnCollisionWithColorPlatform(LPCOLLISIONEVENT e);
 	void HandleCollisionWithColorPlatform(LPCOLLISIONEVENT e, CColorPlatform* color_platf);
 	void OnCollisionWithGoomba(LPCOLLISIONEVENT e);

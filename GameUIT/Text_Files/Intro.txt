@@ -1,9 +1,17 @@
 # list of object assets to load in this scene
 [ASSETS]
 Text_Files\Mario.txt
+Text_Files\Luigi.txt
 Text_Files\IntroObject.txt
 Text_Files\Goomba.txt
 Text_Files\Koopa.txt
 Text_Files\Mushroom.txt
 [OBJECTS]
-800	0	0
+#Layer: Nền đen và Ground Juventus
+800	127	113
+
+#ColorPlat(Ghost Platform): Nền lót
+5	0	195	16	15	20	0	0	0	0
+
+#Red Curtain (Rèm Đỏ)
+900	127	95

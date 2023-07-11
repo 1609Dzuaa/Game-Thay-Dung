@@ -9,7 +9,7 @@
 #define LUIGI_NPC_STATE_WALKING	10
 #define LUIGI_NPC_STATE_JUMPING	20
 
-#define ID_ANI_BIG_LUIGI_IDLE	
+#define ID_ANI_BIG_LUIGI_IDLE_RIGHT	700000	
 
 class CLuigiNPC : public CGameObject
 {
@@ -19,13 +19,14 @@ public:
 	{
 		ax = 0.0f;
 		ay = 0.01f;
+		nx = 1;
 	};
 	void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
 	int IsBlocking() { return 0; }
 	int IsCollidable() { return 1; }
 	void OnCollisionWith(LPCOLLISIONEVENT e);
-	void OnCollisionWithColorPlatform(LPCOLLISIONEVENT e);
-	void HandleCollisionWithColorPlatform(LPCOLLISIONEVENT e, CColorPlatform* color_platf);
+	//void OnCollisionWithColorPlatform(LPCOLLISIONEVENT e);
+	//void HandleCollisionWithColorPlatform(LPCOLLISIONEVENT e, CColorPlatform* color_platf);
 	void Render();
 	void OnNoCollision(DWORD dt);
 	void GetBoundingBox(float& left, float& top, float& right, float& bottom) {};
