@@ -201,6 +201,9 @@
     <ClInclude Include="SMB3Curtain.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="StarIntro.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -372,6 +375,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SMB3Curtain.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="StarIntro.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

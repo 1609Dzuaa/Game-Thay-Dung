@@ -26,10 +26,11 @@
 class CLeaf : public CGameObject 
 {
 	float ax, ay, minY, minX, maxX;
-	bool reachMinOrMax_X;
+	bool reachMinOrMax_X, isIntro;
 	ULONGLONG Fall_Up_start;
 public:
 	CLeaf(float x, float y);
+	CLeaf(float x, float y, int intro);
 
 	int IsBlocking() { return 0; };
 

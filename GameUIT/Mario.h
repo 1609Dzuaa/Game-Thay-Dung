@@ -117,6 +117,8 @@
 
 #define MARIO_STATE_END_GAME	315
 
+#define MARIO_STATE_GOT_HITTED_BY_SHELL	115 //Use for Mario Intro
+
 #pragma endregion STATE
 //==================================================//
 

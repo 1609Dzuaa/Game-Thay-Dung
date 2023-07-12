@@ -3,12 +3,13 @@
 #include "Goomba.h"
 #include "Koopa.h"
 #include "Leaf.h"
+#include "StarIntro.h"
 #include "IntroPlayScene.h"
 
 void CSMB3Curtain::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	//Đi quá mốc nào đó thì Spawn quái
-	if (y > 100 && !HasSpawned)
+	if (y > 80 && !HasSpawned)
 	{
 		SpawnOtherObjects();
 		vy = 0;
@@ -33,18 +34,24 @@ void CSMB3Curtain::Render()
 
 void CSMB3Curtain::SetState(int state)
 {
-
+	
 }
 
 void CSMB3Curtain::SpawnOtherObjects()
 {
 	CIntroPlayScene* current_scene = (CIntroPlayScene*)CGame::GetInstance()->GetCurrentScene();
-	CGoomba* goomba = new CGoomba(70, -100);
-	CMushroom* mr = new CMushroom(50, -100, 0, RED_MUSHROOM);
+	CGoomba* goomba = new CGoomba(50, -100);
+	CMushroom* mr = new CMushroom(45, -100, 0, RED_MUSHROOM);
+	CKoopa* green_koopa = new CKoopa(120, -200, 1, 0);
+	CKoopa* black_koopa = new CKoopa(178, -115, 0, 1);
+	CLeaf* leaf = new CLeaf(130, 0, 1);
+	CStarIntro* star = new CStarIntro(185, -60);
 	mr->SetState(MUSHROOM_STATE_OUT_OF_BRICK);
 	mr->SetSpeed(-MUSHROOM_SPEED_X, 0);
 	current_scene->AddObjectToScene(goomba);
 	current_scene->AddObjectToScene(mr);
-	//current_scene->AddObjectToScene(luigi_npc);
-	//MUSHROOM_STATE_IN_THE_BRICK
+	current_scene->AddObjectToScene(green_koopa);
+	current_scene->AddObjectToScene(black_koopa);
+	current_scene->AddObjectToScene(leaf);
+	current_scene->AddObjectToScene(star);
 }

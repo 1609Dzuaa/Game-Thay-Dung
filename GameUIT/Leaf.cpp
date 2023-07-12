@@ -14,30 +14,64 @@ CLeaf::CLeaf(float x, float y) : CGameObject(x, y)
 	Fall_Up_start = -1;
 	reachMinOrMax_X = false;
 	IsWaitable = true;
+	IsWaiting = false;
+	isIntro = false;
+}
+
+CLeaf::CLeaf(float x, float y, int intro) : CGameObject(x, y)
+{
+	this->ax = 0;
+	this->ay = 0;
+	this->SetState(LEAF_STATE_FALL_DOWN);
+	minY = -1;
+	minX = x;
+	maxX = x + 31.0f;
+	Fall_Up_start = -1;
+	reachMinOrMax_X = false;
+	IsWaitable = true;
+	IsWaiting = false;
+	isIntro = intro;
 }
 
 void CLeaf::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	vx += ax * dt;
 	vy += ay * dt;
-	reachMinOrMax_X = false;
 
-	if (y <= minY)
+	if (!isIntro)
 	{
-		vx = LEAF_FALL_DOWN_SPEED_X;
-		vy = LEAF_FALL_DOWN_SPEED_Y;
-	}
+		reachMinOrMax_X = false;
+		if (y <= minY)
+		{
+			vx = LEAF_FALL_DOWN_SPEED_X;
+			vy = LEAF_FALL_DOWN_SPEED_Y;
+		}
 
-	if (x >= maxX)
-	{
-		vx = -LEAF_FALL_DOWN_SPEED_X;
-		reachMinOrMax_X = true;
+		if (x >= maxX)
+		{
+			vx = -LEAF_FALL_DOWN_SPEED_X;
+			reachMinOrMax_X = true;
+		}
+		if (x < minX)
+		{
+			vx = LEAF_FALL_DOWN_SPEED_X;
+			reachMinOrMax_X = true;
+			//Set vận tốc trục y trong thoáng chốc mà không ảnh hướng đến vận tốc chính
+		}
 	}
-	if (x < minX)
+	else
 	{
-		vx = LEAF_FALL_DOWN_SPEED_X;
-		reachMinOrMax_X = true;
-		//Set vận tốc trục y trong thoáng chốc mà không ảnh hướng đến vận tốc chính
+		if (x >= maxX)
+		{
+			vx = -0.025f;
+			reachMinOrMax_X = true;
+		}
+		if (x < minX)
+		{
+			vx = 0.025f;
+			reachMinOrMax_X = true;
+			//Set vận tốc trục y trong thoáng chốc mà không ảnh hướng đến vận tốc chính
+		}
 	}
 
 	CCollision::GetInstance()->Process(this, dt, coObjects);
@@ -46,7 +80,8 @@ void CLeaf::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 void CLeaf::Render()
 {
-	if (IsWaiting && IsWaitable) return;
+	if (IsWaiting && IsWaitable) 
+		return;
 
 	CAnimations* animations = CAnimations::GetInstance();
 	if (vx > 0)
@@ -82,9 +117,10 @@ void CLeaf::SetState(int state)
 	switch (state)
 	{
 	case LEAF_STATE_FALL_DOWN:
-		vx = LEAF_FALL_DOWN_SPEED_X;
-		vy = LEAF_FALL_DOWN_SPEED_Y;
-		ay = LEAF_GRAVITY;
+		vx = 0.025f;
+		//vy = LEAF_FALL_DOWN_SPEED_Y;
+		vy = 0;
+		ay = 0.000005f;
 		break;
 
 	case LEAF_STATE_FALL_UP:

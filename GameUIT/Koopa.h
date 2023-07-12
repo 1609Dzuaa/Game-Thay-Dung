@@ -49,6 +49,7 @@
 #define KOOPA_STATE_JUMPING 2350
 #define KOOPA_STATE_BEING_HELD 2400
 #define KOOPA_STATE_BEING_HELD_REVERSE 2450
+#define KOOPA_STATE_BOUNCING	2500	//For Black Koopa at IntroPlayScene
 
 #define ID_ANI_KOOPA_WALKING_LEFT 50000
 #define ID_ANI_KOOPA_WALKING_RIGHT 50500
@@ -61,6 +62,7 @@
 #define ID_ANI_KOOPA_REBORN_REVERSE 50035
 #define ID_ANI_KOOPA_JUMPING_LEFT 60000
 #define ID_ANI_KOOPA_JUMPING_RIGHT 60500
+#define ID_ANI_BLACK_KOOPA_SHELL 39100
 
 //
 //======RED KOOPA
@@ -80,6 +82,8 @@ class CKoopa : public CGameObject
 {
 protected:
 	int type;
+	int isGreen, isBlack;	//2 thuộc tính dành cho Koopa Intro
+	int countBounce; //black koopa
 
 	float ax;
 	float ay;
@@ -118,13 +122,14 @@ protected:
 	void HandleCollisionWithBlockingObjects(LPCOLLISIONEVENT e);
 	void HandleCollisionWithColorPlatform(LPCOLLISIONEVENT e, CColorPlatform* color_platf);
 	void AdjustPositionOnColorPlatform(CColorPlatform* color_platf);
-	//void Respawn();
+	void OnCollisionWithMarioNPC(LPCOLLISIONEVENT e);//Use for Intro -> Khiến Mario bị u đầu
 
 	int GetAniIdGreenKoopa();
 	int GetAniIdFlyingKoopa();
 	int GetAniIdRedKoopa();
 public:
 	CKoopa(float x, float y, int type);
+	CKoopa(float x, float y, int isGreen, int isBlack); //Use for Intro
 	virtual void SetState(int state);
 	int GetType() { return type; };
 	void SetType(int para) { this->type = para; };

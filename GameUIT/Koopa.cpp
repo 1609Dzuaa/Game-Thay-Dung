@@ -1,6 +1,7 @@
 ﻿#include"Koopa.h"
 #include "Goomba.h"
 #include "Mario.h"
+#include "MarioNPC.h"
 #include "QuestionBrick.h"
 #include "PlayScene.h"
 #include "EffectScore.h"
@@ -44,6 +45,30 @@ CKoopa::CKoopa(float x, float y, int type) :CGameObject(x, y)
 	isOnPlatform = false;
 	isBeingHeld = false;
 	IsWaitable = true;
+	IsWaiting = false;
+	isGreen = 0;
+	isBlack = 0;
+}
+
+CKoopa::CKoopa(float x, float y, int isGreen, int isBlack) :CGameObject(x, y)
+{
+	this->ax = 0;
+	this->ay = KOOPA_GRAVITY;
+	this->type = GREEN_KOOPA;
+	this->isGreen = isGreen;
+	this->isBlack = isBlack;
+	ghost_head = nullptr;
+	enableToChangeVx = false;
+	die_start = -1;
+	sleep_start = -1;
+	reborn_start = -1;
+	knock_off_start = -1;
+	KillCount = 0;
+	isOnPlatform = false;
+	isBeingHeld = false;
+	IsWaitable = true;
+	IsWaiting = false;
+	SetState(KOOPA_STATE_SLEEP);
 }
 
 void CKoopa::GetBoundingBox(float& left, float& top, float& right, float& bottom)
@@ -52,7 +77,8 @@ void CKoopa::GetBoundingBox(float& left, float& top, float& right, float& bottom
 	if (state == KOOPA_STATE_SLEEP || state == KOOPA_STATE_DIE
 		|| state == KOOPA_STATE_SLIP || state == KOOPA_STATE_REBORN
 		|| state == KOOPA_STATE_SLEEP_REVERSE || state == KOOPA_STATE_REBORN_REVERSE
-		|| state == KOOPA_STATE_SLIP_REVERSE || state == KOOPA_STATE_SLEEP_REVERSE_SPECIAL)
+		|| state == KOOPA_STATE_SLIP_REVERSE || state == KOOPA_STATE_SLEEP_REVERSE_SPECIAL
+		|| state == KOOPA_STATE_BOUNCING)
 	{
 		left = x - KOOPA_BBOX_WIDTH / 2;
 		top = y - KOOPA_IN_SHELL_BBOX_HEIGHT / 2;
@@ -83,7 +109,8 @@ void CKoopa::OnCollisionWith(LPCOLLISIONEVENT e)
 	//2.Va chạm với Koopa mà bị Mario quăng
 
 	KindOfCollisionWith(e);
-	if (!e->obj->IsBlocking()) return;
+	if (!e->obj->IsBlocking())
+		return;
 
 	HandleCollisionWithBlockingObjects(e);
 }
@@ -98,6 +125,8 @@ void CKoopa::KindOfCollisionWith(LPCOLLISIONEVENT e)
 	if (dynamic_cast<CQuestionBrick*>(e->obj) && e->obj->GetState() != QBRICK_STATE_HITTED
 		|| dynamic_cast<CQuestionBrick*>(e->obj) && e->obj->GetState() != QBRICK_STATE_HITTED)
 		this->OnCollisionWithQuesBrick(e);
+	if (dynamic_cast<CMarioNPC*>(e->obj))
+		this->OnCollisionWithMarioNPC(e);
 
 	if (!ConditionsThatEnableToKillAllies()) return; //3 thằng còn lại là Enemies rồi nên đặt đây là hợp lý
 
@@ -111,12 +140,33 @@ void CKoopa::KindOfCollisionWith(LPCOLLISIONEVENT e)
 
 void CKoopa::HandleCollisionWithBlockingObjects(LPCOLLISIONEVENT e)
 {
+	if (isBlack && countBounce < 2)
+	{
+		if (e->ny < 0)
+			SetState(KOOPA_STATE_BOUNCING);
+		return;
+	}
+	else if (isBlack)
+	{
+		vy = 0;
+		isOnPlatform = true;
+		return;
+	}
+
 	if (e->ny == -1) //Giải quyết đc tình trạng Flyin Koopa đập đầu vào thì không nhảy nữa
 	{
 		if (state == KOOPA_STATE_SLEEP_REVERSE)
 			state = KOOPA_STATE_SLEEP_REVERSE_SPECIAL;
 		if (type != GREEN_FLYING_KOOPA)
-			vy = 0;
+		{
+			if (!isGreen)
+				vy = 0;
+			else
+			{
+				vx = 0;
+				vy = 0;
+			}
+		}
 		else if (type == GREEN_FLYING_KOOPA)
 			this->SetState(KOOPA_STATE_JUMPING);
 
@@ -174,7 +224,10 @@ void CKoopa::HandleCollisionWithBlockingObjects(LPCOLLISIONEVENT e)
 void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	//How about respawn it if go too far but comeback later ?!
-	if (!CCamera::GetInstance()->isViewable(this))
+	CScene* current_scene = (CScene*)CGame::GetInstance()->GetCurrentScene();
+
+	if (!CCamera::GetInstance()->isViewable(this)
+		&& current_scene->GetID() == ID_MAP_1_1)
 		return;
 	
 	//if (IsWaiting && IsWaitable)
@@ -218,6 +271,8 @@ void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 void CKoopa::UpdateKoopaState()
 {
+	if (isGreen || isBlack) return; //0 Update State Cho 2 con Koopa đầu Intro
+
 	//Quay đầu của Red Koopa
 	if (type == RED_KOOPA)
 	{
@@ -278,8 +333,14 @@ void CKoopa::UpdateKoopaState()
 
 void CKoopa::Render()
 {
-	if (!CCamera::GetInstance()->isViewable(this)) return;
-	if (IsWaiting && IsWaitable) return;
+	CScene* current_scene = (CScene*)CGame::GetInstance()->GetCurrentScene();
+
+	if (!CCamera::GetInstance()->isViewable(this)
+		&& current_scene->GetID() == ID_MAP_1_1)
+		return;
+
+	if (IsWaiting && IsWaitable) 
+		return;
 	
 	//RenderBoundingBox();
 	//Nếu đang bị hold và chưa tới thời gian reborn
@@ -429,6 +490,21 @@ void CKoopa::SetState(int state)
 		isBeingHeld = true;
 
 		break;
+
+	case KOOPA_STATE_BOUNCING:
+		if (countBounce == 0)
+		{
+			vy = -0.3f;
+			countBounce++;
+		}
+		else if (countBounce)
+		{
+			vy = -0.15f;
+			countBounce++;
+		}
+		else vy = 0.0f;
+
+		break;
 	}
 
 	CGameObject::SetState(state);
@@ -436,6 +512,8 @@ void CKoopa::SetState(int state)
 
 void CKoopa::OnCollisionWithGoomba(LPCOLLISIONEVENT e)
 {
+	if (isGreen) return; //Koopa ở Intro 0 va chạm với Goomba
+
 	CGoomba* goomba = dynamic_cast<CGoomba*>(e->obj);
 	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
 	KillCount++;
@@ -473,6 +551,18 @@ void CKoopa::OnCollisionWithQuesBrick(LPCOLLISIONEVENT e)
     //Will check this part later!
 }
 
+void CKoopa::OnCollisionWithMarioNPC(LPCOLLISIONEVENT e)
+{
+	if (!isGreen) return; //Chỉ dành cho rùa xanh ở màn Intro
+
+	if (e->ny < 0)
+	{
+		vx = -0.0001f;
+		vy = -0.35f; //Nảy lên 1 tí
+		e->obj->SetState(MARIO_STATE_GOT_HITTED_BY_SHELL);
+	}
+}
+
 void CKoopa::OnCollisionWithFlower(LPCOLLISIONEVENT e)
 {
 	if (e->obj->GetState() != FLOWER_STATE_DIE)
@@ -482,6 +572,9 @@ void CKoopa::OnCollisionWithFlower(LPCOLLISIONEVENT e)
 int CKoopa::GetAniIdGreenKoopa()
 {
 	int id = -1;
+
+	if (isBlack) return ID_ANI_BLACK_KOOPA_SHELL;
+
 	if (state == KOOPA_STATE_WALKING && this->vx > 0)
 		id = ID_ANI_KOOPA_WALKING_RIGHT;
 	else if (state == KOOPA_STATE_WALKING && this->vx < 0)

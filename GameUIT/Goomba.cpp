@@ -152,7 +152,7 @@ void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 	UpdateGoombaState();
 	CCollision::GetInstance()->Process(this, dt, coObjects);
-	DebugOutTitle(L"x, y, vx, vy: %f, %f, %f, %f", x, y, vx, vy);
+	//DebugOutTitle(L"x, y, vx, vy: %f, %f, %f, %f", x, y, vx, vy);
 }
 
 void CGoomba::UpdateGoombaState()

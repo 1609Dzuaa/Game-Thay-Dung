@@ -1,7 +1,6 @@
 ﻿#pragma once
 #include "GameObject.h"
 
-//#define SMB3_CURTAIN_SPEED_UP	0.075f
 #define SMB3_CURTAIN_SPEED_DOWN	0.1f
 
 #define ID_ANI_SMB3_CURTAIN	500002

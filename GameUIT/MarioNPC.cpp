@@ -8,10 +8,29 @@ void CMarioNPC::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	vx += ax * dt;
 	vy += ay * dt;
-
+	//if (state == MARIO_STATE_SIT) vx = 0;
+	UpdateSpeed();
 	isOnPlatform = false;
 	CCollision::GetInstance()->Process(this, dt, coObjects);
-	//DebugOutTitle(L"y: %f", y);
+	DebugOutTitle(L"st: %d", state);
+}
+
+void CMarioNPC::UpdateSpeed()
+{
+	if (state == MARIO_STATE_WALKING_RIGHT)
+	{
+		if (abs(vx) > abs(maxVx))
+		{
+			vx = maxVx;
+		}
+	}
+	if (state == MARIO_STATE_WALKING_LEFT)
+	{
+		if (abs(vx) > abs(maxVx))
+		{
+			vx = maxVx;
+		}
+	}
 }
 
 void CMarioNPC::OnCollisionWith(LPCOLLISIONEVENT e)
@@ -22,6 +41,7 @@ void CMarioNPC::OnCollisionWith(LPCOLLISIONEVENT e)
 		OnCollisionWithGoomba(e);
 	if (dynamic_cast<CKoopa*>(e->obj))
 		OnCollisionWithKoopa(e);
+	DebugOut(L"OCW\n");
 }
 
 void CMarioNPC::OnNoCollision(DWORD dt)
@@ -101,7 +121,7 @@ int CMarioNPC::GetAniIdBig()
 	}
 	else
 	{
-        if (isKicking)
+		if (isKicking)
 		{
 			if (nx > 0)
 				aniId = ID_ANI_MARIO_KICKING_RIGHT;
@@ -126,6 +146,10 @@ int CMarioNPC::GetAniIdBig()
 			else
 				aniId = ID_ANI_MARIO_BIG_HOLDING_LEFT;
 		}
+		else if (isSitting)
+			aniId = ID_ANI_MARIO_SIT_LEFT;
+		else if (isHitted)
+			aniId = ID_ANI_MARIO_HITTED_BY_SHELL;
 		else
 		{
 			if (vx == 0)
@@ -177,24 +201,27 @@ void CMarioNPC::SetState(int state)
 		break;
 
 	case MARIO_STATE_WALKING_RIGHT:
-		maxVx = MARIO_WALKING_SPEED;
-		ax = MARIO_ACCEL_WALK_X;
+		maxVx = 0.0023f;
+		vx = 0.001f;
+		ax = MARIO_ACCEL_RUN_X;
 		nx = 1;
 
 		break;
 
 	case MARIO_STATE_WALKING_LEFT:
-		maxVx = -MARIO_WALKING_SPEED;
+		maxVx = -0.075f;
 		ax = -MARIO_ACCEL_WALK_X;
 		nx = -1;
+
 		break;
 
-	case MARIO_STATE_SIT:	//set state ngồi ở Keyboard
-
+	case MARIO_STATE_SIT:
 		if (isOnPlatform && level != MARIO_LEVEL_SMALL)
 		{
 			isSitting = true;
-			vx = 0; vy = 0.0f;
+			vx = 0.0f; 
+			vy = 0.0f;
+			ax = 0.0f;
 			y += MARIO_SIT_HEIGHT_ADJUST;
 		}
 		break;
@@ -253,6 +280,10 @@ void CMarioNPC::SetState(int state)
 
 	case MARIO_STATE_HOLDING:
 		//nothing special
+		break;
+
+	case MARIO_STATE_GOT_HITTED_BY_SHELL:
+		isHitted = true;
 		break;
 	}
 

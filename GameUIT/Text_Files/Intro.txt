@@ -7,6 +7,8 @@ Text_Files\Goomba.txt
 Text_Files\Koopa.txt
 Text_Files\Mushroom.txt
 Text_Files\Platform.txt
+Text_Files\Leaf.txt
+Text_Files\Card.txt
 [OBJECTS]
 
 #Layer: Nền đen và Ground Juventus

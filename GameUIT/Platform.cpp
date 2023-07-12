@@ -33,7 +33,7 @@ void CPlatform::Render()
 		s->Get(this->spriteIdEnd)->Draw(xx, y);
 
 	//
-	RenderBoundingBox();
+	//RenderBoundingBox();
 	//
 }
 

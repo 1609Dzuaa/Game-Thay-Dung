@@ -16,6 +16,8 @@ CGameObject::CGameObject()
 	nx = 1;
 	state = -1;
 	isDeleted = false;
+	IsWaitable = 0;
+	IsWaiting = 0;
 }
 
 void CGameObject::RenderBoundingBox()

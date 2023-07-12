@@ -183,6 +183,7 @@
     <ClInclude Include="SMB3Curtain.h" />
     <ClInclude Include="Sprite.h" />
     <ClInclude Include="Sprites.h" />
+    <ClInclude Include="StarIntro.h" />
     <ClInclude Include="Switch.h" />
     <ClInclude Include="Tail.h" />
     <ClInclude Include="Textures.h" />
@@ -241,6 +242,7 @@
     <ClCompile Include="SMB3Curtain.cpp" />
     <ClCompile Include="Sprite.cpp" />
     <ClCompile Include="Sprites.cpp" />
+    <ClCompile Include="StarIntro.cpp" />
     <ClCompile Include="Switch.cpp" />
     <ClCompile Include="Tail.cpp" />
     <ClCompile Include="Textures.cpp" />

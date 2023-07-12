@@ -2,13 +2,13 @@
 #include "Mario.h"
 #include "SMB3Curtain.h"
 #include "IntroPlayScene.h"
-
+#include "MarioNPC.h"
 
 void CLuigiNPC::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	vx += ax * dt;
 	vy += ay * dt;
-	if (x > 80 && !hasJumped)
+	if (x > 75 && !hasJumped)
 	{
 		SetState(MARIO_STATE_JUMPING);
 		hasJumped = 1;
@@ -16,17 +16,40 @@ void CLuigiNPC::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 	if (y < 50 && !hasSpawn)
 	{
-		SpawnSuperMarioBros3();
+		SpawnSuperMarioBros3(); //Kéo rèm SMB3
 		hasSpawn = 1;
 	}
 
-	if (y > 300) 
+	if (y > 300)
+	{
+		ghost_mario_npc->SetState(MARIO_STATE_SIT_RELEASE);
+		ghost_mario_npc = nullptr;
 		this->Delete();
+	}
 
+	UpdateSpeed();
 	isOnPlatform = false;
 
-	//DebugOutTitle(L"y: %f", y);
+	//DebugOutTitle(L"vx, maxVx, st: %f, %f, %d", vx, maxVx, state);
 	CCollision::GetInstance()->Process(this, dt, coObjects);
+}
+
+void CLuigiNPC::UpdateSpeed()
+{
+	if (state == MARIO_STATE_WALKING_RIGHT)
+	{
+		if (abs(vx) > abs(maxVx))
+		{
+			vx = maxVx;
+		}
+	}
+	if (state == MARIO_STATE_WALKING_LEFT)
+	{
+		if (abs(vx) > abs(maxVx))
+		{
+			vx = maxVx;
+		}
+	}
 }
 
 void CLuigiNPC::OnNoCollision(DWORD dt)
@@ -42,14 +65,17 @@ void CLuigiNPC::OnCollisionWith(LPCOLLISIONEVENT e)
 		vy = 0;
 		isOnPlatform = true;
 	}
+	else if (dynamic_cast<CMarioNPC*>(e->obj))
+		OnCollisionWithMarioNPC(e);
 }
 
 void CLuigiNPC::OnCollisionWithMarioNPC(LPCOLLISIONEVENT e)
 {
 	if (e->ny < 0)
 	{
-		vy = -0.6f;
+		vy = -0.8f;
 		e->obj->SetState(MARIO_STATE_SIT);
+		ghost_mario_npc = dynamic_cast<CMarioNPC*>(e->obj);
 	}
 }
 
@@ -128,15 +154,15 @@ void CLuigiNPC::SetState(int state)
 		break;
 
 	case MARIO_STATE_RUNNING_LEFT:
-		maxVx = -0.0f;
-		vx = 0;
-		//ax = -MARIO_ACCEL_RUN_X;
+		maxVx = -0.00224f;
+		vx = -0.001f;
+		ax = -MARIO_ACCEL_RUN_X;
 		nx = -1;
 		isRunning = true;
 		break;
 
 	case MARIO_STATE_WALKING_RIGHT:
-		maxVx = MARIO_WALKING_SPEED;
+		maxVx = 0.075f;
 		ax = MARIO_ACCEL_WALK_X;
 		nx = 1;
 
@@ -157,7 +183,8 @@ void CLuigiNPC::SetState(int state)
 		if (isOnPlatform)
 		{
 			isJumping = true;
-			vy = -0.75f;
+			isOnPlatform = false;
+			vy = -0.6f;
 		}
 		break;
 
@@ -192,7 +219,7 @@ void CLuigiNPC::GetBoundingBox(float& left, float& top, float& right, float& bot
 
 void CLuigiNPC::SpawnSuperMarioBros3()
 {
-	CSMB3Curtain* smb3_curtain = new CSMB3Curtain(127, -100);
+	CSMB3Curtain* smb3_curtain = new CSMB3Curtain(127, -120);
 	CIntroPlayScene* current_scene = (CIntroPlayScene*)CGame::GetInstance()->GetCurrentScene();
 	current_scene->AddObjectToScene(smb3_curtain);
 }

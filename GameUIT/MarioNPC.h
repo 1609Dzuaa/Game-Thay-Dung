@@ -7,7 +7,8 @@
 #define MARIO_NPC_JUMP_SPEED	0.5f
 
 #define MARIO_NPC_STATE_LOOKUP	30
-#define MARIO_NPC_STATE_NEWTON_LAW	40	//mai rơi trúng đầu
+
+#define ID_ANI_MARIO_HITTED_BY_SHELL	11961
 
 class CMarioNPC : public CGameObject
 {
@@ -15,18 +16,17 @@ class CMarioNPC : public CGameObject
 	int level;
 	int isOnPlatform;
 	BOOLEAN isKicking, isHolding, isEvolving, isEvolveForward, isEvolveBackward;
-	BOOLEAN isJumping, isLanding, isRunning, isSitting;
+	BOOLEAN isJumping, isLanding, isRunning, isSitting, isHitted;
 	float maxVx;
 	ULONGLONG kick_start, evolve_start;
 public:
 	CMarioNPC(float x, float y) :CGameObject(x, y)
 	{
 		this->nx = -1;
-		//ax = MARIO_ACCEL_WALK_X;
+		ax = MARIO_ACCEL_WALK_X;
 		vx = -0.01f;
 		ay = 0.002f;
 		level = MARIO_LEVEL_BIG;
-		SetState(MARIO_STATE_WALKING_LEFT);
 		isOnPlatform = 0;
 		isKicking = 0;
 		isHolding = 0;
@@ -40,8 +40,11 @@ public:
 		isLanding = 0;
 		isRunning = 0;
 		isSitting = 0;
+		isHitted = 0;
+		SetState(MARIO_STATE_WALKING_LEFT);
 	};
 	void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
+	void UpdateSpeed();
 	int IsBlocking() { return 0; }
 	int IsCollidable() { return 1; }
 	void Render();

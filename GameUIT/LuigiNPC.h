@@ -2,6 +2,7 @@
 #include "GameObject.h"
 #include "ColorPlatform.h"
 #include "Mario.h"
+#include "MarioNPC.h"
 
 #define LUIGI_NPC_WALKING_SPEED	0.15f
 #define LUIGI_NPC_JUMP_SPEED	0.5f
@@ -26,25 +27,27 @@ class CLuigiNPC : public CGameObject
 	BOOLEAN hasJumped, hasSpawn;
 	float maxVx;
 	ULONGLONG kick_start;
+	CMarioNPC* ghost_mario_npc;
 public:
 	CLuigiNPC(float x, float y) :CGameObject(x, y)
 	{
 		this->nx = 1;
-		//ax = MARIO_ACCEL_WALK_X;
-		vx = -0.01f;
+		ax = MARIO_ACCEL_WALK_X;
 		ay = 0.002f;
-		SetState(MARIO_STATE_WALKING_RIGHT);
 		isOnPlatform = 0;
 		isKicking = 0;
 		isHolding = 0;
 		maxVx = 0.0f;
 		kick_start = 0;
 		isJumping = 0;
+		SetState(MARIO_STATE_WALKING_RIGHT);
 
 		hasJumped = 0;
 		hasSpawn = 0;
+		ghost_mario_npc = nullptr;
 	};
 	void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
+	void UpdateSpeed();
 	int IsBlocking() { return 0; }
 	int IsCollidable() { return 1; }
 	void OnCollisionWith(LPCOLLISIONEVENT e);
