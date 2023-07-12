@@ -1,23 +1,23 @@
 ﻿#include "MarioNPC.h"
-#include "ColorPlatform.h"
 #include "Goomba.h"
 #include "Koopa.h"
 #include "Mario.h"
+#include "debug.h"
 
 void CMarioNPC::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
-	//vx += ax * dt;
-	//vy += ay * dt;
+	vx += ax * dt;
+	vy += ay * dt;
 
+	isOnPlatform = false;
 	CCollision::GetInstance()->Process(this, dt, coObjects);
+	//DebugOutTitle(L"y: %f", y);
 }
 
 void CMarioNPC::OnCollisionWith(LPCOLLISIONEVENT e)
 {
 	if (e->obj->IsBlocking())
 		OnCollisionWithBlockingObject(e);
-	if (dynamic_cast<CColorPlatform*>(e->obj))
-		OnCollisionWithColorPlatform(e);
 	if (dynamic_cast<CGoomba*>(e->obj))
 		OnCollisionWithGoomba(e);
 	if (dynamic_cast<CKoopa*>(e->obj))
@@ -35,39 +35,6 @@ void CMarioNPC::OnCollisionWithBlockingObject(LPCOLLISIONEVENT e)
 	vy = 0;
 	if (e->ny < 0)
 		isOnPlatform = true;
-}
-
-void CMarioNPC::OnCollisionWithColorPlatform(LPCOLLISIONEVENT e)
-{
-	CColorPlatform* cl_pf = dynamic_cast<CColorPlatform*>(e->obj);
-	HandleCollisionWithColorPlatform(e, cl_pf);
-}
-
-void CMarioNPC::HandleCollisionWithColorPlatform(LPCOLLISIONEVENT e, CColorPlatform* color_platf)
-{
-	//Hàm này để xử lý vị trí của Mario khi nhảy lên Color Platform
-	//Nhằm tránh việc nó bị rơi xuống dù có va chạm
-	//Tương tự như hàm SetLevel trong framework của thầy.
-
-	//Condition that I learned: |Player.TopY + Player.Height > ColorPlat.TopY => SNAP|
-	if (this->level != MARIO_LEVEL_SMALL) //level gấu mèo và BIG dùng chung BBox được vì diff 0 đáng kể
-	{
-
-		if (this->y + MARIO_BIG_BBOX_HEIGHT / 2 + color_platf->GetCellHeight() / 2 > color_platf->GetY())
-		{
-			//SNAP: Player.Y = ColorPlat.Y - ColorPlat.Height / 2 - Player.Height / 2
-			this->y = color_platf->GetY() - color_platf->GetCellHeight() / 2 - MARIO_BIG_BBOX_HEIGHT / 2;
-			vy = 0;
-		}
-	}
-	else
-	{
-		if (this->y + MARIO_SMALL_BBOX_HEIGHT / 2 + color_platf->GetCellHeight() / 2 > color_platf->GetY())
-		{
-			this->y = color_platf->GetY() - color_platf->GetCellHeight() / 2 - MARIO_SMALL_BBOX_HEIGHT / 2;
-			vy = 0;
-		}
-	}
 }
 
 void CMarioNPC::OnCollisionWithGoomba(LPCOLLISIONEVENT e)
@@ -202,8 +169,9 @@ void CMarioNPC::SetState(int state)
 		break;
 
 	case MARIO_STATE_RUNNING_LEFT:
-		maxVx = -0.2f;
-		ax = -MARIO_ACCEL_RUN_X;
+		maxVx = -0.0f;
+		vx = 0;
+		//ax = -MARIO_ACCEL_RUN_X;
 		nx = -1;
 		isRunning = true;
 		break;
@@ -289,4 +257,33 @@ void CMarioNPC::SetState(int state)
 	}
 
 	CGameObject::SetState(state);
+}
+
+void CMarioNPC::GetBoundingBox(float& left, float& top, float& right, float& bottom)
+{
+	//Really IMPORTANT
+	if (level != MARIO_LEVEL_SMALL) //Big or Racoon
+	{
+		if (isSitting)
+		{
+			left = x - MARIO_BIG_SITTING_BBOX_WIDTH / 2;
+			top = y - MARIO_BIG_SITTING_BBOX_HEIGHT / 2;
+			right = left + MARIO_BIG_SITTING_BBOX_WIDTH;
+			bottom = top + MARIO_BIG_SITTING_BBOX_HEIGHT;
+		}
+		else
+		{
+			left = x - MARIO_BIG_BBOX_WIDTH / 2;
+			top = y - MARIO_BIG_BBOX_HEIGHT / 2;
+			right = left + MARIO_BIG_BBOX_WIDTH;
+			bottom = top + MARIO_BIG_BBOX_HEIGHT;
+		}
+	}
+	else
+	{
+		left = x - MARIO_SMALL_BBOX_WIDTH / 2;
+		top = y - MARIO_SMALL_BBOX_HEIGHT / 2;
+		right = left + MARIO_SMALL_BBOX_WIDTH;
+		bottom = top + MARIO_SMALL_BBOX_HEIGHT;
+	}
 }

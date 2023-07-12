@@ -17,6 +17,8 @@
 #include "ColorPlatform.h"
 #include "DataBinding.h"
 #include "RedArrow.h"
+#include "MarioNPC.h"
+#include "LuigiNPC.h"
 
 #include "IntroKeyHandler.h"
 #include "WorldKeyHandler.h"
@@ -118,7 +120,15 @@ void CIntroPlayScene::_ParseSection_OBJECTS(string line)
 		obj = new CIntroLayer(x, y);
 		break;
 
-	case 5:
+	case OBJECT_TYPE_MARIO_INTRO:
+		obj = new CMarioNPC(x, y);
+		break;
+
+	case OBJECT_TYPE_LUIGI_INTRO:
+		obj = new CLuigiNPC(x, y);
+		break;
+
+	case OBJECT_TYPE_PLATFORM:
 	{
 		float cell_width = (float)atof(tokens[3].c_str());
 		float cell_height = (float)atof(tokens[4].c_str());
@@ -140,8 +150,10 @@ void CIntroPlayScene::_ParseSection_OBJECTS(string line)
 		obj = new CRedCurtain(x, y);
 		break;
 
-	case OBJECT_TYPE_GRASS:
-		;
+	case OBJECT_TYPE_GOOMBAS:
+		int type = atoi(tokens[3].c_str());
+		obj = new CGoomba(x, y, type);
+		break;
 	}
 	
 	obj->SetPosition(x, y);

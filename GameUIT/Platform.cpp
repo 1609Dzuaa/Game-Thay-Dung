@@ -15,7 +15,7 @@ void CPlatform::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 void CPlatform::Render()
 {
-	if (!CCamera::GetInstance()->isViewable(this)) return;
+	//if (!CCamera::GetInstance()->isViewable(this)) return;
 
 	if (this->spriteIdBegin == 0) return; //0 vẽ
 	if (this->length <= 0) return;
@@ -33,7 +33,7 @@ void CPlatform::Render()
 		s->Get(this->spriteIdEnd)->Draw(xx, y);
 
 	//
-	//RenderBoundingBox();
+	RenderBoundingBox();
 	//
 }
 

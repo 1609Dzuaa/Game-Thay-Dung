@@ -1,18 +1,18 @@
 ﻿#pragma once
 #include "GameObject.h"
 
-//#define RED_CURTAIN_SPEED_UP	0.075f
-#define RED_CURTAIN_SPEED_UP	0.1f
+//#define SMB3_CURTAIN_SPEED_UP	0.075f
+#define SMB3_CURTAIN_SPEED_DOWN	0.1f
 
-#define ID_ANI_RED_CURTAIN	500001
+#define ID_ANI_SMB3_CURTAIN	500002
 
-class CRedCurtain : public CGameObject
+class CSMB3Curtain : public CGameObject
 {
 	BOOLEAN HasSpawned;
 public:
-	CRedCurtain(float x, float y) :CGameObject(x, y) 
-	{ 
-		vy = -RED_CURTAIN_SPEED_UP;
+	CSMB3Curtain(float x, float y) :CGameObject(x, y)
+	{
+		vy = SMB3_CURTAIN_SPEED_DOWN;
 		HasSpawned = false;
 	};
 	void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
@@ -23,5 +23,5 @@ public:
 	void GetBoundingBox(float& left, float& top, float& right, float& bottom) {};
 	void SetState(int state);
 
-	void SpawnMarioAndLuigi();
+	void SpawnOtherObjects(); //star, leaf, mushroom, goomba, mai rùa xanh, đen
 };

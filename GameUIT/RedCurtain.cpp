@@ -2,6 +2,7 @@
 #include "MarioNPC.h"
 #include "LuigiNPC.h"
 #include "IntroPlayScene.h"
+#include "Goomba.h"
 #include "debug.h"
 
 void CRedCurtain::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
@@ -12,9 +13,10 @@ void CRedCurtain::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		SpawnMarioAndLuigi();
 		vy = 0;
 		HasSpawned = true;
+		this->Delete();
 	}
 
-	DebugOutTitle(L"Y: %f", this->y);
+	//DebugOutTitle(L"Y: %f", this->y);
 	CCollision::GetInstance()->Process(this, dt, coObjects);
 }
 
@@ -37,9 +39,9 @@ void CRedCurtain::SetState(int state)
 
 void CRedCurtain::SpawnMarioAndLuigi()
 {
+	CMarioNPC* mario_npc = new CMarioNPC(x + 100, 170);
+	CLuigiNPC* luigi_npc = new CLuigiNPC(x - 100, 170);
 	CIntroPlayScene* current_scene = (CIntroPlayScene*)CGame::GetInstance()->GetCurrentScene();
-	CMarioNPC* mario_npc = new CMarioNPC(x + 50, 160);
-	CLuigiNPC* luigi_npc = new CLuigiNPC(x - 150, 160);
 	current_scene->AddObjectToScene(mario_npc);
 	current_scene->AddObjectToScene(luigi_npc);
 }

@@ -25,6 +25,26 @@ CGoomba::CGoomba(float x, float y, int type) :CGameObject(x, y)
 	IsWaitable = true;
 }
 
+CGoomba::CGoomba(float x, float y) :CGameObject(x, y)
+{
+	this->vx = -GOOMBA_WALKING_SPEED;
+	this->ax = 0;
+	this->ay = GOOMBA_GRAVITY;
+	this->type = GOOMBA;
+	die_start = -1;
+	die_reverse_start = -1;
+	fly_start = 0;
+	count_step = 0;
+	count_step_to_jump = 0;
+	isDead = false;
+	isSpreadWings = false;
+	this->SetState(GOOMBA_STATE_IDLE);
+	if (this->type == PARA_GOOMBA)
+		this->level = PARA_GOOMBA_LEVEL_HAS_WINGS;
+	IsWaitable = true;
+	IsWaiting = false;
+}
+
 void CGoomba::GetBoundingBox(float& left, float& top, float& right, float& bottom)
 {
 	if (this->type == PARA_GOOMBA && this->level == PARA_GOOMBA_LEVEL_NO_WINGS || this->type != PARA_GOOMBA)
@@ -117,17 +137,22 @@ void CGoomba::HandleCollisionWithBlockingObjects(LPCOLLISIONEVENT e)
 
 void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
-	if (!CCamera::GetInstance()->isViewable(this)) return;
+	CScene* current_scene = (CScene*)CGame::GetInstance()->GetCurrentScene();
+
+	if (!CCamera::GetInstance()->isViewable(this) 
+		&& current_scene->GetID() == ID_MAP_1_1)
+		return;
 
 	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
-	if (CDataBindings::GetInstance()->IsStopWatch) return;
+	if (CDataBindings::GetInstance()->IsStopWatch) 
+		return;
 
 	vy += ay * dt;
 	vx += ax * dt;
 
 	UpdateGoombaState();
 	CCollision::GetInstance()->Process(this, dt, coObjects);
-	//DebugOutTitle(L"x, y, vx, vy: %f, %f, %f, %f", x, y, vx, vy);
+	DebugOutTitle(L"x, y, vx, vy: %f, %f, %f, %f", x, y, vx, vy);
 }
 
 void CGoomba::UpdateGoombaState()
@@ -170,8 +195,13 @@ void CGoomba::UpdateGoombaState()
 void CGoomba::Render()
 {
 	//should check if the object is in the camera => then RENDER it! 
-	if (!CCamera::GetInstance()->isViewable(this)) return;
-	if (IsWaiting && IsWaitable) return;
+	CScene* current_scene = (CScene*)CGame::GetInstance()->GetCurrentScene();
+
+	if (!CCamera::GetInstance()->isViewable(this) 
+		&& current_scene->GetID() == ID_MAP_1_1) 
+		return;
+	if (IsWaiting && IsWaitable) 
+		return;
 
 	int aniId;
 	if (type == GOOMBA)
@@ -181,6 +211,8 @@ void CGoomba::Render()
 			aniId = ID_ANI_GOOMBA_DIE;
 		if (state == GOOMBA_STATE_DIE_REVERSE)
 			aniId = ID_ANI_GOOMBA_DIE_REVERSE;
+		if (state == GOOMBA_STATE_IDLE)
+			aniId = ID_ANI_GOOMBA_IDLE;
 	}
 	else
 	{
@@ -235,6 +267,11 @@ void CGoomba::SetState(int state)
 	case GOOMBA_STATE_FLYING:
 		fly_start = GetTickCount64();
 		vy = -GOOMBA_FLYING_SPEED;
+		break;
+
+	case GOOMBA_STATE_IDLE:
+		vx = 0.0f;
+		ax = 0.0f;
 		break;
 	}
 

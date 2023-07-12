@@ -23,6 +23,9 @@
 #DIE_REVERSE
 5002	32002	100
 
+#Idle
+4999	31001	100
+
 ########### Para Goomba ###################
 [SPRITES]
 #WALK

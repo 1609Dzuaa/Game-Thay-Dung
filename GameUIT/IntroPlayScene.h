@@ -37,6 +37,7 @@ public:
 	void AddObjectToScene(LPGAMEOBJECT game_object) 
 	{
 		objects.push_back(game_object);
+		//objects.insert(objects.begin() + 2, game_object);
 	};
 
 	void Clear();

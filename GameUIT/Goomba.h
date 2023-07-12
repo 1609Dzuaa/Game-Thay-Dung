@@ -34,7 +34,9 @@
 #define GOOMBA_STATE_DIE_REVERSE 201
 #define GOOMBA_STATE_READY_TO_FLY 202
 #define GOOMBA_STATE_FLYING 203
+#define GOOMBA_STATE_IDLE	204	//Goomba ở Intro
 
+#define ID_ANI_GOOMBA_IDLE	4999
 #define ID_ANI_GOOMBA_WALKING 5000
 #define ID_ANI_GOOMBA_DIE 5001
 #define ID_ANI_GOOMBA_DIE_REVERSE 5002
@@ -81,6 +83,7 @@ protected:
 
 public:
 	CGoomba(float x, float y, int type);
+	CGoomba(float x, float y); //use for Intro Goomba
 	virtual void SetState(int state);
 	int GetType() { return this->type; };
 	void SetLevel(int para) { this->level = para; this->state = GOOMBA_STATE_WALKING; }

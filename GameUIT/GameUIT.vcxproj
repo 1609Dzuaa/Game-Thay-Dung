@@ -180,6 +180,7 @@
     <ClInclude Include="SampleKeyEventHandler.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Flower.h" />
+    <ClInclude Include="SMB3Curtain.h" />
     <ClInclude Include="Sprite.h" />
     <ClInclude Include="Sprites.h" />
     <ClInclude Include="Switch.h" />
@@ -237,6 +238,7 @@
     <ClCompile Include="RedCurtain.cpp" />
     <ClCompile Include="SampleKeyEventHandler.cpp" />
     <ClCompile Include="Flower.cpp" />
+    <ClCompile Include="SMB3Curtain.cpp" />
     <ClCompile Include="Sprite.cpp" />
     <ClCompile Include="Sprites.cpp" />
     <ClCompile Include="Switch.cpp" />

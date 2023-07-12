@@ -452,7 +452,6 @@ void CPlayScene::Unload()
 
 	objects.clear();
 	player = NULL;
-	CDataBindings::GetInstance()->IsStopWatch = 0;
 	delete map;
 	map = nullptr;
 	delete underworld_map;

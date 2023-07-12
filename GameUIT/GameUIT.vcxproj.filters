@@ -198,6 +198,9 @@
     <ClInclude Include="IntroLayer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="SMB3Curtain.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -366,6 +369,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="LuigiNPC.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SMB3Curtain.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

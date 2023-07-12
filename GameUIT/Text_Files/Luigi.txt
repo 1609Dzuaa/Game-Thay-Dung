@@ -1,9 +1,23 @@
 # id	left	top	right	bottom	texture_id
 [SPRITES]
 #Idle R
-700000	1028	178	1042	206	0
+700000	1028	178	1043	205	0
+
+#Walk R
+700100	1009	178	1024	205	0
+700101	990	178	1007	205	0
+
+#Jump Walk R
+700200	954	178	971	205	0
+
 
 # ani_id	sprite1_id	time1	sprite2_id	time2	...
 [ANIMATIONS]
 #Idle R
 700000	700000	100
+
+#Walk R
+700100	700000	100	700100	100	700101	100
+
+#Jump R
+700200	700200	100

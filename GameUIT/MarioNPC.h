@@ -22,11 +22,12 @@ public:
 	CMarioNPC(float x, float y) :CGameObject(x, y)
 	{
 		this->nx = -1;
-		ax = MARIO_ACCEL_WALK_X;
-		ay = 0.0001f;
+		//ax = MARIO_ACCEL_WALK_X;
+		vx = -0.01f;
+		ay = 0.002f;
 		level = MARIO_LEVEL_BIG;
-		SetState(MARIO_STATE_IDLE);
-		isOnPlatform = 1;
+		SetState(MARIO_STATE_WALKING_LEFT);
+		isOnPlatform = 0;
 		isKicking = 0;
 		isHolding = 0;
 		isEvolving = 0;
@@ -47,11 +48,11 @@ public:
 	void OnNoCollision(DWORD dt);
 	void OnCollisionWith(LPCOLLISIONEVENT e);
 	void OnCollisionWithBlockingObject(LPCOLLISIONEVENT e);
-	void OnCollisionWithColorPlatform(LPCOLLISIONEVENT e);
-	void HandleCollisionWithColorPlatform(LPCOLLISIONEVENT e, CColorPlatform* color_platf);
 	void OnCollisionWithGoomba(LPCOLLISIONEVENT e);
 	void OnCollisionWithKoopa(LPCOLLISIONEVENT e);
-	void GetBoundingBox(float& left, float& top, float& right, float& bottom) {};
+
+	//Quên mất thằng này, 0 có nó thì 0 colli đc @@@@@@@@@
+	void GetBoundingBox(float& left, float& top, float& right, float& bottom);
 	void SetState(int state);
 
 	int GetAniIdBig();

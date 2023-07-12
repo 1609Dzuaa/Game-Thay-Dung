@@ -30,9 +30,12 @@ void CMushroom::GetBoundingBox(float& l, float& t, float& r, float& b)
 
 void CMushroom::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
-	if (CDataBindings::GetInstance()->IsStopWatch) return;
+	if (CDataBindings::GetInstance()->IsStopWatch) 
+		return;
+	CScene* current_scene = (CScene*)CGame::GetInstance()->GetCurrentScene();
 
-    if (state != MUSHROOM_STATE_OUT_OF_BRICK)
+
+    if (state != MUSHROOM_STATE_OUT_OF_BRICK && current_scene->GetID() == ID_MAP_1_1)
 	{
 		if (y <= brickminY )
 		{
