@@ -240,7 +240,7 @@ void CIntroPlayScene::Load()
 void CIntroPlayScene::Update(DWORD dt)
 {
 	vector<LPGAMEOBJECT> coObjects;
-	for (size_t i = 1; i < objects.size(); i++)
+	for (size_t i = 0; i < objects.size(); i++)
 	{
 		coObjects.push_back(objects[i]);
 	}

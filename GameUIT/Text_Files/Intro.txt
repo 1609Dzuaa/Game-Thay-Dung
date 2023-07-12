@@ -9,12 +9,13 @@ Text_Files\Mushroom.txt
 Text_Files\Platform.txt
 Text_Files\Leaf.txt
 Text_Files\Card.txt
+Text_Files\EffectCollision.txt
 [OBJECTS]
 
 #Layer: Nền đen và Ground Juventus
 800	127	113
 
-#ColorPlat(Ghost Platform): Nền lót
+#Platform: Nền lót
 5	0	195	16	15	20	0	0	0	0
 
 #Red Curtain (Rèm Đỏ)

@@ -40,6 +40,12 @@ public:
 		//objects.insert(objects.begin() + 2, game_object);
 	};
 
+	void AddSubObjectToScene(LPGAMEOBJECT game_object)
+	{
+		//objects.push_back(game_object);
+		objects.insert(objects.begin() + 1, game_object);
+	};
+
 	void Clear();
 	void PurgeDeletedObjects();
 

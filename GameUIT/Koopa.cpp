@@ -110,7 +110,7 @@ void CKoopa::OnCollisionWith(LPCOLLISIONEVENT e)
 
 	KindOfCollisionWith(e);
 	if (!e->obj->IsBlocking())
-		return;
+			return;
 
 	HandleCollisionWithBlockingObjects(e);
 }
@@ -125,8 +125,6 @@ void CKoopa::KindOfCollisionWith(LPCOLLISIONEVENT e)
 	if (dynamic_cast<CQuestionBrick*>(e->obj) && e->obj->GetState() != QBRICK_STATE_HITTED
 		|| dynamic_cast<CQuestionBrick*>(e->obj) && e->obj->GetState() != QBRICK_STATE_HITTED)
 		this->OnCollisionWithQuesBrick(e);
-	if (dynamic_cast<CMarioNPC*>(e->obj))
-		this->OnCollisionWithMarioNPC(e);
 
 	if (!ConditionsThatEnableToKillAllies()) return; //3 thằng còn lại là Enemies rồi nên đặt đây là hợp lý
 
@@ -549,18 +547,6 @@ void CKoopa::OnCollisionWithQuesBrick(LPCOLLISIONEVENT e)
 	//else
 		//this->SetState(GOOMBA_STATE_DIE_REVERSE);
     //Will check this part later!
-}
-
-void CKoopa::OnCollisionWithMarioNPC(LPCOLLISIONEVENT e)
-{
-	if (!isGreen) return; //Chỉ dành cho rùa xanh ở màn Intro
-
-	if (e->ny < 0)
-	{
-		vx = -0.0001f;
-		vy = -0.35f; //Nảy lên 1 tí
-		e->obj->SetState(MARIO_STATE_GOT_HITTED_BY_SHELL);
-	}
 }
 
 void CKoopa::OnCollisionWithFlower(LPCOLLISIONEVENT e)

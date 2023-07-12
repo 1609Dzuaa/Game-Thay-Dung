@@ -8,7 +8,7 @@ void CLuigiNPC::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	vx += ax * dt;
 	vy += ay * dt;
-	if (x > 75 && !hasJumped)
+	if (x > 71.0f && !hasJumped)
 	{
 		SetState(MARIO_STATE_JUMPING);
 		hasJumped = 1;
@@ -162,7 +162,7 @@ void CLuigiNPC::SetState(int state)
 		break;
 
 	case MARIO_STATE_WALKING_RIGHT:
-		maxVx = 0.075f;
+		maxVx = 0.07f;
 		ax = MARIO_ACCEL_WALK_X;
 		nx = 1;
 
@@ -221,5 +221,5 @@ void CLuigiNPC::SpawnSuperMarioBros3()
 {
 	CSMB3Curtain* smb3_curtain = new CSMB3Curtain(127, -120);
 	CIntroPlayScene* current_scene = (CIntroPlayScene*)CGame::GetInstance()->GetCurrentScene();
-	current_scene->AddObjectToScene(smb3_curtain);
+	current_scene->AddSubObjectToScene(smb3_curtain);
 }

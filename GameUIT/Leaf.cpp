@@ -75,7 +75,7 @@ void CLeaf::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	}
 
 	CCollision::GetInstance()->Process(this, dt, coObjects);
-	//DebugOutTitle(L"Pos Y: %f", y);
+	DebugOutTitle(L"vy, ay: %f, %f", vy, ay);
 }
 
 void CLeaf::Render()
@@ -118,9 +118,8 @@ void CLeaf::SetState(int state)
 	{
 	case LEAF_STATE_FALL_DOWN:
 		vx = 0.025f;
-		//vy = LEAF_FALL_DOWN_SPEED_Y;
-		vy = 0;
-		ay = 0.000005f;
+		vy = 0.003f;
+		ay = 0.000015f;
 		break;
 
 	case LEAF_STATE_FALL_UP:

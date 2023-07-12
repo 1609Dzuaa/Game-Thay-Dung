@@ -122,7 +122,6 @@ protected:
 	void HandleCollisionWithBlockingObjects(LPCOLLISIONEVENT e);
 	void HandleCollisionWithColorPlatform(LPCOLLISIONEVENT e, CColorPlatform* color_platf);
 	void AdjustPositionOnColorPlatform(CColorPlatform* color_platf);
-	void OnCollisionWithMarioNPC(LPCOLLISIONEVENT e);//Use for Intro -> Khiến Mario bị u đầu
 
 	int GetAniIdGreenKoopa();
 	int GetAniIdFlyingKoopa();

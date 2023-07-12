@@ -2,17 +2,52 @@
 #include "Goomba.h"
 #include "Koopa.h"
 #include "Mario.h"
+#include "Leaf.h"
+#include "EffectCollision.h"
+#include "IntroPlayScene.h"
 #include "debug.h"
 
 void CMarioNPC::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
-	vx += ax * dt;
-	vy += ay * dt;
-	//if (state == MARIO_STATE_SIT) vx = 0;
+	if (!isEvolving)
+	{
+		vy += ay * dt;
+		vx += ax * dt;
+	}
+	else
+	{
+		vx = 0;
+		vy = 0;
+	}
+
+	if (GetTickCount64() - hitted_timeout > 900 && isHitted)
+		SetState(MARIO_STATE_LOOKUP);
+
+	if (GetTickCount64() - look_timeout > 900 && isLookUp)
+		SetState(MARIO_STATE_JUMPING);
+
+	HandleEvolving();
 	UpdateSpeed();
 	isOnPlatform = false;
 	CCollision::GetInstance()->Process(this, dt, coObjects);
-	DebugOutTitle(L"st: %d", state);
+	//DebugOutTitle(L"st: %d", state);
+}
+
+void CMarioNPC::HandleEvolving()
+{
+	if (GetTickCount64() - evolve_start >= MARIO_EVOLVE_TIME && isEvolving)
+	{
+		//Tiến hoá có 2 loại: tiến hoá lên và tiến hoá lùi
+		if (isEvolveForward)
+			this->SetLevel(MARIO_LEVEL_RACOON);
+		else //Tiến hoá ngược
+			if (this->level == MARIO_LEVEL_RACOON)
+				this->SetLevel(MARIO_LEVEL_SMALL); //Ở Intro thì từ Racoon về Small
+		isEvolving = false;
+		isEvolveForward = false;
+		isEvolveBackward = false;
+		evolve_start = 0;
+	}
 }
 
 void CMarioNPC::UpdateSpeed()
@@ -41,6 +76,8 @@ void CMarioNPC::OnCollisionWith(LPCOLLISIONEVENT e)
 		OnCollisionWithGoomba(e);
 	if (dynamic_cast<CKoopa*>(e->obj))
 		OnCollisionWithKoopa(e);
+	if (dynamic_cast<CLeaf*>(e->obj))
+		OnCollisionWithLeaf(e);
 	DebugOut(L"OCW\n");
 }
 
@@ -67,22 +104,83 @@ void CMarioNPC::OnCollisionWithKoopa(LPCOLLISIONEVENT e)
 {
 	if (e->obj->GetState() == KOOPA_STATE_SLIP)
 		e->obj->SetState(KOOPA_STATE_SLEEP);
-	else
-		e->obj->SetState(KOOPA_STATE_SLIP);
+	else if (e->ny > 0)
+	{
+		//Bị dính chưởng từ trên đầu
+		e->obj->SetSpeed(-0.07f, -0.08f);
+		SetState(MARIO_STATE_GOT_HITTED_BY_SHELL);
+	}
+	else 
+		e->obj->SetState(KOOPA_STATE_SLIP); //đạp nó
+}
+
+void CMarioNPC::OnCollisionWithLeaf(LPCOLLISIONEVENT e)
+{
+	this->isEvolveForward = true;
+	this->SetState(MARIO_STATE_EVOLVING);
+	e->obj->Delete();
+	SpawnEffect(e, e->obj, EFF_COL_TYPE_SMOKE_EVOLVE);
 }
 
 void CMarioNPC::Render()
 {
+	//Big biến thành gấu mèo thì 0 vẽ trong 1 khoảng thgian
+	if (isEvolving && level == MARIO_LEVEL_BIG && isEvolveForward) return; 
+
 	CAnimations* animations = CAnimations::GetInstance();
 	int aniId = -1;
 
 	if (level == MARIO_LEVEL_BIG)
 		aniId = GetAniIdBig();
-	//else if (level == MARIO_LEVEL_SMALL)
-	//	aniId = GetAniIdSmall();
-	//else if (level == MARIO_LEVEL_RACOON)
-	//	aniId = GetAniIdRacoon();
+	else if (level == MARIO_LEVEL_SMALL)
+		aniId = GetAniIdSmall();
+	else if (level == MARIO_LEVEL_RACOON)
+		aniId = GetAniIdRacoon();
 	animations->Get(aniId)->Render(x, y, false);
+	//RenderBoundingBox();
+}
+
+int CMarioNPC::GetAniIdSmall()
+{
+	int aniId = -1;
+
+	if (isEvolving && isEvolveForward)
+	{
+		if (nx > 0)
+			aniId = ID_ANI_MARIO_SMALL_EVOLVE_TO_BIG_RIGHT;
+		else
+			aniId = ID_ANI_MARIO_SMALL_EVOLVE_TO_BIG_LEFT;
+	}
+	else
+	{
+		if (vx == 0)
+		{
+			if (nx > 0) aniId = ID_ANI_MARIO_SMALL_IDLE_RIGHT;
+			else aniId = ID_ANI_MARIO_SMALL_IDLE_LEFT;
+		}
+		else if (vx > 0)
+		{
+			if (ax < 0)
+				aniId = ID_ANI_MARIO_SMALL_BRACE_RIGHT;
+			else if (ax == MARIO_ACCEL_RUN_X)
+				aniId = ID_ANI_MARIO_SMALL_RUNNING_RIGHT;
+			else if (ax == MARIO_ACCEL_WALK_X)
+				aniId = ID_ANI_MARIO_SMALL_WALKING_RIGHT;
+		}
+		else // vx < 0
+		{
+			if (ax > 0)
+				aniId = ID_ANI_MARIO_SMALL_BRACE_LEFT;
+			else if (ax == -MARIO_ACCEL_RUN_X)
+				aniId = ID_ANI_MARIO_SMALL_RUNNING_LEFT;
+			else if (ax == -MARIO_ACCEL_WALK_X)
+				aniId = ID_ANI_MARIO_SMALL_WALKING_LEFT;
+		}
+	}
+
+	if (aniId == -1) aniId = ID_ANI_MARIO_SMALL_IDLE_RIGHT;
+
+	return aniId;
 }
 
 int CMarioNPC::GetAniIdBig()
@@ -150,6 +248,8 @@ int CMarioNPC::GetAniIdBig()
 			aniId = ID_ANI_MARIO_SIT_LEFT;
 		else if (isHitted)
 			aniId = ID_ANI_MARIO_HITTED_BY_SHELL;
+		else if (isLookUp)
+			aniId = ID_ANI_MARIO_LOOK_UP;
 		else
 		{
 			if (vx == 0)
@@ -178,6 +278,74 @@ int CMarioNPC::GetAniIdBig()
 		}
 	}
 	if (aniId == -1) aniId = ID_ANI_MARIO_IDLE_RIGHT;
+
+	return aniId;
+}
+
+int CMarioNPC::GetAniIdRacoon()
+{
+	int aniId = -1;
+
+	if (!isOnPlatform) //included fly, jump, landing, fall
+	{
+		if (nx < 0 && isLanding)
+		{
+			aniId = ID_ANI_MARIO_RACOON_LANDING_LEFT;
+		}
+		else if (nx > 0 && isLanding)
+		{
+			aniId = ID_ANI_MARIO_RACOON_LANDING_RIGHT;
+		}
+		else if (nx > 0 && vy > 0) //Falling
+		{
+			aniId = ID_ANI_MARIO_RACOON_FALLING_RIGHT; //có vào đây
+		}
+		else if (nx < 0 && vy > 0)
+		{
+			aniId = ID_ANI_MARIO_RACOON_FALLING_LEFT;
+		}
+		else
+		{
+			if (nx >= 0)
+				aniId = ID_ANI_MARIO_RACOON_JUMP_WALK_RIGHT;
+			else
+				aniId = ID_ANI_MARIO_RACOON_JUMP_WALK_LEFT;
+		}
+	}
+	else
+	{
+		if (isKicking)
+		{
+			if (nx > 0)
+				aniId = ID_ANI_MARIO_RACOON_KICKING_RIGHT;
+			else
+				aniId = ID_ANI_MARIO_RACOON_KICKING_LEFT;
+		}
+		else if (isHolding)
+		{
+			if (nx > 0 && vx > 0)
+				aniId = ID_ANI_MARIO_RACOON_HOLD_WALK_RIGHT;
+			else if (nx < 0 && vx < 0)
+				aniId = ID_ANI_MARIO_RACOON_HOLD_WALK_LEFT;
+			else if (nx > 0)
+				aniId = ID_ANI_MARIO_RACOON_HOLD_RIGHT;
+			else
+				aniId = ID_ANI_MARIO_RACOON_HOLD_LEFT;
+		}
+		else
+		{
+			if (vx == 0)
+				if (nx > 0) aniId = ID_ANI_MARIO_RACOON_IDLE_RIGHT;
+				else aniId = ID_ANI_MARIO_RACOON_IDLE_LEFT;
+			else if (vx > 0)
+				aniId = ID_ANI_MARIO_RACOON_WALKING_RIGHT;
+			else // vx < 0
+				if (ax == -MARIO_ACCEL_WALK_X)
+					aniId = ID_ANI_MARIO_RACOON_WALKING_LEFT;
+		}
+	}
+
+	if (aniId == -1) aniId = ID_ANI_MARIO_RACOON_IDLE_RIGHT;
 
 	return aniId;
 }
@@ -245,7 +413,9 @@ void CMarioNPC::SetState(int state)
 		{
 			isJumping = true;
 			isLanding = false;
-			vy = -0.55f;
+			isLookUp = false;
+			look_timeout = 0;
+			vy = -0.78f;
 		}
 		break;
 
@@ -274,7 +444,6 @@ void CMarioNPC::SetState(int state)
 	case MARIO_STATE_EVOLVING:
 		evolve_start = GetTickCount64();
 		isEvolving = true;
-		//CDataBindings::GetInstance()->IsStopWatch = 1;
 
 		break;
 
@@ -284,6 +453,14 @@ void CMarioNPC::SetState(int state)
 
 	case MARIO_STATE_GOT_HITTED_BY_SHELL:
 		isHitted = true;
+		hitted_timeout = GetTickCount64();
+		break;
+
+	case MARIO_STATE_LOOKUP:
+		isHitted = false;
+		isLookUp = true;
+		look_timeout = GetTickCount64();
+
 		break;
 	}
 
@@ -317,4 +494,26 @@ void CMarioNPC::GetBoundingBox(float& left, float& top, float& right, float& bot
 		right = left + MARIO_SMALL_BBOX_WIDTH;
 		bottom = top + MARIO_SMALL_BBOX_HEIGHT;
 	}
+}
+
+void CMarioNPC::SpawnEffect(LPCOLLISIONEVENT e, LPGAMEOBJECT obj, int eff_type)
+{
+	float x = -1;
+	float y = -1;
+
+	//tiến hoá, cây chết 
+	{
+		x = this->x;
+		y = this->y;
+	}
+
+	CEffectCollision* eff_col = new CEffectCollision(x, y, GetTickCount64(), eff_type);
+	CIntroPlayScene* current_scene = (CIntroPlayScene*)CGame::GetInstance()->GetCurrentScene();
+	current_scene->AddObjectToScene(eff_col);
+}
+
+void CMarioNPC::SetLevel(int l)
+{
+	// Adjust position to avoid falling off platform
+	level = l;
 }
