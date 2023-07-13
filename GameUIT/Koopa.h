@@ -63,6 +63,7 @@
 #define ID_ANI_KOOPA_JUMPING_LEFT 60000
 #define ID_ANI_KOOPA_JUMPING_RIGHT 60500
 #define ID_ANI_BLACK_KOOPA_SHELL 39100
+#define ID_ANI_BLACK_KOOPA_DIE	39200
 
 //
 //======RED KOOPA
@@ -84,6 +85,7 @@ protected:
 	int type;
 	int isGreen, isBlack;	//2 thuộc tính dành cho Koopa Intro
 	int countBounce; //black koopa
+	int nxNPC;
 
 	float ax;
 	float ay;
@@ -101,6 +103,7 @@ protected:
 
 	void GetBoundingBox(float& left, float& top, float& right, float& bottom);
 	void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
+	void UpdateKoopaIntro(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
 	void Render();
 
 	int IsCollidable() 
@@ -137,4 +140,6 @@ public:
 	void HandleReleaseKoopa();
 	int StateThatEnableToRelease();
 	int ConditionsThatEnableToKillAllies();
+	void SetNxNPC(int nx) { this->nxNPC = nx; }
+	void SetVx(float vx) { this->vx = vx; }
 };

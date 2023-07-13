@@ -5,6 +5,8 @@
 #include "Leaf.h"
 #include "EffectCollision.h"
 #include "IntroPlayScene.h"
+#include "LuigiNPC.h"
+#include "BigBushIntro.h"
 #include "debug.h"
 
 void CMarioNPC::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
@@ -19,6 +21,11 @@ void CMarioNPC::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		vx = 0;
 		vy = 0;
 	}
+	CIntroPlayScene* intro_scene = (CIntroPlayScene*)CGame::GetInstance()->GetCurrentScene();
+
+	//Từng hoạt động bắt đầu từ đây:
+	if (intro_scene->allowReleaseMarioSit)
+		SetState(MARIO_STATE_SIT_RELEASE);
 
 	//bị hit, nhìn lên
 	if (GetTickCount64() - hitted_timeout > 900 && isHitted)
@@ -35,8 +42,10 @@ void CMarioNPC::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		allowLanding = 0;
 
 	//Giết xong thì quay lại sút cái mai
-	if (hasKilledGoomba)
+	if (hasKilledGoomba && isOnPlatform && !hasTurnSmall)
+	{
 		SetState(MARIO_STATE_WALKING_RIGHT);
+	}
 
 	if (isKicking && GetTickCount64() - kick_start > MARIO_KICK_TIME)
 	{
@@ -45,14 +54,71 @@ void CMarioNPC::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	}
 
 	//Sút xong thì đi tới điểm gần phải đứng chờ
-	if (hasKickKoopa && x > 170)
+	if (hasKickKoopa1 && x > 150 && !intro_scene->allowMarioRun && level != MARIO_LEVEL_SMALL)
+	{
 		SetState(MARIO_STATE_IDLE);
+		intro_scene->allowLuigiToThrowKoopa = 1;
+	}
+
+	//Chạy đi khi Luigi quăng rùa
+	if (intro_scene->allowMarioRun)
+		SetState(MARIO_STATE_RUNNING_LEFT);
+
+	//Nhảy lên 
+	if (x < 141.0f && intro_scene->allowMarioRun)
+	{
+		intro_scene->allowMarioRun = 0;
+		SetState(MARIO_STATE_JUMPING);
+	}
+
+	//Spawn con Koopa từ hướng trái
+	if (intro_scene->LuigiHasRunRight && !hasSpawnKoopa)
+	{
+		hasSpawnKoopa = 1;
+		SpawnSlipingKoopaFromLeft();
+	}
+
+	//biến nhỏ di chuyển phải
+	if (hasTurnSmall && !hasMoveRight)
+	{
+		SetState(MARIO_STATE_WALKING_RIGHT);
+		hasMoveRight = 1;
+		hasSpawnBush = 1;
+		SpawnBigBush();
+	}
+
+	//Phanh xíu
+	/*if (hasTurnSmall && x > 170 && hasMoveRight && !hasBrace)
+	{
+		hasBrace = 1;
+		SetState(MARIO_STATE_IDLE);
+		if (!hasSpawnBush)
+		{
+			hasSpawnBush = 1;
+			SpawnBigBush();
+		}
+	}
+
+	if (hasSpawnBush)
+		SetState(MARIO_STATE_WALKING_RIGHT);*/
+
+	if (hasSpawnBush && x > 200.0f && !hasSpawn4Koopas)
+	{
+		hasSpawn4Koopas = 1;
+		Spawn4KoopasFromLeft();
+	}
+
+	if (koopa4 != nullptr && koopa4->GetX() > 185)
+	{
+		intro_scene->allowUseArrow = 1;
+		this->Delete();
+	}
 
 	HandleEvolving();
 	UpdateSpeed();
 	isOnPlatform = false;
 	CCollision::GetInstance()->Process(this, dt, coObjects);
-	DebugOutTitle(L"st, vy, ay: %d, %f, %f", state, vy, ay);
+	DebugOutTitle(L"x: %f", x);
 }
 
 void CMarioNPC::HandleEvolving()
@@ -67,7 +133,10 @@ void CMarioNPC::HandleEvolving()
 		}
 		else //Tiến hoá ngược
 			if (this->level == MARIO_LEVEL_RACOON)
+			{
+				hasTurnSmall = 1;
 				this->SetLevel(MARIO_LEVEL_SMALL); //Ở Intro thì từ Racoon về Small
+			}
 		isEvolving = false;
 		isEvolveForward = false;
 		isEvolveBackward = false;
@@ -125,26 +194,50 @@ void CMarioNPC::OnCollisionWithGoomba(LPCOLLISIONEVENT e)
 	{
 		hasKilledGoomba = 1;
 		e->obj->SetState(GOOMBA_STATE_DIE);
-		vy = -0.4f; //nảy lên
-		//Vẫn còn giật sau khi kill nó
+		vy = -0.45f; //nảy lên
+		//vẫn có chút cà giật lúc giết goomba
 	}
 }
 
 void CMarioNPC::OnCollisionWithKoopa(LPCOLLISIONEVENT e)
 {
-	if (e->obj->GetState() == KOOPA_STATE_SLIP)
-		e->obj->SetState(KOOPA_STATE_SLEEP);
+	CKoopa* koopa = dynamic_cast<CKoopa*>(e->obj);
+	CIntroPlayScene* intro_scene = (CIntroPlayScene*)CGame::GetInstance()->GetCurrentScene();
+
+	if (koopa->GetState() == KOOPA_STATE_SLIP && e->ny < 0)
+	{
+		vy = -0.4f;
+		vx = -0.09f; //Cho vx qua trái 1 chút vừa đủ để đạp lên Koopa đc quăng
+		koopa->SetState(KOOPA_STATE_SLEEP);
+	}
 	else if (e->ny > 0)
 	{
 		//Bị dính chưởng từ trên đầu
-		e->obj->SetSpeed(-0.07f, -0.08f);
+		koopa->SetSpeed(-0.07f, -0.08f);
 		SetState(MARIO_STATE_GOT_HITTED_BY_SHELL);
+	}
+	else if (koopa->GetState() == KOOPA_STATE_SLIP && e->nx != 0)
+	{
+		SetState(MARIO_STATE_EVOLVING);
+		isEvolveBackward = 1;
 	}
 	else
 	{
-		this->SetState(MARIO_STATE_KICKING_RIGHT);
-		hasKickKoopa = 1;
-		e->obj->SetState(KOOPA_STATE_SLIP); //đạp nó
+		if (!hasKickKoopa1)
+		{
+			this->SetState(MARIO_STATE_KICKING_RIGHT);
+			koopa->SetNxNPC(1);
+			hasKickKoopa1 = 1;
+			koopa->SetState(KOOPA_STATE_SLIP); //đạp nó
+		}
+		else
+		{
+			this->SetState(MARIO_STATE_KICKING_RIGHT);
+			koopa->SetNxNPC(1);
+			hasKickKoopa2 = 1;
+			intro_scene->allowLuigiToRunRight = 1;
+			koopa->SetState(KOOPA_STATE_SLIP); //đạp nó lần 2
+		}
 	}
 }
 
@@ -263,13 +356,13 @@ int CMarioNPC::GetAniIdBig()
 			else
 				aniId = ID_ANI_MARIO_KICKING_LEFT;
 		}
-		/*else if (isEvolving && isEvolveBackward) //tiến hoá lùi
+		else if (isEvolving && isEvolveBackward) //tiến hoá lùi
 		{
 			if (nx > 0)
 				aniId = ID_ANI_MARIO_SMALL_EVOLVE_TO_BIG_RIGHT;
 			else
 				aniId = ID_ANI_MARIO_SMALL_EVOLVE_TO_BIG_LEFT;
-		}*/
+		}
 		else if (isHolding)
 		{
 			if (nx > 0 && vx > 0)
@@ -325,7 +418,9 @@ int CMarioNPC::GetAniIdRacoon()
 
 	if (!isOnPlatform) //included fly, jump, landing, fall
 	{
-		if (nx < 0 && isLanding)
+		if (isEvolving && isEvolveBackward)
+			aniId = ID_ANI_MARIO_SMALL_EVOLVE_TO_BIG_RIGHT;
+		else if (nx < 0 && isLanding)
 		{
 			aniId = ID_ANI_MARIO_RACOON_LANDING_LEFT;
 		}
@@ -369,6 +464,11 @@ int CMarioNPC::GetAniIdRacoon()
 			else
 				aniId = ID_ANI_MARIO_RACOON_HOLD_LEFT;
 		}
+		else if (isRunning)
+		{
+			if (nx < 0 && vx < 0)
+				aniId = ID_ANI_MARIO_RACOON_RUNNING_LEFT;
+		}
 		else
 		{
 			if (vx == 0)
@@ -398,11 +498,11 @@ void CMarioNPC::SetState(int state)
 		break;
 
 	case MARIO_STATE_RUNNING_LEFT:
-		maxVx = -0.0f;
-		vx = 0;
-		//ax = -MARIO_ACCEL_RUN_X;
+		maxVx = -0.1f;
+		ax = -0.00013f;
 		nx = -1;
 		isRunning = true;
+
 		break;
 
 	case MARIO_STATE_WALKING_RIGHT:
@@ -433,7 +533,6 @@ void CMarioNPC::SetState(int state)
 	case MARIO_STATE_SIT_RELEASE:
 		if (isSitting)
 		{
-			//ay = 0.00042f;
 			isSitting = false;
 			y -= MARIO_SIT_HEIGHT_ADJUST;
 		}
@@ -461,20 +560,19 @@ void CMarioNPC::SetState(int state)
 		isLanding = true;
 		isJumping = false;
 		allowLanding = 1;
-		ay = 0.005f;
+		ay = 0.0051f;
+		ax = -MARIO_ACCEL_WALK_X;
 
-		vx = -0.055f;
-		nx = -1;
+		vx = -0.053f;
+		//nx = -1;
 		vy = 0.0f; //Set lại vy = 0 nếu đang Landing
 		DebugOut(L"Landing\n");
 		break;
 	}
 
-	/*case MARIO_STATE_RELEASE_JUMP:
-		if (vy < 0)
-			vy += 0.37f / 2.0f; //Nhảy cao hơn
-		isJumping = false;
-		break;*/ //Consider this state
+	case MARIO_STATE_HOLDING:
+		isHolding = true;
+		break;
 
 	case MARIO_STATE_IDLE:
 		ax = 0.0f;
@@ -486,10 +584,6 @@ void CMarioNPC::SetState(int state)
 		evolve_start = GetTickCount64();
 		isEvolving = true;
 
-		break;
-
-	case MARIO_STATE_HOLDING:
-		//nothing special
 		break;
 
 	case MARIO_STATE_GOT_HITTED_BY_SHELL:
@@ -549,12 +643,50 @@ void CMarioNPC::SpawnEffect(LPCOLLISIONEVENT e, LPGAMEOBJECT obj, int eff_type)
 	}
 
 	CEffectCollision* eff_col = new CEffectCollision(x, y, GetTickCount64(), eff_type);
-	CIntroPlayScene* current_scene = (CIntroPlayScene*)CGame::GetInstance()->GetCurrentScene();
-	current_scene->AddObjectToScene(eff_col, 0);
+	CIntroPlayScene* intro_scene = (CIntroPlayScene*)CGame::GetInstance()->GetCurrentScene();
+	intro_scene->AddObjectToScene(eff_col, 0);
 }
 
 void CMarioNPC::SetLevel(int l)
 {
 	// Adjust position to avoid falling off platform
+	y -= (MARIO_BIG_BBOX_HEIGHT - MARIO_SMALL_BBOX_HEIGHT) / 2; //Key problem here
 	level = l;
+}
+
+void CMarioNPC::SpawnSlipingKoopaFromLeft()
+{
+	CIntroPlayScene* intro_scene = (CIntroPlayScene*)CGame::GetInstance()->GetCurrentScene();
+	CKoopa* slip_koopa_from_left = new CKoopa(-20, 175, 1);
+	slip_koopa_from_left->SetNxNPC(1);
+	slip_koopa_from_left->SetState(KOOPA_STATE_SLIP);
+	intro_scene->AddObjectToScene(slip_koopa_from_left, 0);
+}
+
+void CMarioNPC::SpawnBigBush()
+{
+	CIntroPlayScene* intro_scene = (CIntroPlayScene*)CGame::GetInstance()->GetCurrentScene();
+	CBigBush* big_bush = new CBigBush(217.0f, 139.5f);
+	intro_scene->AddObjectToScene(big_bush, 0);
+}
+
+void CMarioNPC::Spawn4KoopasFromLeft()
+{
+	CIntroPlayScene* intro_scene = (CIntroPlayScene*)CGame::GetInstance()->GetCurrentScene();
+	koopa1 = new CKoopa(-30, 120, 1);
+	koopa2 = new CKoopa(-80, 70, 1);
+	koopa3 = new CKoopa(-130, 20, 1);
+	koopa4 = new CKoopa(-240, -30, 1);
+	koopa1->SetState(KOOPA_STATE_WALKING);
+	koopa2->SetState(KOOPA_STATE_WALKING);
+	koopa3->SetState(KOOPA_STATE_WALKING);
+	koopa4->SetState(KOOPA_STATE_WALKING);
+	koopa1->SetSpeed(0.025f, 0.0f);
+	koopa2->SetSpeed(0.025f, 0.0f);
+	koopa3->SetSpeed(0.025f, 0.0f);
+	koopa4->SetSpeed(0.0274f, 0.0f);
+	intro_scene->AddObjectToScene(koopa1, 0);
+	intro_scene->AddObjectToScene(koopa2, 0);
+	intro_scene->AddObjectToScene(koopa3, 0);
+	intro_scene->AddObjectToScene(koopa4, 0);
 }

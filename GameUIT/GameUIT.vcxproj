@@ -132,6 +132,7 @@
     <ClInclude Include="AnimationFrame.h" />
     <ClInclude Include="Animations.h" />
     <ClInclude Include="AssetIDs.h" />
+    <ClInclude Include="BigBushIntro.h" />
     <ClInclude Include="BlackScreen.h" />
     <ClInclude Include="IntroLayer.h" />
     <ClInclude Include="BlockPoint.h" />

@@ -3,11 +3,13 @@
 #include "SMB3Curtain.h"
 #include "IntroPlayScene.h"
 #include "MarioNPC.h"
+#include "Koopa.h"
 
 void CLuigiNPC::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	vx += ax * dt;
 	vy += ay * dt;
+
 	if (x > 71.0f && !hasJumped)
 	{
 		SetState(MARIO_STATE_JUMPING);
@@ -20,18 +22,60 @@ void CLuigiNPC::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		hasSpawn = 1;
 	}
 
-	if (y > 300)
+	CIntroPlayScene* intro_scene = (CIntroPlayScene*)CGame::GetInstance()->GetCurrentScene();
+
+	if (x > 280 && !intro_scene->allowReleaseMarioSit)
 	{
-		ghost_mario_npc->SetState(MARIO_STATE_SIT_RELEASE);
-		ghost_mario_npc = nullptr;
-		this->Delete();
+		intro_scene->allowReleaseMarioSit = 1;
+		SetState(MARIO_STATE_IDLE);
 	}
+	
+	if (intro_scene->allowLuigiToThrowKoopa && !initKoopa)
+	{
+		this->isHolding = true;
+		SetState(MARIO_STATE_WALKING_LEFT);
+		intro_scene->allowLuigiToThrowKoopa = 0;
+		initKoopa = 1;
+	}
+
+	//if (ghost_koopa != nullptr && ghost_koopa->GetState() == KOOPA_STATE_BEING_HELD)
+		//UpdateKoopaPos();
+
+	if (x < 215 && isHolding && !hasKick)
+	{
+		SetState(MARIO_STATE_KICKING_LEFT);
+		isHolding = false;
+		HandleReleaseKoopa();
+		hasKick = 1;
+		intro_scene->allowMarioRun = 1;
+		SetState(MARIO_STATE_IDLE);
+	}
+
+	if (isKicking && GetTickCount64() - kick_start > 150)
+	{
+		isKicking = false;
+		kick_start = 0;
+	}
+
+	if (intro_scene->allowLuigiToRunRight)
+		SetState(MARIO_STATE_WALKING_RIGHT);
+
+	if (!intro_scene->LuigiHasRunRight
+		&& intro_scene->allowLuigiToRunRight
+		&& x > 250)
+		intro_scene->LuigiHasRunRight = 1;
 
 	UpdateSpeed();
 	isOnPlatform = false;
 
-	//DebugOutTitle(L"vx, maxVx, st: %f, %f, %d", vx, maxVx, state);
+	//if (ghost_koopa != nullptr)
+		//DebugOutTitle(L"y, Luigi.Y: %f, %f", ghost_koopa->GetY(), y);
 	CCollision::GetInstance()->Process(this, dt, coObjects);
+}
+
+void CLuigiNPC::UpdateKoopaPos()
+{
+	ghost_koopa->SetPosition(x - 5.0f, y);
 }
 
 void CLuigiNPC::UpdateSpeed()
@@ -73,9 +117,8 @@ void CLuigiNPC::OnCollisionWithMarioNPC(LPCOLLISIONEVENT e)
 {
 	if (e->ny < 0)
 	{
-		vy = -0.8f;
+		vy = -0.7f;
 		e->obj->SetState(MARIO_STATE_SIT);
-		ghost_mario_npc = dynamic_cast<CMarioNPC*>(e->obj);
 	}
 }
 
@@ -83,7 +126,7 @@ void CLuigiNPC::Render()
 {
 	CAnimations* animations = CAnimations::GetInstance();
 	animations->Get(GetAniID())->Render(x, y, false);
-	RenderBoundingBox();
+	//RenderBoundingBox();
 }
 
 int CLuigiNPC::GetAniID()
@@ -103,25 +146,21 @@ int CLuigiNPC::GetAniID()
 			if (nx > 0)
 				aniId = ID_ANI_MARIO_KICKING_RIGHT;
 			else
-				aniId = ID_ANI_MARIO_KICKING_LEFT;
+				aniId = ID_ANI_LUIGI_KICK_LEFT;
 		}
 		else if (isHolding)
 		{
-			if (nx > 0 && vx > 0)
-				aniId = ID_ANI_MARIO_BIG_HOLDING_WAKING_RIGHT;
-			else if (nx < 0 && vx < 0)
-				aniId = ID_ANI_MARIO_BIG_HOLDING_WAKING_LEFT;
-			else if (nx > 0)
-				aniId = ID_ANI_MARIO_BIG_HOLDING_RIGHT;
-			else
-				aniId = ID_ANI_MARIO_BIG_HOLDING_LEFT;
+			if (nx < 0 && vx < 0)
+				aniId = ID_ANI_LUIGI_HOLD_WALK_LEFT;
+			else if(nx < 0 && vx == 0)
+				aniId = ID_ANI_LUIGI_HOLD_LEFT;
 		}
 		else
 		{
 			if (vx == 0)
 			{
 				if (nx > 0) aniId = ID_ANI_LUIGI_IDLE_RIGHT;
-				else aniId = ID_ANI_MARIO_IDLE_LEFT;
+				else aniId = ID_ANI_LUIGI_IDLE_LEFT;
 			}
 			else if (vx > 0)
 			{
@@ -223,4 +262,16 @@ void CLuigiNPC::SpawnSuperMarioBros3()
 	CSMB3Curtain* smb3_curtain = new CSMB3Curtain(127, -120);
 	CIntroPlayScene* current_scene = (CIntroPlayScene*)CGame::GetInstance()->GetCurrentScene();
 	current_scene->AddObjectToScene(smb3_curtain, 1);
+}
+
+void CLuigiNPC::HandleReleaseKoopa()
+{
+	CIntroPlayScene* intro_scene = (CIntroPlayScene*)CGame::GetInstance()->GetCurrentScene();
+
+	this->ghost_koopa = new CKoopa(x - 9.0f, y + 5.0f, 1);
+	ghost_koopa->SetState(KOOPA_STATE_BEING_HELD);
+	intro_scene->AddObjectToScene(ghost_koopa, 0);
+	ghost_koopa->SetBeingHeld(false);
+	ghost_koopa->SetNxNPC(-1);
+	ghost_koopa->SetState(KOOPA_STATE_SLIP);
 }

@@ -207,6 +207,9 @@
     <ClInclude Include="NB3Intro.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="BigBushIntro.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

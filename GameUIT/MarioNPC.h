@@ -22,9 +22,16 @@ class CMarioNPC : public CGameObject
 	int allowLanding; //Chẵn lẻ xen kẽ (chẵn: Landing, lẻ: Fall)
 	BOOLEAN isKicking, isHolding, isEvolving, isEvolveForward, isEvolveBackward;
 	BOOLEAN isJumping, isLanding, isRunning, isSitting, isHitted, isLookUp;
-	BOOLEAN hasKilledGoomba, hasKickKoopa;
+	BOOLEAN hasKilledGoomba, hasKickKoopa1, hasKickKoopa2, hasSpawnKoopa;
+	BOOLEAN hasTurnSmall, hasMoveRight, hasBrace, hasSpawnBush, hasSpawn4Koopas;
 	float maxVx;
-	ULONGLONG kick_start, evolve_start, hitted_timeout, look_timeout;
+	ULONGLONG kick_start, evolve_start, hitted_timeout, look_timeout, idle_start;
+	
+	//Đặt đây 0 hợp lý lắm, mai xem xét lại
+	CKoopa* koopa1 = nullptr;
+	CKoopa* koopa2 = nullptr;
+	CKoopa* koopa3 = nullptr;
+	CKoopa* koopa4 = nullptr;
 public:
 	CMarioNPC(float x, float y) :CGameObject(x, y)
 	{
@@ -51,8 +58,16 @@ public:
 		isLookUp = 0;
 		look_timeout = 0;
 		hasKilledGoomba = 0;
-		hasKickKoopa = 0;
+		hasKickKoopa1 = 0;
+		hasKickKoopa2 = 0;
 		allowLanding = 0;
+		hasSpawnKoopa = 0;
+		hasTurnSmall = 0;
+		hasMoveRight = 0;
+		hasBrace = 0;
+		idle_start = 0;
+		hasSpawnBush = 0;
+		hasSpawn4Koopas = 0;
 		SetState(MARIO_STATE_WALKING_LEFT);
 	};
 	void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
@@ -69,6 +84,9 @@ public:
 	void HandleEvolving();
 	void SetLevel(int level);
 	void SpawnEffect(LPCOLLISIONEVENT e, LPGAMEOBJECT obj, int eff_type); //nên cho vào class EffectCol
+	void SpawnSlipingKoopaFromLeft();
+	void SpawnBigBush();
+	void Spawn4KoopasFromLeft();
 
 	//Quên mất thằng này, 0 có nó thì 0 colli đc @@@@@@@@@
 	void GetBoundingBox(float& left, float& top, float& right, float& bottom);

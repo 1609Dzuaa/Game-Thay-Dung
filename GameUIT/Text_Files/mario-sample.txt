@@ -39,5 +39,8 @@ start	4
 133	textures\Hud_Start & Hud_End.png
 315	textures\Intro.png
 198	textures\Intro_2.png
+200	textures\holding3.png
+201	textures\holding4.png
+202	textures\holding5.png
 
 #Why 70? -> Sitting animation in texture 0 has some problem so i use this instead

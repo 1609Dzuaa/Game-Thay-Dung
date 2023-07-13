@@ -78,7 +78,7 @@ void CKoopa::GetBoundingBox(float& left, float& top, float& right, float& bottom
 		|| state == KOOPA_STATE_SLIP || state == KOOPA_STATE_REBORN
 		|| state == KOOPA_STATE_SLEEP_REVERSE || state == KOOPA_STATE_REBORN_REVERSE
 		|| state == KOOPA_STATE_SLIP_REVERSE || state == KOOPA_STATE_SLEEP_REVERSE_SPECIAL
-		|| state == KOOPA_STATE_BOUNCING)
+		|| state == KOOPA_STATE_BOUNCING || state == KOOPA_STATE_BEING_HELD)
 	{
 		left = x - KOOPA_BBOX_WIDTH / 2;
 		top = y - KOOPA_IN_SHELL_BBOX_HEIGHT / 2;
@@ -99,7 +99,7 @@ void CKoopa::OnNoCollision(DWORD dt)
 	x += vx * dt;
 	y += vy * dt;
 	//Hãy làm sao để mà khi con Koopa nó ngủ thì vẫn hiện On Collision With
-	//DebugOutTitle(L"OCW: %f, %f, %d", vx, vy, isOnPlatform);
+	//DebugOut(L"ONC: %f, %f, %d", vx, vy, isOnPlatform);
 };
 
 void CKoopa::OnCollisionWith(LPCOLLISIONEVENT e)
@@ -157,13 +157,8 @@ void CKoopa::HandleCollisionWithBlockingObjects(LPCOLLISIONEVENT e)
 			state = KOOPA_STATE_SLEEP_REVERSE_SPECIAL;
 		if (type != GREEN_FLYING_KOOPA)
 		{
-			if (!isGreen)
-				vy = 0;
-			else
-			{
-				//vx = 0;
-				vy = 0;
-			}
+			vy = 0;
+			isOnPlatform = true;
 		}
 		else if (type == GREEN_FLYING_KOOPA)
 			this->SetState(KOOPA_STATE_JUMPING);
@@ -232,30 +227,34 @@ void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		//;//giữ nguyên thời gian khi đang wait
 
 	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
-	if (CDataBindings::GetInstance()->IsStopWatch) return;
+	
+	if (CDataBindings::GetInstance()->IsStopWatch) 
+		return;
 
-	if (!mario->GetIsHolding() && StateThatEnableToRelease() && isBeingHeld)
-		HandleReleaseKoopa(); //thả Koopa khi ngưng giữ nút A
+	if (current_scene->GetID() == ID_MAP_1_1)
+		if (!mario->GetIsHolding() && StateThatEnableToRelease() && isBeingHeld)
+			HandleReleaseKoopa(); //thả Koopa khi ngưng giữ nút A ở Map 1-1
 
-	if (isBeingHeld)
+	//TH Bị cầm ở Intro thì có hàm Update vị trí ở Luigi
+	if (current_scene->GetID() == ID_MAP_1_1)
 	{
-		if (mario->GetMarioNormalX() > 0)
+		if (isBeingHeld)
 		{
-			if(mario->GetLevel() > MARIO_LEVEL_SMALL)
-				this->SetPosition(mario->GetX() + 11.5f, mario->GetY() + 1.5f);
-			else 
-				this->SetPosition(mario->GetX() + 11.5f, mario->GetY() - 1.5f);
-		}
-		else
-		{
-			if (mario->GetLevel() > MARIO_LEVEL_SMALL)
-				this->SetPosition(mario->GetX() - 11.5f, mario->GetY() + 1.5f);
+			if (mario->GetMarioNormalX() > 0)
+			{
+				if (mario->GetLevel() > MARIO_LEVEL_SMALL)
+					this->SetPosition(mario->GetX() + 11.5f, mario->GetY() + 1.5f);
+				else
+					this->SetPosition(mario->GetX() + 11.5f, mario->GetY() - 1.5f);
+			}
 			else
-				this->SetPosition(mario->GetX() - 11.5f, mario->GetY() - 1.5f);
+			{
+				if (mario->GetLevel() > MARIO_LEVEL_SMALL)
+					this->SetPosition(mario->GetX() - 11.5f, mario->GetY() + 1.5f);
+				else
+					this->SetPosition(mario->GetX() - 11.5f, mario->GetY() - 1.5f);
+			}
 		}
-		//float koopa_vx, koopa_vy;
-		//mario->GetSpeed(koopa_vx, koopa_vy);
-		//this->SetSpeed(koopa_vx, koopa_vy);
 	}
 	isOnPlatform = false;
 
@@ -264,12 +263,13 @@ void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 	UpdateKoopaState();
 	CCollision::GetInstance()->Process(this, dt, coObjects);
-	//DebugOutTitle(L"vx, vy, st: %f, %f, %d", vx, vy, state);
+	//DebugOutTitle(L"vx, st: %f, %d", vx, state);
 }
 
 void CKoopa::UpdateKoopaState()
 {
-	if (isGreen || isBlack) return; //0 Update State Cho 2 con Koopa đầu Intro
+	if (isGreen || isBlack) 
+		return; //0 Update State Cho 2 con Koopa đầu Intro
 
 	//Quay đầu của Red Koopa
 	if (type == RED_KOOPA)
@@ -327,6 +327,11 @@ void CKoopa::UpdateKoopaState()
 			//Hết thời gian reborn => Walking như bình thường
 			//Set lại vị trí cũng như vận tốc cho cái đầu nếu là Red koopa
 		}
+}
+
+void CKoopa::UpdateKoopaIntro(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
+{
+
 }
 
 void CKoopa::Render()
@@ -422,16 +427,29 @@ void CKoopa::SetState(int state)
 		vy = -KOOPA_KNOCK_OFF_FACTOR_Y;
 		break;
 
-	case KOOPA_STATE_SLIP: //Có vấn đề ở đây
+	case KOOPA_STATE_SLIP:
+	{	CScene* current_scene = (CScene*)CGame::GetInstance()->GetCurrentScene();
 		ay = KOOPA_GRAVITY; //trả lại trọng lực cho nó
-		if (mario->GetMarioNormalX() > 0)
-			vx = KOOPA_SLIPPING_SPEED;
-		else
-			vx = KOOPA_SLIPPING_SPEED;
+
+		if (current_scene->GetID() == ID_MAP_1_1)
+		{
+			if (mario->GetMarioNormalX() > 0)
+				vx = KOOPA_SLIPPING_SPEED;
+			else
+				vx = -KOOPA_SLIPPING_SPEED;
+		}
+		else //Intro
+		{
+			if (nxNPC > 0)
+				vx = 0.1f;
+			else 
+				vx = -0.1f;
+		}
 		vy = 0;
 		y -= (KOOPA_BBOX_HEIGHT - KOOPA_IN_SHELL_BBOX_HEIGHT) / 2;
 		break;
 
+    }
 	case KOOPA_STATE_SLIP_REVERSE:
 		ay = KOOPA_GRAVITY;
 		if (mario->GetMarioNormalX() > 0)
@@ -443,7 +461,7 @@ void CKoopa::SetState(int state)
 		break;
 
 	case KOOPA_STATE_WALKING:
-		if (mario == NULL) vx = -KOOPA_WALKING_SPEED; //nếu ban đầu chưa có mario thì set v âm cho nó
+		if (mario == NULL) vx = KOOPA_WALKING_SPEED; //nếu ban đầu chưa có mario thì set v dương cho nó
 		else
 		{
 			if (this->x > mario->GetX())
@@ -560,7 +578,14 @@ int CKoopa::GetAniIdGreenKoopa()
 {
 	int id = -1;
 
-	if (isBlack) return ID_ANI_BLACK_KOOPA_SHELL;
+	//For black Koopa at Intro Only
+	if (isBlack)
+	{
+		if (state != KOOPA_STATE_DIE)
+			return ID_ANI_BLACK_KOOPA_SHELL;
+		else
+			return ID_ANI_BLACK_KOOPA_DIE;
+	}
 
 	if (state == KOOPA_STATE_WALKING && this->vx > 0)
 		id = ID_ANI_KOOPA_WALKING_RIGHT;
@@ -677,11 +702,3 @@ int CKoopa::ConditionsThatEnableToKillAllies()
 	return (state == KOOPA_STATE_SLIP || state == KOOPA_STATE_SLIP_REVERSE);
 	//Trả về các điều kiện cho phép Koopa giết các đồng minh của nó
 }
-
-/*void CKoopa::Respawn()
-{
-	CKoopa* koopa = new CKoopa(x_initial, y_initial, type_initial);
-	CPlayScene* current_scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
-	current_scene->AddObjectToScene(koopa);
-	isInitialized = true;
-}*/

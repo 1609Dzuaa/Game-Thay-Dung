@@ -25,6 +25,13 @@
 #include "debug.h"
 
 bool CIntroPlayScene::allowGoombaToMove = 0;
+bool CIntroPlayScene::allowLuigiToThrowKoopa = 0;
+bool CIntroPlayScene::allowReleaseMarioSit = 0;
+bool CIntroPlayScene::allowMarioRun = 0;
+bool CIntroPlayScene::allowLuigiToRunRight = 0;
+bool CIntroPlayScene::LuigiHasRunRight = 0;
+bool CIntroPlayScene::hasTurnSmall = 0;
+bool CIntroPlayScene::allowUseArrow = 0;
 
 using namespace std;
 
@@ -33,7 +40,7 @@ CIntroPlayScene::CIntroPlayScene(int id, LPCWSTR filePath) :
 {
 	//Intro 0 có Player ?, toàn NPC
 	Priority = 0;
-	key_handler = new CWorldMapKeyEvent(this);
+	key_handler = new CIntroKeyEvent(this); //ngáo :v
 }
 
 
@@ -257,7 +264,8 @@ void CIntroPlayScene::Render()
 		objects[i]->Render();
 
 	//Chỉ vẽ mũi tên sau khi hết màn giới thiệu
-	//CRedArrow::GetInstance()->Render();
+	if (allowUseArrow)
+		CRedArrow::GetInstance()->Render();
 }
 
 void CIntroPlayScene::Unload()
@@ -267,7 +275,15 @@ void CIntroPlayScene::Unload()
 
 	objects.clear();
 
+	//Vì là biến tĩnh nên cần reset cái đống này khi Unload Scene
 	allowGoombaToMove = 0;
+	allowLuigiToThrowKoopa = 0;
+	allowReleaseMarioSit = 0;
+	allowMarioRun = 0;
+	allowLuigiToRunRight = 0;
+	LuigiHasRunRight = 0;
+	hasTurnSmall = 0;
+	allowUseArrow = 0;
 
 	DebugOut(L"[INFO] Scene %d unloaded! \n", id);
 }

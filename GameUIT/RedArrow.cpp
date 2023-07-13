@@ -1,4 +1,6 @@
 #include "RedArrow.h"
+#include "Scene.h"
+#include "AssetIDs.h"
 
 CRedArrow* CRedArrow::__RedArrowInstance = nullptr;
 
@@ -21,14 +23,31 @@ void CRedArrow::Render()
 
 void CRedArrow::SetLevel(int para)
 {
-	if (!para)
+	CScene* current_scene = (CScene*)CGame::GetInstance()->GetCurrentScene();
+	if (current_scene->GetID() == ID_WORLD)
 	{
-		this->x = static_cast<float>(CGame::GetInstance()->GetBackBufferWidth() / 2) - 15.0f;
-		this->y = static_cast<float>(CGame::GetInstance()->GetBackBufferHeight() / 2) - 65.0f;
+		if (!para)
+		{
+			this->x = static_cast<float>(CGame::GetInstance()->GetBackBufferWidth() / 2) - 15.0f;
+			this->y = static_cast<float>(CGame::GetInstance()->GetBackBufferHeight() / 2) - 65.0f;
+		}
+		else
+		{
+			this->x = static_cast<float>(CGame::GetInstance()->GetBackBufferWidth() / 2) - 15.0f;
+			this->y = static_cast<float>(CGame::GetInstance()->GetBackBufferHeight() / 2) - 56.0f;
+		}
 	}
-	else
+	else //At Intro
 	{
-		this->x = static_cast<float>(CGame::GetInstance()->GetBackBufferWidth() / 2) - 15.0f;
-		this->y = static_cast<float>(CGame::GetInstance()->GetBackBufferHeight() / 2) - 56.0f;
+		if (!para)
+		{
+			this->x = static_cast<float>(CGame::GetInstance()->GetBackBufferWidth() / 2) - 52.0f;
+			this->y = static_cast<float>(CGame::GetInstance()->GetBackBufferHeight() / 2) + 6.0f;
+		}
+		else
+		{
+			this->x = static_cast<float>(CGame::GetInstance()->GetBackBufferWidth() / 2) - 52.0f;
+			this->y = static_cast<float>(CGame::GetInstance()->GetBackBufferHeight() / 2) + 22.0f;
+		}
 	}
 }

@@ -52,6 +52,13 @@ public:
 
 	static bool IsGameObjectDeleted(const LPGAMEOBJECT& o);
 	static bool allowGoombaToMove; //Cờ để Goomba nhận biết và di chuyển
+	static bool allowReleaseMarioSit; //Lúc Luigi đã kéo màn VÀ đi quá màn hình thì cho Mario hết ngồi
+	static bool allowMarioRun;	//Lúc Luigi đi qua vạch thì cho mario chạy
+	static bool allowLuigiToThrowKoopa; //Cho phép Luigi tạo Koopa, ôm và đạp nó
+	static bool allowLuigiToRunRight; //Cho phép Luigi chạy đi mất
+	static bool LuigiHasRunRight; //dùng để spawn cái mai rùa từ hướng trái
+	static bool hasTurnSmall; //dùng để biết Mario đã bị hoá nhỏ và cho nó di chuyển
+	static bool allowUseArrow;
 };
 
 typedef CIntroPlayScene* LPINTROSCENE;

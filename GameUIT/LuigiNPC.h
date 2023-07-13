@@ -3,6 +3,7 @@
 #include "ColorPlatform.h"
 #include "Mario.h"
 #include "MarioNPC.h"
+#include "Koopa.h"
 
 #define LUIGI_NPC_WALKING_SPEED	0.15f
 #define LUIGI_NPC_JUMP_SPEED	0.5f
@@ -11,11 +12,18 @@
 #define LUIGI_NPC_STATE_WALKING	10
 #define LUIGI_NPC_STATE_JUMPING	20
 
-#define ID_ANI_LUIGI_IDLE_RIGHT	700000	
+#define ID_ANI_LUIGI_IDLE_RIGHT	700000
+#define ID_ANI_LUIGI_IDLE_LEFT	700050
 
 #define ID_ANI_LUIGI_WALKING_RIGHT	700100	
 
-#define ID_ANI_LUIGI_JUMPING_RIGHT	700200	
+#define ID_ANI_LUIGI_JUMPING_RIGHT	700200
+
+#define ID_ANI_LUIGI_HOLD_WALK_LEFT	700301
+
+#define ID_ANI_LUIGI_HOLD_LEFT	700300
+
+#define ID_ANI_LUIGI_KICK_LEFT	700400
 
 class CLuigiNPC : public CGameObject
 {
@@ -25,9 +33,10 @@ class CLuigiNPC : public CGameObject
 	BOOLEAN isKicking, isHolding;
 	BOOLEAN isJumping, isRunning;
 	BOOLEAN hasJumped, hasSpawn;
+	BOOLEAN initKoopa, hasKick;
 	float maxVx;
 	ULONGLONG kick_start;
-	CMarioNPC* ghost_mario_npc;
+	CKoopa* ghost_koopa;
 public:
 	CLuigiNPC(float x, float y) :CGameObject(x, y)
 	{
@@ -40,11 +49,13 @@ public:
 		maxVx = 0.0f;
 		kick_start = 0;
 		isJumping = 0;
+		initKoopa = 0;
+		hasKick = 0;
 		SetState(MARIO_STATE_WALKING_RIGHT);
 
 		hasJumped = 0;
 		hasSpawn = 0;
-		ghost_mario_npc = nullptr;
+		ghost_koopa = nullptr;
 	};
 	void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
 	void UpdateSpeed();
@@ -58,5 +69,7 @@ public:
 	void SetState(int state);
 	int GetAniID();
 
+	void UpdateKoopaPos();
+	void HandleReleaseKoopa();
 	void SpawnSuperMarioBros3();
 };

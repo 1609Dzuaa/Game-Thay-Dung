@@ -44,7 +44,7 @@ void CSMB3Curtain::SetState(int state)
 void CSMB3Curtain::SpawnOtherObjects()
 {
 	CIntroPlayScene* current_scene = (CIntroPlayScene*)CGame::GetInstance()->GetCurrentScene();
-	CGoomba* goomba = new CGoomba(50, -100);
+	CGoomba* goomba = new CGoomba(70, -100);
 	CMushroom* mr = new CMushroom(45, -100, 0, RED_MUSHROOM);
 	CKoopa* green_koopa = new CKoopa(120, -200, 1, 0);
 	CKoopa* black_koopa = new CKoopa(178, -115, 0, 1);

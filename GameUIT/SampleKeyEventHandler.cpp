@@ -138,7 +138,13 @@ void CSampleKeyHandler::OnKeyUp(int KeyCode)
 		mario->SetisAtMaxSpeed(false);
 		mario->SetHoldKoopa(false);
 		if (mario->GetIsHolding())
+		{
 			mario->SetIsHoldingKoopa(false);//gọi hàm release koopa từ mario
+			if (mario->GetMarioNormalX() < 0)
+				mario->SetState(MARIO_STATE_KICKING_LEFT);
+			else 
+				mario->SetState(MARIO_STATE_KICKING_RIGHT);
+		}
 		break;
 
 	case DIK_DOWN:
