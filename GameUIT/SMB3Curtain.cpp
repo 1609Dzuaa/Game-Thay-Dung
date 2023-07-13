@@ -4,6 +4,7 @@
 #include "Koopa.h"
 #include "Leaf.h"
 #include "StarIntro.h"
+#include "NB3Intro.h"
 #include "IntroPlayScene.h"
 
 void CSMB3Curtain::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
@@ -29,12 +30,15 @@ void CSMB3Curtain::OnNoCollision(DWORD dt)
 void CSMB3Curtain::Render()
 {
 	CAnimations* animations = CAnimations::GetInstance();
-	animations->Get(ID_ANI_SMB3_CURTAIN)->Render(x, y, false);
+	if (state == SMB3_STATE_BLACK_BG)
+		animations->Get(ID_ANI_SMB3_CURTAIN_BLACK_BG)->Render(x, y, false);
+	else 
+		animations->Get(ID_ANI_SMB3_CURTAIN_COLOR_BG)->Render(x, y, false);
 }
 
 void CSMB3Curtain::SetState(int state)
 {
-	
+	this->state = state;
 }
 
 void CSMB3Curtain::SpawnOtherObjects()
@@ -46,12 +50,16 @@ void CSMB3Curtain::SpawnOtherObjects()
 	CKoopa* black_koopa = new CKoopa(178, -115, 0, 1);
 	CLeaf* leaf = new CLeaf(130, 0, 1);
 	CStarIntro* star = new CStarIntro(185, -60);
+	CNb3Racoon* nb3 = new CNb3Racoon(130.0f, 120.0f);
 	mr->SetState(MUSHROOM_STATE_OUT_OF_BRICK);
 	mr->SetSpeed(-MUSHROOM_SPEED_X, 0);
-	current_scene->AddObjectToScene(goomba);
-	current_scene->AddObjectToScene(mr);
-	current_scene->AddObjectToScene(green_koopa);
-	current_scene->AddObjectToScene(black_koopa);
-	current_scene->AddObjectToScene(leaf);
-	current_scene->AddObjectToScene(star);
+	current_scene->AddObjectToScene(goomba, 0);
+	current_scene->AddObjectToScene(mr, 0);
+	current_scene->AddObjectToScene(green_koopa, 0);
+	current_scene->AddObjectToScene(black_koopa, 0);
+	current_scene->AddObjectToScene(leaf, 0);
+	current_scene->AddObjectToScene(star, 0);
+	current_scene->AddObjectToScene(nb3, 2);
+	SetPosition(125, 115);
+	SetState(SMB3_STATE_COLOR_BG);
 }

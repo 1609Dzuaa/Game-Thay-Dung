@@ -3,7 +3,11 @@
 
 #define SMB3_CURTAIN_SPEED_DOWN	0.1f
 
-#define ID_ANI_SMB3_CURTAIN	500002
+#define SMB3_STATE_BLACK_BG	1
+#define SMB3_STATE_COLOR_BG	2
+
+#define ID_ANI_SMB3_CURTAIN_BLACK_BG	500002
+#define ID_ANI_SMB3_CURTAIN_COLOR_BG	500003
 
 class CSMB3Curtain : public CGameObject
 {
@@ -13,6 +17,7 @@ public:
 	{
 		vy = SMB3_CURTAIN_SPEED_DOWN;
 		HasSpawned = false;
+		state = SMB3_STATE_BLACK_BG;
 	};
 	void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
 	int IsBlocking() { return 0; }

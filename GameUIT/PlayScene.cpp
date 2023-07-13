@@ -452,10 +452,6 @@ void CPlayScene::Unload()
 
 	objects.clear();
 	player = NULL;
-	delete map;
-	map = nullptr;
-	delete underworld_map;
-	underworld_map = nullptr; //Neccessary?
 	init = 0; //mò cả buổi, quên mất chỉ cần đặt ở đây là thành công @@
 	DebugOut(L"[INFO] Scene %d unloaded! \n", id);
 }
@@ -496,13 +492,11 @@ void CPlayScene::AddObjectToScene(LPGAMEOBJECT game_object)
 {
 	this->objects.push_back(game_object);
 	//Thêm vật thể vào scene hiện tại
-	//objects.insert(objects.begin() + 1, game_object);
 }
 
 void CPlayScene::HandleTimerAndWait()
 {
 	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
-	CMarioWorld* mario_world = (CMarioWorld*)((LPWORLDPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
 
 	if (mario->GetState() == MARIO_STATE_DIE) return; //chết thì 0 đụng đến giờ nữa
 

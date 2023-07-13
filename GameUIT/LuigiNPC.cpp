@@ -83,6 +83,7 @@ void CLuigiNPC::Render()
 {
 	CAnimations* animations = CAnimations::GetInstance();
 	animations->Get(GetAniID())->Render(x, y, false);
+	RenderBoundingBox();
 }
 
 int CLuigiNPC::GetAniID()
@@ -211,15 +212,15 @@ void CLuigiNPC::SetState(int state)
 void CLuigiNPC::GetBoundingBox(float& left, float& top, float& right, float& bottom)
 {
 	//Really IMPORTANT
-	left = x - MARIO_BIG_SITTING_BBOX_WIDTH / 2;
-	top = y - MARIO_BIG_SITTING_BBOX_HEIGHT / 2;
-	right = left + MARIO_BIG_SITTING_BBOX_WIDTH;
-	bottom = top + MARIO_BIG_SITTING_BBOX_HEIGHT;
+	left = x - MARIO_BIG_BBOX_WIDTH / 2;
+	top = y - MARIO_BIG_BBOX_HEIGHT / 2;
+	right = left + MARIO_BIG_BBOX_WIDTH;
+	bottom = top + MARIO_BIG_BBOX_HEIGHT;
 }
 
 void CLuigiNPC::SpawnSuperMarioBros3()
 {
 	CSMB3Curtain* smb3_curtain = new CSMB3Curtain(127, -120);
 	CIntroPlayScene* current_scene = (CIntroPlayScene*)CGame::GetInstance()->GetCurrentScene();
-	current_scene->AddSubObjectToScene(smb3_curtain);
+	current_scene->AddObjectToScene(smb3_curtain, 1);
 }

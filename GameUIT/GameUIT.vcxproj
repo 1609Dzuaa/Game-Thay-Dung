@@ -171,6 +171,7 @@
     <ClInclude Include="MarioNPC.h" />
     <ClInclude Include="MarioWorld.h" />
     <ClInclude Include="Mushroom.h" />
+    <ClInclude Include="NB3Intro.h" />
     <ClInclude Include="Platform.h" />
     <ClInclude Include="PlayScene.h" />
     <ClInclude Include="Portal.h" />

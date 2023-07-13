@@ -75,7 +75,7 @@ void CLeaf::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	}
 
 	CCollision::GetInstance()->Process(this, dt, coObjects);
-	DebugOutTitle(L"vy, ay: %f, %f", vy, ay);
+	//DebugOutTitle(L"vy, ay: %f, %f", vy, ay);
 }
 
 void CLeaf::Render()

@@ -20,17 +20,39 @@ void CMarioNPC::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		vy = 0;
 	}
 
+	//bị hit, nhìn lên
 	if (GetTickCount64() - hitted_timeout > 900 && isHitted)
 		SetState(MARIO_STATE_LOOKUP);
 
+	//nhảy lên ăn lá
 	if (GetTickCount64() - look_timeout > 900 && isLookUp)
 		SetState(MARIO_STATE_JUMPING);
+
+	//Hạ cánh giết Goomba
+	if (level == MARIO_LEVEL_RACOON && !hasKilledGoomba && allowLanding % 2 == 0)
+		SetState(MARIO_RACOON_STATE_LANDING);
+	else if (!hasKilledGoomba)
+		allowLanding = 0;
+
+	//Giết xong thì quay lại sút cái mai
+	if (hasKilledGoomba)
+		SetState(MARIO_STATE_WALKING_RIGHT);
+
+	if (isKicking && GetTickCount64() - kick_start > MARIO_KICK_TIME)
+	{
+		isKicking = false;
+		kick_start = 0;
+	}
+
+	//Sút xong thì đi tới điểm gần phải đứng chờ
+	if (hasKickKoopa && x > 170)
+		SetState(MARIO_STATE_IDLE);
 
 	HandleEvolving();
 	UpdateSpeed();
 	isOnPlatform = false;
 	CCollision::GetInstance()->Process(this, dt, coObjects);
-	//DebugOutTitle(L"st: %d", state);
+	DebugOutTitle(L"st, vy, ay: %d, %f, %f", state, vy, ay);
 }
 
 void CMarioNPC::HandleEvolving()
@@ -39,7 +61,10 @@ void CMarioNPC::HandleEvolving()
 	{
 		//Tiến hoá có 2 loại: tiến hoá lên và tiến hoá lùi
 		if (isEvolveForward)
+		{
 			this->SetLevel(MARIO_LEVEL_RACOON);
+			this->SetState(MARIO_RACOON_STATE_LANDING);
+		}
 		else //Tiến hoá ngược
 			if (this->level == MARIO_LEVEL_RACOON)
 				this->SetLevel(MARIO_LEVEL_SMALL); //Ở Intro thì từ Racoon về Small
@@ -78,7 +103,7 @@ void CMarioNPC::OnCollisionWith(LPCOLLISIONEVENT e)
 		OnCollisionWithKoopa(e);
 	if (dynamic_cast<CLeaf*>(e->obj))
 		OnCollisionWithLeaf(e);
-	DebugOut(L"OCW\n");
+	//DebugOut(L"OCW\n");
 }
 
 void CMarioNPC::OnNoCollision(DWORD dt)
@@ -96,8 +121,13 @@ void CMarioNPC::OnCollisionWithBlockingObject(LPCOLLISIONEVENT e)
 
 void CMarioNPC::OnCollisionWithGoomba(LPCOLLISIONEVENT e)
 {
-	e->obj->SetState(GOOMBA_STATE_DIE);
-	vy = -0.274f; //nảy lên
+	if (e->ny < 0)
+	{
+		hasKilledGoomba = 1;
+		e->obj->SetState(GOOMBA_STATE_DIE);
+		vy = -0.4f; //nảy lên
+		//Vẫn còn giật sau khi kill nó
+	}
 }
 
 void CMarioNPC::OnCollisionWithKoopa(LPCOLLISIONEVENT e)
@@ -110,12 +140,19 @@ void CMarioNPC::OnCollisionWithKoopa(LPCOLLISIONEVENT e)
 		e->obj->SetSpeed(-0.07f, -0.08f);
 		SetState(MARIO_STATE_GOT_HITTED_BY_SHELL);
 	}
-	else 
+	else
+	{
+		this->SetState(MARIO_STATE_KICKING_RIGHT);
+		hasKickKoopa = 1;
 		e->obj->SetState(KOOPA_STATE_SLIP); //đạp nó
+	}
 }
 
 void CMarioNPC::OnCollisionWithLeaf(LPCOLLISIONEVENT e)
 {
+	CIntroPlayScene* intro_scene = (CIntroPlayScene*)CGame::GetInstance()->GetCurrentScene();
+	intro_scene->allowGoombaToMove = 1;
+
 	this->isEvolveForward = true;
 	this->SetState(MARIO_STATE_EVOLVING);
 	e->obj->Delete();
@@ -369,9 +406,8 @@ void CMarioNPC::SetState(int state)
 		break;
 
 	case MARIO_STATE_WALKING_RIGHT:
-		maxVx = 0.0023f;
-		vx = 0.001f;
-		ax = MARIO_ACCEL_RUN_X;
+		maxVx = 0.07f;
+		ax = MARIO_ACCEL_WALK_X;
 		nx = 1;
 
 		break;
@@ -406,6 +442,7 @@ void CMarioNPC::SetState(int state)
 	case MARIO_STATE_KICKING_RIGHT:
 		isKicking = true;
 		kick_start = GetTickCount64(); //Tính từ khi chạy ctrinh tới bây giờ
+
 		break;
 
 	case MARIO_STATE_JUMPING:
@@ -423,7 +460,11 @@ void CMarioNPC::SetState(int state)
 	{
 		isLanding = true;
 		isJumping = false;
+		allowLanding = 1;
+		ay = 0.005f;
 
+		vx = -0.055f;
+		nx = -1;
 		vy = 0.0f; //Set lại vy = 0 nếu đang Landing
 		DebugOut(L"Landing\n");
 		break;
@@ -509,7 +550,7 @@ void CMarioNPC::SpawnEffect(LPCOLLISIONEVENT e, LPGAMEOBJECT obj, int eff_type)
 
 	CEffectCollision* eff_col = new CEffectCollision(x, y, GetTickCount64(), eff_type);
 	CIntroPlayScene* current_scene = (CIntroPlayScene*)CGame::GetInstance()->GetCurrentScene();
-	current_scene->AddObjectToScene(eff_col);
+	current_scene->AddObjectToScene(eff_col, 0);
 }
 
 void CMarioNPC::SetLevel(int l)

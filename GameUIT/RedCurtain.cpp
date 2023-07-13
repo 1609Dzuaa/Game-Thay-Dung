@@ -32,16 +32,11 @@ void CRedCurtain::Render()
 	animations->Get(ID_ANI_RED_CURTAIN)->Render(x, y, false);
 }
 
-void CRedCurtain::SetState(int state)
-{
-
-}
-
 void CRedCurtain::SpawnMarioAndLuigi()
 {
 	CMarioNPC* mario_npc = new CMarioNPC(x + 125, 170);
 	CLuigiNPC* luigi_npc = new CLuigiNPC(x - 125, 170);
 	CIntroPlayScene* current_scene = (CIntroPlayScene*)CGame::GetInstance()->GetCurrentScene();
-	current_scene->AddObjectToScene(mario_npc);
-	current_scene->AddObjectToScene(luigi_npc);
+	current_scene->AddObjectToScene(mario_npc, 0);
+	current_scene->AddObjectToScene(luigi_npc, 0);
 }

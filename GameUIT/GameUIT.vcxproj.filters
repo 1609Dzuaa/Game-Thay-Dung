@@ -204,6 +204,9 @@
     <ClInclude Include="StarIntro.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="NB3Intro.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

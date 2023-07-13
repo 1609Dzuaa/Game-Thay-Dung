@@ -13,7 +13,7 @@ Text_Files\EffectCollision.txt
 [OBJECTS]
 
 #Layer: Nền đen và Ground Juventus
-800	127	113
+800	125	113
 
 #Platform: Nền lót
 5	0	195	16	15	20	0	0	0	0

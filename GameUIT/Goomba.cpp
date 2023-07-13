@@ -5,6 +5,7 @@
 #include "Camera.h"
 #include "debug.h"
 #include "DataBinding.h"
+#include "IntroPlayScene.h"
 
 CGoomba::CGoomba(float x, float y, int type) :CGameObject(x, y)
 {
@@ -138,12 +139,20 @@ void CGoomba::HandleCollisionWithBlockingObjects(LPCOLLISIONEVENT e)
 void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	CScene* current_scene = (CScene*)CGame::GetInstance()->GetCurrentScene();
+	CIntroPlayScene* intro_scene = (CIntroPlayScene*)CGame::GetInstance()->GetCurrentScene();
 
-	if (!CCamera::GetInstance()->isViewable(this) 
-		&& current_scene->GetID() == ID_MAP_1_1)
+	//Phần ĐK If này chỉ dành riêng cho Goomba Intro
+	if (current_scene->GetID() == ID_INTRO
+		&& intro_scene->allowGoombaToMove
+		&& state != GOOMBA_STATE_DIE)
+	{
+		UpdateGoombaIntro(dt, coObjects);
 		return;
+	}
+	else if (!CCamera::GetInstance()->isViewable(this)
+		&& current_scene->GetID() == ID_MAP_1_1)
+		return; //Nếu đang ở scene 1-1 VÀ nó 0 trong tầm Cam thì return
 
-	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
 	if (CDataBindings::GetInstance()->IsStopWatch) 
 		return;
 
@@ -192,6 +201,13 @@ void CGoomba::UpdateGoombaState()
 	}
 }
 
+void CGoomba::UpdateGoombaIntro(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
+{
+	vx = -0.011f;
+	SetState(GOOMBA_STATE_WALKING);
+	CCollision::GetInstance()->Process(this, dt, coObjects);
+}
+
 void CGoomba::Render()
 {
 	//should check if the object is in the camera => then RENDER it! 
@@ -234,6 +250,9 @@ void CGoomba::Render()
 
 void CGoomba::SetState(int state)
 {
+	if (this->state == GOOMBA_STATE_DIE || this->state == GOOMBA_STATE_DIE_REVERSE)
+		return;
+
 	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
 
 	switch (state)

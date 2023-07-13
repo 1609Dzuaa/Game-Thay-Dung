@@ -38,5 +38,6 @@ start	4
 132	textures\World1_Tileset_Right.png
 133	textures\Hud_Start & Hud_End.png
 315	textures\Intro.png
+198	textures\Intro_2.png
 
 #Why 70? -> Sitting animation in texture 0 has some problem so i use this instead

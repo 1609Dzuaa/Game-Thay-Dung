@@ -21,7 +21,6 @@ public:
 	void Render();
 	void OnNoCollision(DWORD dt);
 	void GetBoundingBox(float& left, float& top, float& right, float& bottom) {};
-	void SetState(int state);
 
 	void SpawnMarioAndLuigi();
 };

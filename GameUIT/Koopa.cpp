@@ -161,7 +161,7 @@ void CKoopa::HandleCollisionWithBlockingObjects(LPCOLLISIONEVENT e)
 				vy = 0;
 			else
 			{
-				vx = 0;
+				//vx = 0;
 				vy = 0;
 			}
 		}
@@ -359,6 +359,7 @@ void CKoopa::Render()
 void CKoopa::SetState(int state)
 {
 	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
+
 	switch (state)
 	{
 	case KOOPA_STATE_SLEEP:
@@ -421,12 +422,12 @@ void CKoopa::SetState(int state)
 		vy = -KOOPA_KNOCK_OFF_FACTOR_Y;
 		break;
 
-	case KOOPA_STATE_SLIP:
+	case KOOPA_STATE_SLIP: //Có vấn đề ở đây
 		ay = KOOPA_GRAVITY; //trả lại trọng lực cho nó
 		if (mario->GetMarioNormalX() > 0)
 			vx = KOOPA_SLIPPING_SPEED;
 		else
-			vx = -KOOPA_SLIPPING_SPEED;
+			vx = KOOPA_SLIPPING_SPEED;
 		vy = 0;
 		y -= (KOOPA_BBOX_HEIGHT - KOOPA_IN_SHELL_BBOX_HEIGHT) / 2;
 		break;
@@ -530,7 +531,7 @@ void CKoopa::OnCollisionWithKoopa(LPCOLLISIONEVENT e)
 	if (koopa->GetState() != KOOPA_STATE_DIE)
 	{
 		koopa->SetState(KOOPA_STATE_DIE);
-		mario->SpawnScore(koopa);
+		//mario->SpawnScore(koopa);
 	}
 }
 

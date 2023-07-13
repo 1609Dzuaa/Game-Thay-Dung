@@ -18,6 +18,8 @@ protected:
 
 	vector<LPGAMEOBJECT> objects;
 
+	int Priority;//Mức ưu tiên => dùng để xác định vật nào đc vẽ trc, tránh "đè" vật khác
+
 	void _ParseSection_SPRITES(string line);
 	void _ParseSection_ANIMATIONS(string line);
 
@@ -34,22 +36,22 @@ public:
 	virtual void Render();
 	virtual void Unload();
 
-	void AddObjectToScene(LPGAMEOBJECT game_object) 
+	void AddObjectToScene(LPGAMEOBJECT game_object, int priority) 
 	{
-		objects.push_back(game_object);
-		//objects.insert(objects.begin() + 2, game_object);
-	};
-
-	void AddSubObjectToScene(LPGAMEOBJECT game_object)
-	{
-		//objects.push_back(game_object);
-		objects.insert(objects.begin() + 1, game_object);
+		this->Priority = priority;
+		if (Priority == 0)
+			objects.push_back(game_object);
+		else if (Priority == 1) //Why 1 ? => Dùng cho rèm SMB3 with Color để nó 0 vẽ "đè" Mario
+			objects.insert(objects.begin() + 1, game_object);
+		else if(Priority == 2) //Why 2 ? => Dùng cho số 3 Racoon để nó vẽ "đè" số 3 trong rèm SMB3
+			objects.insert(objects.begin() + 3, game_object);
 	};
 
 	void Clear();
 	void PurgeDeletedObjects();
 
 	static bool IsGameObjectDeleted(const LPGAMEOBJECT& o);
+	static bool allowGoombaToMove; //Cờ để Goomba nhận biết và di chuyển
 };
 
 typedef CIntroPlayScene* LPINTROSCENE;

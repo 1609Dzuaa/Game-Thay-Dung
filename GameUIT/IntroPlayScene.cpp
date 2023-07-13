@@ -24,12 +24,15 @@
 #include "WorldKeyHandler.h"
 #include "debug.h"
 
+bool CIntroPlayScene::allowGoombaToMove = 0;
+
 using namespace std;
 
 CIntroPlayScene::CIntroPlayScene(int id, LPCWSTR filePath) :
 	CScene(id, filePath)
 {
 	//Intro 0 có Player ?, toàn NPC
+	Priority = 0;
 	key_handler = new CWorldMapKeyEvent(this);
 }
 
@@ -120,14 +123,6 @@ void CIntroPlayScene::_ParseSection_OBJECTS(string line)
 		obj = new CIntroLayer(x, y);
 		break;
 
-	case OBJECT_TYPE_MARIO_INTRO:
-		obj = new CMarioNPC(x, y);
-		break;
-
-	case OBJECT_TYPE_LUIGI_INTRO:
-		obj = new CLuigiNPC(x, y);
-		break;
-
 	case OBJECT_TYPE_PLATFORM:
 	{
 		float cell_width = (float)atof(tokens[3].c_str());
@@ -149,16 +144,16 @@ void CIntroPlayScene::_ParseSection_OBJECTS(string line)
 	case OBJECT_TYPE_RED_CURTAIN:
 		obj = new CRedCurtain(x, y);
 		break;
-
-	case OBJECT_TYPE_GOOMBAS:
-		int type = atoi(tokens[3].c_str());
-		obj = new CGoomba(x, y, type);
-		break;
 	}
 	
 	obj->SetPosition(x, y);
-	//objects.insert(objects.begin(), obj);
 	objects.push_back(obj);
+	//Đầu tiên là nền đen và Ground Juve: 0
+	//Nền lót 0 đc vẽ nên 0 care: 1
+	//Rèm đỏ "che" nền đen: 2
+	//2 Ae "che" nền đen: 4
+	//Rèm SMB3 cùng 1 đống quái: 1 (Luigi.cpp line 255)
+	//=>Chèn thằng số 3 racoon vào vị trí 2 =>(begin + 3)
 
 }
 
@@ -271,6 +266,8 @@ void CIntroPlayScene::Unload()
 		delete objects[i];
 
 	objects.clear();
+
+	allowGoombaToMove = 0;
 
 	DebugOut(L"[INFO] Scene %d unloaded! \n", id);
 }

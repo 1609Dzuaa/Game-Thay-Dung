@@ -19,8 +19,10 @@ class CMarioNPC : public CGameObject
 	float ax, ay;
 	int level;
 	int isOnPlatform;
+	int allowLanding; //Chẵn lẻ xen kẽ (chẵn: Landing, lẻ: Fall)
 	BOOLEAN isKicking, isHolding, isEvolving, isEvolveForward, isEvolveBackward;
 	BOOLEAN isJumping, isLanding, isRunning, isSitting, isHitted, isLookUp;
+	BOOLEAN hasKilledGoomba, hasKickKoopa;
 	float maxVx;
 	ULONGLONG kick_start, evolve_start, hitted_timeout, look_timeout;
 public:
@@ -48,6 +50,9 @@ public:
 		hitted_timeout = 0;
 		isLookUp = 0;
 		look_timeout = 0;
+		hasKilledGoomba = 0;
+		hasKickKoopa = 0;
+		allowLanding = 0;
 		SetState(MARIO_STATE_WALKING_LEFT);
 	};
 	void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);

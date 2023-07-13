@@ -72,7 +72,6 @@ void CCamera::Update()
     SetCamPos(target_follow->GetX(), target_follow->GetY());
 
     //nếu đang ở Underworld thì đánh cờ điều chỉnh cam
-    //CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
 
     if (mario->GetIsAtMainWorld())
     {
