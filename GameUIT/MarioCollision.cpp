@@ -276,21 +276,21 @@ void CMario::HandleCollisionUpperDirectionWithGoomba(CGoomba* goomba)
 		{
 			goomba->SetLevel(PARA_GOOMBA_LEVEL_NO_WINGS);
 			CountJumpOnEnemies++;
-			SpawnScore(goomba);
+			SpawnScore(goomba, 0, 0);
 			vy = -MARIO_JUMP_DEFLECT_SPEED;
 		}
 		else if (goomba->GetType() == PARA_GOOMBA && goomba->GetLevel() == PARA_GOOMBA_LEVEL_NO_WINGS)
 		{
 			goomba->SetState(GOOMBA_STATE_DIE);
 			CountJumpOnEnemies++;
-			SpawnScore(goomba);
+			SpawnScore(goomba, 0, 0);
 			vy = -MARIO_JUMP_DEFLECT_SPEED; //nảy lên
 		}
 		else //Goomba thường
 		{
 			goomba->SetState(GOOMBA_STATE_DIE);
 			CountJumpOnEnemies++;
-			SpawnScore(goomba);
+			SpawnScore(goomba, 0, 0);
 			vy = -MARIO_JUMP_DEFLECT_SPEED; //nảy lên
 		}
 	}
@@ -307,9 +307,18 @@ void CMario::HandleCollisionOtherDirectionWithGoomba(LPCOLLISIONEVENT e, CGoomba
 			{
 				isHolding = false;
 				goomba->SetState(GOOMBA_STATE_DIE_REVERSE);
-				SpawnScore(goomba);
+				SpawnScore(goomba, 0, 0);
+				ghost_koopa->SetBeingHeld(false);
+				isHolding = false;
 				ghost_koopa->SetState(KOOPA_STATE_DIE);
-				ghost_koopa->SetSpeed(-0.09f, -0.3f);
+				if (e->nx > 0)
+				{
+					ghost_koopa->SetSpeed(0.01f, -0.031f);
+				}
+				else
+				{
+					ghost_koopa->SetSpeed(-0.01f, -0.031f);
+				}
 				this->SetState(MARIO_STATE_IDLE);
 			}
 			else
@@ -366,7 +375,7 @@ void CMario::HandleCollisionUpperDirectionWithKoopa(CKoopa* koopa)
 			koopa->SetType(GREEN_KOOPA); //biến nó thành Koopa thường
 			koopa->SetState(KOOPA_STATE_WALKING);
 			CountJumpOnEnemies++;
-			SpawnScore(koopa);
+			SpawnScore(koopa, 0, 0);
 			vy = -MARIO_JUMP_DEFLECT_SPEED;
 		}
 		else //Koopa thường
@@ -375,20 +384,20 @@ void CMario::HandleCollisionUpperDirectionWithKoopa(CKoopa* koopa)
 			{
 				koopa->SetState(KOOPA_STATE_SLEEP);
 				CountJumpOnEnemies++;
-				SpawnScore(koopa);
+				SpawnScore(koopa, 0, 0);
 				vy = -MARIO_JUMP_DEFLECT_SPEED;
 			}
 			else if (koopa->GetState() == KOOPA_STATE_SLIP_REVERSE)
 			{
 				koopa->SetState(KOOPA_STATE_SLEEP_REVERSE_SPECIAL);
 				CountJumpOnEnemies++;
-				SpawnScore(koopa);
+				SpawnScore(koopa, 0, 0);
 				vy = -MARIO_JUMP_DEFLECT_SPEED;
 			}
 			else if (koopa->GetState() == KOOPA_STATE_SLEEP) //Koopa ĐANG NGỦ
 			{
 				CountJumpOnEnemies++;
-				SpawnScore(koopa);
+				SpawnScore(koopa, 0, 0);
 				koopa->SetState(KOOPA_STATE_SLIP);
 			}
 			else if (koopa->GetState() == KOOPA_STATE_SLEEP_REVERSE
@@ -408,7 +417,7 @@ void CMario::HandleCollisionUpperDirectionWithKoopa(CKoopa* koopa)
 			{
 				koopa->SetState(KOOPA_STATE_SLEEP);
 				CountJumpOnEnemies++;
-				SpawnScore(koopa);
+				SpawnScore(koopa, 0, 0);
 				vy = -MARIO_JUMP_DEFLECT_SPEED;
 			}
 		}
@@ -452,7 +461,7 @@ void CMario::HandleCollisionOtherDirectionWithKoopa(LPCOLLISIONEVENT e, CKoopa* 
 			else if (isHolding && e->nx != this->nx)
 			{
 				koopa->SetState(KOOPA_STATE_DIE);
-				SpawnScore(koopa);
+				SpawnScore(koopa, 0, 0);
 				ghost_koopa->SetState(KOOPA_STATE_DIE);
 				ghost_koopa->Delete();
 				this->SetState(MARIO_STATE_IDLE);
@@ -523,7 +532,7 @@ void CMario::OnCollisionWithMushroom(LPCOLLISIONEVENT e)
 	{
 		if (mr->GetState() != MUSHROOM_STATE_IN_THE_BRICK)
 		{
-			SpawnScore(mr);
+			SpawnScore(mr, 0, 0);
 			mr->Delete();
 			y -= (MARIO_BIG_BBOX_HEIGHT - MARIO_SMALL_BBOX_HEIGHT) / 2; //Giảm y để tránh tình trạng "Sink" dưới nền
 			this->isEvolveForward = true;
@@ -536,7 +545,7 @@ void CMario::OnCollisionWithMushroom(LPCOLLISIONEVENT e)
 		if (mr->GetState() != MUSHROOM_STATE_IN_THE_BRICK)
 		{
 			CDataBindings::GetInstance()->HP++;
-			SpawnScore(mr); //Spawn Level Up
+			SpawnScore(mr, 0, 0); //Spawn Level Up
 			mr->Delete();
 		}
 	}
@@ -558,7 +567,7 @@ void CMario::OnCollisionWithLeaf(LPCOLLISIONEVENT e)
 		this->SetState(MARIO_STATE_EVOLVING);
 		SpawnEffect(e, leaf, EFF_COL_TYPE_SMOKE_EVOLVE);
 	}
-	SpawnScore(leaf);
+	SpawnScore(leaf, 0, 0);
 	leaf->Delete();
 	//points += 1000;
 }
@@ -570,11 +579,19 @@ void CMario::OnCollisionWithFlower(LPCOLLISIONEVENT e)
 		if (isHolding && e->nx != this->nx) //sometimes work ? Will check it later
 		{
 			e->obj->SetState(FLOWER_STATE_DIE);
-			SpawnScore(e->obj);
-			ghost_koopa->SetState(KOOPA_STATE_DIE);
-			ghost_koopa->Delete();
-			this->SetState(MARIO_STATE_IDLE);
+			SpawnScore(e->obj, 0, 0);
+			ghost_koopa->SetBeingHeld(false);
 			isHolding = false;
+			ghost_koopa->SetState(KOOPA_STATE_DIE);
+			if (e->nx > 0)
+			{
+				ghost_koopa->SetSpeed(0.01f, -0.031f);
+			}
+			else
+			{
+				ghost_koopa->SetSpeed(-0.01f, -0.031f);
+			}
+			this->SetState(MARIO_STATE_IDLE);
 		}
 		else if (level > MARIO_LEVEL_BIG) //Racoon thì spawn khói sau khi giảm level
 		{

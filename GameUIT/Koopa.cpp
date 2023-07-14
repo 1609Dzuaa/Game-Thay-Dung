@@ -259,7 +259,7 @@ void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 	UpdateKoopaState();
 	CCollision::GetInstance()->Process(this, dt, coObjects);
-	//DebugOutTitle(L"vx, st: %f, %d", vx, state);
+	DebugOutTitle(L"ay, st, COLLIDABLE: %f, %d, %d", ay, state, IsCollidable());
 }
 
 void CKoopa::UpdateKoopaState()
@@ -268,6 +268,7 @@ void CKoopa::UpdateKoopaState()
 		return; //0 Update State Cho 2 con Koopa đầu Intro
 
 	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
+	CPlayScene* play_scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
 
 	//Quay đầu của Red Koopa
 	if (type == RED_KOOPA)
@@ -327,10 +328,17 @@ void CKoopa::UpdateKoopaState()
 				if (mario->GetLevel() > 2)
 				{
 					mario->SetState(MARIO_STATE_EVOLVING);
-					//mario->
+					mario->SetEvolvingBackWard(true);
+					CEffectCollision* eff = new CEffectCollision(x, y, GetTickCount64(), EFF_COL_TYPE_SMOKE_EVOLVE);
+					play_scene->AddObjectToScene(eff);
+					CDataBindings::GetInstance()->IsStopWatch = 1;
 				}
 				else if (mario->GetLevel() > 1)
-					mario->SetLevel(1);
+				{
+					mario->SetState(MARIO_STATE_EVOLVING);
+					mario->SetEvolvingBackWard(true);
+					CDataBindings::GetInstance()->IsStopWatch = 1;
+				}
 				else
 					mario->SetState(MARIO_STATE_DIE);
 			}
@@ -425,8 +433,6 @@ void CKoopa::SetState(int state)
 	case KOOPA_STATE_DIE:
 		die_start = GetTickCount64();
 		ay = KOOPA_GRAVITY;
-		vy = -0.3f;
-		vx = -0.09f;
 		if (!isBeingHeld)
 		{
 			if (this->nx > 0)
@@ -473,6 +479,7 @@ void CKoopa::SetState(int state)
 		break;
 
 	case KOOPA_STATE_WALKING:
+		ay = KOOPA_GRAVITY; //Quên chưa trả :v
 		if (mario == NULL) vx = KOOPA_WALKING_SPEED; //nếu ban đầu chưa có mario thì set v dương cho nó
 		else
 		{
@@ -551,7 +558,7 @@ void CKoopa::OnCollisionWithGoomba(LPCOLLISIONEVENT e)
 	if (goomba->GetState() != GOOMBA_STATE_DIE_REVERSE)
 	{
 		goomba->SetState(GOOMBA_STATE_DIE_REVERSE);
-		mario->SpawnScore(goomba);
+		mario->SpawnScore(goomba, 1, KillCount);
 	}
 }
 

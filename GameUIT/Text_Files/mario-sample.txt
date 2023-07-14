@@ -1,5 +1,5 @@
 [SETTINGS]
-start	4
+start	1
 
 #id	type	file
 # type: 0: intro, 1: play scene 

@@ -324,7 +324,7 @@ void CWorldPlayScene::Update(DWORD dt)
 	//DebugOut(L"st, ID, Pass, NumPass: %d, %d, %d, %d\n", mario_world->GetState(), CDataBindings::GetInstance()->WorldEntrance[CDataBindings::GetInstance()->NumEntrancePass - 1].ID, CDataBindings::GetInstance()->WorldEntrance[CDataBindings::GetInstance()->NumEntrancePass - 1].isPassed, CDataBindings::GetInstance()->NumEntrancePass);
 	//DebugOut(L"St: %d\n", mario_world->GetState());
 	//DebugOut(L"Block L, T, R, B: %d, %d, %d, %d\n", mario_world->GetBlockDirect().x, mario_world->GetBlockDirect().y, mario_world->GetBlockDirect().z, mario_world->GetBlockDirect().w);
-	DebugOutTitle(L"SW: %d", CDataBindings::GetInstance()->IsStopWatch);
+	DebugOutTitle(L"Level: %d", CRedArrow::GetInstance()->GetLevel());
 
 	vector<LPGAMEOBJECT> coObjects;
 	for (size_t i = 1; i < objects.size(); i++)

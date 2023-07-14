@@ -50,6 +50,7 @@ CMario::CMario(float x, float y) : CGameObject(x, y)
 	isTrulyDied = false;
 	isTrulyEnd = false;
 	HasCollectCard = false;
+	isKillByWeapon = false;
 	CountJumpOnEnemies = 0;
 	untouchdraw = -1;
 	untouch_draw_0 = 0;
@@ -126,13 +127,35 @@ void CMario::SetLevel(int l)
 	level = l;
 }
 
-void CMario::SpawnScore(LPGAMEOBJECT obj)
+void CMario::SpawnScore(LPGAMEOBJECT obj, int killByWeapon, int killCombo)
 {
 	//Nên cộng điểm trong này luôn
-	CEffectScore* eff_scr = new CEffectScore(obj->GetX(), obj->GetY() - 15.0f, obj->GetY() - 45.0f, NORMAL_SCORE);
 	CPlayScene* current_scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
-	current_scene->AddObjectToScene(ClassifyScore(obj, eff_scr));
-	CDataBindings::GetInstance()->points += eff_scr->GetScore();
+
+	if (!killByWeapon)
+	{
+		CEffectScore* eff_scr = new CEffectScore(obj->GetX(), obj->GetY() - 15.0f, obj->GetY() - 45.0f, NORMAL_SCORE);
+		current_scene->AddObjectToScene(ClassifyScore(obj, eff_scr));
+		CDataBindings::GetInstance()->points += eff_scr->GetScore();
+	}
+	else
+	{
+		CEffectScore* eff_scr = nullptr;
+		switch (killCombo)
+		{
+		case 1:
+			eff_scr = new CEffectScore(obj->GetX(), obj->GetY() - 15.0f, obj->GetY() - 45.0f, NORMAL_SCORE);
+			break;
+		case 2:
+			eff_scr = new CEffectScore(obj->GetX(), obj->GetY() - 15.0f, obj->GetY() - 45.0f, DOUBLE_SCORE);
+			break;
+		case 3:
+			eff_scr = new CEffectScore(obj->GetX(), obj->GetY() - 15.0f, obj->GetY() - 45.0f, QUADRA_SCORE);
+			break;
+		}
+		current_scene->AddObjectToScene(ClassifyScore(obj, eff_scr));
+		CDataBindings::GetInstance()->points += eff_scr->GetScore();
+	}
 }
 
 CEffectScore* CMario::ClassifyScore(LPGAMEOBJECT obj, CEffectScore*& eff_scr)

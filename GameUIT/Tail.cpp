@@ -89,7 +89,7 @@ void CTail::OnCollisionWithGoomba(LPCOLLISIONEVENT e)
 	CGoomba* goomba = dynamic_cast<CGoomba*>(e->obj);
 	goomba->SetState(GOOMBA_STATE_DIE_REVERSE);
 	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
-	mario->SpawnScore(goomba);
+	mario->SpawnScore(goomba, 0, 0);
 	mario->SpawnEffect(e, this, EFF_COL_TYPE_NORMAL);
 }
 
@@ -115,7 +115,7 @@ void CTail::OnCollisionWithFlower(LPCOLLISIONEVENT e)
 	CFlower* flower = dynamic_cast<CFlower*>(e->obj);
 	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
 	flower->SetState(FLOWER_STATE_DIE);
-	mario->SpawnScore(e->obj);
+	mario->SpawnScore(e->obj, 0, 0);
 	mario->SpawnEffect(e, this, EFF_COL_TYPE_NORMAL);
 	//DebugOut(L"Tail Collided\n");
 }

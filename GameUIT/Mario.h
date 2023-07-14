@@ -337,6 +337,7 @@ class CMario : public CGameObject
 	BOOLEAN isReachTransPos; //Dùng để nhận biết đã chạm tới điểm trans
 	BOOLEAN isWaitingForTrans; //Dùng để biết có đang đợi chuyển cảnh hay kh
 	BOOLEAN isEndGame;	//End Game -> bật chế độ tự lái
+	BOOLEAN isKillByWeapon; //Weapon here is Ghost_koopa ;)
 	int CountJumpOnEnemies; //Đếm số bước nhảy 0 CHẠM ĐẤT để có số điểm tương ứng
 	int SpeedBar; //thanh tốc độ
 
@@ -398,7 +399,7 @@ public:
 	BOOLEAN GetIsJumping() { return isJumping; }
 	CEffectScore* ClassifyScore(LPGAMEOBJECT obj, CEffectScore*& eff_scr);
 	void SetIsLanding(bool para) { this->isLanding = para; }
-	void SpawnScore(LPGAMEOBJECT obj);
+	void SpawnScore(LPGAMEOBJECT obj, int isKillByWeapon, int comboKill);
 	void SpawnEffect(LPCOLLISIONEVENT e, LPGAMEOBJECT obj, int eff_type); //nên cho vào class EffectCol
 	BOOLEAN GetShaking() { return this->Shaking; }
 	BOOLEAN GetIsFlying() { return this->isFlying; }
@@ -429,6 +430,7 @@ public:
 	void SetCombo(BOOLEAN para) { this->isComboUpAndS = para; }
 	void SetIsWaitingForTrans(BOOLEAN para) { this->isWaitingForTrans = para; }
 	void SetHasCollectCard(BOOLEAN para) { this->HasCollectCard = para; }
+	void SetEvolvingBackWard(BOOLEAN para) { this->isEvolveBackward = para; }
 	void HandleTravellingDown();
 	void HandleTravellingUp();
 	void HandleReleaseKoopa();
