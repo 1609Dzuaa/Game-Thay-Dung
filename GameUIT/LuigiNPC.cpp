@@ -274,4 +274,5 @@ void CLuigiNPC::HandleReleaseKoopa()
 	ghost_koopa->SetBeingHeld(false);
 	ghost_koopa->SetNxNPC(-1);
 	ghost_koopa->SetState(KOOPA_STATE_SLIP);
+	//intro_scene->LuigiHasThrowKoopa = 1;
 }

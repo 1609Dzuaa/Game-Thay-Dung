@@ -60,6 +60,7 @@ public:
 	static bool hasTurnSmall; //dùng để biết Mario đã bị hoá nhỏ và cho nó di chuyển
 	static bool allowUseArrow;
 	static bool hasUpdateArrowPos;
+	static bool LuigiHasThrowKoopa;
 };
 
 typedef CIntroPlayScene* LPINTROSCENE;

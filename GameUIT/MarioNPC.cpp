@@ -29,11 +29,17 @@ void CMarioNPC::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 	//bị hit, nhìn lên
 	if (GetTickCount64() - hitted_timeout > 900 && isHitted)
+	{
 		SetState(MARIO_STATE_LOOKUP);
+		isHitted = false;
+	}
 
 	//nhảy lên ăn lá
 	if (GetTickCount64() - look_timeout > 900 && isLookUp)
+	{
 		SetState(MARIO_STATE_JUMPING);
+		isLookUp = false;
+	}
 
 	//Hạ cánh giết Goomba
 	if (level == MARIO_LEVEL_RACOON && !hasKilledGoomba && allowLanding % 2 == 0)
@@ -54,7 +60,9 @@ void CMarioNPC::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	}
 
 	//Sút xong thì đi tới điểm gần phải đứng chờ
-	if (hasKickKoopa1 && x > 150 && !intro_scene->allowMarioRun && level != MARIO_LEVEL_SMALL)
+	if (hasKickKoopa1 && x > 150 
+		&& !intro_scene->allowMarioRun
+		&& level != MARIO_LEVEL_SMALL)
 	{
 		SetState(MARIO_STATE_IDLE);
 		intro_scene->allowLuigiToThrowKoopa = 1;
@@ -118,7 +126,7 @@ void CMarioNPC::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	UpdateSpeed();
 	isOnPlatform = false;
 	CCollision::GetInstance()->Process(this, dt, coObjects);
-	//DebugOutTitle(L"x: %f", x);
+	//DebugOutTitle(L"st: %d", state);
 }
 
 void CMarioNPC::HandleEvolving()

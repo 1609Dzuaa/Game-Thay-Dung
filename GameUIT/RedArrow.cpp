@@ -1,4 +1,4 @@
-#include "RedArrow.h"
+﻿#include "RedArrow.h"
 #include "Scene.h"
 #include "AssetIDs.h"
 
@@ -41,7 +41,7 @@ void CRedArrow::SetLevel(int para)
 	CScene* current_scene = (CScene*)CGame::GetInstance()->GetCurrentScene();
 	if (current_scene->GetID() == ID_WORLD)
 	{
-		if (!para)
+		if (para == 0)
 		{
 			this->x = static_cast<float>(CGame::GetInstance()->GetBackBufferWidth() / 2) - 15.0f;
 			this->y = static_cast<float>(CGame::GetInstance()->GetBackBufferHeight() / 2) - 65.0f;
@@ -54,7 +54,7 @@ void CRedArrow::SetLevel(int para)
 	}
 	else //At Intro
 	{
-		if (!para)
+		if (para == 0)
 		{
 			this->x = static_cast<float>(CGame::GetInstance()->GetBackBufferWidth() / 2) - 52.0f;
 			this->y = static_cast<float>(CGame::GetInstance()->GetBackBufferHeight() / 2) + 6.0f;
@@ -65,4 +65,5 @@ void CRedArrow::SetLevel(int para)
 			this->y = static_cast<float>(CGame::GetInstance()->GetBackBufferHeight() / 2) + 22.0f;
 		}
 	}
+	this->level = para; //Tên hàm là SetLevel nhưng lại quên SetLevel :vv
 }

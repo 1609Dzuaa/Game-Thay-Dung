@@ -203,7 +203,7 @@ void CGoomba::UpdateGoombaState()
 
 void CGoomba::UpdateGoombaIntro(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
-	vx = -0.017f;
+	vx = -0.02f;
 	SetState(GOOMBA_STATE_WALKING);
 	CCollision::GetInstance()->Process(this, dt, coObjects);
 }

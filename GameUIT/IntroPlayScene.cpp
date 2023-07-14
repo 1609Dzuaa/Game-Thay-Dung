@@ -33,6 +33,7 @@ bool CIntroPlayScene::LuigiHasRunRight = 0;
 bool CIntroPlayScene::hasTurnSmall = 0;
 bool CIntroPlayScene::allowUseArrow = 0;
 bool CIntroPlayScene::hasUpdateArrowPos = 0;
+bool CIntroPlayScene::LuigiHasThrowKoopa = 0;
 
 using namespace std;
 
@@ -291,6 +292,7 @@ void CIntroPlayScene::Unload()
 	hasTurnSmall = 0;
 	allowUseArrow = 0;
 	hasUpdateArrowPos = 0;
+	LuigiHasThrowKoopa = 0;
 
 	DebugOut(L"[INFO] Scene %d unloaded! \n", id);
 }

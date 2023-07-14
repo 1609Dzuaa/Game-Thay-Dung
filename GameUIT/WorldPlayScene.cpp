@@ -286,6 +286,7 @@ void CWorldPlayScene::Update(DWORD dt)
 	//Với Hud ở World thì khởi tạo 1 lần duy nhất, 0 CẦN Update
 	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
 	CPlayScene::timer = 0;
+	DebugOutTitle(L"Level: %d", CRedArrow::GetInstance()->GetLevel());
 
 	if (!initStartHud)
 	{
@@ -324,7 +325,6 @@ void CWorldPlayScene::Update(DWORD dt)
 	//DebugOut(L"st, ID, Pass, NumPass: %d, %d, %d, %d\n", mario_world->GetState(), CDataBindings::GetInstance()->WorldEntrance[CDataBindings::GetInstance()->NumEntrancePass - 1].ID, CDataBindings::GetInstance()->WorldEntrance[CDataBindings::GetInstance()->NumEntrancePass - 1].isPassed, CDataBindings::GetInstance()->NumEntrancePass);
 	//DebugOut(L"St: %d\n", mario_world->GetState());
 	//DebugOut(L"Block L, T, R, B: %d, %d, %d, %d\n", mario_world->GetBlockDirect().x, mario_world->GetBlockDirect().y, mario_world->GetBlockDirect().z, mario_world->GetBlockDirect().w);
-	DebugOutTitle(L"Level: %d", CRedArrow::GetInstance()->GetLevel());
 
 	vector<LPGAMEOBJECT> coObjects;
 	for (size_t i = 1; i < objects.size(); i++)
