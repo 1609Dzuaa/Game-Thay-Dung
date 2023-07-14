@@ -11,7 +11,7 @@ Entrance CDataBindings::WorldEntrance[7] = { -1,0 };
 int CDataBindings::NumEntrancePass = 0;
 Card CDataBindings::cardCollected[3] = { 0,0,0 };
 int CDataBindings::numCardCollected = 0;
-int CDataBindings::HP = 0;
+int CDataBindings::HP = 4;
 int CDataBindings::coin = 0;
 int CDataBindings::points = 0;
 int CDataBindings::TypeOfCardCollected = 0;
@@ -69,7 +69,7 @@ void CDataBindings::RefreshAllData()
 	memset(cardCollected, 0, numCardCollected);
 	CDataBindings::NumEntrancePass = 0;
 	CDataBindings::numCardCollected = 0;
-	CDataBindings::HP = 0;
+	CDataBindings::HP = 4;
 	CDataBindings::coin = 0;
 	CDataBindings::points = 0;
 	CDataBindings::TypeOfCardCollected = 0;
