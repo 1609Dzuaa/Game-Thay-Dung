@@ -118,7 +118,7 @@ void CMarioNPC::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	UpdateSpeed();
 	isOnPlatform = false;
 	CCollision::GetInstance()->Process(this, dt, coObjects);
-	DebugOutTitle(L"x: %f", x);
+	//DebugOutTitle(L"x: %f", x);
 }
 
 void CMarioNPC::HandleEvolving()

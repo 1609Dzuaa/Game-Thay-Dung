@@ -52,9 +52,6 @@ HOW TO INSTALL Microsoft.DXSDK.D3DX
 
 #define BACKGROUND_COLOR D3DXCOLOR(0.0f, 0.0f, 0.0f, 255.0f) //black
 
-#define SCREEN_WIDTH 260
-#define SCREEN_HEIGHT 330 //figure it out ? 330 về 275 = 55
-
 LRESULT CALLBACK WinProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	switch (message) {
@@ -129,8 +126,8 @@ HWND CreateGameWindow(HINSTANCE hInstance, int nCmdShow, int ScreenWidth, int Sc
 			WS_OVERLAPPEDWINDOW, // WS_EX_TOPMOST | WS_VISIBLE | WS_POPUP,
 			CW_USEDEFAULT,
 			CW_USEDEFAULT,
-			SCREEN_WIDTH,
-			SCREEN_HEIGHT,
+			260,
+			330,
 			NULL,
 			NULL,
 			hInstance,

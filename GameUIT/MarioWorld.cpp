@@ -50,7 +50,7 @@ void CMarioWorld::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	CCollision::GetInstance()->Process(this, dt, coObjects);
 	//DebugOutTitle(L"isAllow, atMW: %d, %d", isAllowToPlayThatEntrance, Entrance_ID);
 	//DebugOut(L"CamX, CamY: %f, %f\n", CCamera::GetInstance()->GetCamPos().x, CCamera::GetInstance()->GetCamPos().y);	//DebugOutTitle(L"CardType: %d", mario->GetTypeOfCardCollected());
-	DebugOutTitle(L"St, x, y: %d, %f, %f", state, x, y);
+	//DebugOutTitle(L"St, x, y: %d, %f, %f", state, x, y);
 }
 
 void CMarioWorld::HandlePositionWithEntranceAndBlock()

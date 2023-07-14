@@ -67,6 +67,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			isAtMainWorld = 0;
 			isTrulyDied = true;
 			isTrulyEnd = true;
+			CDataBindings::GetInstance()->IsStopWatch = 0;
 			CGame::GetInstance()->InitiateSwitchScene(ID_WORLD);
 
 			if (isEndGame)
@@ -124,10 +125,10 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		DebugOut(L"Tail was created successfully!\n");
 	}
 
-	if (ghost_koopa)
-		DebugOutTitle(L"x, y, st: %f, %f, %d", ghost_koopa->GetX(), ghost_koopa->GetY(), ghost_koopa->GetState());
+	//if (ghost_koopa)
+		//DebugOutTitle(L"x, y, st: %f, %f, %d", ghost_koopa->GetX(), ghost_koopa->GetY(), ghost_koopa->GetState());
 	//DebugOutTitle(L"SpeedBar, prevVx, vx, MS: %d, %f, %f, %d", SpeedBar, prevVx, vx, isAtMaxSpeed);
-	//DebugOutTitle(L"vx, ax, ay, st: %f, %f, %f, %d", vx, ax, ay, state);
+	//DebugOutTitle(L"st, canfly: %d, %d", state, canFly);
 }
 
 void CMario::UpdateMarioState()

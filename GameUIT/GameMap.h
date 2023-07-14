@@ -26,7 +26,5 @@ public:
 	void ClipSpritesFromTileset(); //cắt từng Sprites từ Tileset
 	void Render();
 	void SetMapMatrix(int** map_matrix);
-	int GetMapWidth();
-	int GetMapHeight();
 	void isViewable(int& Start_col, int& End_col, int& Start_row, int& End_row);
 };

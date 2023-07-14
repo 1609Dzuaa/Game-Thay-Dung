@@ -57,7 +57,7 @@ void CTail::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 void CTail::Render()
 {
-	RenderBoundingBox(); 
+	//RenderBoundingBox(); 
 }
 
 void CTail::OnNoCollision(DWORD dt)

@@ -14,7 +14,7 @@ using namespace std;
 #include "Scene.h"
 #include <string>
 
-#define SCREEN_WIDTH 272
+#define SCREEN_WIDTH 260
 #define SCREEN_HEIGHT 256
 #define MAP1_1_WIDTH 2816
 #define MAP1_1_HEIGHT 352

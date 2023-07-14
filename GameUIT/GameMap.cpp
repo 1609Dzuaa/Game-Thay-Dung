@@ -94,13 +94,3 @@ void CMap::SetMapMatrix(int** map_mat)
 {
 	Map_Matrix = map_mat;
 }
-
-int CMap::GetMapWidth()
-{
-	return MapCollums * TILE_WIDTH;
-}
-
-int CMap::GetMapHeight()
-{
-	return MapRows * TILE_HEIGHT;
-}

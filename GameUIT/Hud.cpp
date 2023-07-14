@@ -39,7 +39,7 @@ void CHud::Update()
 	//Chia ra vị trí ở MainWorld và Underground
 	this->x = CCamera::GetInstance()->GetCamPos().x + CGame::GetInstance()->GetBackBufferWidth() / 2;
 	this->y = CCamera::GetInstance()->GetCamPos().y + CGame::GetInstance()->GetBackBufferHeight() - 16.0f;
-	//UpdateCard();
+	UpdateCard();
 	//DebugOut(L"ID, isPass, NumPass: %d, %d, %d\n", CDataBindings::GetInstance()->WorldEntrance[0].ID, CDataBindings::GetInstance()->WorldEntrance[0].isPassed, CDataBindings::GetInstance()->NumEntrancePass);
 }
 
@@ -218,7 +218,6 @@ void CHud::RenderCard()
 	//vd: vừa ăn xong star => qua scene kế ăn tiếp star thì cho 3 card và vẽ 3 card ???!!
 	//Đã XONG TH ăn 2 Card liên tiếp!!
 
-	//Tuy nhiên: vấn đề mới là xem xét lại hàm này vì có lẽ vi phạm quy tắc
 
 	if (mario_world->GetAtW()) //Vẽ Card ở World
 	{
@@ -226,7 +225,7 @@ void CHud::RenderCard()
 			if (CDataBindings::GetInstance()->cardCollected[i].aniID != 0)
 			{
 				animations->Get(CDataBindings::GetInstance()->cardCollected[i].aniID)->Render(x + 54.0f + i * 24.0f, y, false);
-				CDataBindings::GetInstance()->cardCollected[i].NoFlashAnymore = 1; //Cập nhật mất r, vi phạm
+				CDataBindings::GetInstance()->cardCollected[i].NoFlashAnymore = 1;
 			}
 	}
 	else //Vẽ Card ở Map 1-1

@@ -51,13 +51,21 @@ public:
 			Direct_Been_Blocked.z = 0;
 			Direct_Been_Blocked.w = 1;
 		}
-		else
+		else if (CDataBindings::GetInstance()->NumEntrancePass != 0)
 		{
 			int numEntr = CDataBindings::GetInstance()->NumEntrancePass;
 			Direct_Been_Blocked.x = CDataBindings::GetInstance()->WorldEntrance[numEntr - 1].BlockDirectL;
 			Direct_Been_Blocked.y = CDataBindings::GetInstance()->WorldEntrance[numEntr - 1].BlockDirectT;
 			Direct_Been_Blocked.z = CDataBindings::GetInstance()->WorldEntrance[numEntr - 1].BlockDirectR;
 			Direct_Been_Blocked.w = CDataBindings::GetInstance()->WorldEntrance[numEntr - 1].BlockDirectB;
+		}
+		else
+		{
+			//TH chưa qua map 1 mà đã chết => dẫn đến việc bị block nhầm hướng
+			Direct_Been_Blocked.x = 1;
+			Direct_Been_Blocked.y = 1;
+			Direct_Been_Blocked.z = 0;
+			Direct_Been_Blocked.w = 1;
 		}
 		isTravelling = 0;
 		init = 0;
