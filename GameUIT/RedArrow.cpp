@@ -15,6 +15,21 @@ CRedArrow* CRedArrow::GetInstance()
 	return __RedArrowInstance;
 }
 
+void CRedArrow::Update()
+{
+	CScene* current_scene = (CScene*)CGame::GetInstance()->GetCurrentScene();
+	if (current_scene->GetID() == ID_WORLD)
+	{
+		this->x = static_cast<float>(CGame::GetInstance()->GetBackBufferWidth() / 2) - 15.0f;
+		this->y = static_cast<float>(CGame::GetInstance()->GetBackBufferHeight() / 2) - 65.0f;
+	}
+	else //At Intro
+	{
+		this->x = static_cast<float>(CGame::GetInstance()->GetBackBufferWidth() / 2) - 52.0f;
+		this->y = static_cast<float>(CGame::GetInstance()->GetBackBufferHeight() / 2) + 6.0f;
+	}
+}
+
 void CRedArrow::Render()
 {
 	CAnimations* animations = CAnimations::GetInstance();

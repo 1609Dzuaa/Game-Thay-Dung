@@ -37,6 +37,7 @@ protected:
 
 public:
 	static int initStartHud;
+	static int initArrowPos;
 	CWorldPlayScene(int id, LPCWSTR filePath);
 
 	virtual void Load();

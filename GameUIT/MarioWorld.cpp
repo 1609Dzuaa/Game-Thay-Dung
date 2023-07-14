@@ -109,8 +109,12 @@ void CMarioWorld::Render()
 
 	CAnimations* animations = CAnimations::GetInstance();
 	
-	int aniId = ID_ANI_MARIO_SMALL_AT_WORLD;
-	animations->Get(aniId)->Render(x, y, false);
+	if(CDataBindings::Mario_Level == 1)
+		animations->Get(ID_ANI_MARIO_SMALL_AT_WORLD)->Render(x, y, false);
+	else if(CDataBindings::Mario_Level == 2)
+		animations->Get(ID_ANI_MARIO_BIG_AT_WORLD)->Render(x, y, false);
+	else 
+		animations->Get(ID_ANI_MARIO_RACOON_AT_WORLD)->Render(x, y, false);
 }
 
 void CMarioWorld::GetBoundingBox(float& left, float& top, float& right, float& bottom)

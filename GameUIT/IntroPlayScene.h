@@ -59,6 +59,7 @@ public:
 	static bool LuigiHasRunRight; //dùng để spawn cái mai rùa từ hướng trái
 	static bool hasTurnSmall; //dùng để biết Mario đã bị hoá nhỏ và cho nó di chuyển
 	static bool allowUseArrow;
+	static bool hasUpdateArrowPos;
 };
 
 typedef CIntroPlayScene* LPINTROSCENE;

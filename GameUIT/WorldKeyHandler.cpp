@@ -23,7 +23,7 @@ void CWorldMapKeyEvent::OnKeyDown(int KeyCode)
 			break;
 			
 		case DIK_S:
-			if (!CRedArrow::GetInstance()->GetLevel())
+			if (CRedArrow::GetInstance()->GetLevel() == 0)
 			{
 				//Chuyển Scene thì Reset hết các Data
 				//Sáng mai dậy nhớ Check kĩ các biến static tồn tại trong suốt
@@ -35,6 +35,11 @@ void CWorldMapKeyEvent::OnKeyDown(int KeyCode)
 					CGame::GetInstance()->InitiateSwitchScene(ID_WORLD_SUB);
 				else 
 					CGame::GetInstance()->InitiateSwitchScene(ID_WORLD);
+			}
+			else if(CRedArrow::GetInstance()->GetLevel() == 1)
+			{
+				CDataBindings::GetInstance()->RefreshAllData();
+				CGame::GetInstance()->InitiateSwitchScene(ID_INTRO);
 			}
 			//Dựa vào level của Arrow
 			break;

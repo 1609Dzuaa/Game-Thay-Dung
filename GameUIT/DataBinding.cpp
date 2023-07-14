@@ -18,6 +18,7 @@ int CDataBindings::TypeOfCardCollected = 0;
 int CDataBindings::IsStopWatch = 0;
 int CDataBindings::IsCanPlay = 0;
 int CDataBindings::timer = 300;
+int CDataBindings::Mario_Level = 3; //Tiny
 
 CDataBindings* CDataBindings::GetInstance()
 {
@@ -61,6 +62,8 @@ void CDataBindings::RefreshAllData()
 {
 	//Đang có bug chết ở màn 1 mà chưa qua thì khi Continue 0 move đc
 	//Solved!!! Chỉnh lại Cam đôi chỗ
+	//Hiện đang có bug từ intro vào world rồi vào 1-1, chết xong load lại
+	//thì diagnostic lên đến vài GB ??@@
 	memset(WorldEntrance, 0, NumEntrancePass);
 	memset(cardCollected, 0, numCardCollected);
 	CDataBindings::NumEntrancePass = 0;
@@ -71,6 +74,7 @@ void CDataBindings::RefreshAllData()
 	CDataBindings::TypeOfCardCollected = 0;
 	CDataBindings::IsStopWatch = 0;
 	CDataBindings::IsCanPlay = 0;
+	CDataBindings::Mario_Level = 1;
 	CPlayScene::timer = 300;
 	CWorldPlayScene::initStartHud = 0; //Chỉ cho phép hiện Start Hud khi Load lại màn chơi từ đầu
 	CHud::isStarting = 0;

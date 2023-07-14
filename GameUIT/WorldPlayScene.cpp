@@ -26,6 +26,7 @@
 using namespace std;
 
 int CWorldPlayScene::initStartHud = 0;
+int CWorldPlayScene::initArrowPos = 0;
 
 CWorldPlayScene::CWorldPlayScene(int id, LPCWSTR filePath) :
 	CScene(id, filePath)
@@ -301,6 +302,12 @@ void CWorldPlayScene::Update(DWORD dt)
 		CDataBindings::IsCanPlay = 1;
 	}
 
+	if (!initArrowPos)
+	{
+		CRedArrow::GetInstance()->Update();
+		initArrowPos = 1;
+	}
+
 	DebugOut(L"Can Play: %d\n", CDataBindings::GetInstance()->IsCanPlay);
 
 	if (CDataBindings::GetInstance()->HP < 0)
@@ -363,6 +370,7 @@ void CWorldPlayScene::Unload()
 	objects.clear();
 	player = NULL;
 	initPos = 0;
+	initArrowPos = 0;
 
 	DebugOut(L"[INFO] Scene %d unloaded! \n", id);
 }

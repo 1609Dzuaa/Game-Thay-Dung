@@ -73,6 +73,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			{
 				CDataBindings::GetInstance()->WorldEntrance[CDataBindings::NumEntrancePass].isPassed = 1;
 				CDataBindings::NumEntrancePass++;
+				CDataBindings::Mario_Level = this->level;
 				//End game rồi thì mới tính là pass (Obiviously!)
 			}
 			return;

@@ -18,5 +18,6 @@ public:
 	};
 	int GetLevel() { return this->level; }
 	void SetLevel(int para);
+	void Update(); //Update vị trí tuỳ vào Scene hiện tại
 	void Render();
 };

@@ -32,6 +32,7 @@ bool CIntroPlayScene::allowLuigiToRunRight = 0;
 bool CIntroPlayScene::LuigiHasRunRight = 0;
 bool CIntroPlayScene::hasTurnSmall = 0;
 bool CIntroPlayScene::allowUseArrow = 0;
+bool CIntroPlayScene::hasUpdateArrowPos = 0;
 
 using namespace std;
 
@@ -252,6 +253,11 @@ void CIntroPlayScene::Update(DWORD dt)
 		objects[i]->Update(dt, &coObjects);
 	}
 
+	if (!hasUpdateArrowPos)
+	{
+		CRedArrow::GetInstance()->Update();
+		hasUpdateArrowPos = 1;
+	}
 	// skip the rest if scene was already unloaded (Mario::Update might trigger PlayScene::Unload)
 	//if (player == NULL) return;
 
@@ -284,6 +290,7 @@ void CIntroPlayScene::Unload()
 	LuigiHasRunRight = 0;
 	hasTurnSmall = 0;
 	allowUseArrow = 0;
+	hasUpdateArrowPos = 0;
 
 	DebugOut(L"[INFO] Scene %d unloaded! \n", id);
 }
