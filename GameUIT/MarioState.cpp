@@ -87,9 +87,9 @@ void CMario::SetState(int state)
 			isJumping = true;
 			isLanding = false;
 			if (isRunning)
-				vy = -0.6f;
+				vy = -0.45f;
 			else
-				vy = -0.55f;
+				vy = -0.4f;
 		}
 		break;
 
@@ -97,7 +97,7 @@ void CMario::SetState(int state)
 		if (isOnPlatform)
 		{
 			isJumping = true;
-			vy = -0.6f;
+			vy = -0.5f;
 		}
 		break;
 
@@ -108,7 +108,7 @@ void CMario::SetState(int state)
 		isFlying = false;
 	    
 		vy = 0.0f; //Set lại vy = 0 nếu đang Landing
-		DebugOut(L"Landing\n");
+		//DebugOut(L"Landing\n");
 		break;
 	}
 
@@ -122,10 +122,10 @@ void CMario::SetState(int state)
 			isLanding = false;
 			isJumping = false;
 			fly_start = GetTickCount64();
-			vy = -MARIO_FLYING_SPEED;
+			vy = -0.315f;
 		}
 		else 
-			vy = -MARIO_FLYING_SPEED; //Nếu đang bay thì bơm thêm Vy cho Mario
+			vy = -0.315f; //Nếu đang bay thì bơm thêm Vy cho Mario
 		break;
 	}
 

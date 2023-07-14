@@ -30,15 +30,15 @@ Text_Files\Hud.txt
 #Khỏi phải vẽ nền, dùng sprite 0
 #How about adding object that "more collidable" sooner than other object ?
 #MARIO
-0	25	285
+0	1300	285
 
 #Red Koopa ON GOLD BRICK
 3	2080	278	3
 
 #Para Koopa
-3	1340	210	2
-3	1372	210	2
-3	1396	210	2
+3	1335	210	2
+3	1375	210	2
+3	1415	210	2
 
 #Koopa below Para
 3	1420	295	1
@@ -87,7 +87,7 @@ Text_Files\Hud.txt
 6	496	224	16	15	4	0	0	0
 
 #Normal ground - 2 #here
-6	1120	336	16	15	23	0	0	0
+5	1120	336	16	15	23	0	0	0	0
 
 #Goomba if(inCamera) => Spawn
 2	836	290	1
@@ -155,7 +155,7 @@ Text_Files\Hud.txt
 1	1488	246	2	0
 
 #Normal Ground 2.5
-6	1520	336	16	15	5	0	0	0
+5	1520	336	16	15	5	0	0	0	0
 
 #Stripe Brick On Normal ground 2.5
 1	1552	320	2	0
@@ -166,7 +166,7 @@ Text_Files\Hud.txt
 1	1584	288	2	0
 
 #Normal Ground 3
-6	1648	336	16	15	36	0	0	0
+5	1648	336	16	15	36	0	0	0	0
 
 #Stripe Brick On Normal ground 3
 1	1648	320	2	0
@@ -219,7 +219,7 @@ Text_Files\Hud.txt
 6	2158	190	16	15	3	0	0	0
 
 #Normal Ground 4 - END vừa + 4 để có gì chạy đến vô cực khi end game
-6	2240	336	16	15	40	0	0	0
+5	2240	336	16	15	40	0	0	0	0
 
 #Tube with 2 stripe brick
 9	2248	313	4
@@ -243,7 +243,7 @@ Text_Files\Hud.txt
 9	2304	313	0
 
 #Card
-8	2672	256	
+8	2672	256
 
 ########################################### UNDERWORLD ###############################################
 #Ống 1 - thêm vào nhằm mục đích vẽ đè -> Mario chui ra từ ống
@@ -277,7 +277,7 @@ Text_Files\Hud.txt
 1	112	410	3	0
 
 #Nền dưới
-6	0	560	16	15	16	0	0	0	0
+5	0	560	16	15	16	0	0	0	0
 
 #Bậc thang
 1	256	545	3	0
@@ -293,7 +293,7 @@ Text_Files\Hud.txt
 1	384	418	3	0
 
 #Nền trên
-6	165	401	16	15	12	0	0	0	0
+5	165	401	16	15	12	0	0	0	0
 
 #Ống chui về
 5	350	401	10	15	3	500014	500015	500016	0

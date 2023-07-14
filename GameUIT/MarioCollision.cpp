@@ -128,7 +128,7 @@ void CMario::OnCollisionWithBlockingObjects(LPCOLLISIONEVENT e)
 			}
 			else //Nếu nó là các loại ống còn lại
 			{
-				//vy = 0;
+				vy = 0;
 				isOnPlatform = true;
 				CountJumpOnEnemies = 0;
 			}
@@ -147,7 +147,7 @@ void CMario::OnCollisionWithBlockingObjects(LPCOLLISIONEVENT e)
 				else
 					isAllowToUseTube = false;
 
-				if (e->ny > 0 && isAllowToUseTube && isComboUpAndS) 
+				if (e->ny > 0 && isAllowToUseTube && isComboUpAndS)
 				{
 					start_y = y - MARIO_BIG_BBOX_HEIGHT / 2;
 					isTravelUp = true;
@@ -157,7 +157,6 @@ void CMario::OnCollisionWithBlockingObjects(LPCOLLISIONEVENT e)
 			else
 			{
 				vy = 0;
-				SnappingToAnEdge(e, e->obj);
 				isOnPlatform = true;
 				CountJumpOnEnemies = 0;
 			}
@@ -203,7 +202,6 @@ void CMario::OnCollisionWithNonBlockingObjects(LPCOLLISIONEVENT e)
 
 void CMario::OnCollisionWithColorPlatform(LPCOLLISIONEVENT e)
 {
-	vy = 0;
 	if (e->ny < 0)
 	{
 		if (isEndGame)
@@ -279,21 +277,21 @@ void CMario::HandleCollisionUpperDirectionWithGoomba(CGoomba* goomba)
 			goomba->SetLevel(PARA_GOOMBA_LEVEL_NO_WINGS);
 			CountJumpOnEnemies++;
 			SpawnScore(goomba);
-			vy = -0.23f;
+			vy = -MARIO_JUMP_DEFLECT_SPEED;
 		}
 		else if (goomba->GetType() == PARA_GOOMBA && goomba->GetLevel() == PARA_GOOMBA_LEVEL_NO_WINGS)
 		{
 			goomba->SetState(GOOMBA_STATE_DIE);
 			CountJumpOnEnemies++;
 			SpawnScore(goomba);
-			vy = -0.23f; //nảy lên
+			vy = -MARIO_JUMP_DEFLECT_SPEED; //nảy lên
 		}
 		else //Goomba thường
 		{
 			goomba->SetState(GOOMBA_STATE_DIE);
 			CountJumpOnEnemies++;
 			SpawnScore(goomba);
-			vy = -0.23f; //nảy lên
+			vy = -MARIO_JUMP_DEFLECT_SPEED; //nảy lên
 		}
 	}
 }
@@ -650,48 +648,4 @@ void CMario::OnCollisionWithCard(LPCOLLISIONEVENT e)
 	CPlayScene* current_scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
 	current_scene->AddObjectToScene(eff);
 	this->SetState(MARIO_STATE_END_GAME);
-}
-
-void CMario::SnappingToAnEdge(LPCOLLISIONEVENT e, LPGAMEOBJECT obj)
-{
-	if (this->level != MARIO_LEVEL_SMALL) //level gấu mèo và BIG dùng chung BBox được vì diff 0 đáng kể
-	{
-		/*if (!isSitting) {
-			if (gameobject->GetY() - GetY() < MARIO_BIG_BBOX_HEIGHT)
-			{
-				SetY(gameobject->GetY() - MARIO_BIG_BBOX_HEIGHT + 4);
-				vy = 0;
-				isOnPlatform = true;
-			}
-		}*/
-		if (!isSitting)
-		{
-			if (this->y + MARIO_BIG_BBOX_HEIGHT / 2 > obj->GetY() - 18.0f)
-			{
-				//SNAP: Player.Y = ColorPlat.Y - ColorPlat.Height / 2 - Player.Height / 2
-				this->y = obj->GetY() - MARIO_BIG_BBOX_HEIGHT / 2 - 18.0f;
-				//vy = 0.022f;		
-				vy = 0;
-				isOnPlatform = true;
-			}
-		}
-		else
-		{
-			if (this->y + MARIO_BIG_BBOX_HEIGHT / 2 + 3.5 > obj->GetY())
-			{
-				this->y = obj->GetY() - MARIO_BIG_BBOX_HEIGHT / 2 - 3.5f; //trừ một lượng vừa đủ
-				vy = 0;
-				isOnPlatform = true;
-			}
-		}
-	}
-	else
-	{
-		if (this->y + MARIO_SMALL_BBOX_HEIGHT / 2 > obj->GetY())
-		{
-			this->y = obj->GetY() - MARIO_SMALL_BBOX_HEIGHT / 2;
-			vy = 0;
-			isOnPlatform = true;
-		}
-	}
 }

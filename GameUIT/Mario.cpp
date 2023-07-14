@@ -71,7 +71,7 @@ CMario::CMario(float x, float y) : CGameObject(x, y)
 
 	maxVx = 0.0f;
 	ax = 0.0f;
-	ay = 0.002f;
+	ay = MARIO_GRAVITY_ON_PLATFORM;
 
 	level = MARIO_LEVEL_SMALL;
 	untouchable = 0;
@@ -214,7 +214,7 @@ void CMario::HandleTravellingDown()
 	else if (isTravelling && y > DOWN_TUBE_POSITION_Y + MARIO_BIG_BBOX_HEIGHT && !isAtMainWorld)
 	{
 		vy = 0;
-		ay = MARIO_GRAVITY;	//Trả lại grav cho nó
+		ay = MARIO_GRAVITY_NOT_ON_PLATFORM;	//Trả lại grav cho nó
 		isTravelling = false;
 		isTravelDown = false;
 	}
@@ -246,7 +246,7 @@ void CMario::HandleTravellingUp()
 	else if (isTravelling && y < SHORT_TUBE_POSITION_Y - MARIO_BIG_BBOX_HEIGHT && isAtMainWorld)
 	{
 		vy = 0;
-		ay = MARIO_GRAVITY;
+		ay = MARIO_GRAVITY_ON_PLATFORM;
 		isTravelling = false;
 		isTravelUp = false;
 	}

@@ -428,7 +428,8 @@ void CKoopa::SetState(int state)
 		break;
 
 	case KOOPA_STATE_SLIP:
-	{	CScene* current_scene = (CScene*)CGame::GetInstance()->GetCurrentScene();
+	{	
+		CScene* current_scene = (CScene*)CGame::GetInstance()->GetCurrentScene();
 		ay = KOOPA_GRAVITY; //trả lại trọng lực cho nó
 
 		if (current_scene->GetID() == ID_MAP_1_1)
@@ -450,6 +451,7 @@ void CKoopa::SetState(int state)
 		break;
 
     }
+
 	case KOOPA_STATE_SLIP_REVERSE:
 		ay = KOOPA_GRAVITY;
 		if (mario->GetMarioNormalX() > 0)

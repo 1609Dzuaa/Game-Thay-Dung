@@ -666,7 +666,7 @@ void CMarioNPC::SpawnSlipingKoopaFromLeft()
 void CMarioNPC::SpawnBigBush()
 {
 	CIntroPlayScene* intro_scene = (CIntroPlayScene*)CGame::GetInstance()->GetCurrentScene();
-	CBigBush* big_bush = new CBigBush(217.0f, 139.5f);
+	CBigBush* big_bush = new CBigBush(217.0f, 139.9f);
 	intro_scene->AddObjectToScene(big_bush, 0);
 }
 

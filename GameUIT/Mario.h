@@ -32,14 +32,13 @@
 
 #define MARIO_JUMP_SPEED_Y		0.5f
 #define MARIO_JUMP_RUN_SPEED_Y	0.5f
-//#define MARIO_FLYING_SPEED	0.315f;
-#define MARIO_FLYING_SPEED	0.4f;
+#define MARIO_FLYING_SPEED	0.315f;
 #define MARIO_TRAVELLING_SPEED	0.02815f
 
-//#define MARIO_GRAVITY	0.001f
-#define MARIO_GRAVITY	0.0018f
+#define MARIO_GRAVITY_ON_PLATFORM		0.002f
+#define MARIO_GRAVITY_NOT_ON_PLATFORM	0.001f
 
-#define MARIO_JUMP_DEFLECT_SPEED  0.4f
+#define MARIO_JUMP_DEFLECT_SPEED  0.25f
 
 #define	MARIO_LEVEL_SMALL	1
 #define	MARIO_LEVEL_BIG		2
@@ -425,5 +424,4 @@ public:
 	void SetHasCollectCard(BOOLEAN para) { this->HasCollectCard = para; }
 	void HandleTravellingDown();
 	void HandleTravellingUp();
-	void SnappingToAnEdge(LPCOLLISIONEVENT e, LPGAMEOBJECT obj);
 };

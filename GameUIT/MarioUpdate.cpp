@@ -12,12 +12,18 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	//Chỉ khi trên mặt đất thì biến đấy mới tăng dần lên
 	//Còn nếu đang chạy mà nhảy (not on platform) thì cái biến đấy giảm dần
 
+	//chỉnh Grav ở đây :vvv, mò mãiii
+	if (isOnPlatform && state != MARIO_STATE_DIE)
+		ay = MARIO_GRAVITY_ON_PLATFORM; //để 0 bị trong trạng thái isOnPlat && !isOnPlat cùng 1 lúc
+	else if(!isOnPlatform && state != MARIO_STATE_DIE && state != MARIO_STATE_TRAVELLING)
+		ay = MARIO_GRAVITY_NOT_ON_PLATFORM; //cảm giác sẽ bay bổng hơn
+
 	if (GetTickCount64() - die_idle_start > 900 && isDieIdle) //Make sure only 1 time
 	{
 		isDieIdle = false;
 		isDieJump = true;
 		vy = -MARIO_JUMP_DEFLECT_SPEED;
-		ay = 0.002f;
+		ay = MARIO_GRAVITY_NOT_ON_PLATFORM;
 		die_idle_start = 0;
 		die_time_out = GetTickCount64();
 	}
@@ -112,7 +118,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		DebugOut(L"Tail was created successfully!\n");
 	}
 
-	//DebugOutTitle(L"vx, ax, maxVx ST: %f, %f, %f, %d", vx, ax, maxVx, state);
+	DebugOutTitle(L"ay: %f", ay);
 	//DebugOutTitle(L"SpeedBar, prevVx, vx, MS: %d, %f, %f, %d", SpeedBar, prevVx, vx, isAtMaxSpeed);
 	//DebugOut(L"%d\n", SpeedBar);
 }
