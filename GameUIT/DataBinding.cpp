@@ -64,6 +64,7 @@ void CDataBindings::RefreshAllData()
 	//Solved!!! Chỉnh lại Cam đôi chỗ
 	//Hiện đang có bug từ intro vào world rồi vào 1-1, chết xong load lại
 	//thì diagnostic lên đến vài GB ??@@
+	//Chú ý koopa reborn khi bị cầm và giết allies nữa 
 	memset(WorldEntrance, 0, NumEntrancePass);
 	memset(cardCollected, 0, numCardCollected);
 	CDataBindings::NumEntrancePass = 0;

@@ -137,7 +137,6 @@ public:
 	void SetType(int para) { this->type = para; };
 	CHead* GetHead() { return this->ghost_head; }
 	void SetBeingHeld(BOOLEAN para) { this->isBeingHeld = para; }
-	void HandleReleaseKoopa();
 	int StateThatEnableToRelease();
 	int ConditionsThatEnableToKillAllies();
 	void SetNxNPC(int nx) { this->nxNPC = nx; }

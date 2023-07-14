@@ -1,5 +1,7 @@
 ﻿#include "Collision.h"
 #include "GameObject.h"
+#include "Mario.h"
+#include "Leaf.h"
 
 #include "debug.h"
 
@@ -164,12 +166,34 @@ void CCollision::Scan(LPGAMEOBJECT objSrc, DWORD dt, vector<LPGAMEOBJECT>* objDe
 {
 	for (UINT i = 0; i < objDests->size(); i++)
 	{
+		//Tính toán va chạm giữa vật nguồn và vật thứ tự i trong list
 		LPCOLLISIONEVENT e = SweptAABB(objSrc, dt, objDests->at(i));
 
+		//Ta đã set Lá có thuộc tính Collidable để nó có thể va với Mario
+		//Khi Mario đứng yên, NHƯNG đôi lúc nó lại vấp vào gạch 
+		//=> chỉ cho phép duy nhất TH Lá va với Mario, còn lại delete hết
 		if (e->WasCollided() == 1)
+		{
+			if (!dynamic_cast<CLeaf*>(objSrc))
+				coEvents.push_back(e);
+			else
+			{
+				if (dynamic_cast<CMario*>(objDests->at(i)))
+					coEvents.push_back(e);
+				else
+					delete e;
+			}
+		}
+		else 
+			delete e;
+
+		//========== Phần cũ của thầy=========/////
+		/*if (e->WasCollided() == 1)
 			coEvents.push_back(e);
 		else
-			delete e;
+			delete e;*/
+		//=================================/////
+
 		//Nếu có va chạm giữa vật nguồn và 1 trong các vật trong vector chứa nó thì đẩy cái event này vào vector 
 		//Còn không có va chạm thì xoá sự kiện ấy đi
 	}

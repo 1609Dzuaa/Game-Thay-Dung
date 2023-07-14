@@ -63,5 +63,4 @@ public:
 
     void RenderPauseText();
 	void SetInitCard(BOOLEAN para) { this->initCard = para; }
-	int GetAniIDCard();
 };

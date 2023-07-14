@@ -431,4 +431,5 @@ public:
 	void SetHasCollectCard(BOOLEAN para) { this->HasCollectCard = para; }
 	void HandleTravellingDown();
 	void HandleTravellingUp();
+	void HandleReleaseKoopa();
 };

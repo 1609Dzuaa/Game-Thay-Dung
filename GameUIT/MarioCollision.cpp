@@ -305,12 +305,12 @@ void CMario::HandleCollisionOtherDirectionWithGoomba(LPCOLLISIONEVENT e, CGoomba
 		{
 			if (isHolding && e->nx != this->nx) //hướng va chạm phải khác hướng ôm rùa thì mới cho colli
 			{
+				isHolding = false;
 				goomba->SetState(GOOMBA_STATE_DIE_REVERSE);
 				SpawnScore(goomba);
 				ghost_koopa->SetState(KOOPA_STATE_DIE);
-				ghost_koopa->Delete();
+				ghost_koopa->SetSpeed(-0.09f, -0.3f);
 				this->SetState(MARIO_STATE_IDLE);
-				isHolding = false;
 			}
 			else
 			{
@@ -649,4 +649,23 @@ void CMario::OnCollisionWithCard(LPCOLLISIONEVENT e)
 	CPlayScene* current_scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
 	current_scene->AddObjectToScene(eff);
 	this->SetState(MARIO_STATE_END_GAME);
+}
+
+void CMario::HandleReleaseKoopa()
+{
+	ghost_koopa->SetBeingHeld(false);
+	isHolding = false;
+
+	//Sút nó
+	if (nx < 0)
+		this->SetState(MARIO_STATE_KICKING_LEFT);
+	else 
+		this->SetState(MARIO_STATE_KICKING_RIGHT);
+
+	if (ghost_koopa->GetState() == KOOPA_STATE_BEING_HELD || ghost_koopa->GetState() == KOOPA_STATE_REBORN)
+		ghost_koopa->SetState(KOOPA_STATE_SLIP);
+	else if (ghost_koopa->GetState() == KOOPA_STATE_BEING_HELD_REVERSE || ghost_koopa->GetState() == KOOPA_STATE_REBORN_REVERSE)
+		ghost_koopa->SetState(KOOPA_STATE_SLIP_REVERSE);
+
+	ghost_koopa = NULL;
 }

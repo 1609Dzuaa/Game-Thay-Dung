@@ -163,7 +163,9 @@ void CHud::RenderSpeedBar()
 	CScene* current_scene = (CScene*)CGame::GetInstance()->GetCurrentScene();
 	//Không có đoạn If này thì khi ở World diagnostic lên đến vài GB ;)
 	//1 of Major bug's been solved
-	if (current_scene->GetID() == ID_WORLD) 
+	//Solved vấn đề vẽ quá nhiều SpeedBar
+	//Do cái World dự phòng
+	if (current_scene->GetID() != ID_MAP_1_1) //Chỉ vẽ SpeedBar khi ở Map1-1
 		return;
 
 	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
@@ -172,12 +174,11 @@ void CHud::RenderSpeedBar()
 	//Bar
 	for (int i = 1; i <= mario->GetSpeedBar(); i++)
 	{
-		for (int j = 1; j <= mario->GetSpeedBar(); j++)
-		{
-			//Vẽ đc 6 thằng trên thì mới vẽ thằng này (Undraw như untouchable)
-			if (j == 7)animations->Get(ID_P_BUTTON)->Render(x - 9.0f, y - 4.0f, false);
-			else animations->Get(ID_SPEED_BAR)->Render(x - (62 - 8 * (j - 1)), y - 4.0f, false);
-		}
+		//Vẽ đc 6 thằng trên thì mới vẽ thằng này (Undraw như untouchable)
+		if (i == 7)
+			animations->Get(ID_P_BUTTON)->Render(x - 9.0f, y - 4.0f, false);
+		else
+			animations->Get(ID_SPEED_BAR)->Render(x - (62 - 8 * (i - 1)), y - 4.0f, false);
 	}
 }
 
@@ -225,10 +226,10 @@ void CHud::RenderCard()
 			if (CDataBindings::GetInstance()->cardCollected[i].aniID != 0)
 			{
 				animations->Get(CDataBindings::GetInstance()->cardCollected[i].aniID)->Render(x + 54.0f + i * 24.0f, y, false);
-				CDataBindings::GetInstance()->cardCollected[i].NoFlashAnymore = 1;
+				CDataBindings::GetInstance()->cardCollected[i].NoFlashAnymore = 1; //Cập nhật mất r, vi phạm
 			}
 	}
-	else //Vẽ Card ở Map 1-1 . if(isaffected)=>vẽ chớp cho nó
+	else //Vẽ Card ở Map 1-1
 	{
 		float x1 = CCamera::GetInstance()->GetCamPos().x + CGame::GetInstance()->GetBackBufferWidth() - 69.0f;
 
@@ -253,11 +254,6 @@ void CHud::RenderCard()
 			}
 		}
 	}
-}
-
-int CHud::GetAniIDCard()
-{
-	return 0;
 }
 
 void CHud::RenderPauseText()

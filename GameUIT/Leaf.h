@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "GameObject.h"
 #include "Animation.h"
@@ -33,6 +33,8 @@ public:
 	CLeaf(float x, float y, int intro);
 
 	int IsBlocking() { return 0; };
+	int IsCollidable() { return 1; }; 
+	//tuy set vậy lá đã tự va đc Mario nhưng nó cũng va với block obj :vv
 
 	void Render();
 	void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);

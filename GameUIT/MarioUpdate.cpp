@@ -124,8 +124,10 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		DebugOut(L"Tail was created successfully!\n");
 	}
 
+	if (ghost_koopa)
+		DebugOutTitle(L"x, y, st: %f, %f, %d", ghost_koopa->GetX(), ghost_koopa->GetY(), ghost_koopa->GetState());
 	//DebugOutTitle(L"SpeedBar, prevVx, vx, MS: %d, %f, %f, %d", SpeedBar, prevVx, vx, isAtMaxSpeed);
-	DebugOutTitle(L"vx, ax, ay, st: %f, %f, %f, %d", vx, ax, ay, state);
+	//DebugOutTitle(L"vx, ax, ay, st: %f, %f, %f, %d", vx, ax, ay, state);
 }
 
 void CMario::UpdateMarioState()

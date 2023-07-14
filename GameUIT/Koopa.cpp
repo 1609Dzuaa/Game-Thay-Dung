@@ -29,7 +29,7 @@ CKoopa::CKoopa(float x, float y, int type) :CGameObject(x, y)
 	}
 	else if (type == GREEN_FLYING_KOOPA)
 	{
-		SetState(KOOPA_STATE_JUMPING); //coi lại ở đây sao nó 0 nhảy
+		SetState(KOOPA_STATE_JUMPING);
 		enableToChangeVx = false;
 	}
 	else //loại thường
@@ -230,10 +230,6 @@ void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	if (CDataBindings::GetInstance()->IsStopWatch) 
 		return;
 
-	if (current_scene->GetID() == ID_MAP_1_1)
-		if (!mario->GetIsHolding() && StateThatEnableToRelease() && isBeingHeld)
-			HandleReleaseKoopa(); //thả Koopa khi ngưng giữ nút A ở Map 1-1
-
 	//TH Bị cầm ở Intro thì có hàm Update vị trí ở Luigi
 	if (current_scene->GetID() == ID_MAP_1_1)
 	{
@@ -270,6 +266,8 @@ void CKoopa::UpdateKoopaState()
 {
 	if (isGreen || isBlack) 
 		return; //0 Update State Cho 2 con Koopa đầu Intro
+
+	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
 
 	//Quay đầu của Red Koopa
 	if (type == RED_KOOPA)
@@ -323,15 +321,24 @@ void CKoopa::UpdateKoopaState()
 			|| (state == KOOPA_STATE_REBORN_REVERSE) && (GetTickCount64() - reborn_start >= KOOPA_REBORN_TIMEOUT))
 		{
 			reborn_start = 0;
+			if (isBeingHeld) 
+			{
+				mario->SetIsHoldingKoopa(false);
+				if (mario->GetLevel() > 2)
+				{
+					mario->SetState(MARIO_STATE_EVOLVING);
+					//mario->
+				}
+				else if (mario->GetLevel() > 1)
+					mario->SetLevel(1);
+				else
+					mario->SetState(MARIO_STATE_DIE);
+			}
 			SetState(KOOPA_STATE_WALKING);
+			isBeingHeld = false;
 			//Hết thời gian reborn => Walking như bình thường
 			//Set lại vị trí cũng như vận tốc cho cái đầu nếu là Red koopa
 		}
-}
-
-void CKoopa::UpdateKoopaIntro(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
-{
-
 }
 
 void CKoopa::Render()
@@ -417,6 +424,9 @@ void CKoopa::SetState(int state)
 
 	case KOOPA_STATE_DIE:
 		die_start = GetTickCount64();
+		ay = KOOPA_GRAVITY;
+		vy = -0.3f;
+		vx = -0.09f;
 		if (!isBeingHeld)
 		{
 			if (this->nx > 0)
@@ -684,15 +694,6 @@ void CKoopa::AdjustPositionOnColorPlatform(CColorPlatform* color_platf)
 			vy = 0;
 		}
 	}
-}
-
-void CKoopa::HandleReleaseKoopa()
-{
-	isBeingHeld = false;
-	if (state == KOOPA_STATE_BEING_HELD || state == KOOPA_STATE_REBORN)
-		this->SetState(KOOPA_STATE_SLIP);
-	else if (state == KOOPA_STATE_SLEEP_REVERSE || state == KOOPA_STATE_REBORN_REVERSE)
-		this->SetState(KOOPA_STATE_SLIP_REVERSE);
 }
 
 int CKoopa::StateThatEnableToRelease()

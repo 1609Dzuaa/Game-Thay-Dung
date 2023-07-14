@@ -58,10 +58,10 @@ void CMap::Render()
 	int endRow = 0;
 	CScene* current_scene = (CScene*)CGame::GetInstance()->GetCurrentScene();
 
-	//Khi đang ở WorldPlayScene thì IsAtMainWorld = false
+
 	if (current_scene->GetID() == ID_MAP_1_1)
 	{
-		//Vẽ Map trong đây
+		//Vẽ Map Chính ở trong đây (Có dùng Cam)
 		isViewable(Viewable_Col_start, Viewable_Col_end, startRow, endRow);
 		for (int CurrentRow = 0; CurrentRow < MapRows; CurrentRow++)
 			for (int CurrentColumn = Viewable_Col_start; CurrentColumn < Viewable_Col_end; CurrentColumn++)
@@ -74,8 +74,9 @@ void CMap::Render()
 				SpritesSplitted.at(Sprite_ID)->Draw(Draw_X, Draw_Y); //Vẽ Sprites được tách tại vị trí x, y
 			}
 	}
-	else if(current_scene->GetID() == ID_WORLD || current_scene->GetID() == ID_WORLD_SUB)//vẽ World ở đây, nó có chui vào đây để vẽ nhưng hình như Cam bị lệch
+	else if(current_scene->GetID() == ID_WORLD || current_scene->GetID() == ID_WORLD_SUB)
 	{
+		//vẽ World ở đây
 		for (int CurrentRow = 0; CurrentRow < MapRows; CurrentRow++)
 			for (int CurrentColumn = 0; CurrentColumn < MapCollums; CurrentColumn++)
 			{
