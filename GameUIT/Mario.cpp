@@ -57,6 +57,9 @@ CMario::CMario(float x, float y) : CGameObject(x, y)
 	untouch_0 = 0;
 	untouch_1 = 0;
 	shaking_start = 0;
+	run_start = 0;
+	speed_bar_start = 0;
+	speed_bar_stop = 0;
 	wait_end_game = 0;
 	die_idle_start = 0;
 	die_time_out = 0;

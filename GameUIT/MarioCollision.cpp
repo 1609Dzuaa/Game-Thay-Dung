@@ -418,6 +418,7 @@ void CMario::HandleCollisionUpperDirectionWithKoopa(CKoopa* koopa)
 void CMario::HandleCollisionOtherDirectionWithKoopa(LPCOLLISIONEVENT e, CKoopa* koopa)
 {
 	//Va chạm các hướng KHÁC hướng TRÊN
+	//Coi lại Ghost_Koopa!
 	if (untouchable == 0) //can be touched
 	{
 		if (koopa->GetState() != KOOPA_STATE_DIE)

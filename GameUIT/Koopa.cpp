@@ -216,7 +216,6 @@ void CKoopa::HandleCollisionWithBlockingObjects(LPCOLLISIONEVENT e)
 
 void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
-	//How about respawn it if go too far but comeback later ?!
 	CScene* current_scene = (CScene*)CGame::GetInstance()->GetCurrentScene();
 
 	if (!CCamera::GetInstance()->isViewable(this)
@@ -240,6 +239,7 @@ void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	{
 		if (isBeingHeld)
 		{
+			vx = vy = 0;
 			if (mario->GetMarioNormalX() > 0)
 			{
 				if (mario->GetLevel() > MARIO_LEVEL_SMALL)
@@ -347,7 +347,7 @@ void CKoopa::Render()
 	
 	//RenderBoundingBox();
 	//Nếu đang bị hold và chưa tới thời gian reborn
-	if (isBeingHeld) return; //how 'bout a litte trick here ?
+	//if (isBeingHeld) return; //how 'bout a litte trick here ?
 
 	int aniId = 0;
 
@@ -499,13 +499,15 @@ void CKoopa::SetState(int state)
 
 	case KOOPA_STATE_BEING_HELD:
 		ay = 0;
-		//vy = 0;
+		vy = 0;
+		vx = 0;
 		isBeingHeld = true;
 		break;
 
 	case KOOPA_STATE_BEING_HELD_REVERSE:
 		ay = 0;
-		//vy = 0;
+		vy = 0;
+		vx = 0;
 		isBeingHeld = true;
 
 		break;

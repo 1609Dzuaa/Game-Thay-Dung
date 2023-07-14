@@ -30,7 +30,7 @@ Text_Files\Hud.txt
 #Khỏi phải vẽ nền, dùng sprite 0
 #How about adding object that "more collidable" sooner than other object ?
 #MARIO
-0	1300	285
+#0	525	285
 
 #Red Koopa ON GOLD BRICK
 3	2080	278	3
@@ -76,6 +76,8 @@ Text_Files\Hud.txt
 
 #Red Koopa ON Green Platform
 3	555	264	3
+
+0	2300	285
 
 #Pink platform - 2
 6	448	256	16	15	4	0	0	0

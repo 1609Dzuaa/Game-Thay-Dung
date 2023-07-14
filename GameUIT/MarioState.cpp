@@ -16,7 +16,7 @@ void CMario::SetState(int state)
 	{
 	case MARIO_STATE_RUNNING_RIGHT:
 		if (isSitting) break;
-		maxVx = 0.2f;
+		maxVx = MARIO_RUNNING_MAX_SPEED;
 		ax = MARIO_ACCEL_RUN_X;
 		nx = 1;
 		isRunning = true;
@@ -25,6 +25,7 @@ void CMario::SetState(int state)
 	case MARIO_STATE_RUNNING_AT_MAX_SPEED_RIGHT: //Ở state này thì mới cho bay
 		if (isSitting) break;
 		isAtMaxSpeed = true;
+		ax = MARIO_ACCEL_RUN_X;
 		if (this->level == MARIO_LEVEL_RACOON && SpeedBar == 7)
 			canFly = true;
 		isRunning = true;
@@ -32,7 +33,7 @@ void CMario::SetState(int state)
 
 	case MARIO_STATE_RUNNING_LEFT:
 		if (isSitting) break;
-		maxVx = -0.2f;
+		maxVx = -MARIO_RUNNING_MAX_SPEED;
 		ax = -MARIO_ACCEL_RUN_X;
 		nx = -1;
 		isRunning = true;
@@ -41,6 +42,7 @@ void CMario::SetState(int state)
 	case MARIO_STATE_RUNNING_AT_MAX_SPEED_LEFT:
 		if (isSitting) break;
 		isAtMaxSpeed = true;
+		ax = -MARIO_ACCEL_RUN_X;
 		if (this->level == MARIO_LEVEL_RACOON && SpeedBar == 7)
 			canFly = true;
 		isRunning = true;
@@ -50,7 +52,7 @@ void CMario::SetState(int state)
 		if (isSitting) break;
 		if (!isEndGame)
 		{
-			maxVx = MARIO_WALKING_SPEED;
+			maxVx = MARIO_WALKING_MAX_SPEED;
 			ax = MARIO_ACCEL_WALK_X;
 		}
 		else
@@ -62,7 +64,7 @@ void CMario::SetState(int state)
 
 	case MARIO_STATE_WALKING_LEFT:
 		if (isSitting) break;
-		maxVx = -MARIO_WALKING_SPEED;
+		maxVx = -MARIO_WALKING_MAX_SPEED;
 		ax = -MARIO_ACCEL_WALK_X;
 		nx = -1;
 		isWalking = true;
@@ -122,10 +124,10 @@ void CMario::SetState(int state)
 			isLanding = false;
 			isJumping = false;
 			fly_start = GetTickCount64();
-			vy = -0.315f;
+			vy = -MARIO_FLYING_SPEED;
 		}
 		else 
-			vy = -0.315f; //Nếu đang bay thì bơm thêm Vy cho Mario
+			vy = -MARIO_FLYING_SPEED; //Nếu đang bay thì bơm thêm Vy cho Mario
 		break;
 	}
 
@@ -152,7 +154,6 @@ void CMario::SetState(int state)
 	case MARIO_STATE_SIT_RELEASE:
 		if (isSitting)
 		{
-			//ay = 0.00042f;
 			isSitting = false;
 			y -= MARIO_SIT_HEIGHT_ADJUST;
 		}
@@ -219,7 +220,6 @@ void CMario::SetState(int state)
 		vx = 0.11f;
 		ax =0;
 		vy = 0.0f;
-		//ay = 0.0f;
 		nx = 1;
 		isWalking = true;
 

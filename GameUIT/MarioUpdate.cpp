@@ -13,10 +13,15 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	//Còn nếu đang chạy mà nhảy (not on platform) thì cái biến đấy giảm dần
 
 	//chỉnh Grav ở đây :vvv, mò mãiii
-	if (isOnPlatform && state != MARIO_STATE_DIE)
+	//Quên mất phải != state Travel nếu 0 sẽ bị tụt ngay lập tức khi travel
+	if (isOnPlatform && state != MARIO_STATE_DIE && state != MARIO_STATE_TRAVELLING)
 		ay = MARIO_GRAVITY_ON_PLATFORM; //để 0 bị trong trạng thái isOnPlat && !isOnPlat cùng 1 lúc
 	else if(!isOnPlatform && state != MARIO_STATE_DIE && state != MARIO_STATE_TRAVELLING)
 		ay = MARIO_GRAVITY_NOT_ON_PLATFORM; //cảm giác sẽ bay bổng hơn
+
+    //DEAD_ZONE
+	if (isAtMainWorld && y > 350)
+		SetState(MARIO_STATE_DIE);
 
 	if (GetTickCount64() - die_idle_start > 900 && isDieIdle) //Make sure only 1 time
 	{
@@ -118,9 +123,8 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		DebugOut(L"Tail was created successfully!\n");
 	}
 
-	DebugOutTitle(L"ay: %f", ay);
 	//DebugOutTitle(L"SpeedBar, prevVx, vx, MS: %d, %f, %f, %d", SpeedBar, prevVx, vx, isAtMaxSpeed);
-	//DebugOut(L"%d\n", SpeedBar);
+	DebugOutTitle(L"vx, ax, ay, st: %f, %f, %f, %d", vx, ax, ay, state);
 }
 
 void CMario::UpdateMarioState()
@@ -135,7 +139,12 @@ void CMario::UpdateMarioState()
 		{
 			vx = maxVx;
 			if (this->state == MARIO_STATE_RUNNING_RIGHT)
-				this->SetState(MARIO_STATE_RUNNING_AT_MAX_SPEED_RIGHT);
+			{
+				isAtMaxSpeed = true;
+				if (this->level == MARIO_LEVEL_RACOON && SpeedBar == 7)
+					canFly = true;
+			}
+				//this->SetState(MARIO_STATE_RUNNING_AT_MAX_SPEED_RIGHT); consider this state
 		}
 	}
 	if (state == MARIO_STATE_RUNNING_LEFT || state == MARIO_STATE_WALKING_LEFT
@@ -240,54 +249,44 @@ void CMario::UpdateTime()
 
 void CMario::UpdateSpeedBar()
 {
-	//if (SpeedBar == 0) prevVx = 0; //Reset prevVx
-	//Vẫn còn trường hợp đang chạy max nhưng speedbar 0 đạt tới max
-	//xem xét giảm vx dựa trên speedbar ?
-	//Nếu di chuyển bthg rồi 1 lúc sau tăng tốc (A) thì SpeedBar 0 đạt max
+	//Tích thanh nộ THEO THỜI GIAN chứ KHÔNG PHẢI vận tốc :vvv
 
-	//Chia maxSpeed thành 7 khúc ~ nhau
-	if (isRunning && SpeedBar < 7 && isOnPlatform)	//Chỉ Running mới tích đc lực
+	// Đang chạy tích lực:
+	// 0.| Start_Time(luôn đc cập nhật) -(900ms)-> 1.| -(115ms)-> 2.| ... --> MaxSpeedBar
+	// giữ A và chạy hết 900 => tăng 1 nấc, từ đó trở đi mỗi 115ms tăng 1 nấc
+	if (isRunning && isOnPlatform) //Chỉ đang chạy mới tăng đc SpeedBar
 	{
-		//7 phần như nhau => cắt 8 khúc
-		if (vx > 0)
+		if (GetTickCount64() - run_start > START_RUN_TIME_OUT)
 		{
-			if (this->vx - prevVx >= maxVx / 8)
+			//Vào đc đây là cho phép tăng SpeedBar
+			if (GetTickCount64() - speed_bar_start > 115)
 			{
-				SpeedBar++;
-				prevVx = vx;
-			}
-		}
-		else if (vx < 0)
-		{
-			if (this->vx - prevVx <= maxVx / 8)
-			{
-				SpeedBar++;
-				prevVx = vx;
+				if (SpeedBar < 7)
+				{
+					SpeedBar++;
+					//maxVx += SpeedBar * 0.001f; Necessary ?
+				}
+				speed_bar_start = GetTickCount64();	//Cập nhật lại thời gian tại thời điểm vừa đc tăng
 			}
 		}
 	}
-	else if (SpeedBar > 0) //SpeedBar phải > 0 thì mới giảm đc (obviously)
+	else if (ax * vx < 0 || !isRunning || isRunning && !isOnPlatform)
 	{
+		if (isFlying) return;
+		//Giảm dần SpeedBar mỗi 115ms nếu 0 Chạy
+		if (GetTickCount64() - speed_bar_stop > 115)
+		{
+			if (SpeedBar > 0)
+				SpeedBar--;
+			speed_bar_stop = GetTickCount64(); //Cập nhật lại thời gian tại thời điểm vừa đc giảm
+		}
+		run_start = GetTickCount64(); //Thằng này sẽ luôn đc cập nhật để biết mốc thgian tính từ lúc có chạy tích lực
+	}
 		//Các TH SpeedBar bị giảm trong game:
 		//Không chạy tích lực nữa VÀ đang ở trên nền (Done!)
 		//Đang chạy NHƯNG va phải vật
 		//Đang Bay và hết thời gian bay (Done!)
 		//Đang chạy NHƯNG phanh lại
 		//Đang chạy NHƯNG lại nhảy khi chưa maxspeed (Done!)
-		if (!isRunning && isOnPlatform || !isAtMaxSpeed || ax * vx < 0)
-		{
-			//Để khi bay nhưng 0 đạt MaxSpeed thì nó vẫn 0 giảm SB
-			if (isFlying) return;
-			//đôi lúc khi bay sẽ thấy bay theo trục x nhan vcl @@, cần giới hạn nó
-			//Bug brace khi chạy, nó sẽ 0 brace mà chạy lại hướng ngược lại
-			if (abs(vx - prevVx) >= abs(maxVx / 8))
-			{
-				SpeedBar--;
-				if (SpeedBar == 0) 
-					prevVx = 0; //Reset prevVx
-				else 
-					prevVx -= abs(maxVx / 8);
-			}
-		}
-	}
+	//DebugOutTitle(L"RT, start, st: %d, %d, %d", run_start, speed_bar_start, speed_bar_stop);
 }

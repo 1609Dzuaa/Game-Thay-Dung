@@ -24,8 +24,10 @@
 
 #pragma region CONST & TIME
 
-#define MARIO_WALKING_SPEED		0.11f
+#define MARIO_WALKING_SPEED		0.09f
+#define MARIO_WALKING_MAX_SPEED	0.11f
 #define MARIO_RUNNING_SPEED		0.15f
+#define MARIO_RUNNING_MAX_SPEED	0.2f;
 
 #define MARIO_ACCEL_WALK_X	0.0001f
 #define MARIO_ACCEL_RUN_X	0.00012f
@@ -36,7 +38,7 @@
 #define MARIO_TRAVELLING_SPEED	0.02815f
 
 #define MARIO_GRAVITY_ON_PLATFORM		0.002f
-#define MARIO_GRAVITY_NOT_ON_PLATFORM	0.001f
+#define MARIO_GRAVITY_NOT_ON_PLATFORM	0.0009f
 
 #define MARIO_JUMP_DEFLECT_SPEED  0.25f
 
@@ -64,6 +66,7 @@
 #define MARIO_EVOLVE_TIME 750
 #define UNTOUCH_DRAW_TIME 100
 #define FLYING_TIME	4000
+#define START_RUN_TIME_OUT	900	//Tính từ khi bấm A để chạy thì phải hết 900ms mới tăng SpeedBar
 
 #define END_POS	2700.0f
 
@@ -319,6 +322,10 @@ class CMario : public CGameObject
 	ULONGLONG wait_end_game;
 	ULONGLONG die_idle_start; //thgian chết đứng im
 	ULONGLONG die_time_out; //thời gian chết nhảy
+	//khi bắt đầu bấm A chạy thì đợi 900ms thì SpeedBar mới đc phép tăng, biến này sẽ luôn đc cập nhật
+	ULONGLONG run_start;
+	ULONGLONG speed_bar_start;	//Bắt đầu đếm thời gian để tăng SpeedBar sau khi đc cho phép tăng
+	ULONGLONG speed_bar_stop;	//Bắt đầu đếm thời gian để giảm SpeedBar sau khi ngưng chạy
 	BOOLEAN isDieIdle; //để biết đang animation chết nhưng đứng yên
 	BOOLEAN isDieJump;
 	BOOLEAN isTrulyDied; //để biết đã chết thật sự(rơi xuống dưới) để set Cam về vị trí ban đầu (0, 0)
