@@ -565,13 +565,23 @@ void CKoopa::OnCollisionWithGoomba(LPCOLLISIONEVENT e)
 
 void CKoopa::OnCollisionWithKoopa(LPCOLLISIONEVENT e)
 {
+	CScene* current_scene = (CScene*)CGame::GetInstance()->GetCurrentScene();
+
 	CKoopa* koopa = dynamic_cast<CKoopa*>(e->obj);
 	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
 	if (koopa->GetState() != KOOPA_STATE_DIE)
 	{
-		KillCount++;
-		koopa->SetState(KOOPA_STATE_DIE);
-		mario->SpawnScore(koopa, 1, KillCount);
+		if (current_scene->GetID() == ID_MAP_1_1)
+		{
+			KillCount++;
+			koopa->SetState(KOOPA_STATE_DIE);
+			mario->SpawnScore(koopa, 1, KillCount);
+		}
+		else
+		{
+			koopa->SetState(KOOPA_STATE_DIE);
+
+		}
 	}
 }
 
