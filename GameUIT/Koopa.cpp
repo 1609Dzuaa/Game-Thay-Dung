@@ -259,6 +259,7 @@ void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 	UpdateKoopaState();
 	CCollision::GetInstance()->Process(this, dt, coObjects);
+	DebugOutTitle(L"KillCount: %d", KillCount);
 	//DebugOutTitle(L"ay, st, COLLIDABLE: %f, %d, %d", ay, state, IsCollidable());
 }
 
@@ -554,10 +555,10 @@ void CKoopa::OnCollisionWithGoomba(LPCOLLISIONEVENT e)
 
 	CGoomba* goomba = dynamic_cast<CGoomba*>(e->obj);
 	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
-	KillCount++;
 	if (goomba->GetState() != GOOMBA_STATE_DIE_REVERSE)
 	{
 		goomba->SetState(GOOMBA_STATE_DIE_REVERSE);
+		KillCount += 1;
 		mario->SpawnScore(goomba, 1, KillCount);
 	}
 }
@@ -566,11 +567,11 @@ void CKoopa::OnCollisionWithKoopa(LPCOLLISIONEVENT e)
 {
 	CKoopa* koopa = dynamic_cast<CKoopa*>(e->obj);
 	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
-	KillCount++;
 	if (koopa->GetState() != KOOPA_STATE_DIE)
 	{
+		KillCount++;
 		koopa->SetState(KOOPA_STATE_DIE);
-		//mario->SpawnScore(koopa);
+		mario->SpawnScore(koopa, 1, KillCount);
 	}
 }
 

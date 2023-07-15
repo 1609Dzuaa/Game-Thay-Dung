@@ -1,6 +1,7 @@
 # list of object assets to load in this scene
 [MAP]
 Game_Maps\Map1_1_Full.txt
+#Game_Maps\test.txt
 [UNDERWORLD]
 Game_Maps\Underworld_Map1_1.txt
 [ASSETS]

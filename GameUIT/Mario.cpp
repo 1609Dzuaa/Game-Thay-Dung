@@ -140,11 +140,11 @@ void CMario::SpawnScore(LPGAMEOBJECT obj, int killByWeapon, int killCombo)
 	}
 	else
 	{
-		CEffectScore* eff_scr = nullptr;
+		CEffectScore* eff_scr = new CEffectScore(obj->GetX(), obj->GetY() - 15.0f, obj->GetY() - 45.0f, NORMAL_SCORE);
 		switch (killCombo)
 		{
 		case 1:
-			eff_scr = new CEffectScore(obj->GetX(), obj->GetY() - 15.0f, obj->GetY() - 45.0f, NORMAL_SCORE);
+			//eff_scr = new CEffectScore(obj->GetX(), obj->GetY() - 15.0f, obj->GetY() - 45.0f, NORMAL_SCORE);
 			break;
 		case 2:
 			eff_scr = new CEffectScore(obj->GetX(), obj->GetY() - 15.0f, obj->GetY() - 45.0f, DOUBLE_SCORE);
@@ -153,7 +153,8 @@ void CMario::SpawnScore(LPGAMEOBJECT obj, int killByWeapon, int killCombo)
 			eff_scr = new CEffectScore(obj->GetX(), obj->GetY() - 15.0f, obj->GetY() - 45.0f, QUADRA_SCORE);
 			break;
 		}
-		current_scene->AddObjectToScene(ClassifyScore(obj, eff_scr));
+
+		current_scene->AddObjectToScene(eff_scr);
 		CDataBindings::GetInstance()->points += eff_scr->GetScore();
 	}
 }
