@@ -9,7 +9,7 @@
 * AABB Collision (Framework)
 * Sprites và Animations (Framework)
 * Camera to follow Player (Adjust trong Framework một chút)
-* Black Scene Transition Effect (Vẽ Hình Ảnh Màu Đen Với Độ Alpha Giảm/Tăng Dần)
+* Black Scene Transition Effect (Màn Hình Chuyển Cảnh Màu Đen Với Độ Alpha Giảm/Tăng Dần)
 * Tiled (Dùng Để Vẽ Map): https://www.mapeditor.org/
 * Tool cắt map (Dùng Để Cắt Map Thành Tilemap Phục Vụ Cho Việc Vẽ Map): https://github.com/uiters/MapEditor
 * GIMP (Dùng Để Tạo Một Vài Sprite): https://www.gimp.org/
@@ -26,6 +26,9 @@
 
 ##### UNDERWORLD MAP 1-1
 ![Underworld](https://github.com/Turtl3x1503/Game-Thay-Dung/assets/106080372/e1990653-29a5-49ef-92d6-3133cadffb15)
+
+##### [DEMO]
+https://www.youtube.com/watch?v=yMNQJp5czWA
 
 #### Tài Liệu Tham Khảo:
 * Series Về Game Của BHT CNPM: https://www.facebook.com/bhtcnpm/posts/pfbid02MXNs3EB6TZcKuA7hUt3h92fquQow4E2QWxxBUKUGGz8vARAkXawAWxQ9mXG7g8ERl
