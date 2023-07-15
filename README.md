@@ -9,6 +9,7 @@
 * AABB Collision (Framework)
 * Sprites và Animations (Framework)
 * Camera to follow Player (Adjust trong Framework một chút)
+* Black Scene Transition Effect (Vẽ Hình Ảnh Màu Đen Với Độ Alpha Giảm/Tăng Dần)
 * Tiled (Dùng Để Vẽ Map): https://www.mapeditor.org/
 * Tool cắt map (Dùng Để Cắt Map Thành Tilemap Phục Vụ Cho Việc Vẽ Map): https://github.com/uiters/MapEditor
 * GIMP (Dùng Để Tạo Một Vài Sprite): https://www.gimp.org/
